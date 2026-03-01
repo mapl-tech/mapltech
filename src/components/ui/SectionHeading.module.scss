@@ -1,0 +1,45 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.heading {
+  text-align: center;
+  margin-bottom: $space-3xl;
+}
+
+.left {
+  text-align: left;
+}
+
+.label {
+  display: inline-block;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+  @include gradient-text;
+  margin-bottom: $space-md;
+}
+
+.title {
+  font-family: $font-display;
+  font-size: clamp($font-size-xl, 3.5vw, $font-size-3xl);
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  margin-bottom: $space-md;
+  line-height: $line-height-snug;
+  letter-spacing: $letter-spacing-tight;
+}
+
+.subtitle {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  max-width: min(580px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  line-height: $line-height-relaxed;
+
+  .left & {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,153 @@
+// ============================================
+// MAPL TECH Design System Variables
+// Palette: Black, White, #F03350 (60-30-10 rule)
+// 60% black backgrounds, 30% white text/surfaces, 10% red accents
+// ============================================
+
+// Core Palette — Black (60%)
+$color-black: #000000;
+$color-dark: #000000;
+$color-dark-surface: #0a0a0a;
+$color-dark-card: #111111;
+$color-dark-elevated: #1a1a1a;
+$color-dark-border: #222222;
+$color-navy: #0a0a0a; // kept as alias for backward compat
+$color-navy-light: #111111;
+$color-navy-mid: #1a1a1a;
+
+// White & Text (30%) — WCAG AA contrast ratios on #000 background
+$color-white: #ffffff;                          // 21:1 contrast
+$color-off-white: #f5f5f5;                      // 19.5:1 contrast
+$color-white-muted: rgba(255, 255, 255, 0.80);  // ~13.3:1 — AA pass
+$color-white-dim: rgba(255, 255, 255, 0.56);    // ~7.2:1 — AA pass (muted text)
+$color-text-heading: $color-white;
+$color-text-body: #cccccc;                       // 13.3:1 — readable body text
+$color-text-muted: #999999;                      // 7.4:1 — AA pass (secondary text)
+
+// Primary Accent — Red (10%)
+$color-red: #F03350;              // 3.66:1 on black — use for large text/UI only
+$color-red-bright: #ff3d5a;       // 4.6:1 on black — AA pass for normal text
+$color-red-deep: #c4213c;
+$color-red-glow: rgba(240, 51, 80, 0.2);
+$color-red-text: #ff5c73;         // 5.5:1 on black — accessible for body text links
+
+// Backward-compat aliases (used across components)
+$color-pink: $color-red;
+$color-pink-bright: $color-red-bright;
+$color-pink-hot: $color-red;
+$color-magenta: $color-red-deep;
+$color-coral: $color-red-bright;
+
+// Complementary Accent — Teal (for hover states, secondary interactions)
+$color-teal: #33F0D0;
+$color-teal-muted: rgba(51, 240, 208, 0.15);
+
+// Subtle depth tones (replaces purple)
+$color-purple-deep: #1a0a0a;
+$color-purple-dark: #2a0f14;
+$color-purple: $color-red-deep;
+
+// Gradient definitions — clean, bold
+$gradient-primary: linear-gradient(135deg, $color-red-deep 0%, $color-red 50%, $color-red-bright 100%);
+$gradient-accent: linear-gradient(135deg, $color-red-deep 0%, $color-red 100%);
+$gradient-subtle: linear-gradient(160deg, rgba($color-red-deep, 0.15) 0%, rgba($color-red, 0.03) 100%);
+$gradient-card: linear-gradient(160deg, $color-dark-card 0%, $color-dark-elevated 100%);
+$gradient-text: linear-gradient(90deg, $color-red 0%, $color-red-bright 100%);
+$gradient-border: linear-gradient(135deg, $color-red 0%, $color-red-deep 100%);
+$gradient-hero: radial-gradient(ellipse at 20% 40%, rgba($color-red-deep, 0.35) 0%, transparent 50%),
+               radial-gradient(ellipse at 75% 70%, rgba($color-red, 0.06) 0%, transparent 40%),
+               radial-gradient(ellipse at 50% 100%, rgba($color-red-deep, 0.2) 0%, transparent 50%);
+$gradient-mesh: radial-gradient(at 0% 0%, rgba($color-red-deep, 0.2) 0%, transparent 50%),
+               radial-gradient(at 100% 0%, rgba($color-red, 0.04) 0%, transparent 40%),
+               radial-gradient(at 50% 100%, rgba($color-red-deep, 0.1) 0%, transparent 50%);
+
+// Typography — Overpass throughout (matches MAPL TECH branding)
+$font-display: 'Overpass', sans-serif;
+$font-body: 'Overpass', sans-serif;
+$font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+// Font sizes — rem-based for user accessibility (respects browser font settings)
+// Minimum body text: 1rem (16px). Use xs/sm only for labels, badges, captions.
+$font-size-xs: 0.8125rem;   // 13px — labels, badges only
+$font-size-sm: 0.9375rem;   // 15px — secondary text, captions
+$font-size-base: 1rem;      // 16px — body text minimum
+$font-size-md: 1.0625rem;   // 17px
+$font-size-lg: 1.25rem;     // 20px
+$font-size-xl: 1.5rem;      // 24px
+$font-size-2xl: 2rem;       // 32px
+$font-size-3xl: 2.5rem;     // 40px
+$font-size-4xl: 3rem;       // 48px
+$font-size-5xl: 3.5rem;     // 56px
+$font-size-hero: clamp(2.25rem, 4vw, 3.5rem);
+
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+
+$line-height-tight: 1.08;
+$line-height-snug: 1.2;
+$line-height-normal: 1.55;
+$line-height-relaxed: 1.7;
+
+$letter-spacing-tight: -0.02em;
+$letter-spacing-normal: 0;
+$letter-spacing-wide: 0.04em;
+$letter-spacing-wider: 0.08em;
+$letter-spacing-widest: 0.14em;
+
+// Spacing
+$space-xs: 0.25rem;
+$space-sm: 0.5rem;
+$space-md: 1rem;
+$space-lg: 1.5rem;
+$space-xl: 2rem;
+$space-2xl: 3rem;
+$space-3xl: 4rem;
+$space-4xl: 6rem;
+$space-5xl: 8rem;
+$space-section: clamp(5rem, 10vw, 9rem);
+
+// Layout
+$max-width: 1200px;
+$max-width-narrow: 900px;
+$max-width-wide: 1200px;
+$container-padding: clamp(1.25rem, 5vw, 2rem);
+
+// Border Radius
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 24px;
+$radius-full: 9999px;
+
+// Shadows — clean, high-contrast
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+$shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+$shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.7);
+$shadow-glow: 0 0 40px rgba($color-red, 0.12), 0 0 80px rgba($color-red-deep, 0.08);
+$shadow-glow-strong: 0 0 60px rgba($color-red, 0.2), 0 0 120px rgba($color-red-deep, 0.12);
+$shadow-card-hover: 0 8px 32px rgba($color-red, 0.1), 0 0 0 1px rgba($color-red, 0.2);
+
+// Transitions — smooth, intentional
+$transition-fast: 150ms ease;
+$transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-smooth: 600ms cubic-bezier(0.16, 1, 0.3, 1);
+
+// Breakpoints
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-2xl: 1536px;
+
+// Z-index scale
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-overlay: 300;
+$z-modal: 400;
+$z-toast: 500;

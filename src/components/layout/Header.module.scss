@@ -1,0 +1,336 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-sticky;
+  transition: all $transition-smooth;
+}
+
+// ===== Top bar (email + socials) =====
+.topBar {
+  display: none;
+  background: rgba($color-dark, 0.6);
+  border-bottom: 1px solid rgba($color-dark-border, 0.4);
+  transition: all $transition-smooth;
+  overflow: hidden;
+  max-height: 40px;
+
+  @include lg {
+    display: block;
+  }
+
+  &.topBarHidden {
+    max-height: 0;
+    border-bottom-color: transparent;
+  }
+}
+
+.topBarInner {
+  @include container;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  font-size: $font-size-xs;
+}
+
+.contactLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: $color-text-muted;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-pink;
+  }
+}
+
+.socialLinks {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+
+  a {
+    color: $color-text-muted;
+    transition: color $transition-fast, transform $transition-fast;
+    display: flex;
+    align-items: center;
+
+    @include focus-ring;
+
+    &:hover {
+      color: $color-pink;
+      transform: scale(1.15);
+    }
+  }
+}
+
+// ===== Main nav bar =====
+.navBar {
+  @include glass(rgba($color-dark, 0.5));
+  transition: all $transition-smooth;
+  border-bottom: 1px solid rgba($color-dark-border, 0.3);
+
+  .scrolled & {
+    background: rgba($color-dark, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom-color: rgba($color-dark-border, 0.5);
+  }
+}
+
+.navBarInner {
+  @include container;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  gap: $space-md;
+}
+
+.logo {
+  font-family: $font-display;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-extrabold;
+  color: $color-white;
+  letter-spacing: 1px;
+  text-decoration: none;
+  flex-shrink: 0;
+
+  @include focus-ring;
+
+  .logoPipe {
+    @include gradient-text;
+    font-weight: $font-weight-extrabold;
+  }
+}
+
+.nav {
+  display: none;
+  align-items: center;
+  gap: 2px;
+
+  @include lg {
+    display: flex;
+  }
+}
+
+.navItem {
+  position: relative;
+}
+
+.navLink {
+  display: block;
+  padding: 6px 12px;
+  color: $color-text-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-md;
+  transition: color $transition-fast, background $transition-fast;
+  white-space: nowrap;
+
+  @include focus-ring;
+
+  &:hover {
+    color: $color-white;
+  }
+
+  &.active {
+    color: $color-pink;
+    background: rgba($color-pink, 0.08);
+  }
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 220px;
+  background: $color-navy-light;
+  border: 1px solid $color-dark-border;
+  border-radius: $radius-lg;
+  padding: $space-sm;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all $transition-base;
+  box-shadow: $shadow-lg;
+  z-index: $z-dropdown;
+
+  // Invisible bridge to close the gap between navLink and dropdown
+  &::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+  }
+
+  .navItem:hover &,
+  .navItem:focus-within & {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.dropdownLink {
+  display: block;
+  padding: $space-sm $space-md;
+  color: $color-text-body;
+  font-size: $font-size-sm;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+
+  @include focus-ring;
+
+  &:hover {
+    background: rgba($color-pink, 0.1);
+    color: $color-white;
+  }
+}
+
+.ctaButton {
+  @include button-primary;
+  font-size: $font-size-xs;
+  padding: 8px 20px;
+  display: none;
+
+  @include lg {
+    display: inline-flex;
+  }
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: none;
+  border: 1px solid rgba($color-white, 0.15);
+  border-radius: $radius-md;
+  color: $color-white;
+  font-size: $font-size-xl;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  @include focus-ring;
+  @include lg {
+    display: none;
+  }
+
+  &:hover {
+    border-color: $color-pink;
+    color: $color-pink;
+  }
+}
+
+// ===== Mobile menu =====
+.mobileMenu {
+  position: fixed;
+  inset: 0;
+  z-index: $z-overlay;
+  background: rgba($color-dark, 0.97);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  padding: $space-xl;
+  overflow-y: auto;
+
+  @include lg {
+    display: none;
+  }
+}
+
+.mobileMenuHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $space-3xl;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: none;
+  border: 1px solid rgba($color-white, 0.15);
+  border-radius: $radius-md;
+  color: $color-white;
+  font-size: $font-size-xl;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  @include focus-ring;
+
+  &:hover {
+    border-color: $color-pink;
+    color: $color-pink;
+  }
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  flex: 1;
+}
+
+.mobileNavLink {
+  display: block;
+  padding: $space-md $space-lg;
+  color: $color-text-body;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+
+  @include focus-ring;
+
+  &:hover,
+  &.active {
+    color: $color-white;
+    background: rgba($color-pink, 0.1);
+  }
+}
+
+.mobileSubLink {
+  @extend .mobileNavLink;
+  padding-left: $space-3xl;
+  font-size: $font-size-base;
+  color: $color-text-muted;
+}
+
+.mobileSocial {
+  display: flex;
+  gap: $space-lg;
+  padding-top: $space-2xl;
+  border-top: 1px solid $color-dark-border;
+  margin-top: $space-xl;
+
+  a {
+    color: $color-text-muted;
+    font-size: $font-size-xl;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-pink;
+    }
+  }
+}
+
+.mobileCta {
+  @include button-primary;
+  width: 100%;
+  margin-top: $space-xl;
+  text-align: center;
+}

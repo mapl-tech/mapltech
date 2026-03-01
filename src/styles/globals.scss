@@ -1,0 +1,284 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Overpass — matches existing MAPL TECH branding
+@import url('https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  // scroll-behavior handled by Lenis (SmoothScroll component)
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  // Ensure text scales with user's browser font size settings
+  font-size: 100%; // respects user's preferred font size (default 16px)
+}
+
+body {
+  font-family: $font-body;
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+  letter-spacing: $letter-spacing-normal;
+  color: $color-text-body;
+  background-color: $color-dark;
+  overflow-x: hidden;
+  position: relative;
+
+  // Subtle noise texture overlay for depth
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 128px 128px;
+  }
+}
+
+// Headings use display font (Overpass)
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-display;
+  color: $color-text-heading;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:focus-visible {
+    outline: 2px solid $color-red;
+    outline-offset: 3px;
+    border-radius: $radius-sm;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+
+  &:focus-visible {
+    outline: 2px solid $color-red;
+    outline-offset: 3px;
+    border-radius: $radius-sm;
+  }
+}
+
+ul, ol {
+  list-style: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+
+  &:focus-visible {
+    outline: 2px solid $color-red;
+    outline-offset: 2px;
+    border-radius: $radius-sm;
+  }
+}
+
+::selection {
+  background: rgba($color-pink-hot, 0.35);
+  color: $color-white;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: $color-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $color-dark-border;
+  border-radius: 3px;
+
+  &:hover {
+    background: $color-red;
+  }
+}
+
+// Skip to content link
+.skip-to-content {
+  @include sr-only;
+  position: fixed;
+  top: $space-md;
+  left: $space-md;
+  z-index: $z-toast;
+  padding: $space-sm $space-md;
+  background: $color-pink;
+  color: $color-white;
+  border-radius: $radius-md;
+  font-weight: $font-weight-semibold;
+
+  &:focus {
+    position: fixed;
+    width: auto;
+    height: auto;
+    clip: auto;
+    overflow: visible;
+  }
+}
+
+// Utility classes
+.section {
+  @include section-padding;
+}
+
+.container {
+  @include container;
+}
+
+.gradient-text {
+  @include gradient-text;
+}
+
+// ===== Magnetic Button (Speer-style) =====
+.magnetic-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+  border-radius: $radius-full;
+  font-family: $font-body;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow $transition-base;
+
+  &__text {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__glow {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &:hover &__glow {
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-white;
+    outline-offset: 3px;
+  }
+
+  // Primary
+  &--primary {
+    background: $gradient-primary;
+    color: $color-white;
+    box-shadow: 0 4px 20px rgba($color-pink, 0.2);
+
+    .magnetic-btn__glow {
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+    }
+
+    &:hover {
+      box-shadow: 0 8px 40px rgba($color-pink, 0.35), 0 0 80px rgba($color-pink, 0.1);
+    }
+  }
+
+  // Secondary
+  &--secondary {
+    background: transparent;
+    color: $color-white;
+    border: 1px solid rgba($color-white, 0.15);
+
+    .magnetic-btn__glow {
+      background: rgba($color-pink, 0.05);
+    }
+
+    &:hover {
+      border-color: rgba($color-pink, 0.4);
+      box-shadow: 0 0 30px rgba($color-pink, 0.08);
+    }
+  }
+
+  // Sizes
+  &.btn-sm {
+    padding: 10px 20px;
+    font-size: $font-size-xs;
+  }
+
+  &.btn-md {
+    padding: 14px 28px;
+    font-size: $font-size-sm;
+  }
+
+  &.btn-lg {
+    padding: 18px 36px;
+    font-size: $font-size-sm;
+  }
+}
+
+// Lenis smooth scroll integration
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+// Reduced motion — respect user's OS accessibility setting
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// High contrast mode adjustments
+@media (prefers-contrast: high) {
+  body {
+    color: $color-white;
+  }
+
+  a, button {
+    &:focus-visible {
+      outline-width: 3px;
+    }
+  }
+}

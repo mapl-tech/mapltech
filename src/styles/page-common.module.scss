@@ -1,0 +1,700 @@
+@use './variables' as *;
+@use './mixins' as *;
+
+// Page Hero (used across About, Careers, Contact, Portfolio, Referral, Regional)
+.hero {
+  position: relative;
+  padding: 180px 0 $space-5xl;
+  background: $gradient-hero, $color-dark;
+  overflow: hidden;
+
+  // Subtle bottom gradient fade into next section
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, $color-dark);
+    pointer-events: none;
+  }
+}
+
+.heroInner {
+  @include container;
+  position: relative;
+  z-index: 1;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+
+  @include lg {
+    grid-template-columns: 1fr 1fr;
+    gap: $space-3xl;
+  }
+}
+
+.heroOrb {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+
+  @include lg {
+    max-width: none;
+  }
+}
+
+.heroLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+  @include gradient-text;
+  margin-bottom: $space-xl;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: $gradient-primary;
+    border-radius: 1px;
+  }
+}
+
+.heroTitle {
+  font-family: $font-display;
+  font-size: clamp($font-size-2xl, 4.5vw, $font-size-5xl);
+  font-weight: $font-weight-extrabold;
+  color: $color-white;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+  margin-bottom: $space-xl;
+  max-width: min(750px, 100%);
+}
+
+.heroSubtitle {
+  font-size: clamp($font-size-base, 1.5vw, $font-size-md);
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+  max-width: min(580px, 100%);
+  margin-bottom: $space-2xl;
+}
+
+.heroCentered {
+  text-align: center;
+
+  .heroTitle,
+  .heroSubtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// Generic sections
+.section {
+  @include section-padding;
+  position: relative;
+
+  &.dark {
+    background: $color-dark;
+  }
+
+  &.navy {
+    background: $gradient-mesh, $color-navy;
+  }
+}
+
+.sectionInner {
+  @include container;
+}
+
+.sectionNarrow {
+  @include container($max-width-narrow);
+}
+
+// Content blocks
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-3xl;
+  align-items: center;
+
+  @include lg {
+    grid-template-columns: 1fr 1fr;
+    gap: $space-4xl;
+  }
+}
+
+.textContent {
+  h2 {
+    font-size: clamp($font-size-2xl, 3.5vw, $font-size-3xl);
+    color: $color-white;
+    margin-bottom: $space-lg;
+  }
+
+  h3 {
+    font-size: $font-size-xl;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  h4 {
+    font-size: $font-size-md;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    color: $color-text-body;
+    font-size: $font-size-base;
+    line-height: $line-height-relaxed;
+    margin-bottom: $space-md;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.imageBlock {
+  border-radius: $radius-xl;
+  overflow: hidden;
+  @include gradient-border(1px, $radius-xl);
+  aspect-ratio: 4/3;
+  background: $gradient-card;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-muted;
+  font-size: $font-size-base;
+  position: relative;
+
+  // Shimmer effect
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      transparent 40%,
+      rgba($color-pink, 0.03) 50%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+}
+
+// Cards grid
+.cardsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+
+  @include sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &.twoCol {
+    @include lg {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+.card {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+
+  // Gradient accent line on top
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: $gradient-primary;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform $transition-smooth;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.cardIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-lg;
+  background: rgba($color-pink-hot, 0.08);
+  border: 1px solid rgba($color-pink, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-pink;
+  transition: background $transition-base, border-color $transition-base, transform $transition-base;
+
+  .card:hover & {
+    background: rgba($color-pink-hot, 0.15);
+    border-color: rgba($color-pink, 0.25);
+    transform: scale(1.05);
+  }
+}
+
+.cardTitle {
+  font-family: $font-display;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+}
+
+.cardDescription {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+}
+
+.cardMeta {
+  display: flex;
+  gap: $space-md;
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+  }
+}
+
+// CTA
+.cta {
+  @include section-padding;
+  background: radial-gradient(ellipse at center, rgba($color-purple-dark, 0.25) 0%, $color-navy 70%);
+  position: relative;
+
+  // Top glow line
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(500px, 70%);
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, $color-pink-hot 50%, transparent 100%);
+    opacity: 0.3;
+  }
+}
+
+.ctaInner {
+  @include container($max-width-narrow);
+}
+
+.ctaContent {
+  text-align: center;
+  margin-bottom: $space-3xl;
+
+  h2 {
+    font-size: clamp($font-size-2xl, 4vw, $font-size-4xl);
+    color: $color-white;
+    margin-bottom: $space-lg;
+  }
+
+  p {
+    color: $color-text-body;
+    font-size: $font-size-base;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: $line-height-relaxed;
+  }
+}
+
+// Form sections
+.formSection {
+  @include section-padding;
+  background: $color-dark;
+}
+
+.formGrid {
+  @include container;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-3xl;
+
+  @include lg {
+    grid-template-columns: 1fr 1fr;
+    gap: $space-4xl;
+  }
+}
+
+.formInfo {
+  h2 {
+    font-size: clamp($font-size-2xl, 3.5vw, $font-size-3xl);
+    color: $color-white;
+    margin-bottom: $space-lg;
+  }
+
+  p {
+    color: $color-text-body;
+    font-size: $font-size-base;
+    line-height: $line-height-relaxed;
+    margin-bottom: $space-xl;
+  }
+}
+
+.contactDetails {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+
+  .contactIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-full;
+    background: rgba($color-pink, 0.1);
+    border: 1px solid rgba($color-pink, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-pink;
+    flex-shrink: 0;
+    transition: background $transition-base;
+  }
+
+  &:hover .contactIcon {
+    background: rgba($color-pink, 0.18);
+  }
+
+  .contactText {
+    h4 {
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
+      color: $color-white;
+      margin-bottom: 2px;
+    }
+
+    a, p {
+      font-size: $font-size-base;
+      color: $color-text-body;
+      transition: color $transition-fast;
+      margin-bottom: 0;
+    }
+
+    a:hover {
+      color: $color-pink;
+    }
+  }
+}
+
+// Testimonial sidebar
+.testimonialSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  margin-top: $space-2xl;
+}
+
+.testimonialMini {
+  @include card;
+  padding: $space-xl;
+  height: 100%;
+
+  .testimonialQuote {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    font-style: italic;
+    line-height: $line-height-relaxed;
+    margin-bottom: $space-md;
+
+    &::before {
+      content: '\201C';
+      @include gradient-text;
+      font-size: $font-size-xl;
+      font-style: normal;
+      margin-right: 4px;
+    }
+  }
+
+  .testimonialFooter {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  .testimonialAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba($color-pink, 0.3);
+  }
+
+  .testimonialAuthor {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-white;
+  }
+
+  .testimonialRole {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+  }
+}
+
+// Portfolio filter
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  justify-content: center;
+  margin-bottom: $space-3xl;
+}
+
+.filterButton {
+  @include button-base;
+  padding: 0.6rem 1.5rem;
+  font-size: $font-size-sm;
+  background: transparent;
+  border: 1px solid $color-dark-border;
+  color: $color-text-muted;
+  border-radius: $radius-full;
+
+  @include focus-ring;
+
+  &:hover {
+    border-color: rgba($color-pink, 0.5);
+    color: $color-white;
+    background: rgba($color-pink, 0.05);
+  }
+
+  &.active {
+    background: $gradient-primary;
+    border-color: transparent;
+    color: $color-white;
+    box-shadow: 0 4px 16px rgba($color-pink, 0.2);
+  }
+}
+
+// Portfolio card
+.portfolioCard {
+  @include card;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  height: 100%;
+
+  &:hover .portfolioImage img {
+    transform: scale(1.05);
+  }
+}
+
+.portfolioImage {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  position: relative;
+  background: $gradient-card;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition-slow;
+  }
+}
+
+.portfolioCategory {
+  position: absolute;
+  top: $space-md;
+  left: $space-md;
+  padding: $space-xs $space-md;
+  background: rgba($color-dark, 0.88);
+  backdrop-filter: blur(8px);
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  color: $color-pink;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+}
+
+.portfolioContent {
+  padding: $space-xl;
+
+  h3 {
+    font-size: $font-size-lg;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    @include line-clamp(2);
+    margin-bottom: $space-md;
+  }
+}
+
+.portfolioTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-xs;
+
+  span {
+    padding: 4px 10px;
+    background: rgba($color-pink, 0.08);
+    border: 1px solid rgba($color-pink, 0.1);
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    color: $color-pink;
+  }
+}
+
+// Job card styles
+.jobCard {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  overflow: hidden;
+  height: 100%;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: $gradient-primary;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform $transition-smooth;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.jobHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $space-md;
+  flex-wrap: wrap;
+}
+
+.jobTitle {
+  font-family: $font-display;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+}
+
+.jobBadge {
+  padding: $space-xs $space-md;
+  background: rgba($color-pink, 0.1);
+  border: 1px solid rgba($color-pink, 0.12);
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  color: $color-pink;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+}
+
+.jobDescription {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+}
+
+.jobMeta {
+  display: flex;
+  gap: $space-lg;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+
+    svg {
+      color: $color-pink;
+    }
+  }
+}
+
+// Referral
+.referralSteps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+  max-width: 800px;
+  margin: 0 auto;
+
+  @include md {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.referralStep {
+  text-align: center;
+  padding: $space-lg;
+}
+
+.referralNumber {
+  width: 64px;
+  height: 64px;
+  border-radius: $radius-full;
+  background: $gradient-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  margin: 0 auto $space-lg;
+  box-shadow: 0 4px 20px rgba($color-pink, 0.25);
+}
+
+.referralStepTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  margin-bottom: $space-sm;
+}
+
+.referralStepDesc {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+}

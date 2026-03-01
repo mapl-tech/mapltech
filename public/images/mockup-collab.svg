@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" fill="none">
+  <rect width="600" height="400" fill="#0a0a0a"/>
+  <!-- App frame -->
+  <rect x="40" y="30" width="520" height="340" rx="12" fill="#111" stroke="#222" stroke-width="1.5"/>
+  <!-- Sidebar -->
+  <rect x="40" y="30" width="140" height="340" rx="12" fill="#0d0d0d"/>
+  <rect x="180" y="30" width="1" height="340" fill="#1a1a1a"/>
+  <!-- Sidebar logo -->
+  <rect x="56" y="50" width="55" height="10" rx="2" fill="#F03350" opacity="0.5"/>
+  <!-- Sidebar channels -->
+  <rect x="56" y="80" width="108" height="5" rx="1" fill="#fff" opacity="0.3"/>
+  <rect x="56" y="98" width="108" height="24" rx="4" fill="#F03350" opacity="0.08"/>
+  <rect x="66" y="106" width="8" height="8" rx="2" fill="#F03350" opacity="0.4"/>
+  <rect x="80" y="106" width="60" height="5" rx="1" fill="#F03350" opacity="0.6"/>
+  <rect x="66" y="130" width="8" height="8" rx="2" fill="#222"/>
+  <rect x="80" y="130" width="50" height="5" rx="1" fill="#555"/>
+  <rect x="66" y="150" width="8" height="8" rx="2" fill="#222"/>
+  <rect x="80" y="150" width="65" height="5" rx="1" fill="#555"/>
+  <rect x="66" y="170" width="8" height="8" rx="2" fill="#222"/>
+  <rect x="80" y="170" width="55" height="5" rx="1" fill="#555"/>
+  <!-- Sidebar - team section -->
+  <rect x="56" y="200" width="108" height="5" rx="1" fill="#fff" opacity="0.3"/>
+  <circle cx="70" cy="222" r="8" fill="#1a1a1a"/>
+  <circle cx="66" cy="218" r="3" fill="#33F0D0" opacity="0.7"/>
+  <rect x="84" y="219" width="50" height="4" rx="1" fill="#555"/>
+  <circle cx="70" cy="242" r="8" fill="#1a1a1a"/>
+  <circle cx="66" cy="238" r="3" fill="#33F0D0" opacity="0.7"/>
+  <rect x="84" y="239" width="40" height="4" rx="1" fill="#555"/>
+  <circle cx="70" cy="262" r="8" fill="#1a1a1a"/>
+  <circle cx="66" cy="258" r="3" fill="#666" opacity="0.5"/>
+  <rect x="84" y="259" width="55" height="4" rx="1" fill="#444"/>
+  <!-- Main content - Kanban board -->
+  <rect x="196" y="46" width="120" height="8" rx="1" fill="#fff" opacity="0.7"/>
+  <rect x="196" y="60" width="70" height="4" rx="1" fill="#666"/>
+  <!-- Board controls -->
+  <rect x="470" y="44" width="70" height="22" rx="8" fill="#F03350" opacity="0.2"/>
+  <rect x="482" y="51" width="46" height="8" rx="1" fill="#F03350" opacity="0.6"/>
+  <!-- Column 1 - To Do -->
+  <rect x="196" y="80" width="108" height="276" rx="8" fill="#151515" stroke="#222" stroke-width="0.5"/>
+  <rect x="206" y="92" width="40" height="5" rx="1" fill="#fff" opacity="0.5"/>
+  <rect x="272" y="90" width="22" height="10" rx="5" fill="#222"/>
+  <text x="283" y="98" text-anchor="middle" fill="#666" font-family="sans-serif" font-size="8">3</text>
+  <!-- Task cards -->
+  <rect x="206" y="110" width="88" height="52" rx="6" fill="#111" stroke="#222" stroke-width="0.5"/>
+  <rect x="216" y="120" width="68" height="4" rx="1" fill="#ccc"/>
+  <rect x="216" y="130" width="50" height="3" rx="1" fill="#555"/>
+  <circle cx="224" cy="148" r="6" fill="#1a1a1a"/>
+  <rect x="254" y="144" width="30" height="10" rx="5" fill="#F03350" opacity="0.12"/>
+  <rect x="206" y="170" width="88" height="52" rx="6" fill="#111" stroke="#222" stroke-width="0.5"/>
+  <rect x="216" y="180" width="60" height="4" rx="1" fill="#ccc"/>
+  <rect x="216" y="190" width="70" height="3" rx="1" fill="#555"/>
+  <circle cx="224" cy="208" r="6" fill="#1a1a1a"/>
+  <rect x="254" y="204" width="30" height="10" rx="5" fill="#33F0D0" opacity="0.12"/>
+  <rect x="206" y="230" width="88" height="42" rx="6" fill="#111" stroke="#222" stroke-width="0.5"/>
+  <rect x="216" y="240" width="55" height="4" rx="1" fill="#ccc"/>
+  <rect x="216" y="250" width="65" height="3" rx="1" fill="#555"/>
+  <!-- Column 2 - In Progress -->
+  <rect x="314" y="80" width="108" height="276" rx="8" fill="#151515" stroke="#222" stroke-width="0.5"/>
+  <rect x="324" y="92" width="55" height="5" rx="1" fill="#F03350" opacity="0.6"/>
+  <rect x="390" y="90" width="22" height="10" rx="5" fill="#F03350" opacity="0.15"/>
+  <text x="401" y="98" text-anchor="middle" fill="#F03350" font-family="sans-serif" font-size="8">2</text>
+  <rect x="324" y="110" width="88" height="64" rx="6" fill="#111" stroke="#F03350" stroke-width="0.5" opacity="0.4"/>
+  <rect x="334" y="120" width="65" height="4" rx="1" fill="#ccc"/>
+  <rect x="334" y="130" width="55" height="3" rx="1" fill="#555"/>
+  <!-- Progress bar -->
+  <rect x="334" y="142" width="68" height="4" rx="2" fill="#1a1a1a"/>
+  <rect x="334" y="142" width="45" height="4" rx="2" fill="#F03350" opacity="0.5"/>
+  <circle cx="342" cy="160" r="6" fill="#1a1a1a"/>
+  <rect x="370" y="156" width="30" height="10" rx="5" fill="#F03350" opacity="0.12"/>
+  <rect x="324" y="182" width="88" height="52" rx="6" fill="#111" stroke="#222" stroke-width="0.5"/>
+  <rect x="334" y="192" width="70" height="4" rx="1" fill="#ccc"/>
+  <rect x="334" y="202" width="60" height="3" rx="1" fill="#555"/>
+  <rect x="334" y="214" width="68" height="4" rx="2" fill="#1a1a1a"/>
+  <rect x="334" y="214" width="30" height="4" rx="2" fill="#33F0D0" opacity="0.5"/>
+  <!-- Column 3 - Done -->
+  <rect x="432" y="80" width="108" height="276" rx="8" fill="#151515" stroke="#222" stroke-width="0.5"/>
+  <rect x="442" y="92" width="30" height="5" rx="1" fill="#33F0D0" opacity="0.6"/>
+  <rect x="508" y="90" width="22" height="10" rx="5" fill="#33F0D0" opacity="0.12"/>
+  <text x="519" y="98" text-anchor="middle" fill="#33F0D0" font-family="sans-serif" font-size="8">5</text>
+  <rect x="442" y="110" width="88" height="42" rx="6" fill="#111" stroke="#33F0D0" stroke-width="0.3" opacity="0.4"/>
+  <rect x="452" y="120" width="60" height="4" rx="1" fill="#888"/>
+  <rect x="452" y="130" width="45" height="3" rx="1" fill="#444"/>
+  <rect x="442" y="160" width="88" height="42" rx="6" fill="#111" stroke="#33F0D0" stroke-width="0.3" opacity="0.4"/>
+  <rect x="452" y="170" width="55" height="4" rx="1" fill="#888"/>
+  <rect x="452" y="180" width="50" height="3" rx="1" fill="#444"/>
+  <rect x="442" y="210" width="88" height="42" rx="6" fill="#111" stroke="#33F0D0" stroke-width="0.3" opacity="0.3"/>
+  <rect x="452" y="220" width="65" height="4" rx="1" fill="#888"/>
+  <rect x="452" y="230" width="40" height="3" rx="1" fill="#444"/>
+</svg>

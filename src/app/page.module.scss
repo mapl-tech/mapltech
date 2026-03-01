@@ -1,0 +1,777 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+// ===== HERO — atmospheric, bold, asymmetric =====
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: $gradient-hero, $color-dark;
+
+  // Decorative grid lines for depth
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba($color-dark-border, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba($color-dark-border, 0.06) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at 30% 50%, black 15%, transparent 65%);
+    -webkit-mask-image: radial-gradient(ellipse at 30% 50%, black 15%, transparent 65%);
+  }
+}
+
+.heroGrid {
+  @include container;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  padding-top: 180px;
+  padding-bottom: $space-5xl;
+
+  @include lg {
+    grid-template-columns: 1fr 1fr;
+    gap: $space-3xl;
+  }
+}
+
+.heroContent {
+  position: relative;
+}
+
+.heroOrb {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+
+  @include lg {
+    max-width: none;
+  }
+}
+
+.heroLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  font-size: $font-size-xs;
+  font-family: $font-body;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+  @include gradient-text;
+  margin-bottom: $space-xl;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 2px;
+    background: $gradient-primary;
+    border-radius: 1px;
+  }
+}
+
+.heroTitle {
+  font-family: $font-display;
+  font-size: clamp($font-size-2xl, 4.5vw, $font-size-5xl);
+  font-weight: $font-weight-extrabold;
+  color: $color-white;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+  margin-bottom: $space-xl;
+
+  .highlight {
+    @include gradient-text;
+  }
+}
+
+.heroSubtitle {
+  font-size: clamp($font-size-base, 2vw, $font-size-lg);
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+  max-width: min(560px, 100%);
+  margin-bottom: $space-2xl;
+}
+
+.heroCta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md;
+}
+
+.heroGlow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba($color-pink-hot, 0.05) 0%, transparent 60%);
+  right: -120px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  filter: blur(50px);
+}
+
+// ===== SERVICES CARDS — gradient top stroke, depth =====
+.services {
+  @include section-padding;
+  @include section-divider;
+  background: $gradient-mesh, $color-navy;
+  position: relative;
+  overflow: hidden;
+}
+
+.servicesInner {
+  @include container;
+  position: relative;
+  z-index: 1;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+
+  @include md {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.serviceCard {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  overflow: hidden;
+  padding: $space-2xl;
+  height: 100%;
+
+  // Gradient stroke on top
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: $gradient-primary;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform $transition-smooth;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.serviceIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-lg;
+  background: rgba($color-pink-hot, 0.08);
+  border: 1px solid rgba($color-pink, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-pink;
+  transition: background $transition-base, border-color $transition-base, transform $transition-base;
+
+  .serviceCard:hover & {
+    background: rgba($color-pink-hot, 0.15);
+    border-color: rgba($color-pink, 0.25);
+    transform: scale(1.05);
+  }
+}
+
+.serviceTitle {
+  font-family: $font-display;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+}
+
+.serviceDescription {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+  flex: 1;
+}
+
+.serviceLink {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  color: $color-pink;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+  transition: gap $transition-base, color $transition-base;
+
+  &:hover {
+    gap: $space-md;
+    color: $color-pink-hot;
+  }
+}
+
+// ===== APPROACH — split layout with visual =====
+.approach {
+  @include section-padding;
+  background: $color-dark;
+  position: relative;
+}
+
+.approachInner {
+  @include container;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-3xl;
+  align-items: center;
+
+  @include lg {
+    grid-template-columns: 1fr 1fr;
+    gap: $space-4xl;
+  }
+}
+
+.approachContent {
+  p {
+    color: $color-text-body;
+    font-size: $font-size-base;
+    line-height: $line-height-relaxed;
+    margin-bottom: $space-md;
+  }
+}
+
+.approachPoints {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  margin-top: $space-xl;
+}
+
+.approachPoint {
+  display: flex;
+  gap: $space-lg;
+  align-items: flex-start;
+}
+
+.approachIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-md;
+  background: rgba($color-pink, 0.08);
+  border: 1px solid rgba($color-pink, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-pink;
+  flex-shrink: 0;
+}
+
+.approachPointContent {
+  h4 {
+    font-family: $font-display;
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    color: $color-white;
+    margin-bottom: $space-xs;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    line-height: $line-height-normal;
+    margin-bottom: 0;
+  }
+}
+
+.approachVisual {
+  @include gradient-border(1px, $radius-xl);
+  background: $gradient-card;
+  border-radius: $radius-xl;
+  padding: $space-2xl $space-xl;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -30%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle, rgba($color-pink, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+}
+
+.approachStep {
+  display: flex;
+  align-items: center;
+  gap: $space-lg;
+  position: relative;
+  z-index: 1;
+  padding: $space-sm 0;
+}
+
+.stepNumber {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  background: $gradient-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-display;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba($color-pink, 0.25);
+}
+
+.stepText {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  line-height: $line-height-normal;
+}
+
+// ===== WHY US — metrics + cards =====
+.whyUs {
+  @include section-padding;
+  @include section-divider;
+  background: $gradient-mesh, $color-navy;
+  position: relative;
+  overflow: hidden;
+}
+
+.whyUsInner {
+  @include container;
+  position: relative;
+  z-index: 1;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-xl;
+  margin-bottom: $space-4xl;
+
+  @include md {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.metric {
+  text-align: center;
+  padding: $space-xl $space-lg;
+  border-radius: $radius-xl;
+  background: rgba($color-dark-card, 0.5);
+  border: 1px solid rgba($color-dark-border, 0.5);
+  transition: border-color $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    border-color: rgba($color-pink, 0.2);
+    box-shadow: 0 0 30px rgba($color-pink, 0.05);
+  }
+
+  .metricValue {
+    font-family: $font-display;
+    font-size: clamp($font-size-3xl, 5vw, $font-size-5xl);
+    font-weight: $font-weight-extrabold;
+    color: $color-white;
+    line-height: 1;
+    margin-bottom: $space-sm;
+  }
+
+  .metricLabel {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+  }
+}
+
+.whyUsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.whyUsCard {
+  @include gradient-border(1px, $radius-xl);
+  background: linear-gradient(160deg, rgba($color-dark-card, 0.95) 0%, rgba($color-dark-elevated, 0.9) 100%);
+  border-radius: $radius-xl;
+  padding: $space-2xl;
+  transition: transform $transition-base, box-shadow $transition-base;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+
+  // Corner glow on hover
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba($color-pink, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+    transition: opacity $transition-base;
+    opacity: 0;
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: $shadow-card-hover;
+
+    &::after {
+      opacity: 1;
+    }
+
+    .whyUsNumber {
+      opacity: 0.8;
+    }
+  }
+
+  h3 {
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    line-height: $line-height-relaxed;
+  }
+}
+
+.whyUsNumber {
+  font-family: $font-display;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-extrabold;
+  color: $color-white;
+  opacity: 0.5;
+  line-height: 1;
+  margin-bottom: $space-md;
+  display: block;
+  transition: opacity $transition-base;
+}
+
+// ===== PORTFOLIO TEASER =====
+.portfolio {
+  @include section-padding;
+  background: $color-dark;
+}
+
+.portfolioInner {
+  @include container;
+}
+
+.portfolioGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+  margin-bottom: $space-3xl;
+
+  @include sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.portfolioCard {
+  @include card;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  height: 100%;
+
+  &:hover .portfolioImage img {
+    transform: scale(1.06);
+  }
+}
+
+.portfolioImage {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition-slow;
+  }
+
+  .portfolioCategory {
+    position: absolute;
+    top: $space-md;
+    left: $space-md;
+    padding: 4px 12px;
+    background: rgba($color-dark, 0.88);
+    backdrop-filter: blur(8px);
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    color: $color-pink;
+    font-weight: $font-weight-semibold;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+  }
+}
+
+.portfolioContent {
+  padding: $space-xl;
+
+  h3 {
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    @include line-clamp(2);
+  }
+}
+
+.portfolioCta {
+  text-align: center;
+}
+
+// ===== TESTIMONIALS =====
+.testimonials {
+  @include section-padding;
+  @include section-divider;
+  background: $color-navy;
+  overflow: hidden;
+}
+
+.testimonialsInner {
+  @include container;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonialSlider {
+  position: relative;
+}
+
+.testimonialCard {
+  @include gradient-border(1px, $radius-2xl);
+  background: $gradient-card;
+  border-radius: $radius-2xl;
+  padding: $space-4xl $space-2xl;
+  text-align: center;
+  max-width: min(720px, 100%);
+  margin: 0 auto;
+
+  @include md {
+    padding: $space-4xl $space-3xl;
+  }
+
+  .quote {
+    font-size: clamp($font-size-base, 2.5vw, $font-size-xl);
+    color: $color-text-body;
+    line-height: $line-height-relaxed;
+    font-style: italic;
+    margin-bottom: $space-xl;
+    position: relative;
+
+    &::before {
+      content: '\201C';
+      display: block;
+      font-family: $font-display;
+      font-size: 5rem;
+      line-height: 1;
+      @include gradient-text;
+      opacity: 0.2;
+      font-style: normal;
+      margin-bottom: $space-md;
+    }
+  }
+
+  .author {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-md;
+
+    .authorImage {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba($color-pink, 0.3);
+    }
+
+    .authorName {
+      font-family: $font-display;
+      font-size: $font-size-base;
+      font-weight: $font-weight-bold;
+      color: $color-white;
+    }
+
+    .authorRole {
+      font-size: $font-size-sm;
+      color: $color-text-muted;
+      margin-top: 4px;
+    }
+  }
+}
+
+.testimonialControls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: $space-xl;
+}
+
+.testimonialDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: $color-dark-border;
+  cursor: pointer;
+  transition: all $transition-base;
+  padding: 0;
+
+  &.activeDot {
+    background: $color-pink-hot;
+    box-shadow: 0 0 16px rgba($color-pink-hot, 0.5);
+    width: 28px;
+    border-radius: 5px;
+  }
+
+  &:hover:not(.activeDot) {
+    background: rgba($color-pink, 0.4);
+  }
+}
+
+.testimonialArrows {
+  display: flex;
+  justify-content: center;
+  gap: $space-md;
+  margin-top: $space-lg;
+}
+
+.arrowButton {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-full;
+  border: 1px solid $color-dark-border;
+  background: transparent;
+  color: $color-white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-base;
+
+  @include focus-ring;
+
+  &:hover {
+    border-color: rgba($color-pink, 0.5);
+    color: $color-pink;
+    box-shadow: 0 0 24px rgba($color-pink, 0.12);
+    transform: scale(1.05);
+  }
+}
+
+// ===== CTA SECTION =====
+.cta {
+  @include section-padding;
+  background: radial-gradient(ellipse at center, rgba($color-purple-deep, 0.3) 0%, $color-dark 70%);
+  position: relative;
+  overflow: hidden;
+
+  // Top glow line
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(500px, 70%);
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, $color-pink-hot 50%, transparent 100%);
+    opacity: 0.3;
+    z-index: 1;
+  }
+}
+
+.ctaInner {
+  @include container($max-width-narrow);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.ctaTitle {
+  font-family: $font-display;
+  font-size: clamp($font-size-2xl, 4vw, $font-size-4xl);
+  color: $color-white;
+  margin-bottom: $space-lg;
+}
+
+.ctaSubtitle {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  margin-bottom: $space-3xl;
+  max-width: min(500px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  line-height: $line-height-relaxed;
+}
+
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-md;
+}
+
+// ===== BACKGROUND ORBS — zigzag left/right behind section content =====
+.bgOrb {
+  position: absolute;
+  width: clamp(280px, 35vw, 480px);
+  pointer-events: none;
+  z-index: 0;
+  top: 50%;
+}
+
+.bgOrbLeft {
+  composes: bgOrb;
+  left: -8%;
+}
+
+.bgOrbRight {
+  composes: bgOrb;
+  right: -8%;
+}

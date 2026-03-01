@@ -1,0 +1,474 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.hero {
+  position: relative;
+  padding: 180px 0 $space-5xl;
+  background: $gradient-hero, $color-dark;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, $color-navy);
+    pointer-events: none;
+  }
+}
+
+.heroInner {
+  @include container;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.heroLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+  @include gradient-text;
+  margin-bottom: $space-xl;
+  justify-content: center;
+}
+
+.heroTitle {
+  font-family: $font-display;
+  font-size: clamp($font-size-2xl, 4.5vw, $font-size-5xl);
+  font-weight: $font-weight-extrabold;
+  color: $color-white;
+  letter-spacing: $letter-spacing-tight;
+  margin-bottom: $space-xl;
+  max-width: min(750px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroSubtitle {
+  font-size: clamp($font-size-base, 1.5vw, $font-size-md);
+  color: $color-text-body;
+  max-width: min(580px, 100%);
+  margin: 0 auto;
+  line-height: $line-height-relaxed;
+}
+
+// Quick nav
+.quickNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: $space-md;
+  margin-top: $space-3xl;
+  padding: $space-lg $space-xl;
+  border-radius: $radius-full;
+  background: rgba($color-dark-card, 0.6);
+  border: 1px solid rgba($color-dark-border, 0.6);
+  backdrop-filter: blur(8px);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.quickNavLink {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  transition: color $transition-fast;
+  white-space: nowrap;
+
+  &:hover {
+    color: $color-white;
+  }
+}
+
+.quickNavDivider {
+  width: 1px;
+  height: 16px;
+  background: rgba($color-dark-border, 0.8);
+}
+
+// Category sections
+.category {
+  @include section-padding;
+
+  &:nth-of-type(odd) {
+    background: $color-navy;
+  }
+
+  &:nth-of-type(even) {
+    background: $color-dark;
+  }
+}
+
+.categoryInner {
+  @include container;
+}
+
+.tiersGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+  margin-bottom: $space-3xl;
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tierCard {
+  @include gradient-border(1px, $radius-xl);
+  background: $gradient-card;
+  border-radius: $radius-xl;
+  padding: $space-2xl;
+  display: flex;
+  flex-direction: column;
+  transition: transform $transition-base, box-shadow $transition-base;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: $shadow-glow;
+  }
+
+  &.featured {
+    background: linear-gradient(145deg, rgba($color-purple-dark, 0.3) 0%, $color-dark-card 100%);
+  }
+}
+
+.tierBadge {
+  display: inline-block;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: $gradient-primary;
+  color: $color-white;
+  padding: $space-xs $space-md;
+  border-radius: $radius-full;
+  margin-bottom: $space-lg;
+  width: fit-content;
+}
+
+.tierName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  margin-bottom: $space-sm;
+}
+
+.tierDescription {
+  font-size: $font-size-base;
+  color: $color-text-muted;
+  margin-bottom: $space-xl;
+  line-height: $line-height-relaxed;
+}
+
+.tierPrice {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-extrabold;
+  @include gradient-text;
+  margin-bottom: $space-lg;
+}
+
+.tierPriceLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wide;
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  -webkit-text-fill-color: $color-text-muted;
+  color: $color-text-muted;
+}
+
+.tierDivider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba($color-dark-border, 0.8), transparent);
+  margin-bottom: $space-lg;
+}
+
+.includedLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wide;
+  color: $color-text-muted;
+  margin-bottom: $space-md;
+}
+
+.tierFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  margin-bottom: $space-xl;
+  flex: 1;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-sm;
+    font-size: $font-size-base;
+    color: $color-text-body;
+
+    svg {
+      color: $color-pink;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+  }
+}
+
+// Retainers
+.retainersSection {
+  margin-top: $space-xl;
+  padding-top: $space-2xl;
+  border-top: 1px solid rgba($color-dark-border, 0.5);
+}
+
+.retainersTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  text-align: center;
+  margin-bottom: $space-sm;
+}
+
+.retainersSubtitle {
+  font-size: $font-size-base;
+  color: $color-text-muted;
+  text-align: center;
+  margin-bottom: $space-xl;
+}
+
+.retainersGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-lg;
+
+  > * {
+    width: 100%;
+
+    @include sm {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
+.retainerCard {
+  @include card;
+  text-align: center;
+
+  h4 {
+    font-size: $font-size-lg;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  .retainerPrice {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    @include gradient-text;
+  }
+}
+
+// Bundles
+.bundlesSection {
+  @include section-padding;
+  background: $color-dark;
+}
+
+.bundlesInner {
+  @include container;
+}
+
+.bundlesDescription {
+  text-align: center;
+  font-size: $font-size-base;
+  color: $color-text-body;
+  max-width: 600px;
+  margin: -$space-lg auto $space-3xl;
+  line-height: $line-height-relaxed;
+}
+
+.bundlesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.bundleCard {
+  @include gradient-border(1px, $radius-xl);
+  background: linear-gradient(145deg, rgba($color-purple-dark, 0.2) 0%, $color-dark-card 100%);
+  border-radius: $radius-xl;
+  padding: $space-2xl;
+  display: flex;
+  flex-direction: column;
+  transition: transform $transition-base, box-shadow $transition-base;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: $shadow-glow;
+  }
+
+  h3 {
+    font-size: $font-size-xl;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+}
+
+.bundleDescription {
+  font-size: $font-size-base;
+  color: $color-text-muted;
+  margin-bottom: $space-xl;
+  line-height: $line-height-relaxed;
+}
+
+.bundlePrice {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-extrabold;
+  @include gradient-text;
+  margin-bottom: $space-lg;
+}
+
+.bundleFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  margin-bottom: $space-xl;
+  flex: 1;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    font-size: $font-size-base;
+    color: $color-text-body;
+
+    svg {
+      color: $color-pink;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// Hourly
+.hourlySection {
+  @include section-padding;
+  background: $color-navy;
+}
+
+.hourlyInner {
+  @include container($max-width-narrow);
+}
+
+.hourlyGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+  margin-bottom: $space-3xl;
+
+  @include md {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.hourlyCard {
+  @include card;
+  text-align: center;
+  padding: $space-2xl;
+
+  h3 {
+    font-size: $font-size-lg;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  .hourlyPrice {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-extrabold;
+    @include gradient-text;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+  }
+}
+
+.hourlyNote {
+  text-align: center;
+  font-size: $font-size-base;
+  color: $color-text-muted;
+  font-style: italic;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+// CTA
+.cta {
+  @include section-padding;
+  background: radial-gradient(ellipse at center, rgba($color-purple-dark, 0.25) 0%, $color-navy 70%);
+  text-align: center;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(500px, 70%);
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, $color-pink-hot 50%, transparent 100%);
+    opacity: 0.3;
+  }
+}
+
+.ctaInner {
+  @include container($max-width-narrow);
+
+  h2 {
+    font-size: clamp($font-size-2xl, 4vw, $font-size-4xl);
+    color: $color-white;
+    margin-bottom: $space-lg;
+  }
+
+  p {
+    color: $color-text-body;
+    font-size: $font-size-base;
+    margin-bottom: $space-2xl;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: $line-height-relaxed;
+  }
+}

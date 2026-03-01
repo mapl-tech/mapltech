@@ -1,0 +1,29 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.button {
+  @include button-base;
+  @include focus-ring;
+}
+
+.primary {
+  @include button-primary;
+}
+
+.secondary {
+  @include button-secondary;
+}
+
+.large {
+  padding: 1rem 2.25rem;
+  font-size: $font-size-md;
+}
+
+.small {
+  padding: 0.5rem 1.25rem;
+  font-size: $font-size-sm;
+}
+
+.fullWidth {
+  width: 100%;
+}

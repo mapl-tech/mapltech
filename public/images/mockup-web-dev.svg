@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" fill="none">
+  <rect width="600" height="400" fill="#0a0a0a"/>
+  <!-- Laptop body -->
+  <rect x="80" y="50" width="440" height="275" rx="12" fill="#111111" stroke="#222222" stroke-width="1.5"/>
+  <!-- Screen -->
+  <rect x="95" y="65" width="410" height="245" rx="4" fill="#0d0d0d"/>
+  <!-- Browser chrome -->
+  <rect x="95" y="65" width="410" height="28" rx="4" fill="#1a1a1a"/>
+  <circle cx="112" cy="79" r="4" fill="#F03350" opacity="0.8"/>
+  <circle cx="126" cy="79" r="4" fill="#333" opacity="0.5"/>
+  <circle cx="140" cy="79" r="4" fill="#333" opacity="0.5"/>
+  <rect x="170" y="73" width="200" height="12" rx="6" fill="#222"/>
+  <!-- Navigation bar -->
+  <rect x="95" y="93" width="410" height="24" fill="#111"/>
+  <rect x="110" y="99" width="50" height="12" rx="2" fill="#F03350" opacity="0.6"/>
+  <rect x="170" y="99" width="35" height="12" rx="2" fill="#333"/>
+  <rect x="215" y="99" width="40" height="12" rx="2" fill="#333"/>
+  <rect x="265" y="99" width="30" height="12" rx="2" fill="#333"/>
+  <rect x="420" y="99" width="70" height="12" rx="6" fill="#F03350" opacity="0.4"/>
+  <!-- Hero section -->
+  <rect x="110" y="130" width="180" height="14" rx="2" fill="#fff" opacity="0.9"/>
+  <rect x="110" y="152" width="220" height="10" rx="2" fill="#fff" opacity="0.3"/>
+  <rect x="110" y="168" width="160" height="10" rx="2" fill="#fff" opacity="0.3"/>
+  <rect x="110" y="190" width="80" height="24" rx="12" fill="#F03350" opacity="0.7"/>
+  <!-- Image placeholder -->
+  <rect x="340" y="130" width="150" height="90" rx="8" fill="#1a1a1a" stroke="#222" stroke-width="1"/>
+  <circle cx="415" cy="170" r="20" fill="#F03350" opacity="0.1" stroke="#F03350" stroke-width="0.5" opacity="0.3"/>
+  <!-- Cards section -->
+  <rect x="110" y="235" width="115" height="65" rx="6" fill="#151515" stroke="#222" stroke-width="0.8"/>
+  <rect x="122" y="248" width="40" height="6" rx="1" fill="#F03350" opacity="0.5"/>
+  <rect x="122" y="260" width="90" height="4" rx="1" fill="#444"/>
+  <rect x="122" y="268" width="70" height="4" rx="1" fill="#444"/>
+  <rect x="122" y="282" width="50" height="8" rx="4" fill="#F03350" opacity="0.3"/>
+
+  <rect x="237" y="235" width="115" height="65" rx="6" fill="#151515" stroke="#222" stroke-width="0.8"/>
+  <rect x="249" y="248" width="40" height="6" rx="1" fill="#33F0D0" opacity="0.5"/>
+  <rect x="249" y="260" width="90" height="4" rx="1" fill="#444"/>
+  <rect x="249" y="268" width="75" height="4" rx="1" fill="#444"/>
+  <rect x="249" y="282" width="50" height="8" rx="4" fill="#33F0D0" opacity="0.3"/>
+
+  <rect x="364" y="235" width="115" height="65" rx="6" fill="#151515" stroke="#222" stroke-width="0.8"/>
+  <rect x="376" y="248" width="40" height="6" rx="1" fill="#F03350" opacity="0.5"/>
+  <rect x="376" y="260" width="90" height="4" rx="1" fill="#444"/>
+  <rect x="376" y="268" width="65" height="4" rx="1" fill="#444"/>
+  <rect x="376" y="282" width="50" height="8" rx="4" fill="#F03350" opacity="0.3"/>
+  <!-- Laptop base -->
+  <path d="M60 325 L80 325 L95 340 L505 340 L520 325 L540 325 L530 350 L70 350 Z" fill="#111" stroke="#222" stroke-width="1"/>
+  <!-- Subtle glow -->
+  <ellipse cx="300" cy="380" rx="200" ry="15" fill="#F03350" opacity="0.03"/>
+</svg>

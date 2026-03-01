@@ -1,0 +1,17 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.orbContainer {
+  position: fixed;
+  right: clamp(2rem, 5vw, 8rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(200px, 25vw, 380px);
+  z-index: 1;
+  pointer-events: none;
+  display: none;
+
+  @include lg {
+    display: block;
+  }
+}

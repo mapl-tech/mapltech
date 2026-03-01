@@ -1,0 +1,393 @@
+@use './variables' as *;
+@use './mixins' as *;
+
+// ===== Service Page Hero =====
+.hero {
+  position: relative;
+  padding: 180px 0 $space-5xl;
+  background: $gradient-hero, $color-dark;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, rgba($color-navy, 1));
+    pointer-events: none;
+  }
+}
+
+.heroInner {
+  @include container;
+  position: relative;
+  z-index: 1;
+}
+
+.heroLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+  @include gradient-text;
+  margin-bottom: $space-xl;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: $gradient-primary;
+    border-radius: 1px;
+  }
+}
+
+.heroTitle {
+  font-family: $font-display;
+  font-size: clamp($font-size-2xl, 4.5vw, $font-size-5xl);
+  font-weight: $font-weight-extrabold;
+  color: $color-white;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+  margin-bottom: $space-xl;
+  max-width: min(750px, 100%);
+}
+
+.heroSubtitle {
+  font-size: clamp($font-size-base, 1.5vw, $font-size-md);
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+  max-width: min(580px, 100%);
+  margin-bottom: $space-2xl;
+}
+
+.heroCta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md;
+}
+
+// ===== Features Grid =====
+.features {
+  @include section-padding;
+  @include section-divider;
+  background: $gradient-mesh, $color-navy;
+}
+
+.featuresInner {
+  @include container;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+
+  @include sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.featureCard {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding: $space-2xl;
+  overflow: hidden;
+  height: 100%;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: $gradient-primary;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform $transition-smooth;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.featureIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-lg;
+  background: rgba($color-pink, 0.08);
+  border: 1px solid rgba($color-pink, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-pink;
+  transition: background $transition-base, transform $transition-base;
+
+  .featureCard:hover & {
+    background: rgba($color-pink, 0.15);
+    transform: scale(1.05);
+  }
+}
+
+.featureTitle {
+  font-family: $font-display;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+}
+
+.featureDescription {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+}
+
+// ===== Process =====
+.process {
+  @include section-padding;
+  background: $color-dark;
+}
+
+.processInner {
+  @include container;
+}
+
+.processSteps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-2xl;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.processStep {
+  display: flex;
+  gap: $space-xl;
+  align-items: flex-start;
+}
+
+.processNumber {
+  width: 52px;
+  height: 52px;
+  border-radius: $radius-full;
+  background: $gradient-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba($color-pink, 0.25);
+}
+
+.processContent {
+  flex: 1;
+
+  h3 {
+    font-size: $font-size-xl;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    line-height: $line-height-relaxed;
+  }
+}
+
+// ===== Pricing Tiers =====
+.pricing {
+  @include section-padding;
+  background: $color-navy;
+}
+
+.pricingInner {
+  @include container;
+}
+
+.pricingGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.pricingCard {
+  @include gradient-border(1px, $radius-xl);
+  background: $gradient-card;
+  border-radius: $radius-xl;
+  padding: $space-2xl;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: $shadow-glow;
+  }
+
+  &.featured {
+    background: linear-gradient(145deg, rgba($color-purple-dark, 0.3) 0%, $color-dark-card 100%);
+
+    &::before {
+      background: $gradient-accent;
+    }
+  }
+}
+
+.pricingLabel {
+  display: inline-block;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  @include gradient-text;
+  margin-bottom: $space-sm;
+}
+
+.pricingName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  margin-bottom: $space-sm;
+}
+
+.pricingPrice {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-extrabold;
+  @include gradient-text;
+  margin-bottom: $space-sm;
+}
+
+.pricingDescription {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  margin-bottom: $space-xl;
+  line-height: $line-height-relaxed;
+}
+
+.pricingFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  margin-bottom: $space-xl;
+  flex: 1;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-sm;
+    font-size: $font-size-base;
+    color: $color-text-body;
+
+    svg {
+      color: $color-pink;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+  }
+}
+
+// ===== Retainers =====
+.retainers {
+  @include section-padding;
+  background: $color-dark;
+}
+
+.retainersInner {
+  @include container($max-width-narrow);
+}
+
+.retainerGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.retainerCard {
+  @include card;
+  text-align: center;
+  height: 100%;
+
+  h3 {
+    font-size: $font-size-lg;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  .retainerPrice {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    @include gradient-text;
+  }
+}
+
+// ===== CTA with Form =====
+.ctaSection {
+  @include section-padding;
+  background: radial-gradient(ellipse at center, rgba($color-purple-dark, 0.25) 0%, $color-navy 70%);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(500px, 70%);
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, $color-pink-hot 50%, transparent 100%);
+    opacity: 0.3;
+  }
+}
+
+.ctaInner {
+  @include container($max-width-narrow);
+}
+
+.ctaContent {
+  text-align: center;
+  margin-bottom: $space-3xl;
+
+  h2 {
+    font-size: clamp($font-size-2xl, 4vw, $font-size-4xl);
+    color: $color-white;
+    margin-bottom: $space-lg;
+  }
+
+  p {
+    color: $color-text-body;
+    font-size: $font-size-base;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: $line-height-relaxed;
+  }
+}

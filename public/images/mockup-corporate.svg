@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" fill="none">
+  <rect width="600" height="400" fill="#0a0a0a"/>
+  <!-- Browser frame -->
+  <rect x="40" y="30" width="520" height="340" rx="12" fill="#111" stroke="#222" stroke-width="1.5"/>
+  <!-- Browser bar -->
+  <rect x="40" y="30" width="520" height="36" rx="12" fill="#0d0d0d"/>
+  <circle cx="62" cy="48" r="5" fill="#F03350" opacity="0.4"/>
+  <circle cx="78" cy="48" r="5" fill="#FFB800" opacity="0.3"/>
+  <circle cx="94" cy="48" r="5" fill="#33F0D0" opacity="0.3"/>
+  <rect x="180" y="42" width="240" height="12" rx="6" fill="#1a1a1a"/>
+  <!-- Nav -->
+  <rect x="60" y="78" width="70" height="8" rx="1" fill="#F03350" opacity="0.5"/>
+  <rect x="370" y="78" width="40" height="6" rx="1" fill="#555"/>
+  <rect x="420" y="78" width="35" height="6" rx="1" fill="#555"/>
+  <rect x="465" y="78" width="45" height="6" rx="1" fill="#555"/>
+  <rect x="520" y="74" width="24" height="14" rx="7" fill="#F03350" opacity="0.3"/>
+  <!-- Hero section -->
+  <rect x="60" y="105" width="220" height="8" rx="1" fill="#fff" opacity="0.8"/>
+  <rect x="60" y="120" width="180" height="6" rx="1" fill="#fff" opacity="0.5"/>
+  <rect x="60" y="135" width="250" height="4" rx="1" fill="#666"/>
+  <rect x="60" y="144" width="200" height="4" rx="1" fill="#666"/>
+  <rect x="60" y="160" width="100" height="28" rx="8" fill="#F03350" opacity="0.25"/>
+  <rect x="75" y="168" width="70" height="12" rx="2" fill="#F03350" opacity="0.6"/>
+  <!-- Hero image -->
+  <rect x="340" y="100" width="200" height="100" rx="8" fill="#151515" stroke="#222" stroke-width="0.5"/>
+  <rect x="356" y="116" width="48" height="48" rx="8" fill="#1a1a1a"/>
+  <rect x="416" y="120" width="100" height="5" rx="1" fill="#ccc"/>
+  <rect x="416" y="130" width="80" height="4" rx="1" fill="#666"/>
+  <rect x="416" y="140" width="110" height="3" rx="1" fill="#555"/>
+  <rect x="416" y="148" width="90" height="3" rx="1" fill="#555"/>
+  <rect x="356" y="172" width="168" height="14" rx="4" fill="#1a1a1a"/>
+  <!-- Stats bar -->
+  <rect x="60" y="215" width="480" height="50" rx="8" fill="#151515" stroke="#222" stroke-width="0.5"/>
+  <rect x="85" y="228" width="40" height="4" rx="1" fill="#666"/>
+  <text x="85" y="252" fill="#fff" font-family="sans-serif" font-size="16" font-weight="bold" opacity="0.8">500+</text>
+  <line x1="180" y1="225" x2="180" y2="255" stroke="#222" stroke-width="0.5"/>
+  <rect x="205" y="228" width="50" height="4" rx="1" fill="#666"/>
+  <text x="205" y="252" fill="#33F0D0" font-family="sans-serif" font-size="16" font-weight="bold" opacity="0.8">98%</text>
+  <line x1="300" y1="225" x2="300" y2="255" stroke="#222" stroke-width="0.5"/>
+  <rect x="325" y="228" width="45" height="4" rx="1" fill="#666"/>
+  <text x="325" y="252" fill="#F03350" font-family="sans-serif" font-size="16" font-weight="bold" opacity="0.8">24/7</text>
+  <line x1="420" y1="225" x2="420" y2="255" stroke="#222" stroke-width="0.5"/>
+  <rect x="445" y="228" width="55" height="4" rx="1" fill="#666"/>
+  <text x="445" y="252" fill="#fff" font-family="sans-serif" font-size="16" font-weight="bold" opacity="0.7">15+</text>
+  <!-- Cards row -->
+  <rect x="60" y="280" width="150" height="75" rx="8" fill="#151515" stroke="#222" stroke-width="0.5"/>
+  <rect x="76" y="294" width="24" height="24" rx="6" fill="#F03350" opacity="0.1"/>
+  <rect x="76" y="326" width="80" height="5" rx="1" fill="#ccc"/>
+  <rect x="76" y="335" width="110" height="3" rx="1" fill="#555"/>
+  <rect x="76" y="342" width="90" height="3" rx="1" fill="#555"/>
+  <rect x="225" y="280" width="150" height="75" rx="8" fill="#151515" stroke="#222" stroke-width="0.5"/>
+  <rect x="241" y="294" width="24" height="24" rx="6" fill="#33F0D0" opacity="0.1"/>
+  <rect x="241" y="326" width="90" height="5" rx="1" fill="#ccc"/>
+  <rect x="241" y="335" width="100" height="3" rx="1" fill="#555"/>
+  <rect x="241" y="342" width="80" height="3" rx="1" fill="#555"/>
+  <rect x="390" y="280" width="150" height="75" rx="8" fill="#151515" stroke="#222" stroke-width="0.5"/>
+  <rect x="406" y="294" width="24" height="24" rx="6" fill="#fff" opacity="0.06"/>
+  <rect x="406" y="326" width="70" height="5" rx="1" fill="#ccc"/>
+  <rect x="406" y="335" width="105" height="3" rx="1" fill="#555"/>
+  <rect x="406" y="342" width="85" height="3" rx="1" fill="#555"/>
+</svg>
