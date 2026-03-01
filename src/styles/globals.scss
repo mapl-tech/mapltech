@@ -231,18 +231,30 @@ input, textarea, select {
 
   // Sizes
   &.btn-sm {
-    padding: 10px 20px;
+    padding: 8px 16px;
     font-size: $font-size-md;
+
+    @media (min-width: $breakpoint-sm) {
+      padding: 10px 20px;
+    }
   }
 
   &.btn-md {
-    padding: 14px 28px;
+    padding: 10px 22px;
     font-size: $font-size-md;
+
+    @media (min-width: $breakpoint-sm) {
+      padding: 14px 28px;
+    }
   }
 
   &.btn-lg {
-    padding: 18px 36px;
+    padding: 14px 28px;
     font-size: $font-size-md;
+
+    @media (min-width: $breakpoint-sm) {
+      padding: 18px 36px;
+    }
   }
 }
 
@@ -260,6 +272,13 @@ html.lenis, html.lenis body {
 }
 
 } // end @layer base
+
+// Mobile body text minimum — 16px floor for readability on small screens
+@media (max-width: $breakpoint-sm) {
+  p, li, blockquote, td, th, dd {
+    font-size: 1rem;
+  }
+}
 
 // Reduced motion — respect user's OS accessibility setting
 @media (prefers-reduced-motion: reduce) {

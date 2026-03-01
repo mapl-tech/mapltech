@@ -135,7 +135,7 @@ export default function HeroSection() {
             <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4" style={{ marginTop: 30 }}>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center rounded-full px-8 py-4 text-[1.0625rem] font-semibold capitalize tracking-[0.08em] transition-all hover:brightness-110 active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-full px-6 py-3 sm:px-8 sm:py-4 text-[1.0625rem] font-semibold capitalize tracking-[0.08em] transition-all hover:brightness-110 active:scale-[0.98]"
                 style={{
                   background: 'linear-gradient(135deg, #c4213c 0%, #F03350 50%, #ff3d5a 100%)',
                   color: '#fff',
@@ -147,7 +147,7 @@ export default function HeroSection() {
 
               <a
                 href="#services"
-                className="inline-flex items-center justify-center rounded-full px-8 py-4 text-[1.0625rem] font-semibold capitalize tracking-[0.08em] transition-all hover:bg-white/10 active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-full px-6 py-3 sm:px-8 sm:py-4 text-[1.0625rem] font-semibold capitalize tracking-[0.08em] transition-all hover:bg-white/10 active:scale-[0.98]"
                 style={{
                   background: 'rgba(255,255,255,0.05)',
                   border: '1px solid rgba(255,255,255,0.12)',
