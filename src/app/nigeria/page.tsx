@@ -17,7 +17,6 @@ import MagneticButton from '@/components/ui/MagneticButton';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
 import ContactForm from '@/components/ui/ContactForm';
-import ScrollOrb from '@/components/ui/ScrollOrb';
 import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
@@ -68,7 +67,7 @@ const services = [
     icon: <HiCodeBracket size={22} />,
     title: 'Web Development',
     description:
-      'Custom-coded sites optimized for Nigerian network conditions — fast load times, minimal data usage, and mobile-first design for a market where 80%+ of users browse on mobile.',
+      'Custom-coded sites optimized for Nigerian network conditions - fast load times, minimal data usage, and mobile-first design for a market where 80%+ of users browse on mobile.',
     href: '/services/web-development',
   },
   {
@@ -82,7 +81,7 @@ const services = [
     icon: <HiWrenchScrewdriver size={22} />,
     title: 'Custom Internal Tools',
     description:
-      'Dashboards, client portals, and reporting systems tailored for Nigerian agencies — with local payment integrations, multi-currency support, and offline-capable features.',
+      'Dashboards, client portals, and reporting systems tailored for Nigerian agencies - with local payment integrations, multi-currency support, and offline-capable features.',
     href: '/services/custom-internal-tools',
   },
 ];
@@ -104,7 +103,7 @@ const whyChoose = [
     icon: <HiShieldCheck size={20} />,
     title: 'Built for Nigerian Infrastructure',
     description:
-      'We optimize for local realities — variable bandwidth, mobile-first audiences, Paystack/Flutterwave integrations, and NDPR compliance.',
+      'We optimize for local realities - variable bandwidth, mobile-first audiences, Paystack/Flutterwave integrations, and NDPR compliance.',
   },
   {
     icon: <HiChatBubbleLeftRight size={20} />,
@@ -120,7 +119,7 @@ const caseStudy = {
   challenge:
     'Manual client onboarding process taking 3-5 business days with frequent data entry errors and lost documents.',
   solution:
-    'Automated the entire onboarding pipeline — from intake form to CRM entry to document management — with AI-powered data extraction and validation.',
+    'Automated the entire onboarding pipeline - from intake form to CRM entry to document management - with AI-powered data extraction and validation.',
   results: [
     'Onboarding time reduced from 5 days to under 4 hours',
     '95% reduction in data entry errors',
@@ -157,7 +156,7 @@ export default function NigeriaPage() {
               </BlurReveal>
               <BlurReveal delay={0.2}>
                 <p className={styles.heroSubtitle}>
-                  From Lagos to Abuja to Port Harcourt — we provide the systems, automation,
+                  From Lagos to Abuja to Port Harcourt - we provide the systems, automation,
                   and infrastructure Nigerian agencies need to compete on a global stage.
                   Canadian engineering standards. Local expertise.
                 </p>
@@ -173,11 +172,18 @@ export default function NigeriaPage() {
                 </div>
               </BlurReveal>
             </div>
-            <div className={styles.heroOrb} aria-hidden="true">
-              <BlurReveal delay={0.4}>
-                <ScrollOrb variant="mixed" rotationMultiplier={1} />
-              </BlurReveal>
-            </div>
+            <BlurReveal delay={0.4}>
+              <div className={styles.imageBlock}>
+                <Image
+                  src="/images/team-nigeria.jpg"
+                  alt="MAPL TECH Nigeria team collaborating"
+                  width={600}
+                  height={450}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  priority
+                />
+              </div>
+            </BlurReveal>
           </div>
         </div>
       </section>
@@ -188,7 +194,7 @@ export default function NigeriaPage() {
           <SectionHeading
             label="The Opportunity"
             title="Nigeria's Digital Economy Is Booming"
-            subtitle="The largest tech ecosystem in Africa — and agencies need engineering partners who can keep up."
+            subtitle="The largest tech ecosystem in Africa - and agencies need engineering partners who can keep up."
           />
           <div className={styles.referralSteps}>
             {stats.map((stat, i) => (
@@ -207,7 +213,7 @@ export default function NigeriaPage() {
               <p style={{ maxWidth: 700, margin: '0 auto', opacity: 0.8 }}>
                 Nigerian agencies are building for one of the fastest-growing digital
                 populations in the world. MAPL TECH provides the engineering muscle
-                to match that ambition — custom systems, AI automation, and scalable
+                to match that ambition - custom systems, AI automation, and scalable
                 infrastructure built for the Nigerian market.
               </p>
             </div>
@@ -331,7 +337,7 @@ export default function NigeriaPage() {
                 </p>
                 <p>
                   Backed by our Canadian headquarters, our Nigeria team has access to the
-                  full depth of MAPL TECH&apos;s 25+ years of combined engineering experience —
+                  full depth of MAPL TECH&apos;s 25+ years of combined engineering experience -
                   ensuring every project meets international standards while being
                   purpose-built for Nigerian agencies.
                 </p>
@@ -360,7 +366,7 @@ export default function NigeriaPage() {
               <h2>Ready to Build With MAPL TECH Nigeria?</h2>
               <p>
                 Tell us about your project. Whether you&apos;re in Lagos, Abuja,
-                Port Harcourt, or anywhere in Nigeria — we&apos;ll respond within 24 hours.
+                Port Harcourt, or anywhere in Nigeria - we&apos;ll respond within 24 hours.
               </p>
             </BlurReveal>
           </div>

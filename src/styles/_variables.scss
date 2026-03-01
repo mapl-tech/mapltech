@@ -61,9 +61,9 @@ $gradient-mesh: radial-gradient(at 0% 0%, rgba($color-red-deep, 0.2) 0%, transpa
                radial-gradient(at 100% 0%, rgba($color-red, 0.04) 0%, transparent 40%),
                radial-gradient(at 50% 100%, rgba($color-red-deep, 0.1) 0%, transparent 50%);
 
-// Typography — Overpass throughout (matches MAPL TECH branding)
-$font-display: 'Overpass', sans-serif;
-$font-body: 'Overpass', sans-serif;
+// Typography - Overpass throughout (loaded via next/font, falls back to var)
+$font-display: var(--font-overpass), 'Overpass', sans-serif;
+$font-body: var(--font-overpass), 'Overpass', sans-serif;
 $font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
 // Font sizes — rem-based for user accessibility (respects browser font settings)

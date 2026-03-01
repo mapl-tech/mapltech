@@ -39,7 +39,7 @@ export const pricing = {
     tiers: [
       {
         name: 'Foundation Automation',
-        description: 'CRM setup, lead routing and 3–5 automations',
+        description: 'Perfect for agencies drowning in manual CRM work and follow-ups',
         price: '$3,500–$5,000',
         features: [
           'CRM setup & configuration',
@@ -51,7 +51,7 @@ export const pricing = {
       },
       {
         name: 'Advanced Automation',
-        description: 'Multi-system workflows and AI intake/assistants',
+        description: 'For agencies ready to connect every tool into one seamless pipeline',
         price: '$6,000–$10,000',
         features: [
           'Multi-system workflow automation',
@@ -64,7 +64,7 @@ export const pricing = {
       },
       {
         name: 'Enterprise AI Workflows',
-        description: 'AI agents, analytics and governance',
+        description: 'Full AI-powered operations for agencies handling complex, high-volume work',
         price: '$10,000–$18,000',
         features: [
           'Custom AI agent development',
@@ -86,7 +86,7 @@ export const pricing = {
     tiers: [
       {
         name: 'Internal Dashboards',
-        description: 'Team-facing dashboards with real-time data and role-based views',
+        description: 'Give your team instant visibility into the numbers that matter most',
         price: '$5,000–$8,000',
         features: [
           'Custom data visualization',
@@ -97,7 +97,7 @@ export const pricing = {
       },
       {
         name: 'Client Portals',
-        description: 'Branded portals with project tracking, docs, and payments',
+        description: 'Impress clients with a branded hub for projects, docs, and payments',
         price: '$8,000–$15,000',
         features: [
           'Branded client experience',
@@ -109,7 +109,7 @@ export const pricing = {
       },
       {
         name: 'Ops & Reporting Systems',
-        description: 'Full operational platforms with multi-team coordination',
+        description: 'Run your entire agency from one platform built around your workflow',
         price: '$12,000–$25,000+',
         features: [
           'End-to-end operations management',
@@ -125,14 +125,82 @@ export const pricing = {
       { name: 'Dedicated Dev Time', price: '$3,000–$6,000/month' },
     ],
   },
+  webDevelopment: {
+    tiers: [
+      {
+        name: 'Starter',
+        description: 'For agencies that need a sharp, fast site without the bloat of page builders',
+        price: '$5,000',
+        features: [
+          'Custom-coded responsive website (up to 7 pages)',
+          'Mobile-first, pixel-perfect build',
+          'Basic SEO setup and meta optimization',
+          'Contact form with email integration',
+          'Performance optimization (90+ Lighthouse)',
+          'Cross-browser and device testing',
+          '30-day post-launch support',
+        ],
+      },
+      {
+        name: 'Growth / E-Commerce',
+        description: 'Your clients need more than a brochure site - they need a site that drives revenue',
+        price: '$8,500',
+        features: [
+          'Everything in Starter',
+          'Up to 12 pages with dynamic content',
+          'CMS integration (headless or WordPress)',
+          'E-commerce or booking functionality',
+          'Advanced SEO architecture and schema markup',
+          'Analytics and conversion tracking setup',
+          'API integrations (CRM, email, payments)',
+          '60-day post-launch support',
+        ],
+      },
+      {
+        name: 'Advanced / AI-Powered',
+        description: 'For agencies building complex, interactive web platforms that need to scale',
+        price: '$12,000',
+        features: [
+          'Everything in Growth',
+          'Full-stack custom web application',
+          'AI-powered features (chatbots, recommendations, content)',
+          'User authentication and role-based access',
+          'Custom API development and third-party integrations',
+          'Real-time data processing and dynamic content',
+          'Automated testing and CI/CD pipeline',
+          '90-day post-launch support',
+        ],
+      },
+      {
+        name: 'Enterprise',
+        description: 'Large-scale, mission-critical platforms that need dedicated engineering and architecture planning',
+        price: 'Custom',
+        features: [
+          'Everything in Advanced',
+          'Dedicated project manager and engineering team',
+          'Custom infrastructure and deployment architecture',
+          'Multi-language and multi-region support',
+          'Enterprise security audits and compliance',
+          'Load testing and scalability planning',
+          'SLA-backed ongoing support and maintenance',
+          'Quarterly roadmap and strategy sessions',
+        ],
+      },
+    ],
+    maintenance: [
+      { name: 'Essential Care', price: '$500/month', description: 'Security updates, uptime monitoring, and monthly backups' },
+      { name: 'Growth Support', price: '$1,000-$2,000/month', description: 'Bug fixes, content updates, performance tuning, and minor feature additions' },
+      { name: 'Priority Retainer', price: '$2,500-$5,000/month', description: 'Dedicated dev hours, feature development, and priority response times' },
+    ],
+  },
   hourlyRates: {
-    standard: '$75–$120/hour',
+    standard: '$65–$120/hour',
     emergency: '$150+/hour',
   },
   bundles: [
     {
       name: 'Agency Automation Partner',
-      description: 'Ongoing automation and AI support for growing agencies',
+      description: 'Like having a senior automation engineer on staff for a fraction of the cost',
       price: '$4,000–$7,500/month',
       features: [
         'Automation & AI workflows',
@@ -143,7 +211,7 @@ export const pricing = {
     },
     {
       name: 'Full Systems Partner',
-      description: 'Complete engineering partnership — automation, tools, web, and infrastructure',
+      description: 'Your dedicated engineering department - automation, tools, web, and infrastructure all handled',
       price: '$7,500–$12,000/month',
       features: [
         'Automation & AI workflows',
@@ -160,7 +228,7 @@ export const pricing = {
 export const testimonials = [
   {
     quote:
-      'MAPL TECH rebuilt our entire client onboarding pipeline. What used to take our team hours now happens automatically — and our clients notice the difference.',
+      'MAPL TECH rebuilt our entire client onboarding pipeline. What used to take our team hours now happens automatically - and our clients notice the difference.',
     name: 'Mimi Akuma',
     company: 'Akuma Patterson Holdings',
     role: 'CEO',
@@ -187,17 +255,17 @@ export const testimonials = [
 export const portfolioProjects = [
   {
     title: 'LRO Staffing',
-    category: 'Web Development',
+    category: 'Custom Internal Tools',
     description: 'Full site rebuild with a custom job board, applicant tracking integration, and recruiter-facing dashboards.',
     tags: ['WordPress', 'Custom Development', 'API Integration'],
-    image: '/images/mockup-corporate.svg',
+    image: '/images/project-lro-staffing.jpg',
   },
   {
     title: 'Akuma Patterson Holdings',
     category: 'Automation and AI Workflows',
-    description: 'Automated the entire client lifecycle — from CRM lead capture to invoicing and project hand-off — eliminating manual data entry.',
+    description: 'Automated the entire client lifecycle - from CRM lead capture to invoicing and project hand-off - eliminating manual data entry.',
     tags: ['Automation', 'CRM', 'AI Workflows'],
-    image: '/images/mockup-automation.svg',
+    image: '/images/project-akuma-patterson.png',
   },
   {
     title: 'FOCAS Canada',
@@ -205,27 +273,6 @@ export const portfolioProjects = [
     description: 'Event-driven web platform with member portal, registration workflows, and community engagement tools.',
     tags: ['WordPress', 'Member Portal', 'Events'],
     image: '/images/mockup-event-platform.svg',
-  },
-  {
-    title: 'Tricia Walters',
-    category: 'Web Development',
-    description: 'Personal brand site with CMS-powered content, integrated booking system, and optimized page speed.',
-    tags: ['Portfolio', 'CMS', 'Booking'],
-    image: '/images/mockup-web-dev.svg',
-  },
-  {
-    title: 'UNSVCC',
-    category: 'Custom Internal Tools',
-    description: 'Internal operations dashboard with real-time organizational metrics, role-based access, and automated reporting.',
-    tags: ['Dashboard', 'Analytics', 'Reporting'],
-    image: '/images/mockup-dashboard.svg',
-  },
-  {
-    title: 'Namaste Tibetan Kitchen',
-    category: 'Web Development',
-    description: 'Custom restaurant site with online ordering, real-time menu management, and SEO-optimized local search presence.',
-    tags: ['Restaurant', 'E-commerce', 'CMS'],
-    image: '/images/mockup-restaurant.svg',
   },
   {
     title: 'TDot Jerk',
@@ -237,16 +284,44 @@ export const portfolioProjects = [
   {
     title: 'Crowned Spice',
     category: 'Automation and AI Workflows',
-    description: 'End-to-end e-commerce automation — inventory syncing, shipping triggers, and post-purchase communication flows.',
+    description: 'End-to-end e-commerce automation - inventory syncing, shipping triggers, and post-purchase communication flows.',
     tags: ['E-commerce', 'Automation', 'Inventory'],
     image: '/images/mockup-ecommerce.svg',
   },
   {
-    title: 'colLabb',
-    category: 'Custom Internal Tools',
-    description: 'Collaborative workspace platform with task management, client reporting dashboards, and team coordination tools.',
-    tags: ['Platform', 'Collaboration', 'Reporting'],
-    image: '/images/mockup-collab.svg',
+    title: 'Crowngate Business',
+    category: 'Web Development',
+    description: 'Corporate business platform with service showcase, client onboarding workflows, and professional brand presence.',
+    tags: ['Corporate', 'Custom Development', 'Branding'],
+    image: '/images/mockup-corporate.svg',
+  },
+  {
+    title: 'Tashi Delek',
+    category: 'Web Development',
+    description: 'Restaurant website with cultural storytelling, menu showcase, and location-driven local SEO for Tibetan cuisine.',
+    tags: ['Restaurant', 'CMS', 'Local SEO'],
+    image: '/images/mockup-restaurant.svg',
+  },
+  {
+    title: 'Tricia Walters',
+    category: 'Web Development',
+    description: 'Personal brand site with CMS-powered content, integrated booking system, and optimized page speed.',
+    tags: ['Portfolio', 'CMS', 'Booking'],
+    image: '/images/project-trisha-walters.webp',
+  },
+  {
+    title: 'UNSVCC',
+    category: 'Web Development',
+    description: 'Internal operations dashboard with real-time organizational metrics, role-based access, and automated reporting.',
+    tags: ['Dashboard', 'Analytics', 'Reporting'],
+    image: '/images/project-unsvcc.webp',
+  },
+  {
+    title: 'Namaste Tibetan Kitchen',
+    category: 'Web Development',
+    description: 'Custom restaurant site with online ordering, real-time menu management, and SEO-optimized local search presence.',
+    tags: ['Restaurant', 'E-commerce', 'CMS'],
+    image: '/images/mockup-restaurant.svg',
   },
 ];
 
@@ -271,7 +346,7 @@ export const careers = [
     type: 'Contract',
     location: 'Remote',
     country: 'Canada',
-    description: 'Shape brand identity systems — from visual guidelines to messaging frameworks — for agencies and their clients.',
+    description: 'Shape brand identity systems - from visual guidelines to messaging frameworks - for agencies and their clients.',
   },
   {
     title: 'Social Media Manager',
@@ -322,6 +397,6 @@ export const careers = [
     type: 'Contract',
     location: 'Kingston / Montego Bay',
     country: 'Jamaica',
-    description: 'Own client relationships for our Jamaica branch — onboarding, ongoing support, and ensuring project success across the Caribbean.',
+    description: 'Own client relationships for our Jamaica branch - onboarding, ongoing support, and ensuring project success across the Caribbean.',
   },
 ];

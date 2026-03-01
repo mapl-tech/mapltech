@@ -27,21 +27,37 @@ export default function OurWorkPage() {
   return (
     <>
       <section className={styles.hero}>
-        <div className={`${styles.heroInner} ${styles.heroCentered}`}>
-          <BlurReveal>
-            <span className={styles.heroLabel}>Our Work</span>
-          </BlurReveal>
-          <BlurReveal delay={0.1}>
-            <h1 className={styles.heroTitle}>
-              Real Work. Real Agencies. Real Results.
-            </h1>
-          </BlurReveal>
-          <BlurReveal delay={0.2}>
-            <p className={styles.heroSubtitle}>
-              Systems, automation, and infrastructure we&apos;ve shipped for agencies
-              across industries — from staffing to e-commerce to non-profits.
-            </p>
-          </BlurReveal>
+        <div className={styles.heroInner}>
+          <div className={styles.heroGrid}>
+            <div>
+              <BlurReveal>
+                <span className={styles.heroLabel}>Our Work</span>
+              </BlurReveal>
+              <BlurReveal delay={0.1}>
+                <h1 className={styles.heroTitle}>
+                  Real Work. Real Agencies. Real Results.
+                </h1>
+              </BlurReveal>
+              <BlurReveal delay={0.2}>
+                <p className={styles.heroSubtitle}>
+                  Systems, automation, and infrastructure we&apos;ve shipped for agencies
+                  across industries - from staffing to e-commerce to non-profits.
+                </p>
+              </BlurReveal>
+            </div>
+            <BlurReveal delay={0.3}>
+              <div className={styles.imageBlock}>
+                <Image
+                  src="/images/hero-our-work.jpg"
+                  alt="Team brainstorming and reviewing project results"
+                  width={600}
+                  height={450}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  priority
+                />
+              </div>
+            </BlurReveal>
+          </div>
         </div>
       </section>
 
@@ -72,9 +88,6 @@ export default function OurWorkPage() {
                       width={600}
                       height={400}
                     />
-                    <span className={styles.portfolioCategory}>
-                      {project.category}
-                    </span>
                   </div>
                   <div className={styles.portfolioContent}>
                     <h3>{project.title}</h3>

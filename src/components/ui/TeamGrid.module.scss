@@ -1,0 +1,282 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.wrapper {
+  width: 100%;
+}
+
+// ===== Country Tabs =====
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: $color-dark-card;
+  border: 1px solid rgba($color-dark-border, 0.6);
+  border-radius: $radius-lg;
+  padding: 4px;
+  margin-bottom: $space-xl;
+  width: fit-content;
+}
+
+.tab {
+  padding: $space-sm $space-xl;
+  border-radius: $radius-md;
+  border: none;
+  background: transparent;
+  color: $color-text-muted;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: color $transition-fast, background $transition-fast;
+  white-space: nowrap;
+
+  &:hover {
+    color: $color-white;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-red;
+    outline-offset: -2px;
+    border-radius: $radius-md;
+  }
+}
+
+.tabActive {
+  background: rgba($color-white, 0.08);
+  color: $color-white;
+  font-weight: $font-weight-semibold;
+}
+
+// ===== Filters =====
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  margin-bottom: $space-2xl;
+
+  @include sm {
+    flex-direction: row;
+  }
+}
+
+.searchWrap {
+  position: relative;
+  flex: 1;
+  max-width: 360px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $color-text-muted;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  background: $color-dark-card;
+  border: 1px solid rgba($color-dark-border, 0.6);
+  border-radius: $radius-md;
+  color: $color-white;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  transition: border-color $transition-fast;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgba($color-red, 0.5);
+  }
+}
+
+.selectWrap {
+  position: relative;
+  min-width: 180px;
+}
+
+.select {
+  width: 100%;
+  padding: 10px 36px 10px 14px;
+  background: $color-dark-card;
+  border: 1px solid rgba($color-dark-border, 0.6);
+  border-radius: $radius-md;
+  color: $color-white;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: rgba($color-red, 0.5);
+  }
+
+  option {
+    background: $color-dark-card;
+    color: $color-white;
+  }
+}
+
+.selectIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $color-text-muted;
+  pointer-events: none;
+}
+
+// ===== Grid =====
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+  min-height: 200px;
+
+  @include sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ===== Card =====
+.card {
+  position: relative;
+  background: $color-dark-card;
+  border: 1px solid rgba($color-dark-border, 0.5);
+  border-radius: $radius-xl;
+  padding: $space-xl;
+  transition: border-color $transition-fast, transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    border-color: rgba($color-dark-border, 1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.cardAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-full;
+  background: linear-gradient(135deg, rgba($color-red-deep, 0.4) 0%, rgba($color-dark-elevated, 1) 100%);
+  border: 1px solid rgba($color-dark-border, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $space-lg;
+}
+
+.cardInitials {
+  font-family: $font-display;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  letter-spacing: 0.5px;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+}
+
+.cardName {
+  font-family: $font-display;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  line-height: $line-height-snug;
+}
+
+.cardTitle {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+}
+
+.cardMeta {
+  display: flex;
+  gap: $space-sm;
+  margin-top: $space-xs;
+  margin-bottom: $space-sm;
+}
+
+.regionBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.5px;
+  color: $color-text-muted;
+  background: rgba($color-dark-border, 0.4);
+  padding: 2px 8px;
+  border-radius: $radius-full;
+}
+
+.deptBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.5px;
+  color: $color-red;
+  background: rgba($color-red, 0.08);
+  padding: 2px 8px;
+  border-radius: $radius-full;
+}
+
+.cardBio {
+  font-size: $font-size-sm;
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+  margin-top: $space-xs;
+}
+
+.linkedinBtn {
+  position: absolute;
+  top: $space-lg;
+  right: $space-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-dark-border, 0.5);
+  color: $color-text-muted;
+  transition: color $transition-fast, border-color $transition-fast, background $transition-fast;
+
+  &:hover {
+    color: $color-white;
+    border-color: rgba($color-white, 0.3);
+    background: rgba($color-white, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-red;
+    outline-offset: 2px;
+  }
+}
+
+// ===== Empty State =====
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: $space-3xl $space-xl;
+
+  p {
+    color: $color-text-muted;
+    font-size: $font-size-base;
+  }
+}

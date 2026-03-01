@@ -16,7 +16,7 @@ import styles from '@/styles/page-common.module.scss';
 export const metadata: Metadata = {
   title: 'About Us',
   description:
-    'MAPL TECH is the engineering partner agencies call when projects demand real systems, automation, and infrastructure — not another marketing vendor.',
+    'MAPL TECH is the engineering partner agencies call when projects demand real systems, automation, and infrastructure - not another marketing vendor.',
   openGraph: {
     title: 'About Us | MAPL TECH',
     description:
@@ -42,7 +42,7 @@ export default function AboutPage() {
       icon: <HiCodeBracket size={22} />,
       title: 'Code That Lasts',
       description:
-        'We write code your developers can read, extend, and maintain — not clever hacks that fall apart when we leave.',
+        'We write code your developers can read, extend, and maintain - not clever hacks that fall apart when we leave.',
     },
     {
       icon: <HiShieldCheck size={22} />,
@@ -95,7 +95,7 @@ export default function AboutPage() {
               <div className={styles.textContent}>
                 <SectionHeading
                   label="Who We Are"
-                  title="Your Engineering Team — Without the Overhead"
+                  title="Your Engineering Team - Without the Overhead"
                   align="left"
                 />
                 <p>
@@ -105,7 +105,7 @@ export default function AboutPage() {
                 </p>
                 <p>
                   Headquartered in Toronto and Ottawa, Canada, with branches in Nigeria
-                  and Jamaica — we bring 25+ years of combined experience across systems
+                  and Jamaica - we bring 25+ years of combined experience across systems
                   architecture, automation, web development, and AI to agencies worldwide.
                 </p>
                 <p>
@@ -137,11 +137,12 @@ export default function AboutPage() {
             <BlurReveal>
               <div className={styles.imageBlock}>
                 <Image
-                  src="/images/mockup-collab.svg"
-                  alt="Collaborative workspace and project management tools"
+                  src="/images/about-partnership.jpg"
+                  alt="Diverse team collaborating around a laptop in an office"
                   width={600}
                   height={400}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }}
                 />
               </div>
             </BlurReveal>
@@ -154,7 +155,7 @@ export default function AboutPage() {
                 />
                 <p>
                   We don&apos;t operate like a vendor behind a ticket queue. We integrate
-                  directly into your workflow — using your tools, joining your meetings,
+                  directly into your workflow - using your tools, joining your meetings,
                   communicating the way your team prefers.
                 </p>
                 <p>
@@ -163,7 +164,7 @@ export default function AboutPage() {
                   extend, and own long after the initial build.
                 </p>
                 <p>
-                  Single project or long-term partnership — every engagement gets the
+                  Single project or long-term partnership - every engagement gets the
                   same engineering rigor and attention.
                 </p>
               </div>
@@ -201,11 +202,13 @@ export default function AboutPage() {
             <BlurReveal>
               <h2>Ready to Stop Duct-Taping Your Tech Stack?</h2>
               <p>
-                Let&apos;s talk about what your agency actually needs — and build it right.
+                Let&apos;s talk about what your agency actually needs - and build it right.
               </p>
-              <MagneticButton href="/contact" size="large">
-                Start the Conversation <HiArrowRight />
-              </MagneticButton>
+              <div style={{ marginTop: '1.5rem' }}>
+                <MagneticButton href="/contact" size="large">
+                  Start the Conversation <HiArrowRight />
+                </MagneticButton>
+              </div>
             </BlurReveal>
           </div>
         </div>

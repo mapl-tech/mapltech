@@ -1,0 +1,230 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ===== Hero =====
+.hero {
+  position: relative;
+  padding: 180px 0 $space-5xl;
+  background: $gradient-hero, $color-dark;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, $color-navy);
+    pointer-events: none;
+  }
+}
+
+.heroInner {
+  @include container;
+  position: relative;
+  z-index: 1;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+
+  @include lg {
+    grid-template-columns: 1fr 1fr;
+    gap: $space-3xl;
+  }
+}
+
+.imageBlock {
+  border-radius: $radius-xl;
+  overflow: hidden;
+  @include gradient-border(1px, $radius-xl);
+  aspect-ratio: 4/3;
+  background: $gradient-card;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      transparent 40%,
+      rgba($color-pink, 0.03) 50%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+}
+
+.heroLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: capitalize;
+  letter-spacing: $letter-spacing-widest;
+  @include gradient-text;
+  margin-bottom: $space-xl;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: $gradient-primary;
+    border-radius: 1px;
+  }
+}
+
+.heroTitle {
+  font-family: $font-display;
+  font-size: clamp($font-size-2xl, 4.5vw, $font-size-5xl);
+  font-weight: $font-weight-extrabold;
+  color: $color-white;
+  letter-spacing: $letter-spacing-tight;
+  line-height: $line-height-tight;
+  margin-bottom: $space-xl;
+  max-width: min(750px, 100%);
+}
+
+.heroSubtitle {
+  font-size: clamp($font-size-base, 1.5vw, $font-size-md);
+  color: $color-text-body;
+  max-width: min(580px, 100%);
+  line-height: $line-height-relaxed;
+}
+
+// ===== Executive Leadership =====
+.executives {
+  @include section-padding;
+  background: $color-navy;
+  @include section-divider;
+}
+
+.executivesInner {
+  @include container;
+}
+
+.executiveGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+  max-width: 900px;
+  margin: 0 auto;
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.executiveCard {
+  position: relative;
+  background: $color-dark-card;
+  border: 1px solid rgba($color-dark-border, 0.6);
+  border-radius: $radius-xl;
+  padding: $space-2xl;
+  transition: border-color $transition-fast, transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    border-color: rgba($color-dark-border, 1);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.executiveAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: $radius-full;
+  background: linear-gradient(135deg, rgba($color-red-deep, 0.5) 0%, $color-dark-elevated 100%);
+  border: 2px solid rgba($color-dark-border, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $space-xl;
+  overflow: hidden;
+}
+
+.executiveImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.executiveInitials {
+  font-family: $font-display;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  letter-spacing: 1px;
+}
+
+.executiveHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: $space-sm;
+}
+
+.executiveName {
+  font-family: $font-display;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  line-height: $line-height-snug;
+}
+
+.executiveTitle {
+  font-size: $font-size-sm;
+  color: $color-red;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $space-lg;
+}
+
+.executiveBio {
+  font-size: $font-size-sm;
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+}
+
+.executiveLinkedin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-dark-border, 0.6);
+  color: $color-text-muted;
+  flex-shrink: 0;
+  transition: color $transition-fast, border-color $transition-fast, background $transition-fast;
+
+  &:hover {
+    color: $color-white;
+    border-color: rgba($color-white, 0.3);
+    background: rgba($color-white, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-red;
+    outline-offset: 2px;
+  }
+}
+
+// ===== Team Section =====
+.teamSection {
+  @include section-padding;
+  background: $color-dark;
+}
+
+.teamInner {
+  @include container;
+}

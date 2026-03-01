@@ -9,15 +9,12 @@ import {
   HiClock,
   HiShieldCheck,
   HiChatBubbleLeftRight,
-  HiChartBar,
-  HiUserGroup,
 } from 'react-icons/hi2';
 import Image from 'next/image';
 import MagneticButton from '@/components/ui/MagneticButton';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
 import ContactForm from '@/components/ui/ContactForm';
-import ScrollOrb from '@/components/ui/ScrollOrb';
 import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
@@ -68,7 +65,7 @@ const services = [
     icon: <HiCodeBracket size={22} />,
     title: 'Web Development',
     description:
-      'Custom-coded sites built for Caribbean audiences — fast load times optimized for local network conditions, mobile-first design, and SEO tailored for regional search.',
+      'Custom-coded sites built for Caribbean audiences - fast load times optimized for local network conditions, mobile-first design, and SEO tailored for regional search.',
     href: '/services/web-development',
   },
   {
@@ -82,7 +79,7 @@ const services = [
     icon: <HiWrenchScrewdriver size={22} />,
     title: 'Custom Internal Tools',
     description:
-      'Client portals, project dashboards, and reporting systems designed for Caribbean agencies — with integrations for local payment providers and business tools.',
+      'Client portals, project dashboards, and reporting systems designed for Caribbean agencies - with integrations for local payment providers and business tools.',
     href: '/services/custom-internal-tools',
   },
 ];
@@ -98,13 +95,13 @@ const whyChoose = [
     icon: <HiClock size={20} />,
     title: 'Same Time Zone Collaboration',
     description:
-      'Our Jamaica team works in EST/AST — the same time zone as your agency. Real-time collaboration, fast responses, and no overnight delays.',
+      'Our Jamaica team works in EST/AST - the same time zone as your agency. Real-time collaboration, fast responses, and no overnight delays.',
   },
   {
     icon: <HiShieldCheck size={20} />,
     title: 'Optimized for Caribbean Markets',
     description:
-      'We build for local realities — mobile-heavy audiences, Caribbean payment gateways, regional SEO, and performance optimization for island connectivity.',
+      'We build for local realities - mobile-heavy audiences, Caribbean payment gateways, regional SEO, and performance optimization for island connectivity.',
   },
   {
     icon: <HiChatBubbleLeftRight size={20} />,
@@ -157,7 +154,7 @@ export default function JamaicaPage() {
               </BlurReveal>
               <BlurReveal delay={0.2}>
                 <p className={styles.heroSubtitle}>
-                  From Kingston to Montego Bay — we provide the systems, automation, and
+                  From Kingston to Montego Bay - we provide the systems, automation, and
                   infrastructure Jamaican agencies need to compete regionally and globally.
                   Canadian engineering standards. Caribbean connection.
                 </p>
@@ -173,11 +170,18 @@ export default function JamaicaPage() {
                 </div>
               </BlurReveal>
             </div>
-            <div className={styles.heroOrb} aria-hidden="true">
-              <BlurReveal delay={0.4}>
-                <ScrollOrb variant="teal" rotationMultiplier={1} />
-              </BlurReveal>
-            </div>
+            <BlurReveal delay={0.4}>
+              <div className={styles.imageBlock}>
+                <Image
+                  src="/images/jamaica-hero.jpg"
+                  alt="Black business professionals collaborating in a meeting"
+                  width={600}
+                  height={450}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  priority
+                />
+              </div>
+            </BlurReveal>
           </div>
         </div>
       </section>
@@ -331,7 +335,7 @@ export default function JamaicaPage() {
                 <p>
                   Backed by our Canadian headquarters with 25+ years of combined
                   engineering experience, our Jamaica team delivers international-grade
-                  systems built with a Caribbean perspective — from tourism tech to
+                  systems built with a Caribbean perspective - from tourism tech to
                   financial services to creative agency workflows.
                 </p>
               </div>
@@ -339,8 +343,8 @@ export default function JamaicaPage() {
             <BlurReveal delay={0.15}>
               <div className={styles.imageBlock}>
                 <Image
-                  src="/images/team-jamaica.jpg"
-                  alt="MAPL TECH Jamaica team"
+                  src="/images/jamaica-team.jpg"
+                  alt="Black professional leading a team discussion"
                   width={600}
                   height={400}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -359,7 +363,7 @@ export default function JamaicaPage() {
               <h2>Ready to Build With MAPL TECH Jamaica?</h2>
               <p>
                 Tell us about your project. Whether you&apos;re in Kingston, Montego Bay,
-                or anywhere in Jamaica — we&apos;ll respond within 24 hours.
+                or anywhere in Jamaica - we&apos;ll respond within 24 hours.
               </p>
             </BlurReveal>
           </div>

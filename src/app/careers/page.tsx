@@ -10,7 +10,7 @@ import styles from '@/styles/page-common.module.scss';
 export const metadata: Metadata = {
   title: 'Careers',
   description:
-    'Join MAPL TECH — we\'re hiring across Canada, Nigeria, and Jamaica. Remote and on-site roles in Ottawa, Toronto, Lagos, Abuja, Kingston, and Montego Bay.',
+    'Join MAPL TECH - we\'re hiring across Canada, Nigeria, and Jamaica. Remote and on-site roles in Ottawa, Toronto, Lagos, Abuja, Kingston, and Montego Bay.',
   openGraph: {
     title: 'Careers | MAPL TECH',
     description: 'Work with leading agencies. Ship real systems. Join MAPL TECH.',
@@ -30,7 +30,7 @@ export default function CareersPage() {
           </BlurReveal>
           <BlurReveal delay={0.2}>
             <p className={styles.heroSubtitle}>
-              We&apos;re growing our team across Canada, Nigeria, and Jamaica —
+              We&apos;re growing our team across Canada, Nigeria, and Jamaica -
               specialists who help agencies build real systems, real automation,
               and real infrastructure.
             </p>

@@ -8,9 +8,6 @@ import {
   HiCpuChip,
   HiWrenchScrewdriver,
   HiArrowRight,
-  HiChatBubbleLeftRight,
-  HiShieldCheck,
-  HiUserGroup,
   HiChevronLeft,
   HiChevronRight,
 } from 'react-icons/hi2';
@@ -23,6 +20,7 @@ import MagneticButton from '@/components/ui/MagneticButton';
 import ScrollOrb from '@/components/ui/ScrollOrb';
 import ParallaxOrb from '@/components/ui/ParallaxOrb';
 import ContactForm from '@/components/ui/ContactForm';
+import HeroSection from '@/components/ui/glassmorphism-trust-hero';
 import { testimonials, portfolioProjects } from '@/config/site';
 import styles from './page.module.scss';
 
@@ -34,7 +32,7 @@ export default function HomePage() {
       icon: <HiCodeBracket size={24} />,
       title: 'Web Development',
       description:
-        'Custom-coded sites engineered for speed, accessibility, and maintainability. No page builders, no shortcuts — just clean architecture your team can own.',
+        'Custom-coded sites engineered for speed, accessibility, and maintainability. No page builders, no shortcuts - just clean architecture your team can own.',
       href: '/services/web-development',
     },
     {
@@ -48,7 +46,7 @@ export default function HomePage() {
       icon: <HiWrenchScrewdriver size={24} />,
       title: 'Custom Internal Tools',
       description:
-        'Dashboards, client portals, and reporting systems built around how your agency actually works — not how a SaaS product thinks you should.',
+        'Dashboards, client portals, and reporting systems built around how your agency actually works - not how a SaaS product thinks you should.',
       href: '/services/custom-internal-tools',
     },
   ];
@@ -57,7 +55,7 @@ export default function HomePage() {
     {
       title: 'Built for Agency Workflows',
       description:
-        'We know how agencies run — multi-client juggling, tight turnarounds, evolving scopes. Our solutions fit the way you already work.',
+        'We know how agencies run - multi-client juggling, tight turnarounds, evolving scopes. Our solutions fit the way you already work.',
     },
     {
       title: 'Engineering, Not Templates',
@@ -72,63 +70,24 @@ export default function HomePage() {
     {
       title: 'Transparent From Day One',
       description:
-        'Regular updates, documented code, clean handoffs. You always know where things stand — and your team can pick up right where we left off.',
+        'Regular updates, documented code, clean handoffs. You always know where things stand - and your team can pick up right where we left off.',
     },
   ];
 
-  const featuredProjects = portfolioProjects.slice(0, 6);
+  const featuredProjects = portfolioProjects.slice(0, 3);
 
   return (
     <>
       {/* Hero Section */}
-      <section className={styles.hero} aria-label="Hero">
-        <FloatingOrbs />
-        <div className={styles.heroGrid}>
-          <div className={styles.heroContent}>
-            <BlurReveal delay={0.1}>
-              <span className={styles.heroLabel}>Systems &bull; Automation &bull; Infrastructure</span>
-            </BlurReveal>
-            <BlurReveal delay={0.2} yOffset={40}>
-              <h1 className={styles.heroTitle}>
-                The{' '}
-                <span className={styles.highlight}>
-                  engineering backbone
-                </span>{' '}
-                behind agencies that refuse to cut corners on technology
-              </h1>
-            </BlurReveal>
-            <BlurReveal delay={0.35}>
-              <p className={styles.heroSubtitle}>
-                We partner with agencies to build, ship, and scale the systems, automation,
-                and infrastructure their most ambitious projects demand.
-              </p>
-            </BlurReveal>
-            <BlurReveal delay={0.5}>
-              <div className={styles.heroCta}>
-                <MagneticButton href="/contact" size="large">
-                  Start a Project
-                </MagneticButton>
-                <MagneticButton href="/services/web-development" variant="secondary" size="large">
-                  Explore Services
-                </MagneticButton>
-              </div>
-            </BlurReveal>
-          </div>
-          <div className={styles.heroOrb} aria-hidden="true">
-            <BlurReveal delay={0.6}>
-              <ScrollOrb variant="red" rotationMultiplier={1} />
-            </BlurReveal>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* How We Support Agencies */}
-      <section className={styles.services} aria-label="Services">
+      <section id="services" className={styles.services} aria-label="Services">
         <div className={styles.servicesInner}>
           <SectionHeading
             label="What We Do"
             title="The Technical Work Agencies Can't Afford to Get Wrong"
-            subtitle="Systems, automation, and infrastructure — built by engineers who understand agency life."
+            subtitle="Systems, automation, and infrastructure - built by engineers who understand agency life."
           />
           <div className={styles.servicesGrid}>
             {services.map((service, i) => (
@@ -138,7 +97,7 @@ export default function HomePage() {
                   <h3 className={styles.serviceTitle}>{service.title}</h3>
                   <p className={styles.serviceDescription}>{service.description}</p>
                   <Link href={service.href} className={styles.serviceLink}>
-                    Learn more <HiArrowRight />
+                    Learn more <HiArrowRight aria-hidden="true" />
                   </Link>
                 </div>
               </BlurReveal>
@@ -171,45 +130,35 @@ export default function HomePage() {
                 The result: clean implementation, maintainable systems, and zero
                 lost-in-translation moments between design and development.
               </p>
-              <div className={styles.approachPoints}>
-                <div className={styles.approachPoint}>
-                  <div className={styles.approachIcon}><HiUserGroup size={18} /></div>
-                  <div className={styles.approachPointContent}>
-                    <h4>Embedded Partnership</h4>
-                    <p>Your tools, your channels, your cadence. We adapt to how you work.</p>
+              <div className={styles.approachSteps}>
+                {[
+                  { title: 'Discover & Scope', desc: 'We learn your agency, your clients, and your pain points' },
+                  { title: 'Architect & Plan', desc: 'We design systems around your workflow, not ours' },
+                  { title: 'Build & Iterate', desc: 'Transparent development with weekly check-ins' },
+                  { title: 'Deploy & Support', desc: 'Smooth launches with ongoing maintenance built in' },
+                ].map((step, i) => (
+                  <div key={i} className={styles.approachStep}>
+                    <div className={styles.stepNumber}>{i + 1}</div>
+                    <div className={styles.approachStepContent}>
+                      <h4>{step.title}</h4>
+                      <p>{step.desc}</p>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.approachPoint}>
-                  <div className={styles.approachIcon}><HiChatBubbleLeftRight size={18} /></div>
-                  <div className={styles.approachPointContent}>
-                    <h4>No Surprises</h4>
-                    <p>Regular updates, documented decisions, and honest timelines.</p>
-                  </div>
-                </div>
-                <div className={styles.approachPoint}>
-                  <div className={styles.approachIcon}><HiShieldCheck size={18} /></div>
-                  <div className={styles.approachPointContent}>
-                    <h4>Production-Grade Solutions</h4>
-                    <p>Tested, documented, and built to last — not just to demo well.</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </BlurReveal>
 
           <BlurReveal delay={0.15}>
-            <div className={styles.approachVisual}>
-              {[
-                'Discover & Scope — We learn your agency, your clients, and your pain points',
-                'Architect & Plan — We design systems around your workflow, not ours',
-                'Build & Iterate — Transparent development with weekly check-ins',
-                'Deploy & Support — Smooth launches with ongoing maintenance built in',
-              ].map((step, i) => (
-                <div key={i} className={styles.approachStep}>
-                  <div className={styles.stepNumber}>{i + 1}</div>
-                  <span className={styles.stepText}>{step}</span>
-                </div>
-              ))}
+            <div className={styles.approachImage}>
+              <Image
+                src="/images/homepage-approach.jpg"
+                alt="Diverse tech professionals collaborating at a laptop"
+                width={600}
+                height={440}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
             </div>
           </BlurReveal>
         </div>
@@ -270,9 +219,9 @@ export default function HomePage() {
       <section className={styles.portfolio} aria-label="Selected Projects">
         <div className={styles.portfolioInner}>
           <SectionHeading
-            label="Our Work"
-            title="Projects That Went Live — and Stayed Up"
-            subtitle="Real systems built for real agencies. Here's a sample of what we've shipped."
+            label="Featured on DesignRush's Best Designs"
+            labelHref="https://www.designrush.com/best-designs"
+            title="Selected Projects & Technical Deliveries"
           />
 
           <div className={styles.portfolioGrid}>
@@ -285,6 +234,7 @@ export default function HomePage() {
                       alt={`${project.title} project preview`}
                       width={600}
                       height={400}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                     <span className={styles.portfolioCategory}>{project.category}</span>
                   </div>
@@ -318,16 +268,9 @@ export default function HomePage() {
 
           <div className={styles.testimonialSlider} role="region" aria-label="Testimonial carousel">
             <BlurReveal>
-              <div className={styles.testimonialCard}>
+              <div className={styles.testimonialCard} role="tabpanel" aria-label={`Testimonial from ${testimonials[activeTestimonial].name}`}>
                 <p className={styles.quote}>{testimonials[activeTestimonial].quote}</p>
                 <div className={styles.author}>
-                  <Image
-                    src={testimonials[activeTestimonial].image}
-                    alt={testimonials[activeTestimonial].name}
-                    width={56}
-                    height={56}
-                    className={styles.authorImage}
-                  />
                   <div>
                     <div className={styles.authorName}>
                       {testimonials[activeTestimonial].name}
@@ -404,7 +347,7 @@ export default function HomePage() {
           <BlurReveal delay={0.15}>
             <div className={styles.ctaActions}>
               <MagneticButton href="/contact" size="large">
-                Start a Conversation <HiArrowRight style={{ marginLeft: 8 }} />
+                Start a Conversation <HiArrowRight aria-hidden="true" style={{ marginLeft: 8 }} />
               </MagneticButton>
               <MagneticButton href="/pricing" variant="secondary" size="large">
                 View Pricing

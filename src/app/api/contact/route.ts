@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const subjectLine = subject
-      ? `New Contact: ${subject} — from ${name}`
+      ? `New Contact: ${subject} - from ${name}`
       : `New Contact Form Submission from ${name}`;
 
     const htmlBody = `

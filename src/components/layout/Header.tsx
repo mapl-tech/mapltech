@@ -56,7 +56,7 @@ export default function Header() {
             className={styles.contactLink}
             aria-label={`Email ${siteConfig.email}`}
           >
-            <HiEnvelope />
+            <HiEnvelope aria-hidden="true" />
             {siteConfig.email}
           </a>
           <div className={styles.socialLinks} aria-label="Social media links">
@@ -93,6 +93,7 @@ export default function Header() {
                   className={`${styles.navLink} ${
                     pathname === item.href ? styles.active : ''
                   }`}
+                  {...(item.children ? { 'aria-haspopup': 'true' as const } : {})}
                 >
                   {item.label}
                 </Link>
@@ -131,7 +132,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className={styles.mobileMenu} role="dialog" aria-label="Mobile navigation">
+        <div className={styles.mobileMenu} role="dialog" aria-modal="true" aria-label="Mobile navigation">
           <div className={styles.mobileMenuHeader}>
             <Link href="/" className={styles.logo} aria-label="MAPL TECH Home">
               <Image src="/images/mapl-tech-logo.svg" alt="MAPL TECH" width={160} height={35} priority />

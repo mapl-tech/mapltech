@@ -13,6 +13,7 @@ import MagneticButton from '@/components/ui/MagneticButton';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
 import ContactForm from '@/components/ui/ContactForm';
+import { pricing } from '@/config/site';
 import styles from '@/styles/service-page.module.scss';
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Web Development | MAPL TECH',
     description:
-      'Custom-coded, performance-optimized websites built for agencies — not page builders.',
+      'Custom-coded, performance-optimized websites built for agencies - not page builders.',
   },
 };
 
@@ -31,7 +32,7 @@ const features = [
     icon: <HiCodeBracket size={22} />,
     title: 'Custom-Coded, Not Cobbled Together',
     description:
-      'No templates, no page builders, no plugin Frankensteins. Every site is engineered from scratch — custom WordPress themes, headless CMS builds, or full-stack React.',
+      'No templates, no page builders, no plugin Frankensteins. Every site is engineered from scratch - custom WordPress themes, headless CMS builds, or full-stack React.',
   },
   {
     icon: <HiGlobeAlt size={22} />,
@@ -55,7 +56,7 @@ const features = [
     icon: <HiServerStack size={22} />,
     title: 'Solid Backend Architecture',
     description:
-      'APIs, databases, server logic, and caching layers — the invisible infrastructure that makes everything else work reliably.',
+      'APIs, databases, server logic, and caching layers - the invisible infrastructure that makes everything else work reliably.',
   },
   {
     icon: <HiDevicePhoneMobile size={22} />,
@@ -74,7 +75,7 @@ const processSteps = [
   {
     title: 'Design Collaboration',
     description:
-      'We work alongside your designers with wireframes and interactive prototypes — making sure every design decision is technically sound and buildable.',
+      'We work alongside your designers with wireframes and interactive prototypes - making sure every design decision is technically sound and buildable.',
   },
   {
     title: 'Build & QA',
@@ -126,7 +127,7 @@ export default function WebDevelopmentPage() {
           <SectionHeading
             label="What We Deliver"
             title="Every Layer of the Stack, Done Right"
-            subtitle="From pixel-perfect frontends to bulletproof backends — we build what your agency project demands."
+            subtitle="From pixel-perfect frontends to bulletproof backends - we build what your agency project demands."
           />
           <div className={styles.featuresGrid}>
             {features.map((feature, i) => (
@@ -158,6 +159,38 @@ export default function WebDevelopmentPage() {
                     <h3>{step.title}</h3>
                     <p>{step.description}</p>
                   </div>
+                </div>
+              </BlurReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.pricing}>
+        <div className={styles.pricingInner}>
+          <SectionHeading
+            label="Pricing"
+            title="Transparent Pricing, No Surprises"
+            subtitle="Pick the tier that matches your project scope. Every plan includes post-launch support."
+          />
+          <div className={styles.pricingGrid}>
+            {pricing.webDevelopment.tiers.map((tier, i) => (
+              <BlurReveal key={tier.name} delay={i * 0.08}>
+                <div className={`${styles.pricingCard} ${i === 1 ? styles.featured : ''}`}>
+                  {i === 1 && <span className={styles.pricingLabel}>Most Popular</span>}
+                  <h3 className={styles.pricingName}>{tier.name}</h3>
+                  <p className={styles.pricingDescription}>{tier.description}</p>
+                  <div className={styles.pricingPrice}>
+                    {tier.price === 'Custom' ? 'Custom' : `${tier.price}+`}
+                  </div>
+                  <ul className={styles.pricingFeatures}>
+                    {tier.features.map((f) => (
+                      <li key={f}><HiCheck size={16} />{f}</li>
+                    ))}
+                  </ul>
+                  <MagneticButton href="/contact">
+                    {tier.price === 'Custom' ? 'Talk to Us' : 'Get Started'} <HiArrowRight />
+                  </MagneticButton>
                 </div>
               </BlurReveal>
             ))}

@@ -59,7 +59,7 @@ export default function Footer() {
           {/* Brand column */}
           <div className={styles.brand}>
             <div className={styles.logo}>
-              <Image src="/images/mapl-tech-logo.svg" alt="MAPL TECH" width={160} height={35} />
+              <Image src="/images/mapl-tech-logo.svg" alt="MAPL TECH" width={160} height={35} sizes="160px" />
             </div>
             <p className={styles.description}>
               The engineering backbone behind agencies that refuse to cut corners
@@ -111,6 +111,7 @@ export default function Footer() {
             <h4>Company</h4>
             <ul>
               <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/team">Team</Link></li>
               <li><Link href="/our-work">Our Work</Link></li>
               <li><Link href="/careers">Careers</Link></li>
               <li><Link href="/contact">Contact</Link></li>
@@ -123,17 +124,17 @@ export default function Footer() {
             <h4>Contact</h4>
             <div className={styles.contactInfo}>
               <div className={styles.contactItem}>
-                <HiEnvelope size={16} />
+                <HiEnvelope size={16} aria-hidden="true" />
                 <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
               </div>
               <div className={styles.contactItem}>
-                <HiPhone size={16} />
+                <HiPhone size={16} aria-hidden="true" />
                 <a href={`tel:${siteConfig.phone}`}>
                   {siteConfig.phone}
                 </a>
               </div>
               <div className={styles.contactItem}>
-                <HiMapPin size={16} />
+                <HiMapPin size={16} aria-hidden="true" />
                 <span>Canada &bull; Nigeria &bull; Jamaica</span>
               </div>
             </div>
@@ -174,8 +175,8 @@ export default function Footer() {
         <div className={styles.bottom}>
           <p>&copy; {currentYear} MAPL TECH. All rights reserved.</p>
           <div className={styles.bottomLinks}>
-            <Link href="/contact">Privacy Policy</Link>
-            <Link href="/contact">Terms of Service</Link>
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/terms">Terms of Use</Link>
           </div>
         </div>
       </div>

@@ -19,11 +19,11 @@ import styles from '@/styles/service-page.module.scss';
 export const metadata: Metadata = {
   title: 'Custom Internal Tools for Agencies',
   description:
-    'Custom dashboards, client portals, and operations platforms built around how your agency actually works — not how a SaaS product thinks you should.',
+    'Custom dashboards, client portals, and operations platforms built around how your agency actually works - not how a SaaS product thinks you should.',
   openGraph: {
     title: 'Custom Internal Tools | MAPL TECH',
     description:
-      'Internal tools built for your agency — not adapted from someone else\'s workflow.',
+      'Internal tools built for your agency - not adapted from someone else\'s workflow.',
   },
 };
 
@@ -32,7 +32,7 @@ const features = [
     icon: <HiTableCells size={22} />,
     title: 'Internal Dashboards',
     description:
-      'Real-time data visualization with role-based access. Your team sees exactly what they need — nothing more, nothing less.',
+      'Real-time data visualization with role-based access. Your team sees exactly what they need - nothing more, nothing less.',
   },
   {
     icon: <HiUserCircle size={22} />,
@@ -50,7 +50,7 @@ const features = [
     icon: <HiLockClosed size={22} />,
     title: 'Security Built In',
     description:
-      'Encryption, authentication, role-based permissions, and compliance — baked into every tool from the start, not bolted on later.',
+      'Encryption, authentication, role-based permissions, and compliance - baked into every tool from the start, not bolted on later.',
   },
   {
     icon: <HiArrowPath size={22} />,
@@ -78,13 +78,13 @@ export default function CustomInternalToolsPage() {
           </BlurReveal>
           <BlurReveal delay={0.1}>
             <h1 className={styles.heroTitle}>
-              Internal Tools Built Around Your Agency — Not the Other Way Around
+              Internal Tools Built Around Your Agency - Not the Other Way Around
             </h1>
           </BlurReveal>
           <BlurReveal delay={0.2}>
             <p className={styles.heroSubtitle}>
               Dashboards, client portals, and reporting systems designed for how your
-              team actually operates — not how a SaaS platform thinks you should.
+              team actually operates - not how a SaaS platform thinks you should.
             </p>
           </BlurReveal>
           <BlurReveal delay={0.3}>
@@ -180,7 +180,7 @@ export default function CustomInternalToolsPage() {
               <h2>Tired of Workarounds and Spreadsheets?</h2>
               <p>
                 Tell us what&apos;s slowing your team down. We&apos;ll build the tool
-                that fixes it — for good.
+                that fixes it - for good.
               </p>
             </BlurReveal>
           </div>

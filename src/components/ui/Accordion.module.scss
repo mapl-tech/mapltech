@@ -1,0 +1,80 @@
+@use '../../styles/variables' as *;
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-width: min(720px, 100%);
+  margin: 0 auto;
+}
+
+.item {
+  border: 1px solid rgba($color-dark-border, 0.6);
+  border-radius: $radius-lg;
+  background: $color-dark-card;
+  overflow: hidden;
+  transition: border-color $transition-fast, background $transition-fast;
+
+  & + & {
+    margin-top: $space-sm;
+  }
+
+  &.open {
+    border-color: rgba($color-red, 0.25);
+    background: linear-gradient(160deg, rgba($color-red-deep, 0.08) 0%, $color-dark-card 100%);
+  }
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: $space-lg $space-xl;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: $space-md;
+}
+
+.question {
+  font-family: $font-display;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-white;
+  line-height: $line-height-snug;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-md;
+  }
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-full;
+  background: rgba($color-dark-border, 0.5);
+  color: $color-text-muted;
+  transition: background $transition-fast, color $transition-fast;
+
+  .open & {
+    background: rgba($color-red, 0.15);
+    color: $color-red;
+  }
+}
+
+.content {
+  overflow: hidden;
+}
+
+.answer {
+  padding: 0 $space-xl $space-lg;
+  font-size: $font-size-base;
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+}

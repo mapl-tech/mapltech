@@ -37,8 +37,8 @@ export default function TextReveal({
                 : { y: '100%', opacity: 0 }
             }
             transition={{
-              duration: 0.6,
-              delay: delay + i * 0.04,
+              duration: 0.35,
+              delay: delay + i * 0.025,
               ease: [0.25, 0.1, 0.25, 1],
             }}
           >

@@ -63,7 +63,7 @@
   font-size: $font-size-xs;
   font-family: $font-body;
   font-weight: $font-weight-semibold;
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: $letter-spacing-widest;
   @include gradient-text;
   margin-bottom: $space-xl;
@@ -213,7 +213,7 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
   letter-spacing: $letter-spacing-wide;
-  text-transform: uppercase;
+  text-transform: capitalize;
   transition: gap $transition-base, color $transition-base;
 
   &:hover {
@@ -251,79 +251,17 @@
   }
 }
 
-.approachPoints {
+.approachSteps {
   display: flex;
   flex-direction: column;
-  gap: $space-xl;
+  gap: $space-lg;
   margin-top: $space-xl;
-}
-
-.approachPoint {
-  display: flex;
-  gap: $space-lg;
-  align-items: flex-start;
-}
-
-.approachIcon {
-  width: 44px;
-  height: 44px;
-  border-radius: $radius-md;
-  background: rgba($color-pink, 0.08);
-  border: 1px solid rgba($color-pink, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $color-pink;
-  flex-shrink: 0;
-}
-
-.approachPointContent {
-  h4 {
-    font-family: $font-display;
-    font-size: $font-size-base;
-    font-weight: $font-weight-bold;
-    color: $color-white;
-    margin-bottom: $space-xs;
-  }
-
-  p {
-    font-size: $font-size-base;
-    color: $color-text-body;
-    line-height: $line-height-normal;
-    margin-bottom: 0;
-  }
-}
-
-.approachVisual {
-  @include gradient-border(1px, $radius-xl);
-  background: $gradient-card;
-  border-radius: $radius-xl;
-  padding: $space-2xl $space-xl;
-  display: flex;
-  flex-direction: column;
-  gap: $space-lg;
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: -30%;
-    right: -30%;
-    width: 70%;
-    height: 70%;
-    background: radial-gradient(circle, rgba($color-pink, 0.04) 0%, transparent 60%);
-    pointer-events: none;
-  }
 }
 
 .approachStep {
   display: flex;
-  align-items: center;
   gap: $space-lg;
-  position: relative;
-  z-index: 1;
-  padding: $space-sm 0;
+  align-items: flex-start;
 }
 
 .stepNumber {
@@ -342,10 +280,32 @@
   box-shadow: 0 4px 16px rgba($color-pink, 0.25);
 }
 
-.stepText {
-  font-size: $font-size-base;
-  color: $color-text-body;
-  line-height: $line-height-normal;
+.approachStepContent {
+  h4 {
+    font-family: $font-display;
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    color: $color-white;
+    margin-bottom: $space-xs;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    line-height: $line-height-normal;
+    margin-bottom: 0;
+  }
+}
+
+.approachImage {
+  border-radius: $radius-xl;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  position: relative;
+
+  img {
+    border-radius: $radius-xl;
+  }
 }
 
 // ===== WHY US — metrics + cards =====
@@ -400,7 +360,7 @@
     font-size: $font-size-sm;
     color: $color-text-muted;
     letter-spacing: $letter-spacing-wide;
-    text-transform: uppercase;
+    text-transform: capitalize;
   }
 }
 
@@ -539,7 +499,7 @@
     color: $color-pink;
     font-weight: $font-weight-semibold;
     letter-spacing: $letter-spacing-wide;
-    text-transform: uppercase;
+    text-transform: capitalize;
   }
 }
 

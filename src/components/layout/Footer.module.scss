@@ -90,7 +90,7 @@
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
     color: $color-white;
-    text-transform: uppercase;
+    text-transform: capitalize;
     letter-spacing: $letter-spacing-wide;
     margin-bottom: $space-xl;
   }

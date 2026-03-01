@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import { HiEnvelope, HiPhone, HiMapPin } from 'react-icons/hi2';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
@@ -31,7 +30,7 @@ export default function ContactPage() {
           </BlurReveal>
           <BlurReveal delay={0.2}>
             <p className={styles.heroSubtitle}>
-              Whether it&apos;s a complex web build, an automation pipeline, or a custom tool —
+              Whether it&apos;s a complex web build, an automation pipeline, or a custom tool -
               describe the project and we&apos;ll respond within 24 hours.
             </p>
           </BlurReveal>
@@ -45,7 +44,7 @@ export default function ContactPage() {
               <h2>Let&apos;s Talk</h2>
               <p>
                 Fill out the form and we&apos;ll get back to you within 24 hours.
-                Or reach out directly — we&apos;re always happy to jump on a call.
+                Or reach out directly - we&apos;re always happy to jump on a call.
               </p>
 
               <div className={styles.contactDetails}>
@@ -88,13 +87,6 @@ export default function ContactPage() {
                   <div key={t.name} className={styles.testimonialMini}>
                     <p className={styles.testimonialQuote}>&ldquo;{t.quote}&rdquo;</p>
                     <div className={styles.testimonialFooter}>
-                      <Image
-                        src={t.image}
-                        alt={t.name}
-                        width={40}
-                        height={40}
-                        className={styles.testimonialAvatar}
-                      />
                       <div>
                         <div className={styles.testimonialAuthor}>{t.name}</div>
                         <div className={styles.testimonialRole}>

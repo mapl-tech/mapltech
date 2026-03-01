@@ -32,13 +32,13 @@ const features = [
     icon: <HiCog8Tooth size={22} />,
     title: 'CRM That Works for You',
     description:
-      'We configure your CRM to route leads, trigger follow-ups, and manage pipelines automatically — so your team focuses on closing, not data entry.',
+      'We configure your CRM to route leads, trigger follow-ups, and manage pipelines automatically - so your team focuses on closing, not data entry.',
   },
   {
     icon: <HiCircleStack size={22} />,
     title: 'Multi-System Pipelines',
     description:
-      'Your website, CRM, project tools, invoicing, and internal systems — all connected into one automated pipeline that doesn\'t break.',
+      'Your website, CRM, project tools, invoicing, and internal systems - all connected into one automated pipeline that doesn\'t break.',
   },
   {
     icon: <HiCpuChip size={22} />,

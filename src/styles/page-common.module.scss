@@ -56,7 +56,7 @@
   font-family: $font-body;
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: $letter-spacing-widest;
   @include gradient-text;
   margin-bottom: $space-xl;

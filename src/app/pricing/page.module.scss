@@ -32,7 +32,7 @@
   font-family: $font-body;
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: $letter-spacing-widest;
   @include gradient-text;
   margin-bottom: $space-xl;
@@ -152,7 +152,7 @@
   display: inline-block;
   font-size: $font-size-xs;
   font-weight: $font-weight-bold;
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: 1px;
   background: $gradient-primary;
   color: $color-white;
@@ -189,7 +189,7 @@
 .tierPriceLabel {
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: $letter-spacing-wide;
   background: none;
   -webkit-background-clip: unset;
@@ -207,7 +207,7 @@
 .includedLabel {
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: $letter-spacing-wide;
   color: $color-text-muted;
   margin-bottom: $space-md;
@@ -232,6 +232,51 @@
       flex-shrink: 0;
       margin-top: 2px;
     }
+  }
+}
+
+// Web Development 4-column grid
+.webDevGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+  margin-bottom: $space-3xl;
+
+  @include sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tierCard {
+    padding: $space-xl;
+  }
+}
+
+.customPrice {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-extrabold;
+}
+
+// Not sure callout
+.notSureCallout {
+  margin-top: $space-3xl;
+  text-align: center;
+  padding: $space-2xl $space-xl;
+  border-radius: $radius-xl;
+  background: linear-gradient(160deg, rgba($color-red-deep, 0.1) 0%, rgba($color-dark-card, 0.8) 100%);
+  border: 1px solid rgba($color-dark-border, 0.5);
+
+  h3 {
+    font-size: $font-size-xl;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    max-width: 480px;
+    margin: 0 auto $space-xl;
+    line-height: $line-height-relaxed;
   }
 }
 
@@ -288,6 +333,85 @@
     font-weight: $font-weight-bold;
     @include gradient-text;
   }
+
+  .retainerDescription {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    margin-top: $space-sm;
+    line-height: $line-height-normal;
+  }
+}
+
+// What Makes Us Different
+.differentiators {
+  @include section-padding;
+  background: $color-dark;
+}
+
+.differentiatorsInner {
+  @include container;
+}
+
+.differentiatorsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+
+  @include sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.differentiatorCard {
+  padding: $space-xl;
+  border-radius: $radius-xl;
+  background: $color-dark-card;
+  border: 1px solid rgba($color-dark-border, 0.5);
+  transition: border-color $transition-fast, transform $transition-base;
+
+  &:hover {
+    border-color: rgba($color-red, 0.2);
+    transform: translateY(-3px);
+  }
+
+  h3 {
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    line-height: $line-height-relaxed;
+  }
+}
+
+.differentiatorIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-lg;
+  background: rgba($color-red, 0.1);
+  color: $color-red;
+  margin-bottom: $space-md;
+}
+
+// FAQ
+.faqSection {
+  @include section-padding;
+  background: $color-navy;
+}
+
+.faqInner {
+  @include container($max-width-narrow);
 }
 
 // Bundles

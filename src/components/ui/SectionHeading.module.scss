@@ -15,10 +15,19 @@
   font-family: $font-body;
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: $letter-spacing-widest;
   @include gradient-text;
   margin-bottom: $space-md;
+}
+
+.labelLink {
+  text-decoration: none;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
 .title {

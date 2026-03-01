@@ -15,8 +15,8 @@ export default function BlurReveal({
   children,
   className = '',
   delay = 0,
-  duration = 0.9,
-  yOffset = 30,
+  duration = 0.5,
+  yOffset = 20,
 }: BlurRevealProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-60px' });

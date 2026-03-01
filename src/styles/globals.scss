@@ -1,8 +1,9 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
-// Overpass — matches existing MAPL TECH branding
-@import url('https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap');
+// Overpass font loaded via next/font in layout.tsx for optimal performance
+
+@layer base {
 
 *,
 *::before,
@@ -166,7 +167,7 @@ input, textarea, select {
   font-family: $font-body;
   font-weight: $font-weight-semibold;
   letter-spacing: $letter-spacing-wide;
-  text-transform: uppercase;
+  text-transform: capitalize;
   text-decoration: none;
   cursor: pointer;
   overflow: hidden;
@@ -231,17 +232,17 @@ input, textarea, select {
   // Sizes
   &.btn-sm {
     padding: 10px 20px;
-    font-size: $font-size-xs;
+    font-size: $font-size-md;
   }
 
   &.btn-md {
     padding: 14px 28px;
-    font-size: $font-size-sm;
+    font-size: $font-size-md;
   }
 
   &.btn-lg {
     padding: 18px 36px;
-    font-size: $font-size-sm;
+    font-size: $font-size-md;
   }
 }
 
@@ -257,6 +258,8 @@ html.lenis, html.lenis body {
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
+
+} // end @layer base
 
 // Reduced motion — respect user's OS accessibility setting
 @media (prefers-reduced-motion: reduce) {
