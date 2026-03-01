@@ -132,7 +132,7 @@ export default function HeroSection() {
             </p>
 
             {/* Buttons */}
-            <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4">
+            <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4" style={{ marginTop: 30 }}>
               <Link
                 href="/contact"
                 className="inline-flex items-center justify-center rounded-full px-8 py-4 text-[1.0625rem] font-semibold capitalize tracking-[0.08em] transition-all hover:brightness-110 active:scale-[0.98]"

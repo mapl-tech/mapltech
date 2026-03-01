@@ -113,9 +113,11 @@ export default function OurWorkPage() {
               <p>
                 Tell us about your project. We&apos;ll tell you exactly how we&apos;d approach it.
               </p>
-              <MagneticButton href="/contact" size="large">
-                Start Your Project <HiArrowRight />
-              </MagneticButton>
+              <div style={{ marginTop: 30 }}>
+                <MagneticButton href="/contact" size="large">
+                  Start Your Project <HiArrowRight />
+                </MagneticButton>
+              </div>
             </BlurReveal>
           </div>
         </div>

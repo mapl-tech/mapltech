@@ -160,7 +160,7 @@ export default function JamaicaPage() {
                 </p>
               </BlurReveal>
               <BlurReveal delay={0.3}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: 30 }}>
                   <MagneticButton href="/contact" size="large">
                     Start a Project <HiArrowRight />
                   </MagneticButton>

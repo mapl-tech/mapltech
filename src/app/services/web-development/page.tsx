@@ -110,7 +110,7 @@ export default function WebDevelopmentPage() {
             </p>
           </BlurReveal>
           <BlurReveal delay={0.3}>
-            <div className={styles.heroCta}>
+            <div className={styles.heroCta} style={{ marginTop: 30 }}>
               <MagneticButton href="/contact" size="large">
                 Start Your Project <HiArrowRight />
               </MagneticButton>
