@@ -67,11 +67,11 @@ $font-body: var(--font-overpass), 'Overpass', sans-serif;
 $font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
 // Font sizes — rem-based for user accessibility (respects browser font settings)
-// Minimum body text: 1rem (16px). Use xs/sm only for labels, badges, captions.
+// Minimum body text: 1.0625rem (17px). Use xs/sm only for labels, badges, captions.
 $font-size-xs: 0.8125rem;   // 13px — labels, badges only
 $font-size-sm: 0.9375rem;   // 15px — secondary text, captions
-$font-size-base: 1rem;      // 16px — body text minimum
-$font-size-md: 1.0625rem;   // 17px
+$font-size-base: 1.0625rem; // 17px — body text minimum
+$font-size-md: 1.125rem;    // 18px
 $font-size-lg: 1.25rem;     // 20px
 $font-size-xl: 1.5rem;      // 24px
 $font-size-2xl: 2rem;       // 32px

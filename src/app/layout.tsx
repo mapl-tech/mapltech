@@ -166,12 +166,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={overpass.variable}>
       <head>
-        {/* Google Analytics */}
+        {/* Preconnect to third-party origins for faster resource loading */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://static.hotjar.com" />
+        <link rel="dns-prefetch" href="https://static.hotjar.com" />
+
+        {/* Google Analytics — lazyOnload to prioritize page content */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-F2XZRRNH7S"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -180,8 +186,8 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* Hotjar */}
-        <Script id="hotjar" strategy="afterInteractive">
+        {/* Hotjar — lazyOnload to prioritize page content */}
+        <Script id="hotjar" strategy="lazyOnload">
           {`
             (function(h,o,t,j,a,r){
               h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
