@@ -115,7 +115,7 @@ export default function Header() {
             ))}
           </nav>
 
-          <Link href="/contact" className={styles.ctaButton}>
+          <Link href="/contact-us" className={styles.ctaButton}>
             Contact Us
           </Link>
 
@@ -187,7 +187,7 @@ export default function Header() {
             })}
           </div>
 
-          <Link href="/contact" className={styles.mobileCta}>
+          <Link href="/contact-us" className={styles.mobileCta}>
             Contact Us
           </Link>
         </div>

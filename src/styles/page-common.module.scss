@@ -510,6 +510,8 @@
   overflow: hidden;
   cursor: pointer;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &:hover .portfolioImage img {
     transform: scale(1.05);
@@ -522,6 +524,7 @@
   overflow: hidden;
   position: relative;
   background: $gradient-card;
+  flex-shrink: 0;
 
   img {
     width: 100%;
@@ -547,6 +550,9 @@
 
 .portfolioContent {
   padding: $space-xl;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 
   h3 {
     font-size: $font-size-lg;
@@ -559,6 +565,7 @@
     color: $color-text-body;
     @include line-clamp(2);
     margin-bottom: $space-md;
+    flex: 1;
   }
 }
 

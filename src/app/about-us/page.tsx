@@ -205,7 +205,7 @@ export default function AboutPage() {
                 Let&apos;s talk about what your agency actually needs - and build it right.
               </p>
               <div style={{ marginTop: '1.5rem' }}>
-                <MagneticButton href="/contact" size="large">
+                <MagneticButton href="/contact-us" size="large">
                   Start the Conversation <HiArrowRight />
                 </MagneticButton>
               </div>

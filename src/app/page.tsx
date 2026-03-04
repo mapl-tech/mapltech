@@ -74,7 +74,9 @@ export default function HomePage() {
     },
   ];
 
-  const featuredProjects = portfolioProjects.slice(0, 3);
+  const featuredProjects = portfolioProjects.filter((project) =>
+    ['LRO Staffing', 'Akuma Patterson Holdings', 'UNSVCC'].includes(project.title)
+  );
 
   return (
     <>
@@ -173,7 +175,7 @@ export default function HomePage() {
             subtitle="Real results from real agency partnerships."
           />
 
-          <div className={styles.metrics}>
+          <div className={`${styles.metrics} grid grid-cols-1 sm:grid-cols-3 gap-8`}>
             <div className={styles.metric}>
               <div className={styles.metricValue}>
                 <AnimatedCounter target={200} suffix="+" delay={0} />
@@ -225,8 +227,8 @@ export default function HomePage() {
           />
 
           <div className={styles.portfolioGrid}>
-            {featuredProjects.map((project, i) => (
-              <BlurReveal key={project.title} delay={i * 0.08}>
+            {featuredProjects.map((project, i) => {
+              const card = (
                 <div className={styles.portfolioCard}>
                   <div className={styles.portfolioImage}>
                     <Image
@@ -243,8 +245,20 @@ export default function HomePage() {
                     <p>{project.description}</p>
                   </div>
                 </div>
-              </BlurReveal>
-            ))}
+              );
+
+              return (
+                <BlurReveal key={project.title} delay={i * 0.08}>
+                  {project.url ? (
+                    <a href={project.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
+                      {card}
+                    </a>
+                  ) : (
+                    card
+                  )}
+                </BlurReveal>
+              );
+            })}
           </div>
 
           <BlurReveal>
@@ -346,7 +360,7 @@ export default function HomePage() {
           </BlurReveal>
           <BlurReveal delay={0.15}>
             <div className={styles.ctaActions}>
-              <MagneticButton href="/contact" size="large">
+              <MagneticButton href="/contact-us" size="large">
                 Start a Conversation <HiArrowRight aria-hidden="true" style={{ marginLeft: 8 }} />
               </MagneticButton>
               <MagneticButton href="/pricing" variant="secondary" size="large">

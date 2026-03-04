@@ -22,14 +22,14 @@ export const siteConfig = {
       { label: 'Custom Internal Tools', href: '/services/custom-internal-tools' },
     ]},
     { label: 'Pricing', href: '/pricing' },
-    { label: 'About Us', href: '/about', children: [
-      { label: 'About MAPL TECH', href: '/about' },
+    { label: 'About Us', href: '/about-us', children: [
+      { label: 'About MAPL TECH', href: '/about-us' },
       { label: 'MAPL TECH Nigeria', href: '/nigeria' },
       { label: 'MAPL TECH Jamaica', href: '/jamaica' },
     ]},
     { label: 'Our Work', href: '/our-work' },
     { label: 'Careers', href: '/careers' },
-    { label: 'Contact', href: '/contact' },
+    { label: 'Contact', href: '/contact-us' },
     { label: 'Referral', href: '/referral' },
   ],
 };
@@ -256,9 +256,10 @@ export const portfolioProjects = [
   {
     title: 'LRO Staffing',
     category: 'Custom Internal Tools',
-    description: 'Full site rebuild with a custom job board, applicant tracking integration, and recruiter-facing dashboards.',
-    tags: ['WordPress', 'Custom Development', 'API Integration'],
+    description: 'Interactive salary guide tool with dynamic filtering, real-time data visualization, and role-based salary benchmarking for recruiters and hiring managers.',
+    tags: ['Interactive Tool', 'Data Visualization', 'Custom Development'],
     image: '/images/project-lro-staffing.jpg',
+    url: 'https://www.lrostaffing.com/lro-salary-guide/2026-interactive-salary-guide/',
   },
   {
     title: 'Akuma Patterson Holdings',
@@ -266,6 +267,7 @@ export const portfolioProjects = [
     description: 'Automated the entire client lifecycle - from CRM lead capture to invoicing and project hand-off - eliminating manual data entry.',
     tags: ['Automation', 'CRM', 'AI Workflows'],
     image: '/images/project-akuma-patterson.png',
+    url: 'https://akumapatterson.com/',
   },
   {
     title: 'FOCAS Canada',
@@ -280,6 +282,7 @@ export const portfolioProjects = [
     description: 'Food service site with catering request workflow, multi-location finder, and mobile-first design.',
     tags: ['Restaurant', 'Custom Development', 'Maps'],
     image: '/images/mockup-catering.svg',
+    url: 'https://tdotjerk.ca/',
   },
   {
     title: 'Crowned Spice',
@@ -294,6 +297,7 @@ export const portfolioProjects = [
     description: 'Corporate business platform with service showcase, client onboarding workflows, and professional brand presence.',
     tags: ['Corporate', 'Custom Development', 'Branding'],
     image: '/images/mockup-corporate.svg',
+    url: 'https://crowngatestore.com/',
   },
   {
     title: 'Tashi Delek',
@@ -301,6 +305,7 @@ export const portfolioProjects = [
     description: 'Restaurant website with cultural storytelling, menu showcase, and location-driven local SEO for Tibetan cuisine.',
     tags: ['Restaurant', 'CMS', 'Local SEO'],
     image: '/images/mockup-restaurant.svg',
+    url: 'https://tdcafe.com/',
   },
   {
     title: 'Tricia Walters',
@@ -314,14 +319,16 @@ export const portfolioProjects = [
     category: 'Web Development',
     description: 'Internal operations dashboard with real-time organizational metrics, role-based access, and automated reporting.',
     tags: ['Dashboard', 'Analytics', 'Reporting'],
-    image: '/images/project-unsvcc.webp',
+    image: '/images/unsvcc.webp',
+    url: 'https://www.unsvcc.org/',
   },
   {
     title: 'Namaste Tibetan Kitchen',
     category: 'Web Development',
     description: 'Custom restaurant site with online ordering, real-time menu management, and SEO-optimized local search presence.',
     tags: ['Restaurant', 'E-commerce', 'CMS'],
-    image: '/images/mockup-restaurant.svg',
+    image: '/images/mockup-portal.svg',
+    url: 'https://namastekitchen.ca/',
   },
 ];
 

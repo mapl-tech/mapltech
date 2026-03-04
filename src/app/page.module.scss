@@ -324,14 +324,8 @@
 }
 
 .metrics {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $space-xl;
   margin-bottom: $space-4xl;
-
-  @include md {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  // Grid layout handled by Tailwind classes on the element
 }
 
 .metric {
@@ -468,6 +462,8 @@
   overflow: hidden;
   cursor: pointer;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &:hover .portfolioImage img {
     transform: scale(1.06);
@@ -479,6 +475,7 @@
   height: 220px;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 
   img {
     width: 100%;
@@ -505,6 +502,9 @@
 
 .portfolioContent {
   padding: $space-xl;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 
   h3 {
     font-family: $font-display;
@@ -517,6 +517,7 @@
     font-size: $font-size-base;
     color: $color-text-body;
     @include line-clamp(2);
+    flex: 1;
   }
 }
 

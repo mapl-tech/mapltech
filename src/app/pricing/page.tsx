@@ -167,7 +167,7 @@ export default function PricingPage() {
                       <li key={f}><HiCheck size={16} />{f}</li>
                     ))}
                   </ul>
-                  <MagneticButton href="/contact">
+                  <MagneticButton href="/contact-us">
                     {tier.price === 'Custom' ? 'Talk to Us' : 'Get Started'}
                   </MagneticButton>
                 </div>
@@ -203,7 +203,7 @@ export default function PricingPage() {
               <p>
                 Tell us what you need and we will recommend the right scope and budget. No pressure, no hard sell - just honest guidance.
               </p>
-              <MagneticButton href="/contact" variant="secondary">
+              <MagneticButton href="/contact-us" variant="secondary">
                 Book a Free Consultation <HiArrowRight />
               </MagneticButton>
             </div>
@@ -273,7 +273,7 @@ export default function PricingPage() {
                       <li key={f}><HiCheck size={16} />{f}</li>
                     ))}
                   </ul>
-                  <MagneticButton href="/contact">Get Started</MagneticButton>
+                  <MagneticButton href="/contact-us">Get Started</MagneticButton>
                 </div>
               </BlurReveal>
             ))}
@@ -326,7 +326,7 @@ export default function PricingPage() {
                       <li key={f}><HiCheck size={16} />{f}</li>
                     ))}
                   </ul>
-                  <MagneticButton href="/contact">Get Started</MagneticButton>
+                  <MagneticButton href="/contact-us">Get Started</MagneticButton>
                 </div>
               </BlurReveal>
             ))}
@@ -383,7 +383,7 @@ export default function PricingPage() {
                       <li key={f}><HiCheck size={16} />{f}</li>
                     ))}
                   </ul>
-                  <MagneticButton href="/contact">
+                  <MagneticButton href="/contact-us">
                     Become a Partner <HiArrowRight />
                   </MagneticButton>
                 </div>
@@ -435,7 +435,7 @@ export default function PricingPage() {
               Tell us what&apos;s eating up your team&apos;s time. We&apos;ll show you exactly where
               automation and better systems will save you money - and build you a plan to get there.
             </p>
-            <MagneticButton href="/contact" size="large">
+            <MagneticButton href="/contact-us" size="large">
               Book Your Free Strategy Call <HiArrowRight />
             </MagneticButton>
           </BlurReveal>

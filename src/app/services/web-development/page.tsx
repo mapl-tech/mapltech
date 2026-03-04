@@ -17,13 +17,29 @@ import { pricing } from '@/config/site';
 import styles from '@/styles/service-page.module.scss';
 
 export const metadata: Metadata = {
-  title: 'Web Development',
+  title: 'Custom Web Development for Agencies',
   description:
-    'Custom-coded websites engineered for speed, accessibility, and long-term maintainability. MAPL TECH handles the complex builds so your agency can focus on design and strategy.',
+    'MAPL TECH builds custom-coded websites engineered for speed, accessibility, and long-term maintainability. From headless CMS builds to full-stack React applications, we handle the complex development so your agency can focus on design and client strategy.',
+  keywords: [
+    'custom web development',
+    'agency web development partner',
+    'custom-coded websites',
+    'headless CMS development',
+    'full-stack web development',
+    'React web applications',
+    'WordPress development for agencies',
+    'performance-optimized websites',
+    'accessible web development',
+    'mobile-first web design',
+    'MAPL TECH web development',
+  ],
   openGraph: {
-    title: 'Web Development | MAPL TECH',
+    title: 'Custom Web Development for Agencies | MAPL TECH',
     description:
-      'Custom-coded, performance-optimized websites built for agencies - not page builders.',
+      'Custom-coded, performance-optimized websites built for agencies. From headless CMS to full-stack React, engineered for speed and accessibility.',
+  },
+  alternates: {
+    canonical: 'https://mapltech.com/services/web-development',
   },
 };
 
@@ -68,30 +84,64 @@ const features = [
 
 const processSteps = [
   {
-    title: 'Discovery & Scoping',
+    phase: 'Phase 01',
+    title: 'Discovery',
     description:
-      'We dig into your agency\'s needs, your client\'s goals, and the technical constraints. You get a clear spec and architecture plan before a single line of code.',
+      'We map your goals, audience, and technical landscape. You walk away with a clear project spec, sitemap, and architecture plan before we write a single line of code.',
   },
   {
-    title: 'Design Collaboration',
+    phase: 'Phase 02',
+    title: 'Design',
     description:
-      'We work alongside your designers with wireframes and interactive prototypes - making sure every design decision is technically sound and buildable.',
+      'Your designers lead the creative vision. We validate every mockup for technical feasibility, responsive behavior, and performance so nothing gets lost in translation.',
   },
   {
-    title: 'Build & QA',
+    phase: 'Phase 03',
+    title: 'Development',
     description:
-      'Iterative sprints with weekly demos. Every feature is tested for functionality, performance, accessibility, and cross-browser consistency.',
+      'Iterative sprints with weekly demos you can click through. Custom code, no shortcuts. Every component is built for speed, accessibility, and maintainability.',
   },
   {
-    title: 'Launch & Support',
+    phase: 'Phase 04',
+    title: 'Test & Launch',
     description:
-      'Zero-drama deployments with monitoring baked in. Retainer support keeps your site secure, fast, and evolving after launch.',
+      'Cross-browser QA, performance audits, and accessibility checks. We deploy with zero downtime and stay on for post-launch monitoring and support.',
   },
 ];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Custom Web Development for Agencies',
+  description: 'Custom-coded websites engineered for speed, accessibility, and long-term maintainability. From headless CMS builds to full-stack React applications.',
+  provider: {
+    '@type': 'Organization',
+    name: 'MAPL TECH',
+    url: 'https://mapltech.com',
+  },
+  url: 'https://mapltech.com/services/web-development',
+  serviceType: 'Web Development',
+  areaServed: ['Canada', 'Nigeria', 'Jamaica'],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Web Development Pricing',
+    itemListElement: pricing.webDevelopment.tiers.map((tier) => ({
+      '@type': 'Offer',
+      name: tier.name,
+      description: tier.description,
+      price: tier.price === 'Custom' ? undefined : tier.price.replace(/[^0-9]/g, ''),
+      priceCurrency: tier.price === 'Custom' ? undefined : 'USD',
+    })),
+  },
+};
 
 export default function WebDevelopmentPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className={styles.hero}>
         <div className={styles.heroInner}>
           <BlurReveal>
@@ -111,7 +161,7 @@ export default function WebDevelopmentPage() {
           </BlurReveal>
           <BlurReveal delay={0.3}>
             <div className={styles.heroCta} style={{ marginTop: 30 }}>
-              <MagneticButton href="/contact" size="large">
+              <MagneticButton href="/contact-us" size="large">
                 Start Your Project <HiArrowRight />
               </MagneticButton>
               <MagneticButton href="/pricing" variant="secondary" size="large">
@@ -143,22 +193,22 @@ export default function WebDevelopmentPage() {
         </div>
       </section>
 
-      <section className={styles.process}>
+      <section className={styles.process} aria-label="Our web development process">
         <div className={styles.processInner}>
           <SectionHeading
             label="Our Process"
-            title="How We Ship"
-            subtitle="A proven workflow built around agency timelines and client expectations."
+            title="From Brief to Browser, Step by Step"
+            subtitle="A battle-tested workflow built around agency timelines and real client expectations."
           />
-          <div className={styles.processSteps}>
+          <div className={styles.processGrid}>
+            <div className={styles.processLine} aria-hidden="true" />
             {processSteps.map((step, i) => (
               <BlurReveal key={step.title} delay={i * 0.1}>
-                <div className={styles.processStep}>
+                <div className={styles.processCard}>
                   <div className={styles.processNumber}>{i + 1}</div>
-                  <div className={styles.processContent}>
-                    <h3>{step.title}</h3>
-                    <p>{step.description}</p>
-                  </div>
+                  <span className={styles.processLabel}>{step.phase}</span>
+                  <h3 className={styles.processTitle}>{step.title}</h3>
+                  <p className={styles.processDescription}>{step.description}</p>
                 </div>
               </BlurReveal>
             ))}
@@ -173,7 +223,7 @@ export default function WebDevelopmentPage() {
             title="Transparent Pricing, No Surprises"
             subtitle="Pick the tier that matches your project scope. Every plan includes post-launch support."
           />
-          <div className={styles.pricingGrid}>
+          <div className={`${styles.pricingGrid} grid grid-cols-1 sm:grid-cols-2 gap-8`}>
             {pricing.webDevelopment.tiers.map((tier, i) => (
               <BlurReveal key={tier.name} delay={i * 0.08}>
                 <div className={`${styles.pricingCard} ${i === 1 ? styles.featured : ''}`}>
@@ -188,7 +238,7 @@ export default function WebDevelopmentPage() {
                       <li key={f}><HiCheck size={16} />{f}</li>
                     ))}
                   </ul>
-                  <MagneticButton href="/contact">
+                  <MagneticButton href="/contact-us">
                     {tier.price === 'Custom' ? 'Talk to Us' : 'Get Started'} <HiArrowRight />
                   </MagneticButton>
                 </div>

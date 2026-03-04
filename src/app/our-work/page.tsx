@@ -78,8 +78,8 @@ export default function OurWorkPage() {
           </div>
 
           <div className={styles.cardsGrid}>
-            {filtered.map((project, i) => (
-              <BlurReveal key={project.title} delay={i * 0.06}>
+            {filtered.map((project, i) => {
+              const card = (
                 <div className={styles.portfolioCard}>
                   <div className={styles.portfolioImage}>
                     <Image
@@ -99,8 +99,20 @@ export default function OurWorkPage() {
                     </div>
                   </div>
                 </div>
-              </BlurReveal>
-            ))}
+              );
+
+              return (
+                <BlurReveal key={project.title} delay={i * 0.06}>
+                  {project.url ? (
+                    <a href={project.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
+                      {card}
+                    </a>
+                  ) : (
+                    card
+                  )}
+                </BlurReveal>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -114,7 +126,7 @@ export default function OurWorkPage() {
                 Tell us about your project. We&apos;ll tell you exactly how we&apos;d approach it.
               </p>
               <div style={{ marginTop: 30 }}>
-                <MagneticButton href="/contact" size="large">
+                <MagneticButton href="/contact-us" size="large">
                   Start Your Project <HiArrowRight />
                 </MagneticButton>
               </div>

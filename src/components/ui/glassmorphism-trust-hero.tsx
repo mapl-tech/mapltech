@@ -134,7 +134,7 @@ export default function HeroSection() {
             {/* Buttons */}
             <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4" style={{ marginTop: 30 }}>
               <Link
-                href="/contact"
+                href="/contact-us"
                 className="inline-flex items-center justify-center rounded-full px-6 py-3 sm:px-8 sm:py-4 text-[1.0625rem] font-semibold capitalize tracking-[0.08em] transition-all hover:brightness-110 active:scale-[0.98]"
                 style={{
                   background: 'linear-gradient(135deg, #c4213c 0%, #F03350 50%, #ff3d5a 100%)',
