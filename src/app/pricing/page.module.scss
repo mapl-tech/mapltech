@@ -118,14 +118,6 @@
   grid-template-columns: 1fr;
   gap: $space-xl;
   margin-bottom: $space-3xl;
-
-  @include md {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include lg {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .tierCard {
@@ -303,19 +295,9 @@
 }
 
 .retainersGrid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: $space-lg;
-
-  > * {
-    width: 100%;
-
-    @include sm {
-      flex: 1;
-      min-width: 0;
-    }
-  }
 }
 
 .retainerCard {

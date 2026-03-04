@@ -118,8 +118,8 @@ export default function AboutPage() {
             <BlurReveal delay={0.15}>
               <div className={styles.imageBlock}>
                 <Image
-                  src="/images/team-about.jpg"
-                  alt="MAPL TECH team collaborating on a project"
+                  src="/images/homepage-approach.jpg"
+                  alt="Diverse tech professionals collaborating at a laptop"
                   width={600}
                   height={400}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
