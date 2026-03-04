@@ -175,8 +175,8 @@ export default function NigeriaPage() {
             <BlurReveal delay={0.4}>
               <div className={styles.imageBlock}>
                 <Image
-                  src="/images/mockup-nigeria-team.svg"
-                  alt="MAPL TECH Nigeria branch network visualization"
+                  src="/images/hero-our-work.jpg"
+                  alt="MAPL TECH Nigeria engineering team collaboration"
                   width={600}
                   height={450}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
