@@ -25,9 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${post.title} | MAPL TECH Blog`,
     description: post.excerpt,
     keywords: `${post.category}, MAPL TECH, ${post.author.name}, agency technology`,
-    alternates: {
-      canonical: `https://mapltech.com/blog/${post.slug}`,
-    },
+    alternates: { canonical: `https://mapltech.com/blog/${post.slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt,
@@ -37,14 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       authors: [post.author.name],
       section: post.category,
       siteName: 'MAPL TECH',
-      images: [
-        {
-          url: post.coverImage,
-          width: 1200,
-          height: 630,
-          alt: post.coverImageAlt,
-        },
-      ],
+      images: [{ url: post.coverImage, width: 1200, height: 630, alt: post.coverImageAlt }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -73,33 +64,19 @@ export default async function BlogPostPage({ params }: Props) {
     description: post.excerpt,
     datePublished: post.date,
     dateModified: post.date,
-    author: {
-      '@type': 'Person',
-      name: post.author.name,
-      jobTitle: post.author.role,
-    },
+    author: { '@type': 'Person', name: post.author.name, jobTitle: post.author.role },
     publisher: {
       '@type': 'Organization',
       name: 'MAPL TECH',
       url: 'https://mapltech.com',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://mapltech.com/images/mapl-tech-logo.svg',
-      },
+      logo: { '@type': 'ImageObject', url: 'https://mapltech.com/images/mapl-tech-logo.svg' },
     },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `https://mapltech.com/blog/${post.slug}`,
-    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://mapltech.com/blog/${post.slug}` },
     url: `https://mapltech.com/blog/${post.slug}`,
     articleSection: post.category,
     wordCount: post.content.split(' ').length,
     timeRequired: `PT${post.readTime}M`,
-    image: {
-      '@type': 'ImageObject',
-      url: post.coverImage,
-      description: post.coverImageAlt,
-    },
+    image: { '@type': 'ImageObject', url: post.coverImage, description: post.coverImageAlt },
   };
 
   return (
@@ -109,11 +86,26 @@ export default async function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Reading progress indicator */}
       <ReadingProgress />
 
-      {/* Post hero */}
+      {/* ── Full-bleed image hero ───────────────────────────────────────── */}
       <header className={styles.postHero}>
+        {/* Background image */}
+        <div className={styles.postHeroBg} aria-hidden="true">
+          <Image
+            src={post.coverImage}
+            alt=""
+            fill
+            sizes="100vw"
+            style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
+            priority
+          />
+        </div>
+
+        {/* Layered gradient — cinematic dark vignette */}
+        <div className={styles.postHeroGradient} aria-hidden="true" />
+
+        {/* Content on top of image */}
         <div className={styles.postHeroInner}>
           {/* Breadcrumb */}
           <nav className={styles.postBreadcrumb} aria-label="Breadcrumb">
@@ -124,55 +116,46 @@ export default async function BlogPostPage({ params }: Props) {
             <span aria-current="page">{post.category}</span>
           </nav>
 
-          <div className={styles.postCategory} aria-label={`Category: ${post.category}`}>
-            {post.category}
-          </div>
-
-          <h1 className={styles.postTitle}>{post.title}</h1>
-
-          {/* Post meta */}
-          <div className={styles.postMeta}>
-            <div className={styles.postMetaAuthor}>
-              <div className={styles.authorAvatar} aria-hidden="true">
-                {initials(post.author.name)}
-              </div>
-              <div className={styles.postMetaAuthorInfo}>
-                <p className={styles.authorName}>{post.author.name}</p>
-                <p className={styles.authorRole}>{post.author.role}</p>
-              </div>
+          {/* Category + title + meta stacked at bottom */}
+          <div className={styles.postHeroContent}>
+            <div className={styles.postCategory} aria-label={`Category: ${post.category}`}>
+              {post.category}
             </div>
 
-            <div className={styles.postMetaDivider} aria-hidden="true" />
+            <h1 className={styles.postTitle}>{post.title}</h1>
 
-            <div className={styles.postMetaItem}>
-              <HiCalendar size={14} aria-hidden="true" />
-              <time dateTime={post.date}>{post.date}</time>
-            </div>
+            <p className={styles.postExcerpt}>{post.excerpt}</p>
 
-            <div className={styles.postMetaDivider} aria-hidden="true" />
+            <div className={styles.postMeta}>
+              <div className={styles.postMetaAuthor}>
+                <div className={styles.authorAvatar} aria-hidden="true">
+                  {initials(post.author.name)}
+                </div>
+                <div className={styles.postMetaAuthorInfo}>
+                  <p className={styles.authorName}>{post.author.name}</p>
+                  <p className={styles.authorRole}>{post.author.role}</p>
+                </div>
+              </div>
 
-            <div className={styles.postMetaItem}>
-              <HiClock size={14} aria-hidden="true" />
-              <span>{post.readTime} min read</span>
+              <div className={styles.postMetaDivider} aria-hidden="true" />
+
+              <div className={styles.postMetaItem}>
+                <HiCalendar size={14} aria-hidden="true" />
+                <time dateTime={post.date}>{post.date}</time>
+              </div>
+
+              <div className={styles.postMetaDivider} aria-hidden="true" />
+
+              <div className={styles.postMetaItem}>
+                <HiClock size={14} aria-hidden="true" />
+                <span>{post.readTime} min read</span>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Cover image */}
-      <div className={styles.postCoverImageWrap}>
-        <Image
-          src={post.coverImage}
-          alt={post.coverImageAlt}
-          fill
-          sizes="(max-width: 900px) 100vw, 900px"
-          style={{ objectFit: 'cover', objectPosition: 'center' }}
-          priority
-        />
-        <div className={styles.postCoverImageOverlay} aria-hidden="true" />
-      </div>
-
-      {/* Article content */}
+      {/* ── Article content ────────────────────────────────────────────── */}
       <main className={styles.postContent}>
         <div className={styles.postContentInner}>
           <article>
@@ -182,7 +165,7 @@ export default async function BlogPostPage({ params }: Props) {
             />
           </article>
 
-          {/* Inline CTA */}
+          {/* CTA */}
           <aside className={styles.postCta} aria-label="Contact MAPL TECH">
             <h3>Ready to put this into practice?</h3>
             <p>
@@ -194,60 +177,42 @@ export default async function BlogPostPage({ params }: Props) {
             </MagneticButton>
           </aside>
 
-          {/* Back link */}
-          <div style={{ marginTop: '2rem' }}>
-            <Link
-              href="/blog"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                color: 'rgba(255,255,255,0.5)',
-                textDecoration: 'none',
-                fontSize: '0.9375rem',
-                fontWeight: 600,
-                transition: 'color 150ms ease',
-              }}
-              aria-label="Back to all blog posts"
-            >
-              <HiArrowLeft aria-hidden="true" /> Back to Blog
-            </Link>
-          </div>
+          {/* Back */}
+          <Link href="/blog" className={styles.backLink} aria-label="Back to all blog posts">
+            <HiArrowLeft aria-hidden="true" /> Back to Blog
+          </Link>
         </div>
       </main>
 
-      {/* Related posts */}
+      {/* ── Related posts ──────────────────────────────────────────────── */}
       {related.length > 0 && (
         <section className={styles.relatedSection} aria-label="Related articles">
           <div className={styles.relatedInner}>
             <h2 className={styles.relatedTitle}>Related Articles</h2>
-            <ul
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '1.5rem',
-                listStyle: 'none',
-                padding: 0,
-                margin: 0,
-              }}
-              role="list"
-            >
+            <ul className={styles.relatedGrid} role="list">
               {related.map((rel) => (
                 <li key={rel.slug} role="listitem">
                   <Link
                     href={`/blog/${rel.slug}`}
                     className={styles.card}
-                    aria-label={`${rel.title} — ${rel.category}`}
+                    aria-label={`${rel.title} — ${rel.category}, ${rel.readTime} min read`}
                   >
-                    <div className={styles.cardImageBlock} aria-hidden="true">
-                      <div className={styles.cardImageBg} />
-                      <div className={styles.cardImagePattern} />
+                    <div className={styles.cardImageBlock}>
+                      <Image
+                        src={rel.coverImage}
+                        alt={rel.coverImageAlt}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        style={{ objectFit: 'cover' }}
+                      />
+                      <div className={styles.cardImageOverlay} aria-hidden="true" />
                       <span className={styles.cardCategory}>{rel.category}</span>
                     </div>
                     <div className={styles.cardBody}>
                       <div className={styles.cardMeta}>
                         <time dateTime={rel.date}>{rel.date}</time>
                         <span aria-hidden="true">·</span>
+                        <HiClock size={12} aria-hidden="true" />
                         <span>{rel.readTime} min</span>
                       </div>
                       <h3 className={styles.cardTitle}>{rel.title}</h3>
@@ -273,4 +238,3 @@ export default async function BlogPostPage({ params }: Props) {
     </>
   );
 }
-
