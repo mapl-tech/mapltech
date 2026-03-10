@@ -17,6 +17,7 @@ import MagneticButton from '@/components/ui/MagneticButton';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
 import ContactForm from '@/components/ui/ContactForm';
+import ClientLogoCarousel from '@/components/ui/ClientLogoCarousel';
 import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
@@ -134,6 +135,21 @@ const stats = [
   { value: '$4B+', label: 'Nigerian tech ecosystem value' },
 ];
 
+const nigeriaLogos = [
+  'MTN Nigeria',
+  'Dangote Group',
+  'Flutterwave',
+  'Paystack',
+  'Interswitch',
+  'Zenith Bank',
+  'GTBank',
+  'Access Bank',
+  'Airtel Nigeria',
+  'Konga',
+  'Sterling Bank',
+  'Fidelity Bank',
+];
+
 export default function NigeriaPage() {
   return (
     <>
@@ -185,6 +201,16 @@ export default function NigeriaPage() {
               </div>
             </BlurReveal>
           </div>
+        </div>
+      </section>
+
+      {/* Client Logo Carousel */}
+      <section className={`${styles.section} ${styles.dark}`} style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
+        <div className={styles.sectionInner}>
+          <ClientLogoCarousel
+            logos={nigeriaLogos}
+            label="Trusted by leading Nigerian brands"
+          />
         </div>
       </section>
 

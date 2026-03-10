@@ -15,6 +15,7 @@ import MagneticButton from '@/components/ui/MagneticButton';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
 import ContactForm from '@/components/ui/ContactForm';
+import ClientLogoCarousel from '@/components/ui/ClientLogoCarousel';
 import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
@@ -132,6 +133,21 @@ const stats = [
   { value: '$500M+', label: 'Jamaica\'s growing digital economy' },
 ];
 
+const jamaicaLogos = [
+  'Digicel',
+  'GraceKennedy',
+  'NCB Financial',
+  'Sagicor',
+  'Jamaica Broilers',
+  'Supreme Ventures',
+  'VM Group',
+  'Scotia Group',
+  'Carreras',
+  'JN Group',
+  'Petrojam',
+  'JMMB Group',
+];
+
 export default function JamaicaPage() {
   return (
     <>
@@ -183,6 +199,16 @@ export default function JamaicaPage() {
               </div>
             </BlurReveal>
           </div>
+        </div>
+      </section>
+
+      {/* Client Logo Carousel */}
+      <section className={`${styles.section} ${styles.dark}`} style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
+        <div className={styles.sectionInner}>
+          <ClientLogoCarousel
+            logos={jamaicaLogos}
+            label="Trusted by leading Caribbean brands"
+          />
         </div>
       </section>
 
