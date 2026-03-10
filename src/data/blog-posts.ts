@@ -23,7 +23,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Automation & AI',
     date: 'March 3, 2026',
     readTime: 7,
-    author: { name: 'Dami Adeyemi', role: 'Head of Automation, MAPL TECH Nigeria' },
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
     featured: true,
     coverImage: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1200&q=80',
     coverImageAlt: 'Abstract AI neural network visualization representing multimodal intelligence',
@@ -61,7 +61,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Web Development',
     date: 'February 24, 2026',
     readTime: 6,
-    author: { name: 'Kwame Asante', role: 'Lead Engineer, MAPL TECH' },
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
     coverImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',
     coverImageAlt: 'Code on a computer monitor in a modern development workspace',
     content: `
@@ -93,7 +93,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Industry',
     date: 'February 17, 2026',
     readTime: 8,
-    author: { name: 'Adaeze Okonkwo', role: 'Director of Partnerships, MAPL TECH Nigeria' },
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
     coverImage: 'https://images.unsplash.com/photo-1580894894513-541e068a3e2b?auto=format&fit=crop&w=1200&q=80',
     coverImageAlt: 'African business professionals collaborating in a modern office',
     content: `
@@ -126,7 +126,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Internal Tools',
     date: 'February 10, 2026',
     readTime: 9,
-    author: { name: 'Tolu Bakare', role: 'Senior Engineer, MAPL TECH Nigeria' },
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
     coverImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
     coverImageAlt: 'Data analytics dashboard displayed on a laptop screen',
     content: `
@@ -161,7 +161,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Automation & AI',
     date: 'February 3, 2026',
     readTime: 7,
-    author: { name: 'Seun Oladipo', role: 'AI Systems Lead, MAPL TECH' },
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
     coverImage: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80',
     coverImageAlt: 'AI processor chip representing machine learning model comparison',
     content: `
@@ -194,7 +194,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Web Development',
     date: 'January 27, 2026',
     readTime: 6,
-    author: { name: 'Kwame Asante', role: 'Lead Engineer, MAPL TECH' },
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
     coverImage: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80',
     coverImageAlt: 'Web performance analytics and speed metrics on a monitor',
     content: `
@@ -225,7 +225,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Internal Tools',
     date: 'January 20, 2026',
     readTime: 6,
-    author: { name: 'Tolu Bakare', role: 'Senior Engineer, MAPL TECH Nigeria' },
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
     coverImage: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=1200&q=80',
     coverImageAlt: 'Team planning workflow on sticky notes and whiteboard',
     content: `
@@ -257,7 +257,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Automation & AI',
     date: 'January 13, 2026',
     readTime: 7,
-    author: { name: 'Dami Adeyemi', role: 'Head of Automation, MAPL TECH Nigeria' },
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
     coverImage: 'https://images.unsplash.com/photo-1589254066213-a0c9dc853511?auto=format&fit=crop&w=1200&q=80',
     coverImageAlt: 'Person using smartphone for AI-powered voice communication',
     content: `

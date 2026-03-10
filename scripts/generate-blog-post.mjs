@@ -87,12 +87,7 @@ MAPL TECH's four content categories:
 - "Internal Tools" — dashboards, CRMs, client portals, Notion alternatives, custom admin panels
 - "Industry" — digital transformation in Africa and the Caribbean, fintech, payments, tech ecosystem
 
-Author roster (pick the best fit):
-- Dami Adeyemi, Head of Automation, MAPL TECH Nigeria → Automation & AI
-- Tolu Okafor, Lead Engineer, MAPL TECH → Web Development / Internal Tools
-- Kwame Asante, Product Lead, MAPL TECH → Internal Tools
-- Jade Campbell, Director of Strategy, MAPL TECH Jamaica → Industry
-- Remi Fashola, Senior Developer, MAPL TECH → any technical topic
+Author: All posts are published by MAPL TECH (name: "MAPL TECH", role: "Technology Agency").
 
 Voice: sharp, expert, practitioner-level. Specific and concrete — no corporate fluff.
 Content format: Full HTML using <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>. Start with <p class="lead">. Target 700–900 words. Include real tool names, numbers, and actionable insights.`,
