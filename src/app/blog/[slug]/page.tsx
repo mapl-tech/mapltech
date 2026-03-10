@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { HiArrowLeft, HiArrowRight, HiClock, HiCalendar, HiChevronRight } from 'react-icons/hi2';
 import { getPostBySlug, getRelatedPosts, blogPosts } from '@/data/blog-posts';
 import ReadingProgress from '@/components/ui/ReadingProgress';
@@ -36,11 +37,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       authors: [post.author.name],
       section: post.category,
       siteName: 'MAPL TECH',
+      images: [
+        {
+          url: post.coverImage,
+          width: 1200,
+          height: 630,
+          alt: post.coverImageAlt,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
+      images: [post.coverImage],
     },
   };
 }
@@ -85,6 +95,11 @@ export default async function BlogPostPage({ params }: Props) {
     articleSection: post.category,
     wordCount: post.content.split(' ').length,
     timeRequired: `PT${post.readTime}M`,
+    image: {
+      '@type': 'ImageObject',
+      url: post.coverImage,
+      description: post.coverImageAlt,
+    },
   };
 
   return (
@@ -143,6 +158,19 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </div>
       </header>
+
+      {/* Cover image */}
+      <div className={styles.postCoverImageWrap}>
+        <Image
+          src={post.coverImage}
+          alt={post.coverImageAlt}
+          fill
+          sizes="(max-width: 900px) 100vw, 900px"
+          style={{ objectFit: 'cover', objectPosition: 'center' }}
+          priority
+        />
+        <div className={styles.postCoverImageOverlay} aria-hidden="true" />
+      </div>
 
       {/* Article content */}
       <main className={styles.postContent}>

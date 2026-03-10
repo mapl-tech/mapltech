@@ -9,6 +9,8 @@ export interface BlogPost {
   readTime: number;
   author: { name: string; role: string };
   featured?: boolean;
+  coverImage: string;
+  coverImageAlt: string;
   content: string;
 }
 
@@ -23,6 +25,8 @@ export const blogPosts: BlogPost[] = [
     readTime: 7,
     author: { name: 'Dami Adeyemi', role: 'Head of Automation, MAPL TECH Nigeria' },
     featured: true,
+    coverImage: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Abstract AI neural network visualization representing multimodal intelligence',
     content: `
 <p class="lead">For the past three years, AI automation has been largely text-in, text-out. You feed a model a prompt, it gives you words back, and your workflow pipes those words somewhere useful. GPT-4o changes that equation fundamentally — and agencies that understand this shift early will have a significant head start.</p>
 
@@ -58,6 +62,8 @@ export const blogPosts: BlogPost[] = [
     date: 'February 24, 2026',
     readTime: 6,
     author: { name: 'Kwame Asante', role: 'Lead Engineer, MAPL TECH' },
+    coverImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Code on a computer monitor in a modern development workspace',
     content: `
 <p class="lead">Next.js 15 shipped in late 2024 with a set of changes that initially looked incremental — React 19 support, improved caching defaults, the Turbopack compiler reaching stability. Twelve months on, those changes have compounded into a meaningful performance gap between App Router codebases and their Pages Router counterparts.</p>
 
@@ -88,6 +94,8 @@ export const blogPosts: BlogPost[] = [
     date: 'February 17, 2026',
     readTime: 8,
     author: { name: 'Adaeze Okonkwo', role: 'Director of Partnerships, MAPL TECH Nigeria' },
+    coverImage: 'https://images.unsplash.com/photo-1580894894513-541e068a3e2b?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'African business professionals collaborating in a modern office',
     content: `
 <p class="lead">By 2030, Africa's digital economy is projected to reach $4 trillion. That number gets cited often in investor decks and conference keynotes. What gets cited less often is the infrastructure context that makes building for that economy genuinely different from building for North American or European markets — and the specific engineering decisions that separate products that work from products that don't.</p>
 
@@ -119,6 +127,8 @@ export const blogPosts: BlogPost[] = [
     date: 'February 10, 2026',
     readTime: 9,
     author: { name: 'Tolu Bakare', role: 'Senior Engineer, MAPL TECH Nigeria' },
+    coverImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Data analytics dashboard displayed on a laptop screen',
     content: `
 <p class="lead">Last quarter, we shipped a client portal for a Lagos-based integrated marketing agency. The brief was clear: replace a patchwork of WhatsApp messages, emailed invoices, and manual project updates with a single system that clients could log into to see everything. Twelve weeks from brief to production. Here's what we built, what surprised us, and what we'd do differently.</p>
 
@@ -152,6 +162,8 @@ export const blogPosts: BlogPost[] = [
     date: 'February 3, 2026',
     readTime: 7,
     author: { name: 'Seun Oladipo', role: 'AI Systems Lead, MAPL TECH' },
+    coverImage: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'AI processor chip representing machine learning model comparison',
     content: `
 <p class="lead">The "Claude vs GPT" debate generates enormous amounts of content that is almost entirely useless for making real production decisions. Benchmark scores and arena ratings tell you how models perform on curated evaluation sets, not how they behave when you're running 500 invoice extractions a day or routing client briefs through a classification pipeline. This post is about the latter.</p>
 
@@ -183,6 +195,8 @@ export const blogPosts: BlogPost[] = [
     date: 'January 27, 2026',
     readTime: 6,
     author: { name: 'Kwame Asante', role: 'Lead Engineer, MAPL TECH' },
+    coverImage: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Web performance analytics and speed metrics on a monitor',
     content: `
 <p class="lead">When Google replaced First Input Delay (FID) with Interaction to Next Paint (INP) as a Core Web Vital in March 2024, a lot of agencies assumed it wouldn't change much in practice. INP measures the latency of all interactions on a page — clicks, taps, keyboard inputs — not just the first one. In the first six months after the switch, INP failures became the most common Core Web Vitals issue we see in new client audits. And unlike LCP or CLS, fixing them requires understanding your JavaScript execution model, not just your image loading strategy.</p>
 
@@ -212,6 +226,8 @@ export const blogPosts: BlogPost[] = [
     date: 'January 20, 2026',
     readTime: 6,
     author: { name: 'Tolu Bakare', role: 'Senior Engineer, MAPL TECH Nigeria' },
+    coverImage: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Team planning workflow on sticky notes and whiteboard',
     content: `
 <p class="lead">Every agency we talk to has a Notion database they're slightly embarrassed by. It started as a clean project tracker, then someone added a client CRM view, then a content calendar, then an invoicing log. Now it has 47 properties per project record, three automations that conflict with each other, and a filter setup that only one person on the team fully understands. The question is never whether to build something custom — it's when.</p>
 
@@ -242,6 +258,8 @@ export const blogPosts: BlogPost[] = [
     date: 'January 13, 2026',
     readTime: 7,
     author: { name: 'Dami Adeyemi', role: 'Head of Automation, MAPL TECH Nigeria' },
+    coverImage: 'https://images.unsplash.com/photo-1589254066213-a0c9dc853511?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Person using smartphone for AI-powered voice communication',
     content: `
 <p class="lead">Twelve months ago, AI voice agents were impressive demos that weren't quite ready for real business use. The latency was noticeable, the voices were subtly robotic, and the context handling fell apart in anything but linear conversations. The tools available today — particularly Vapi, Retell AI, and ElevenLabs' conversational AI product — have cleared those hurdles decisively. We are actively building production voice automation for agency clients right now, and the results are worth examining in detail.</p>
 

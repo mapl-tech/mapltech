@@ -2,16 +2,13 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { HiArrowRight, HiClock, HiCalendar } from 'react-icons/hi2';
 import { blogPosts, categories, type BlogCategory } from '@/data/blog-posts';
 import styles from '@/styles/blog.module.scss';
 
 function initials(name: string) {
-  return name
-    .split(' ')
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join('');
+  return name.split(' ').slice(0, 2).map((w) => w[0]).join('');
 }
 
 export default function BlogGrid() {
@@ -27,19 +24,14 @@ export default function BlogGrid() {
 
   const counts = useMemo(() => {
     const map: Record<string, number> = { All: nonFeatured.length };
-    categories.forEach((c) => {
-      map[c] = nonFeatured.filter((p) => p.category === c).length;
-    });
+    categories.forEach((c) => { map[c] = nonFeatured.filter((p) => p.category === c).length; });
     return map;
   }, []);
 
   return (
     <>
       {/* Filter bar */}
-      <nav
-        className={styles.filterSection}
-        aria-label="Filter blog posts by category"
-      >
+      <nav className={styles.filterSection} aria-label="Filter blog posts by category">
         <div className={styles.filterInner} role="list">
           {(['All', ...categories] as const).map((cat) => (
             <button
@@ -48,18 +40,16 @@ export default function BlogGrid() {
               className={`${styles.filterBtn} ${active === cat ? styles.active : ''}`}
               onClick={() => setActive(cat)}
               aria-pressed={active === cat}
-              aria-label={`Show ${cat === 'All' ? 'all posts' : cat + ' posts'} (${counts[cat]} posts)`}
+              aria-label={`Show ${cat === 'All' ? 'all posts' : cat + ' posts'} (${counts[cat] ?? 0} posts)`}
             >
               {cat}
-              <span className={styles.filterCount} aria-hidden="true">
-                {counts[cat] ?? 0}
-              </span>
+              <span className={styles.filterCount} aria-hidden="true">{counts[cat] ?? 0}</span>
             </button>
           ))}
         </div>
       </nav>
 
-      {/* Featured post — always visible */}
+      {/* Featured post */}
       {featured && active === 'All' && (
         <section className={styles.featuredSection} aria-label="Featured post">
           <div className={styles.featuredInner}>
@@ -68,9 +58,17 @@ export default function BlogGrid() {
               className={styles.featuredCard}
               aria-label={`Read featured post: ${featured.title}`}
             >
-              {/* Visual side */}
-              <div className={styles.featuredImageSide} aria-hidden="true">
-                <div className={styles.featuredImagePattern} />
+              {/* Image side */}
+              <div className={styles.featuredImageSide}>
+                <Image
+                  src={featured.coverImage}
+                  alt={featured.coverImageAlt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  style={{ objectFit: 'cover' }}
+                  priority
+                />
+                <div className={styles.featuredImageOverlay} aria-hidden="true" />
                 <span className={styles.featuredCategoryBadge}>{featured.category}</span>
                 <span className={styles.featuredNewBadge}>Latest Post</span>
               </div>
@@ -112,9 +110,7 @@ export default function BlogGrid() {
       <section className={styles.gridSection} aria-label={`${active === 'All' ? 'All' : active} blog posts`}>
         <div className={styles.gridInner}>
           <div className={styles.gridHeader}>
-            <h2 className={styles.gridTitle}>
-              {active === 'All' ? 'All Articles' : active}
-            </h2>
+            <h2 className={styles.gridTitle}>{active === 'All' ? 'All Articles' : active}</h2>
             <span className={styles.gridCount} aria-live="polite" aria-atomic="true">
               {filtered.length} {filtered.length === 1 ? 'post' : 'posts'}
             </span>
@@ -131,9 +127,15 @@ export default function BlogGrid() {
                     className={styles.card}
                     aria-label={`${post.title} — ${post.category}, ${post.readTime} min read`}
                   >
-                    <div className={styles.cardImageBlock} aria-hidden="true">
-                      <div className={styles.cardImageBg} />
-                      <div className={styles.cardImagePattern} />
+                    <div className={styles.cardImageBlock}>
+                      <Image
+                        src={post.coverImage}
+                        alt={post.coverImageAlt}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        style={{ objectFit: 'cover' }}
+                      />
+                      <div className={styles.cardImageOverlay} aria-hidden="true" />
                       <span className={styles.cardCategory}>{post.category}</span>
                     </div>
 
