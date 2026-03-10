@@ -14,30 +14,8 @@ import {
   Plane,
 } from 'lucide-react';
 
-// Air Canada maple leaf SVG mark (inline)
-const AirCanadaIcon = ({ className }: { className?: string }) => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-  >
-    <path
-      d="M12 2C11.5 4.5 9.5 5.5 7 5.5C8 7 7.5 8.5 6 9.5C8 9.5 9.5 10.5 9.5 12.5C10.5 11 12 10.5 12 10.5C12 10.5 13.5 11 14.5 12.5C14.5 10.5 16 9.5 18 9.5C16.5 8.5 16 7 17 5.5C14.5 5.5 12.5 4.5 12 2Z"
-      fill="currentColor"
-    />
-    <path
-      d="M8 15L6 22H9L10.5 18L12 19.5L13.5 18L15 22H18L16 15C14.8 16 13.5 16.5 12 16.5C10.5 16.5 9.2 16 8 15Z"
-      fill="currentColor"
-    />
-  </svg>
-);
-
 const CLIENTS = [
-  { name: 'Air Canada', icon: AirCanadaIcon },
+  { name: 'Air Canada', icon: Plane },
   { name: 'Acme Corp', icon: Hexagon },
   { name: 'Quantum', icon: Triangle },
   { name: 'Command+Z', icon: Command },
