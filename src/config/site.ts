@@ -20,6 +20,7 @@ export const siteConfig = {
       { label: 'Web Development', href: '/services/web-development' },
       { label: 'Automation & AI', href: '/services/automation-ai-workflow-setup' },
       { label: 'Custom Internal Tools', href: '/services/custom-internal-tools' },
+      { label: 'Cloud Engineering', href: '/services/cloud-engineering' },
     ]},
     { label: 'Pricing', href: '/pricing' },
     { label: 'About Us', href: '/about-us', children: [
@@ -28,8 +29,8 @@ export const siteConfig = {
       { label: 'MAPL TECH Jamaica', href: '/jamaica' },
     ]},
     { label: 'Our Work', href: '/our-work' },
+    { label: 'Blog', href: '/blog' },
     { label: 'Careers', href: '/careers' },
-    { label: 'Contact', href: '/contact-us' },
     { label: 'Referral', href: '/referral' },
   ],
 };
@@ -123,6 +124,55 @@ export const pricing = {
     retainers: [
       { name: 'Feature Updates', price: '$1,000–$2,000/month' },
       { name: 'Dedicated Dev Time', price: '$3,000–$6,000/month' },
+    ],
+  },
+  cloudEngineering: {
+    tiers: [
+      {
+        name: 'Starter Cloud Setup',
+        description: 'For agencies ready to move off shared hosting and into reliable, scalable infrastructure',
+        price: '$5,000–$8,000',
+        features: [
+          'Cloud provider setup (AWS, GCP, or Azure)',
+          'Basic CI/CD pipeline configuration',
+          'SSL, DNS, and domain management',
+          'Application deployment & containerization',
+          'Uptime monitoring & alerting',
+          'Documentation & handoff',
+        ],
+      },
+      {
+        name: 'Production Infrastructure',
+        description: 'Multi-environment cloud architecture for agencies running serious client workloads',
+        price: '$10,000–$18,000',
+        features: [
+          'Infrastructure as Code (Terraform / Pulumi)',
+          'Staging, production, and preview environments',
+          'Auto-scaling & load balancing',
+          'Logging, monitoring, and observability stack',
+          'Security hardening & IAM policies',
+          'Database provisioning & backup automation',
+          'Team training & documentation',
+        ],
+      },
+      {
+        name: 'Enterprise Cloud Platform',
+        description: 'Mission-critical infrastructure for agencies managing high-traffic, multi-region deployments',
+        price: '$20,000+',
+        features: [
+          'Multi-region & multi-cloud architecture',
+          'Disaster recovery & failover automation',
+          'Compliance & audit readiness (SOC 2, HIPAA)',
+          'Cost optimization & resource right-sizing',
+          'Custom service mesh & networking',
+          'Dedicated DevOps engineering support',
+          'SLA-backed ongoing management',
+        ],
+      },
+    ],
+    retainers: [
+      { name: 'Infrastructure Monitoring', price: '$1,000–$2,000/month' },
+      { name: 'Managed Cloud Operations', price: '$3,000–$6,000/month' },
     ],
   },
   webDevelopment: {
@@ -363,6 +413,13 @@ export const careers = [
     description: 'Manage and grow social media presence for multiple agency clients.',
   },
   {
+    title: 'Cloud Engineer',
+    type: 'Contract',
+    location: 'Remote',
+    country: 'Canada',
+    description: 'Design, deploy, and manage cloud infrastructure on AWS, GCP, or Azure. Build CI/CD pipelines, IaC modules, and observability stacks for agency clients.',
+  },
+  {
     title: 'Coding Instructor',
     type: 'Contract',
     location: 'Ottawa, ON',
@@ -383,6 +440,13 @@ export const careers = [
     location: 'Lagos / Remote',
     country: 'Nigeria',
     description: 'Build and maintain custom web applications, internal tools, and automation pipelines for agency clients across West Africa.',
+  },
+  {
+    title: 'Cloud / DevOps Engineer',
+    type: 'Contract',
+    location: 'Lagos / Remote',
+    country: 'Nigeria',
+    description: 'Build and maintain cloud infrastructure, CI/CD pipelines, and monitoring systems for agency clients across Africa.',
   },
   {
     title: 'Project Coordinator',

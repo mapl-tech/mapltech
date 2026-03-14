@@ -19,11 +19,11 @@ import styles from './page.module.scss';
 export const metadata: Metadata = {
   title: 'Pricing',
   description:
-    'MAPL TECH pricing for web development, automation & AI workflows, custom internal tools, and agency partnerships. Transparent pricing with retainer options.',
+    'MAPL TECH pricing for web development, automation & AI workflows, custom internal tools, cloud engineering, and agency partnerships. Transparent pricing with retainer options.',
   openGraph: {
     title: 'Pricing | MAPL TECH',
     description:
-      'Transparent pricing for web development, agency automation, internal tools, and partnership bundles.',
+      'Transparent pricing for web development, agency automation, internal tools, cloud engineering, and partnership bundles.',
   },
 };
 
@@ -121,6 +121,10 @@ export default function PricingPage() {
               <span className={styles.quickNavDivider} />
               <a href="#internal-tools" className={styles.quickNavLink}>
                 Internal Tools
+              </a>
+              <span className={styles.quickNavDivider} />
+              <a href="#cloud-engineering" className={styles.quickNavLink}>
+                Cloud Engineering
               </a>
               <span className={styles.quickNavDivider} />
               <a href="#bundles" className={styles.quickNavLink}>
@@ -341,6 +345,59 @@ export default function PricingPage() {
             </p>
             <div className={styles.retainersGrid}>
               {pricing.internalTools.retainers.map((r, i) => (
+                <BlurReveal key={r.name} delay={i * 0.1}>
+                  <div className={styles.retainerCard}>
+                    <h4>{r.name}</h4>
+                    <div className={styles.retainerPrice}>{r.price}</div>
+                  </div>
+                </BlurReveal>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cloud Engineering */}
+      <section id="cloud-engineering" className={styles.category}>
+        <div className={styles.categoryInner}>
+          <SectionHeading
+            label="Cloud Engineering"
+            title="Infrastructure That Runs Itself"
+            subtitle="Production-grade cloud architecture, CI/CD pipelines, and monitoring - so your agency never worries about uptime or scaling."
+          />
+          <div className={styles.tiersGrid}>
+            {pricing.cloudEngineering.tiers.map((tier, i) => (
+              <BlurReveal key={tier.name} delay={i * 0.1}>
+                <div className={`${styles.tierCard} ${i === 1 ? styles.featured : ''}`}>
+                  {i === 1 && <span className={styles.tierBadge}>Most Popular</span>}
+                  <h3 className={styles.tierName}>{tier.name}</h3>
+                  <p className={styles.tierDescription}>{tier.description}</p>
+                  <div className={styles.tierPrice}>
+                    {tier.price}
+                    <span className={styles.tierPriceLabel}>one-time</span>
+                  </div>
+                  <div className={styles.tierDivider} />
+                  <p className={styles.includedLabel}>What&apos;s included:</p>
+                  <ul className={styles.tierFeatures}>
+                    {tier.features.map((f) => (
+                      <li key={f}><HiCheck size={16} />{f}</li>
+                    ))}
+                  </ul>
+                  <MagneticButton href="/contact-us">Get Started</MagneticButton>
+                </div>
+              </BlurReveal>
+            ))}
+          </div>
+
+          <div className={styles.retainersSection}>
+            <h3 className={styles.retainersTitle}>
+              Your infrastructure needs attention after launch day
+            </h3>
+            <p className={styles.retainersSubtitle}>
+              Ongoing monitoring, cost optimization, and incident response keep your cloud running smoothly as you scale.
+            </p>
+            <div className={styles.retainersGrid}>
+              {pricing.cloudEngineering.retainers.map((r, i) => (
                 <BlurReveal key={r.name} delay={i * 0.1}>
                   <div className={styles.retainerCard}>
                     <h4>{r.name}</h4>

@@ -7,6 +7,7 @@ import {
   HiCodeBracket,
   HiCpuChip,
   HiWrenchScrewdriver,
+  HiCloud,
   HiArrowRight,
   HiChevronLeft,
   HiChevronRight,
@@ -48,6 +49,13 @@ export default function HomePage() {
       description:
         'Dashboards, client portals, and reporting systems built around how your agency actually works - not how a SaaS product thinks you should.',
       href: '/services/custom-internal-tools',
+    },
+    {
+      icon: <HiCloud size={24} />,
+      title: 'Cloud Engineering',
+      description:
+        'Scalable cloud infrastructure, CI/CD pipelines, and monitoring - designed, deployed, and managed so your agency never worries about uptime or scaling.',
+      href: '/services/cloud-engineering',
     },
   ];
 

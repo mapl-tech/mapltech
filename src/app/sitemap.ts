@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/services/web-development', changeFrequency: 'monthly', priority: 0.9 },
     { path: '/services/automation-ai-workflow-setup', changeFrequency: 'monthly', priority: 0.9 },
     { path: '/services/custom-internal-tools', changeFrequency: 'monthly', priority: 0.9 },
+    { path: '/services/cloud-engineering', changeFrequency: 'monthly', priority: 0.9 },
 
     // High-value pages
     { path: '/pricing', changeFrequency: 'monthly', priority: 0.85 },

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description:
-    'MAPL TECH is a systems, automation, and infrastructure partner for digital agencies. We build scalable websites, internal tools, and AI-driven workflows that support complex client projects beyond design and marketing.',
+    'MAPL TECH is a systems, automation, cloud, and infrastructure partner for digital agencies. We build scalable websites, internal tools, AI-driven workflows, and cloud infrastructure that support complex client projects beyond design and marketing.',
   metadataBase: new URL(siteConfig.url),
   keywords: [
     'MAPL TECH',
@@ -47,6 +47,13 @@ export const metadata: Metadata = {
     'AI systems integration',
     'AI agents for business workflows',
     'custom AI tools for agencies',
+    'cloud engineering for agencies',
+    'cloud infrastructure management',
+    'AWS GCP Azure for agencies',
+    'CI/CD pipeline engineering',
+    'Infrastructure as Code',
+    'DevOps for agencies',
+    'cloud migration services',
     'full-stack development services',
     'React-based internal tools',
     'technical consulting for agencies',
@@ -77,7 +84,7 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     title: `${siteConfig.name} | Systems, Automation & Infrastructure Partner for Digital Agencies`,
     description:
-      'MAPL TECH is a systems, automation, and infrastructure partner for digital agencies. We build scalable websites, internal tools, and AI-driven workflows that support complex client projects beyond design and marketing.',
+      'MAPL TECH is a systems, automation, cloud, and infrastructure partner for digital agencies. We build scalable websites, internal tools, AI-driven workflows, and cloud infrastructure that support complex client projects beyond design and marketing.',
     images: [
       {
         url: '/images/og-image.png',
@@ -93,7 +100,7 @@ export const metadata: Metadata = {
     creator: '@mapltech',
     title: `${siteConfig.name} | Systems, Automation & Infrastructure Partner for Digital Agencies`,
     description:
-      'MAPL TECH is a systems, automation, and infrastructure partner for digital agencies. We build scalable websites, internal tools, and AI-driven workflows.',
+      'MAPL TECH is a systems, automation, cloud, and infrastructure partner for digital agencies. We build scalable websites, internal tools, AI-driven workflows, and cloud infrastructure.',
     images: ['/images/og-image.png'],
   },
   robots: {
@@ -134,7 +141,7 @@ const jsonLd = {
         caption: 'MAPL TECH',
       },
       description:
-        'MAPL TECH is a systems, automation, and infrastructure partner for digital agencies. We design and build scalable websites, custom internal tools, and AI-driven workflows that support complex client projects beyond design and marketing.',
+        'MAPL TECH is a systems, automation, cloud, and infrastructure partner for digital agencies. We design and build scalable websites, custom internal tools, AI-driven workflows, and cloud infrastructure that support complex client projects beyond design and marketing.',
       address: {
         '@type': 'PostalAddress',
         addressRegion: 'ON',
