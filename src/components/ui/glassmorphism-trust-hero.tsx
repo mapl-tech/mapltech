@@ -70,7 +70,7 @@ export default function HeroSection() {
         }}
       />
 
-      {/* Concentric circles SVG — sits behind the right column */}
+      {/* Concentric circles SVG  - sits behind the right column */}
       <div
         className="absolute pointer-events-none hidden lg:block"
         style={{

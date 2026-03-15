@@ -5,7 +5,7 @@ import styles from '@/styles/blog.module.scss';
 import { blogPosts } from '@/data/blog-posts';
 
 export const metadata: Metadata = {
-  title: 'Blog | MAPL TECH — Tech Insights for Agencies',
+  title: 'Blog | MAPL TECH - Tech Insights for Agencies',
   description:
     'Weekly articles on web development, AI automation, and custom internal tools from the MAPL TECH engineering team. Practical insights for agencies in Nigeria, Jamaica, and beyond.',
   keywords:
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     canonical: 'https://mapltech.com/blog',
   },
   openGraph: {
-    title: 'MAPL TECH Blog — Tech Insights for Agencies',
+    title: 'MAPL TECH Blog - Tech Insights for Agencies',
     description:
       'Weekly engineering insights on AI automation, web development, and custom internal tools from the MAPL TECH team.',
     url: 'https://mapltech.com/blog',
@@ -79,7 +79,7 @@ export default function BlogPage() {
           <BlurReveal delay={0.2}>
             <p className={styles.heroSubtitle}>
               Practical articles on AI automation, web development, and custom
-              internal tools — written by the engineers building them.
+              internal tools - written by the engineers building them.
             </p>
           </BlurReveal>
         </div>

@@ -48,7 +48,7 @@ export default function Header() {
       className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}
       role="banner"
     >
-      {/* Top bar — email + socials */}
+      {/* Top bar - email + socials */}
       <div className={`${styles.topBar} ${scrolled ? styles.topBarHidden : ''}`}>
         <div className={styles.topBarInner}>
           <a

@@ -125,7 +125,7 @@ export default function BlogGrid() {
                   <Link
                     href={`/blog/${post.slug}`}
                     className={styles.card}
-                    aria-label={`${post.title} — ${post.category}, ${post.readTime} min read`}
+                    aria-label={`${post.title} - ${post.category}, ${post.readTime} min read`}
                   >
                     <div className={styles.cardImageBlock}>
                       <Image

@@ -1,7 +1,7 @@
 @use '../styles/variables' as *;
 @use '../styles/mixins' as *;
 
-// ===== HERO — atmospheric, bold, asymmetric =====
+// ===== HERO  - atmospheric, bold, asymmetric =====
 .hero {
   position: relative;
   min-height: 100vh;
@@ -119,7 +119,7 @@
   filter: blur(50px);
 }
 
-// ===== SERVICES CARDS — gradient top stroke, depth =====
+// ===== SERVICES CARDS  - gradient top stroke, depth =====
 .services {
   @include section-padding;
   @include section-divider;
@@ -222,7 +222,7 @@
   }
 }
 
-// ===== APPROACH — split layout with visual =====
+// ===== APPROACH  - split layout with visual =====
 .approach {
   @include section-padding;
   background: $color-dark;
@@ -308,7 +308,7 @@
   }
 }
 
-// ===== WHY US — metrics + cards =====
+// ===== WHY US  - metrics + cards =====
 .whyUs {
   @include section-padding;
   @include section-divider;
@@ -718,7 +718,7 @@
   gap: $space-md;
 }
 
-// ===== BACKGROUND ORBS — zigzag left/right behind section content =====
+// ===== BACKGROUND ORBS  - zigzag left/right behind section content =====
 .bgOrb {
   position: absolute;
   width: clamp(280px, 35vw, 480px);

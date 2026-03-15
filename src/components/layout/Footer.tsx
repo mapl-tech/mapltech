@@ -116,7 +116,7 @@ export default function Footer() {
               <li><Link href="/careers">Careers</Link></li>
               <li><Link href="/contact-us">Contact</Link></li>
               <li><Link href="/referral">Referral Program</Link></li>
-              <li><Link href="/blog" aria-label="MAPL TECH Blog — weekly tech insights">Blog</Link></li>
+              <li><Link href="/blog" aria-label="MAPL TECH Blog - weekly tech insights">Blog</Link></li>
               <li><Link href="/nigeria" aria-label="MAPL TECH Nigeria">Nigeria</Link></li>
               <li><Link href="/jamaica" aria-label="MAPL TECH Jamaica">Jamaica</Link></li>
             </ul>

@@ -573,7 +573,7 @@
   }
 }
 
-// ─── Individual Post Page — Full-bleed image hero ─────────────────────────────
+// ─── Individual Post Page  - Full-bleed image hero ─────────────────────────────
 
 .postHero {
   position: relative;
@@ -588,7 +588,7 @@
   @include lg { min-height: 740px; }
 }
 
-// Actual image layer — sits behind everything
+// Actual image layer  - sits behind everything
 .postHeroBg {
   position: absolute;
   inset: 0;
@@ -604,7 +604,7 @@
   }
 }
 
-// Multi-stop gradient — darkens top (for breadcrumb) and bottom (for text)
+// Multi-stop gradient  - darkens top (for breadcrumb) and bottom (for text)
 .postHeroGradient {
   position: absolute;
   inset: 0;

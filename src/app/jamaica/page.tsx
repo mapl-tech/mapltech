@@ -212,7 +212,7 @@ export default function JamaicaPage() {
         </div>
       </section>
 
-      {/* Local Context — Jamaica's Digital Landscape */}
+      {/* Local Context - Jamaica's Digital Landscape */}
       <section className={`${styles.section} ${styles.navy}`}>
         <div className={styles.sectionInner}>
           <SectionHeading

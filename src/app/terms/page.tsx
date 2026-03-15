@@ -58,8 +58,8 @@ export default function TermsPage() {
 
             <h2>4. Intellectual Property</h2>
             <p>
-              All content on the MAPL TECH website — including text, graphics, logos, images,
-              designs, and software — is the property of MAPL TECH or its content suppliers
+              All content on the MAPL TECH website - including text, graphics, logos, images,
+              designs, and software - is the property of MAPL TECH or its content suppliers
               and is protected by applicable intellectual property laws.
             </p>
             <p>

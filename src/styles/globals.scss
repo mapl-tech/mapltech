@@ -273,14 +273,14 @@ html.lenis, html.lenis body {
 
 } // end @layer base
 
-// Mobile body text minimum — 17px floor for readability on small screens
+// Mobile body text minimum  - 17px floor for readability on small screens
 @media (max-width: $breakpoint-sm) {
   p, li, blockquote, td, th, dd {
     font-size: 1.0625rem;
   }
 }
 
-// Reduced motion — respect user's OS accessibility setting
+// Reduced motion  - respect user's OS accessibility setting
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

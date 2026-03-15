@@ -88,7 +88,7 @@ export default async function BlogPostPage({ params }: Props) {
 
       <ReadingProgress />
 
-      {/* ── Full-bleed image hero ───────────────────────────────────────── */}
+      {/* -- Full-bleed image hero ------------------------------------------------- */}
       <header className={styles.postHero}>
         {/* Background image */}
         <div className={styles.postHeroBg} aria-hidden="true">
@@ -102,7 +102,7 @@ export default async function BlogPostPage({ params }: Props) {
           />
         </div>
 
-        {/* Layered gradient — cinematic dark vignette */}
+        {/* Layered gradient - cinematic dark vignette */}
         <div className={styles.postHeroGradient} aria-hidden="true" />
 
         {/* Content on top of image */}
@@ -155,7 +155,7 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </header>
 
-      {/* ── Article content ────────────────────────────────────────────── */}
+      {/* -- Article content -------------------------------------------------------- */}
       <main className={styles.postContent}>
         <div className={styles.postContentInner}>
           <article>
@@ -184,7 +184,7 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </main>
 
-      {/* ── Related posts ──────────────────────────────────────────────── */}
+      {/* -- Related posts ---------------------------------------------------------- */}
       {related.length > 0 && (
         <section className={styles.relatedSection} aria-label="Related articles">
           <div className={styles.relatedInner}>
@@ -195,7 +195,7 @@ export default async function BlogPostPage({ params }: Props) {
                   <Link
                     href={`/blog/${rel.slug}`}
                     className={styles.card}
-                    aria-label={`${rel.title} — ${rel.category}, ${rel.readTime} min read`}
+                    aria-label={`${rel.title} - ${rel.category}, ${rel.readTime} min read`}
                   >
                     <div className={styles.cardImageBlock}>
                       <Image

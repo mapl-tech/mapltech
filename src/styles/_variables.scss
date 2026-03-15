@@ -4,7 +4,7 @@
 // 60% black backgrounds, 30% white text/surfaces, 10% red accents
 // ============================================
 
-// Core Palette — Black (60%)
+// Core Palette  - Black (60%)
 $color-black: #000000;
 $color-dark: #000000;
 $color-dark-surface: #0a0a0a;
@@ -15,21 +15,21 @@ $color-navy: #0a0a0a; // kept as alias for backward compat
 $color-navy-light: #111111;
 $color-navy-mid: #1a1a1a;
 
-// White & Text (30%) — WCAG AA contrast ratios on #000 background
+// White & Text (30%)  - WCAG AA contrast ratios on #000 background
 $color-white: #ffffff;                          // 21:1 contrast
 $color-off-white: #f5f5f5;                      // 19.5:1 contrast
-$color-white-muted: rgba(255, 255, 255, 0.80);  // ~13.3:1 — AA pass
-$color-white-dim: rgba(255, 255, 255, 0.56);    // ~7.2:1 — AA pass (muted text)
+$color-white-muted: rgba(255, 255, 255, 0.80);  // ~13.3:1  - AA pass
+$color-white-dim: rgba(255, 255, 255, 0.56);    // ~7.2:1  - AA pass (muted text)
 $color-text-heading: $color-white;
-$color-text-body: #cccccc;                       // 13.3:1 — readable body text
-$color-text-muted: #999999;                      // 7.4:1 — AA pass (secondary text)
+$color-text-body: #cccccc;                       // 13.3:1  - readable body text
+$color-text-muted: #999999;                      // 7.4:1  - AA pass (secondary text)
 
-// Primary Accent — Red (10%)
-$color-red: #F03350;              // 3.66:1 on black — use for large text/UI only
-$color-red-bright: #ff3d5a;       // 4.6:1 on black — AA pass for normal text
+// Primary Accent  - Red (10%)
+$color-red: #F03350;              // 3.66:1 on black  - use for large text/UI only
+$color-red-bright: #ff3d5a;       // 4.6:1 on black  - AA pass for normal text
 $color-red-deep: #c4213c;
 $color-red-glow: rgba(240, 51, 80, 0.2);
-$color-red-text: #ff5c73;         // 5.5:1 on black — accessible for body text links
+$color-red-text: #ff5c73;         // 5.5:1 on black  - accessible for body text links
 
 // Backward-compat aliases (used across components)
 $color-pink: $color-red;
@@ -38,7 +38,7 @@ $color-pink-hot: $color-red;
 $color-magenta: $color-red-deep;
 $color-coral: $color-red-bright;
 
-// Complementary Accent — Teal (for hover states, secondary interactions)
+// Complementary Accent  - Teal (for hover states, secondary interactions)
 $color-teal: #33F0D0;
 $color-teal-muted: rgba(51, 240, 208, 0.15);
 
@@ -47,7 +47,7 @@ $color-purple-deep: #1a0a0a;
 $color-purple-dark: #2a0f14;
 $color-purple: $color-red-deep;
 
-// Gradient definitions — clean, bold
+// Gradient definitions  - clean, bold
 $gradient-primary: linear-gradient(135deg, $color-red-deep 0%, $color-red 50%, $color-red-bright 100%);
 $gradient-accent: linear-gradient(135deg, $color-red-deep 0%, $color-red 100%);
 $gradient-subtle: linear-gradient(160deg, rgba($color-red-deep, 0.15) 0%, rgba($color-red, 0.03) 100%);
@@ -66,11 +66,11 @@ $font-display: var(--font-overpass), 'Overpass', sans-serif;
 $font-body: var(--font-overpass), 'Overpass', sans-serif;
 $font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-// Font sizes — rem-based for user accessibility (respects browser font settings)
+// Font sizes  - rem-based for user accessibility (respects browser font settings)
 // Minimum body text: 1.0625rem (17px). Use xs/sm only for labels, badges, captions.
-$font-size-xs: 0.8125rem;   // 13px — labels, badges only
-$font-size-sm: 0.9375rem;   // 15px — secondary text, captions
-$font-size-base: 1.0625rem; // 17px — body text minimum
+$font-size-xs: 0.8125rem;   // 13px  - labels, badges only
+$font-size-sm: 0.9375rem;   // 15px  - secondary text, captions
+$font-size-base: 1.0625rem; // 17px  - body text minimum
 $font-size-md: 1.125rem;    // 18px
 $font-size-lg: 1.25rem;     // 20px
 $font-size-xl: 1.5rem;      // 24px
@@ -124,7 +124,7 @@ $radius-xl: 16px;
 $radius-2xl: 24px;
 $radius-full: 9999px;
 
-// Shadows — clean, high-contrast
+// Shadows  - clean, high-contrast
 $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
 $shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
 $shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.7);
@@ -132,7 +132,7 @@ $shadow-glow: 0 0 40px rgba($color-red, 0.12), 0 0 80px rgba($color-red-deep, 0.
 $shadow-glow-strong: 0 0 60px rgba($color-red, 0.2), 0 0 120px rgba($color-red-deep, 0.12);
 $shadow-card-hover: 0 8px 32px rgba($color-red, 0.1), 0 0 0 1px rgba($color-red, 0.2);
 
-// Transitions — smooth, intentional
+// Transitions  - smooth, intentional
 $transition-fast: 150ms ease;
 $transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 $transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);

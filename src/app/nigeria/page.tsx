@@ -214,7 +214,7 @@ export default function NigeriaPage() {
         </div>
       </section>
 
-      {/* Local Context — Nigeria's Digital Landscape */}
+      {/* Local Context - Nigeria's Digital Landscape */}
       <section className={`${styles.section} ${styles.navy}`}>
         <div className={styles.sectionInner}>
           <SectionHeading

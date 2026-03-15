@@ -141,7 +141,7 @@ export default function ScrollOrb({ variant = 'red', rotationMultiplier = 1 }: S
           </linearGradient>
         </defs>
 
-        {/* Ring 1 — outermost */}
+        {/* Ring 1 - outermost */}
         <g transform="translate(250, 250)">
           <motion.g style={{ rotate: rotate1 }}>
             <ellipse cx="0" cy="0" rx="240" ry="240" fill="none" stroke={`url(#${g1})`} strokeWidth="1" />
@@ -150,7 +150,7 @@ export default function ScrollOrb({ variant = 'red', rotationMultiplier = 1 }: S
           </motion.g>
         </g>
 
-        {/* Ring 2 — mid, counter-rotation */}
+        {/* Ring 2 - mid, counter-rotation */}
         <g transform="translate(250, 250)">
           <motion.g style={{ rotate: rotate2 }}>
             <ellipse cx="0" cy="0" rx="200" ry="200" fill="none" stroke={`url(#${g2})`} strokeWidth="0.8" />
@@ -159,7 +159,7 @@ export default function ScrollOrb({ variant = 'red', rotationMultiplier = 1 }: S
           </motion.g>
         </g>
 
-        {/* Ring 3 — inner, fastest */}
+        {/* Ring 3 - inner, fastest */}
         <g transform="translate(250, 250)">
           <motion.g style={{ rotate: rotate3 }}>
             <ellipse cx="0" cy="0" rx="155" ry="155" fill="none" stroke={`url(#${g3})`} strokeWidth="0.7" />

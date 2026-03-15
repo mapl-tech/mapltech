@@ -24,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/about-us', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/contact-us', changeFrequency: 'monthly', priority: 0.8 },
 
-    // Blog listing — updated weekly
+    // Blog listing - updated weekly
     { path: '/blog', changeFrequency: 'weekly', priority: 0.8 },
 
     // Regional pages

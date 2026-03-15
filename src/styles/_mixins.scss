@@ -65,7 +65,7 @@
   -webkit-backdrop-filter: blur(16px) saturate(1.2);
 }
 
-// Card style — refined with depth
+// Card style  - refined with depth
 @mixin card {
   background: $gradient-card;
   border: 1px solid rgba($color-dark-border, 0.8);
@@ -110,7 +110,7 @@
   }
 }
 
-// Primary button — gradient with glow
+// Primary button  - gradient with glow
 @mixin button-primary {
   @include button-base;
   background: $gradient-primary;
@@ -127,7 +127,7 @@
   }
 }
 
-// Secondary button — outlined with subtle glow on hover
+// Secondary button  - outlined with subtle glow on hover
 @mixin button-secondary {
   @include button-base;
   background: transparent;
@@ -170,7 +170,7 @@
   overflow: hidden;
 }
 
-// Section divider — glowing gradient line
+// Section divider  - glowing gradient line
 @mixin section-divider {
   position: relative;
 

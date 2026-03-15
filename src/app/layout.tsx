@@ -179,7 +179,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://static.hotjar.com" />
         <link rel="dns-prefetch" href="https://static.hotjar.com" />
 
-        {/* Google Analytics — lazyOnload to prioritize page content */}
+        {/* Google Analytics - lazyOnload to prioritize page content */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-F2XZRRNH7S"
           strategy="lazyOnload"
@@ -193,7 +193,7 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* Hotjar — lazyOnload to prioritize page content */}
+        {/* Hotjar - lazyOnload to prioritize page content */}
         <Script id="hotjar" strategy="lazyOnload">
           {`
             (function(h,o,t,j,a,r){

@@ -41,11 +41,11 @@ export const pricing = {
       {
         name: 'Foundation Automation',
         description: 'Perfect for agencies drowning in manual CRM work and follow-ups',
-        price: '$3,500–$5,000',
+        price: '$3,500-$5,000',
         features: [
           'CRM setup & configuration',
           'Lead routing workflows',
-          '3–5 core automations',
+          '3-5 core automations',
           'Integration with existing tools',
           'Documentation & training',
         ],
@@ -53,7 +53,7 @@ export const pricing = {
       {
         name: 'Advanced Automation',
         description: 'For agencies ready to connect every tool into one seamless pipeline',
-        price: '$6,000–$10,000',
+        price: '$6,000-$10,000',
         features: [
           'Multi-system workflow automation',
           'AI-powered intake forms',
@@ -66,7 +66,7 @@ export const pricing = {
       {
         name: 'Enterprise AI Workflows',
         description: 'Full AI-powered operations for agencies handling complex, high-volume work',
-        price: '$10,000–$18,000',
+        price: '$10,000-$18,000',
         features: [
           'Custom AI agent development',
           'Predictive analytics pipelines',
@@ -79,8 +79,8 @@ export const pricing = {
     ],
     retainers: [
       { name: 'Light Monitoring & Tweaks', price: '$750/month' },
-      { name: 'Ongoing Optimization', price: '$1,500–$2,500/month' },
-      { name: 'Priority / Multi-Client', price: '$3,000–$5,000/month' },
+      { name: 'Ongoing Optimization', price: '$1,500-$2,500/month' },
+      { name: 'Priority / Multi-Client', price: '$3,000-$5,000/month' },
     ],
   },
   internalTools: {
@@ -88,7 +88,7 @@ export const pricing = {
       {
         name: 'Internal Dashboards',
         description: 'Give your team instant visibility into the numbers that matter most',
-        price: '$5,000–$8,000',
+        price: '$5,000-$8,000',
         features: [
           'Custom data visualization',
           'Real-time reporting',
@@ -99,7 +99,7 @@ export const pricing = {
       {
         name: 'Client Portals',
         description: 'Impress clients with a branded hub for projects, docs, and payments',
-        price: '$8,000–$15,000',
+        price: '$8,000-$15,000',
         features: [
           'Branded client experience',
           'Secure document sharing',
@@ -111,7 +111,7 @@ export const pricing = {
       {
         name: 'Ops & Reporting Systems',
         description: 'Run your entire agency from one platform built around your workflow',
-        price: '$12,000–$25,000+',
+        price: '$12,000-$25,000+',
         features: [
           'End-to-end operations management',
           'Automated reporting pipelines',
@@ -122,8 +122,8 @@ export const pricing = {
       },
     ],
     retainers: [
-      { name: 'Feature Updates', price: '$1,000–$2,000/month' },
-      { name: 'Dedicated Dev Time', price: '$3,000–$6,000/month' },
+      { name: 'Feature Updates', price: '$1,000-$2,000/month' },
+      { name: 'Dedicated Dev Time', price: '$3,000-$6,000/month' },
     ],
   },
   cloudEngineering: {
@@ -131,7 +131,7 @@ export const pricing = {
       {
         name: 'Starter Cloud Setup',
         description: 'For agencies ready to move off shared hosting and into reliable, scalable infrastructure',
-        price: '$5,000–$8,000',
+        price: '$5,000-$8,000',
         features: [
           'Cloud provider setup (AWS, GCP, or Azure)',
           'Basic CI/CD pipeline configuration',
@@ -144,7 +144,7 @@ export const pricing = {
       {
         name: 'Production Infrastructure',
         description: 'Multi-environment cloud architecture for agencies running serious client workloads',
-        price: '$10,000–$18,000',
+        price: '$10,000-$18,000',
         features: [
           'Infrastructure as Code (Terraform / Pulumi)',
           'Staging, production, and preview environments',
@@ -171,8 +171,8 @@ export const pricing = {
       },
     ],
     retainers: [
-      { name: 'Infrastructure Monitoring', price: '$1,000–$2,000/month' },
-      { name: 'Managed Cloud Operations', price: '$3,000–$6,000/month' },
+      { name: 'Infrastructure Monitoring', price: '$1,000-$2,000/month' },
+      { name: 'Managed Cloud Operations', price: '$3,000-$6,000/month' },
     ],
   },
   webDevelopment: {
@@ -244,14 +244,14 @@ export const pricing = {
     ],
   },
   hourlyRates: {
-    standard: '$65–$120/hour',
+    standard: '$65-$120/hour',
     emergency: '$150+/hour',
   },
   bundles: [
     {
       name: 'Agency Automation Partner',
       description: 'Like having a senior automation engineer on staff for a fraction of the cost',
-      price: '$4,000–$7,500/month',
+      price: '$4,000-$7,500/month',
       features: [
         'Automation & AI workflows',
         'Internal tooling support',
@@ -262,7 +262,7 @@ export const pricing = {
     {
       name: 'Full Systems Partner',
       description: 'Your dedicated engineering department - automation, tools, web, and infrastructure all handled',
-      price: '$7,500–$12,000/month',
+      price: '$7,500-$12,000/month',
       features: [
         'Automation & AI workflows',
         'Internal tools development',

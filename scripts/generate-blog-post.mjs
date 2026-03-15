@@ -45,7 +45,7 @@ async function fetchUnsplashImage(query) {
       };
     }
   }
-  // Fallback pool — varied tech images
+  // Fallback pool - varied tech images
   const pool = [
     'photo-1488229297570-58520851e868',
     'photo-1451187580459-43490279c0fa',
@@ -81,16 +81,17 @@ async function main() {
     thinking: { type: 'adaptive' },
     system: `You are the lead content writer for MAPL TECH, a technology agency serving clients in Nigeria, Jamaica, and internationally.
 
-MAPL TECH's four content categories:
-- "Automation & AI" — workflow automation, AI integrations, LLMs in business, Make/Zapier/n8n, GPT/Claude APIs
-- "Web Development" — Next.js, React, TypeScript, performance, Core Web Vitals, deployment
-- "Internal Tools" — dashboards, CRMs, client portals, Notion alternatives, custom admin panels
-- "Industry" — digital transformation in Africa and the Caribbean, fintech, payments, tech ecosystem
+MAPL TECH's five content categories:
+- "Automation & AI" - workflow automation, AI integrations, LLMs in business, Make/Zapier/n8n, GPT/Claude APIs
+- "Web Development" - Next.js, React, TypeScript, performance, Core Web Vitals, deployment
+- "Internal Tools" - dashboards, CRMs, client portals, Notion alternatives, custom admin panels
+- "Cloud Engineering" - AWS, GCP, Azure, CI/CD pipelines, Infrastructure as Code, DevOps, monitoring, scaling
+- "Industry" - digital transformation in Africa and the Caribbean, fintech, payments, tech ecosystem
 
 Author: All posts are published by MAPL TECH (name: "MAPL TECH", role: "Technology Agency").
 
-Voice: sharp, expert, practitioner-level. Specific and concrete — no corporate fluff.
-Content format: Full HTML using <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>. Start with <p class="lead">. Target 700–900 words. Include real tool names, numbers, and actionable insights.`,
+Voice: sharp, expert, practitioner-level. Specific and concrete  - no corporate fluff.
+Content format: Full HTML using <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>. Start with <p class="lead">. Target 700-900 words. Include real tool names, numbers, and actionable insights.`,
     tools: [
       {
         name: 'publish_post',
@@ -106,15 +107,15 @@ Content format: Full HTML using <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>. Sta
             },
             title: {
               type: 'string',
-              description: 'Compelling headline, 50–70 characters',
+              description: 'Compelling headline, 50-70 characters',
             },
             excerpt: {
               type: 'string',
-              description: '1–2 sentence summary, 100–160 characters',
+              description: '1-2 sentence summary, 100-160 characters',
             },
             category: {
               type: 'string',
-              enum: ['Automation & AI', 'Web Development', 'Internal Tools', 'Industry'],
+              enum: ['Automation & AI', 'Web Development', 'Internal Tools', 'Cloud Engineering', 'Industry'],
             },
             readTime: {
               type: 'number',
@@ -131,7 +132,7 @@ Content format: Full HTML using <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>. Sta
             },
             coverImageQuery: {
               type: 'string',
-              description: '2–4 word Unsplash search query for the cover image',
+              description: '2-4 word Unsplash search query for the cover image',
             },
             content: {
               type: 'string',
@@ -152,7 +153,7 @@ ${existingTitles.map((t) => `- ${t}`).join('\n')}
 
 Used slugs: ${existingSlugs.join(', ')}
 
-Pick a fresh, timely topic. Rotate through categories — don't write two Automation posts in a row if that's what the latest ones cover. Make it genuinely useful to agency owners and developers in Nigeria, Jamaica, or internationally.`,
+Pick a fresh, timely topic. Rotate through categories  - don't write two Automation posts in a row if that's what the latest ones cover. Make it genuinely useful to agency owners and developers in Nigeria, Jamaica, or internationally.`,
       },
     ],
   });
