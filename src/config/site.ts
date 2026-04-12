@@ -312,6 +312,14 @@ export const portfolioProjects = [
     url: 'https://www.lrostaffing.com/lro-salary-guide/2026-interactive-salary-guide/',
   },
   {
+    title: 'MAPL Tours',
+    category: 'Automation and AI Workflows',
+    description: 'A travel and tourism company fully managed by AI - from trip planning and booking to customer communication and itinerary generation.',
+    tags: ['AI', 'Travel', 'Automation'],
+    image: '/images/project-mapl-tours.png',
+    url: 'https://mapltours.com/',
+  },
+  {
     title: 'Akuma Patterson Holdings',
     category: 'Automation and AI Workflows',
     description: 'Automated the entire client lifecycle - from CRM lead capture to invoicing and project hand-off - eliminating manual data entry.',

@@ -83,7 +83,7 @@ export default function HomePage() {
   ];
 
   const featuredProjects = portfolioProjects.filter((project) =>
-    ['LRO Staffing', 'Akuma Patterson Holdings', 'UNSVCC'].includes(project.title)
+    ['LRO Staffing', 'MAPL Tours', 'UNSVCC'].includes(project.title)
   );
 
   return (
