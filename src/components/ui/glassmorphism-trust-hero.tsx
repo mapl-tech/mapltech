@@ -1,78 +1,108 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Target,
-  Crown,
-  Star,
-  Hexagon,
-  Triangle,
-  Command,
-  Ghost,
-  Gem,
-  Cpu,
-  Plane,
-} from 'lucide-react';
 
+// Real client roster - pulled from the portfolio (config/site.ts)
 const CLIENTS = [
-  { name: 'Air Canada', icon: Plane },
-  { name: 'Acme Corp', icon: Hexagon },
-  { name: 'Quantum', icon: Triangle },
-  { name: 'Command+Z', icon: Command },
-  { name: 'Phantom', icon: Ghost },
-  { name: 'Ruby', icon: Gem },
-  { name: 'Chipset', icon: Cpu },
+  'LRO Staffing',
+  'MAPL Tours',
+  'Akuma Patterson',
+  'FOCAS Canada',
+  'TDot Jerk',
+  'Crowned Spice',
+  'Crowngate',
+  'UNSVCC',
+  'Namaste Kitchen',
+  'Tashi Delek',
 ];
 
 const StatItem = ({ value, label }: { value: string; label: string }) => (
   <div className="flex flex-col items-center justify-center transition-transform hover:-translate-y-1 cursor-default">
     <span className="text-xl font-bold text-white sm:text-2xl">{value}</span>
-    <span className="text-[10px] capitalize tracking-wider text-zinc-500 font-medium sm:text-xs">{label}</span>
+    <span className="text-[10px] uppercase tracking-[0.14em] text-zinc-500 font-medium sm:text-[11px]">
+      {label}
+    </span>
   </div>
 );
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full min-h-screen overflow-hidden" style={{ background: '#0a0a0a' }}>
+    <section className="relative w-full min-h-screen overflow-hidden" style={{ background: '#000' }}>
       {/* Scoped animations */}
       <style>{`
         @keyframes fadeSlideIn {
-          from { opacity: 0; transform: translateY(20px); }
+          from { opacity: 0; transform: translateY(24px); }
           to { opacity: 1; transform: translateY(0); }
         }
         @keyframes marquee {
           from { transform: translateX(0); }
           to { transform: translateX(-50%); }
         }
+        @keyframes heroRingPulse {
+          0%, 100% { opacity: 0.85; }
+          50% { opacity: 0.5; }
+        }
         .hero-fade-in {
-          animation: fadeSlideIn 0.45s ease-out forwards;
+          animation: fadeSlideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
         }
         .hero-marquee {
-          animation: marquee 40s linear infinite;
+          animation: marquee 36s linear infinite;
         }
-        .hero-delay-100 { animation-delay: 0.05s; }
-        .hero-delay-200 { animation-delay: 0.1s; }
-        .hero-delay-300 { animation-delay: 0.15s; }
-        .hero-delay-400 { animation-delay: 0.2s; }
-        .hero-delay-500 { animation-delay: 0.3s; }
+        .hero-marquee:hover {
+          animation-play-state: paused;
+        }
+        .hero-rings {
+          animation: heroRingPulse 7s ease-in-out infinite;
+        }
+        .hero-delay-100 { animation-delay: 0.08s; }
+        .hero-delay-200 { animation-delay: 0.18s; }
+        .hero-delay-300 { animation-delay: 0.28s; }
+        .hero-delay-400 { animation-delay: 0.38s; }
+        .hero-delay-500 { animation-delay: 0.52s; }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-fade-in { animation-duration: 0.01ms; }
+          .hero-marquee, .hero-rings { animation: none; }
+        }
       `}</style>
 
-      {/* Subtle radial glow behind the circles */}
+      {/* Atmospheric glow */}
       <div
         className="absolute pointer-events-none"
         style={{
-          top: '10%',
-          right: '-5%',
-          width: '60%',
-          height: '90%',
-          background: 'radial-gradient(ellipse at center, rgba(240,51,80,0.08) 0%, transparent 70%)',
+          top: '8%',
+          right: '-8%',
+          width: '64%',
+          height: '92%',
+          background: 'radial-gradient(ellipse at center, rgba(240,51,80,0.09) 0%, transparent 68%)',
+        }}
+      />
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          bottom: '-20%',
+          left: '-12%',
+          width: '50%',
+          height: '60%',
+          background: 'radial-gradient(ellipse at center, rgba(196,33,60,0.07) 0%, transparent 70%)',
         }}
       />
 
-      {/* Concentric circles SVG  - sits behind the right column */}
+      {/* Fine engineering grid, faded toward edges */}
       <div
-        className="absolute pointer-events-none hidden lg:block"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
+          backgroundSize: '72px 72px',
+          maskImage: 'radial-gradient(ellipse at 30% 40%, black 10%, transparent 70%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at 30% 40%, black 10%, transparent 70%)',
+        }}
+      />
+
+      {/* Concentric circles - engineering blueprint motif (desktop only) */}
+      <div
+        className="hero-rings absolute pointer-events-none hidden lg:block"
         style={{
           top: '50%',
           right: '2%',
@@ -97,51 +127,50 @@ export default function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-8 pt-24 pb-12 md:pt-32 md:pb-20">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-start">
+      <div className="relative z-10 mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-8 pt-28 pb-14 md:pt-36 md:pb-20">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10 items-start">
 
           {/* --- LEFT COLUMN --- */}
-          <div className="lg:col-span-7 flex flex-col justify-center space-y-8 pt-8">
+          <div className="lg:col-span-7 flex flex-col justify-center space-y-7 sm:space-y-8 pt-4 sm:pt-8">
 
-            {/* Tagline with red line */}
+            {/* Eyebrow */}
             <div className="hero-fade-in hero-delay-100 flex items-center gap-4">
               <span className="block w-10 h-[2px] bg-[#F03350] flex-shrink-0" />
               <span
-                className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em]"
-                style={{ color: '#F03350' }}
+                className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em]"
+                style={{ color: '#ff5c73' }}
               >
                 Systems &middot; Automation &middot; Infrastructure
               </span>
             </div>
 
-            {/* Heading */}
+            {/* Headline */}
             <h1
-              className="hero-fade-in hero-delay-200 text-[3rem] sm:text-5xl md:text-[3.5rem] lg:text-[4rem] font-bold leading-[1.08] tracking-tight"
+              className="hero-fade-in hero-delay-200 text-[2.6rem] sm:text-[3.4rem] lg:text-[4rem] font-extrabold leading-[1.08] tracking-tight"
               style={{ color: '#fff' }}
             >
-              The{' '}
-              <span style={{ color: '#F03350' }}>engineering{'\n'}backbone</span>{' '}
-              behind agencies that refuse to cut corners on technology
+              The <span style={{ color: '#F03350' }}>engineering backbone</span> behind
+              agencies that refuse to cut corners
             </h1>
 
             {/* Subtitle */}
             <p
               className="hero-fade-in hero-delay-300 max-w-xl text-base sm:text-lg leading-relaxed"
-              style={{ color: 'rgba(255,255,255,0.55)' }}
+              style={{ color: 'rgba(255,255,255,0.6)' }}
             >
               We partner with agencies to build, ship, and scale the systems, automation,
               and infrastructure their most ambitious projects demand.
             </p>
 
             {/* Buttons */}
-            <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4" style={{ marginTop: 30 }}>
+            <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4 pt-2">
               <Link
                 href="/contact-us"
-                className="inline-flex items-center justify-center rounded-full px-6 py-3 sm:px-8 sm:py-4 text-[1.0625rem] font-semibold capitalize tracking-[0.08em] transition-all hover:brightness-110 active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-full px-7 py-3.5 sm:px-9 sm:py-4 text-[1.0625rem] font-semibold tracking-[0.04em] transition-all hover:brightness-110 hover:-translate-y-0.5 active:scale-[0.98]"
                 style={{
                   background: 'linear-gradient(135deg, #c4213c 0%, #F03350 50%, #ff3d5a 100%)',
                   color: '#fff',
-                  boxShadow: '0 4px 24px rgba(240,51,80,0.25)',
+                  boxShadow: '0 4px 24px rgba(240,51,80,0.3)',
                 }}
               >
                 Start a Project
@@ -149,43 +178,63 @@ export default function HeroSection() {
 
               <a
                 href="#services"
-                className="inline-flex items-center justify-center rounded-full px-6 py-3 sm:px-8 sm:py-4 text-[1.0625rem] font-semibold capitalize tracking-[0.08em] transition-all hover:bg-white/10 active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-full px-7 py-3.5 sm:px-9 sm:py-4 text-[1.0625rem] font-semibold tracking-[0.04em] transition-all hover:bg-white/10 active:scale-[0.98]"
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.14)',
                   color: '#fff',
                 }}
               >
                 Explore Services
               </a>
             </div>
+
+            {/* Office locations - quiet global-footprint signal */}
+            <div
+              className="hero-fade-in hero-delay-500 flex items-center gap-3 pt-2 text-[11px] sm:text-xs font-medium uppercase tracking-[0.18em]"
+              style={{ color: 'rgba(255,255,255,0.38)' }}
+            >
+              <span>Toronto</span>
+              <span style={{ color: 'rgba(240,51,80,0.6)' }}>/</span>
+              <span>Lagos</span>
+              <span style={{ color: 'rgba(240,51,80,0.6)' }}>/</span>
+              <span>Kingston</span>
+            </div>
           </div>
 
           {/* --- RIGHT COLUMN --- */}
-          <div className="lg:col-span-5 space-y-6 lg:mt-12">
+          <div className="lg:col-span-5 space-y-6 lg:mt-10">
 
             {/* Stats Card */}
-            <div className="hero-fade-in hero-delay-500 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl shadow-2xl">
-              <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-white/5 blur-3xl pointer-events-none" />
+            <div className="hero-fade-in hero-delay-500 relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-7 sm:p-8 backdrop-blur-xl shadow-2xl">
+              <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-[#F03350]/5 blur-3xl pointer-events-none" />
 
               <div className="relative z-10">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
-                    <Target className="h-6 w-6 text-white" />
-                  </div>
+                <div className="flex items-end justify-between gap-4 mb-8">
                   <div>
-                    <div className="text-3xl font-bold tracking-tight text-white">200+</div>
-                    <div className="text-sm text-zinc-400">Projects Supported</div>
+                    <div className="text-5xl font-extrabold tracking-tight text-white leading-none">
+                      200+
+                    </div>
+                    <div className="mt-2 text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500">
+                      Projects Supported
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-medium tracking-[0.14em] text-zinc-300 mb-1">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    ACCEPTING&nbsp;PROJECTS
                   </div>
                 </div>
 
                 <div className="space-y-3 mb-8">
                   <div className="flex justify-between text-sm">
                     <span className="text-zinc-400">Client Satisfaction</span>
-                    <span className="text-white font-medium">98%</span>
+                    <span className="text-white font-semibold">100%</span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800/50">
-                    <div className="h-full w-[98%] rounded-full bg-gradient-to-r from-[#c4213c] to-[#F03350]" />
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800/60">
+                    <div className="h-full w-full rounded-full bg-gradient-to-r from-[#c4213c] to-[#F03350]" />
                   </div>
                 </div>
 
@@ -193,50 +242,33 @@ export default function HeroSection() {
 
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <StatItem value="25+" label="Years" />
-                  <div className="w-px h-full bg-white/10 mx-auto" />
                   <StatItem value="24/7" label="Support" />
-                  <div className="w-px h-full bg-white/10 mx-auto" />
-                  <StatItem value="100%" label="Quality" />
-                </div>
-
-                <div className="mt-8 flex flex-wrap gap-2">
-                  <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium tracking-wide text-zinc-300">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    ACTIVE
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium tracking-wide text-zinc-300">
-                    <Crown className="w-3 h-3 text-[#F03350]" />
-                    PREMIUM
-                  </div>
+                  <StatItem value="3" label="Countries" />
                 </div>
               </div>
             </div>
 
-            {/* Marquee Card */}
-            <div className="hero-fade-in hero-delay-500 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 py-8 backdrop-blur-xl">
-              <h3 className="mb-6 px-8 text-sm font-medium text-zinc-400">Trusted by Industry Leaders</h3>
+            {/* Client Marquee */}
+            <div className="hero-fade-in hero-delay-500 relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] py-7 backdrop-blur-xl">
+              <h2 className="mb-5 px-7 sm:px-8 text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500">
+                Selected Client Partners
+              </h2>
 
               <div
                 className="relative flex overflow-hidden"
                 style={{
-                  maskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)',
+                  maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
                 }}
               >
-                <div className="hero-marquee flex gap-12 whitespace-nowrap px-4">
-                  {[...CLIENTS, ...CLIENTS, ...CLIENTS].map((client, i) => (
-                    <div
+                <div className="hero-marquee flex items-baseline gap-10 whitespace-nowrap px-4">
+                  {[...CLIENTS, ...CLIENTS].map((client, i) => (
+                    <span
                       key={i}
-                      className="flex items-center gap-2 opacity-50 transition-all hover:opacity-100 hover:scale-105 cursor-default grayscale hover:grayscale-0"
+                      className="text-lg font-bold tracking-tight text-white/45 transition-colors hover:text-white cursor-default"
                     >
-                      <client.icon className="h-6 w-6 text-white fill-current" />
-                      <span className="text-lg font-bold text-white tracking-tight">
-                        {client.name}
-                      </span>
-                    </div>
+                      {client}
+                    </span>
                   ))}
                 </div>
               </div>

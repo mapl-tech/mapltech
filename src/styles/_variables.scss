@@ -61,10 +61,11 @@ $gradient-mesh: radial-gradient(at 0% 0%, rgba($color-red-deep, 0.2) 0%, transpa
                radial-gradient(at 100% 0%, rgba($color-red, 0.04) 0%, transparent 40%),
                radial-gradient(at 50% 100%, rgba($color-red-deep, 0.1) 0%, transparent 50%);
 
-// Typography - Overpass throughout (loaded via next/font, falls back to var)
-$font-display: var(--font-overpass), 'Overpass', sans-serif;
-$font-body: var(--font-overpass), 'Overpass', sans-serif;
-$font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+// Typography - Overpass for titles/headings, DM Sans for everything else
+// Both loaded via next/font in layout.tsx
+$font-display: var(--font-overpass), 'Overpass', sans-serif;       // titles only
+$font-body: var(--font-dm-sans), 'DM Sans', sans-serif;            // body, labels, UI
+$font-mono: var(--font-dm-sans), 'DM Sans', sans-serif;
 
 // Font sizes  - rem-based for user accessibility (respects browser font settings)
 // Minimum body text: 1.0625rem (17px). Use xs/sm only for labels, badges, captions.
@@ -78,7 +79,7 @@ $font-size-2xl: 2rem;       // 32px
 $font-size-3xl: 2.5rem;     // 40px
 $font-size-4xl: 3rem;       // 48px
 $font-size-5xl: 3.5rem;     // 56px
-$font-size-hero: clamp(2.25rem, 4vw, 3.5rem);
+$font-size-hero: clamp(2.5rem, 5.5vw, 4.5rem);
 
 $font-weight-light: 300;
 $font-weight-regular: 400;

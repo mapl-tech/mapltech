@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Overpass } from 'next/font/google';
+import { Overpass, DM_Sans } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -12,6 +12,12 @@ import '@/styles/globals.scss';
 const overpass = Overpass({
   subsets: ['latin'],
   variable: '--font-overpass',
+  display: 'swap',
+});
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
   display: 'swap',
 });
 
@@ -171,7 +177,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={overpass.variable}>
+    <html lang="en" className={`${overpass.variable} ${dmSans.variable}`}>
       <head>
         {/* Preconnect to third-party origins for faster resource loading */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />

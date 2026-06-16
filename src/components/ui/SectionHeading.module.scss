@@ -11,14 +11,29 @@
 }
 
 .label {
-  display: inline-block;
-  font-family: $font-body;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  font-family: $font-mono;
   font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  text-transform: capitalize;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
   letter-spacing: $letter-spacing-widest;
-  @include gradient-text;
+  color: $color-red-text;
   margin-bottom: $space-md;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: rgba($color-red, 0.45);
+  }
+
+  .left &::before {
+    display: none;
+  }
 }
 
 .labelLink {
@@ -32,7 +47,7 @@
 
 .title {
   font-family: $font-display;
-  font-size: clamp($font-size-xl, 3.5vw, $font-size-3xl);
+  font-size: clamp(1.75rem, 3.8vw, 2.75rem);
   font-weight: $font-weight-bold;
   color: $color-white;
   margin-bottom: $space-md;

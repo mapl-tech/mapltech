@@ -209,11 +209,12 @@
   display: inline-flex;
   align-items: center;
   gap: $space-sm;
-  color: $color-pink;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  letter-spacing: $letter-spacing-wide;
-  text-transform: capitalize;
+  color: $color-red-text;
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-wider;
+  text-transform: uppercase;
   transition: gap $transition-base, color $transition-base;
 
   &:hover {
@@ -351,10 +352,11 @@
   }
 
   .metricLabel {
-    font-size: $font-size-sm;
+    font-family: $font-mono;
+    font-size: $font-size-xs;
     color: $color-text-muted;
-    letter-spacing: $letter-spacing-wide;
-    text-transform: capitalize;
+    letter-spacing: $letter-spacing-wider;
+    text-transform: uppercase;
   }
 }
 
@@ -423,8 +425,8 @@
   font-family: $font-display;
   font-size: $font-size-4xl;
   font-weight: $font-weight-extrabold;
-  color: $color-white;
-  opacity: 0.5;
+  color: $color-red;
+  opacity: 0.45;
   line-height: 1;
   margin-bottom: $space-md;
   display: block;
@@ -492,11 +494,12 @@
     background: rgba($color-dark, 0.88);
     backdrop-filter: blur(8px);
     border-radius: $radius-full;
-    font-size: $font-size-xs;
-    color: $color-pink;
-    font-weight: $font-weight-semibold;
-    letter-spacing: $letter-spacing-wide;
-    text-transform: capitalize;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: $color-red-text;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-wider;
+    text-transform: uppercase;
   }
 }
 
@@ -557,8 +560,8 @@
   }
 
   .quote {
-    font-size: clamp($font-size-base, 2.5vw, $font-size-xl);
-    color: $color-text-body;
+    font-size: clamp($font-size-md, 2.5vw, $font-size-xl);
+    color: $color-off-white;
     line-height: $line-height-relaxed;
     font-style: italic;
     margin-bottom: $space-xl;
