@@ -16,6 +16,108 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: 'real-time-collaboration-features-custom-web-apps',
+    title: 'Adding Real-Time Collaboration to Custom Web Apps Without the Complexity',
+    excerpt:
+      'How to build multiplayer features like live cursors, co-editing, and real-time updates into your web apps using modern tools and pragmatic architecture.',
+    category: 'Web Development',
+    date: 'July 6, 2026',
+    readTime: 7,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'real-time collaboration code',
+    content: `
+<p class="lead">Your users now expect multiplayer. Google Docs trained an entire generation to assume that if two people are looking at the same screen, they should see each other's changes instantly. In 2026, that expectation has bled into every custom tool, client portal, and internal dashboard we build. The good news: you no longer need a PhD in distributed systems to ship real-time features.</p>
+
+<h2>Why Real-Time Matters Beyond Chat</h2>
+
+<p>When most teams hear "real-time," they think chat or notifications. But the highest-impact real-time features are often quieter: a sales team seeing pipeline updates without refreshing, two operations managers editing the same inventory sheet simultaneously, or a client portal where both sides watch a project status change live.</p>
+
+<p>We've built real-time collaboration into custom tools for clients across Lagos, Kingston, and Toronto. The pattern is consistent: <strong>teams that see each other's work in real time make fewer duplicate decisions and resolve conflicts faster.</strong> One logistics client in Nigeria cut order processing errors by 35% simply by adding live presence indicators to their dispatch dashboard—dispatchers could see who was already handling which order.</p>
+
+<h2>The Modern Real-Time Stack</h2>
+
+<p>Five years ago, building real-time meant wrestling with raw WebSockets, writing your own reconnection logic, and managing state synchronization from scratch. Today, the tooling has matured dramatically. Here's what actually works in production:</p>
+
+<h3>1. Supabase Realtime for Database-Driven Updates</h3>
+
+<p>If your app already runs on Supabase (or PostgreSQL), Supabase Realtime is the lowest-friction option. It listens to Postgres changes via logical replication and broadcasts them over WebSockets. You subscribe to table changes in a few lines of code:</p>
+
+<ul>
+<li><strong>Best for:</strong> Dashboards, admin panels, status boards—anything where the source of truth is a database row</li>
+<li><strong>Latency:</strong> Typically 50-150ms from write to client update</li>
+<li><strong>Limitation:</strong> Not ideal for high-frequency updates like live cursors (use Supabase's Broadcast channel for that)</li>
+</ul>
+
+<h3>2. Liveblocks for Document-Style Collaboration</h3>
+
+<p>Liveblocks handles the hard parts of multiplayer: conflict resolution, presence awareness, and offline support. It provides CRDTs (Conflict-free Replicated Data Types) out of the box, which means two users editing the same field simultaneously won't overwrite each other's work.</p>
+
+<ul>
+<li><strong>Best for:</strong> Co-editing interfaces, collaborative forms, design tools, whiteboard features</li>
+<li><strong>Pricing:</strong> Free tier covers up to 300 monthly active users—enough for most internal tools</li>
+<li><strong>Integration:</strong> First-class React hooks, works seamlessly with Next.js</li>
+</ul>
+
+<h3>3. PartyKit / Cloudflare Durable Objects for Custom Logic</h3>
+
+<p>When you need real-time <em>and</em> server-side logic—like validating moves in a workflow, rate-limiting updates, or aggregating data before broadcasting—PartyKit (now part of the Cloudflare ecosystem) gives you programmable WebSocket rooms running at the edge. Each "party" is a stateful server that can hold data in memory and persist to storage.</p>
+
+<ul>
+<li><strong>Best for:</strong> Complex collaborative workflows, real-time auctions, live dashboards with computed aggregations</li>
+<li><strong>Edge deployment:</strong> Rooms spin up close to your users—critical for teams split between Lagos and London</li>
+</ul>
+
+<h2>Architecture Decisions That Save You Pain</h2>
+
+<p>Choosing a tool is the easy part. The architecture around it determines whether your real-time features stay reliable at scale or become a debugging nightmare.</p>
+
+<h3>Separate Your Real-Time Layer From Your API Layer</h3>
+
+<p>Don't route real-time updates through the same API endpoints that handle CRUD operations. Keep your REST or tRPC API as the source of truth for writes, and let your real-time layer handle reads and subscriptions. This means a failed WebSocket connection never blocks a user from saving their work.</p>
+
+<h3>Design for Reconnection From Day One</h3>
+
+<p>Mobile networks in Lagos drop. WiFi in Kingston fluctuates. Your real-time layer <strong>will</strong> disconnect. Every implementation needs three things:</p>
+
+<ul>
+<li><strong>Exponential backoff reconnection</strong>—don't hammer your server with retry attempts</li>
+<li><strong>State reconciliation on reconnect</strong>—fetch the latest state via your API, then resubscribe to the real-time stream</li>
+<li><strong>Optimistic UI with rollback</strong>—show the user's action immediately, correct it if the server disagrees after reconnection</li>
+</ul>
+
+<h3>Use Presence Deliberately</h3>
+
+<p>Presence indicators (showing who's online, where their cursor is, what they're editing) are cheap to implement but expensive if overused. Broadcasting cursor positions 60 times per second across 50 users creates real load. Throttle presence updates to 5-10Hz for cursors, and use simple "viewing this page" indicators for most internal tools. Save fine-grained presence for features where it genuinely prevents conflicts.</p>
+
+<h2>What This Looks Like in a Next.js App</h2>
+
+<p>For a typical internal tool built with Next.js 15 and the App Router, our go-to architecture looks like this:</p>
+
+<ul>
+<li><strong>Data mutations:</strong> Server Actions or tRPC mutations write to PostgreSQL</li>
+<li><strong>Real-time subscriptions:</strong> Supabase Realtime (for database change streams) or Liveblocks (for collaborative editing)</li>
+<li><strong>Presence:</strong> Liveblocks useOthers() hook for lightweight "who's here" indicators</li>
+<li><strong>Fallback:</strong> SWR or React Query polling at 5-second intervals when WebSocket connections fail</li>
+</ul>
+
+<p>This hybrid approach means the app <em>always works</em>—real-time enhances the experience but isn't a single point of failure. Progressive enhancement applied to multiplayer.</p>
+
+<h2>When Real-Time Isn't Worth the Complexity</h2>
+
+<p>Not every app needs live updates. If your users typically work solo, if data changes infrequently (less than once per minute), or if your team doesn't have the bandwidth to test edge cases around reconnection and conflict resolution—<strong>a simple "Refresh" button or 30-second polling interval is a perfectly valid choice.</strong></p>
+
+<p>We've talked clients out of real-time features as often as we've built them. The question isn't "can we?" but "does this solve a real coordination problem?"</p>
+
+<h2>Start With Presence, Then Layer Up</h2>
+
+<p>If you're adding real-time to an existing app, start with the simplest high-value feature: showing who else is looking at the same record. It takes an afternoon to implement with Liveblocks or Supabase Broadcast, immediately reduces "did you already handle this?" Slack messages, and gives your team a foundation to build more sophisticated collaboration features when the use case is clear.</p>
+
+<p>Real-time collaboration used to be a feature reserved for companies with dedicated infrastructure teams. In 2026, the tools have caught up to the expectation. The challenge now is choosing the right level of real-time for each feature—and building it so it degrades gracefully when the network doesn't cooperate.</p>
+`,
+  },
+
+  {
     slug: 'progressive-enhancement-2026-building-web-apps-that-work-everywhere',
     title: 'Progressive Enhancement in 2026: Building Web Apps That Work Everywhere',
     excerpt:
