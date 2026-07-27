@@ -89,13 +89,10 @@
   @include container;
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap; // wrap rather than hidden-scroll: every category stays visible
   gap: $space-sm;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
   padding-bottom: $space-sm;
-
-  &::-webkit-scrollbar { display: none; }
 }
 
 .filterBtn {

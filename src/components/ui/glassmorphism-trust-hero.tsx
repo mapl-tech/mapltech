@@ -3,10 +3,25 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 
-// Hero proof strip - strongest THIRD-PARTY clients only, read before the first CTA.
-// Deliberately excludes MAPL Tours: it is our own product (see /labs), so listing it
-// under "Trusted by" would misrepresent it as an external client.
-const PROOF_CLIENTS = ['LRO Staffing', 'Loop', 'FOCAS Canada', 'UNSVCC', 'CHHA-NCR'];
+// Client partners for the hero marquee.
+//
+// TO ADD LOGOS LATER: drop each SVG/PNG into /public/images/clients/ and give the
+// entry a `logo` path (e.g. { name: 'Loop', logo: '/images/clients/loop.svg' }).
+// Entries with a logo render the image; entries without keep the wordmark - so
+// logos can be added one at a time without breaking the row.
+//
+// Deliberately excludes MAPL Tours: it is our own product (see /labs), so listing
+// it among client partners would misrepresent it as an external client.
+const PARTNERS: { name: string; logo?: string }[] = [
+  { name: 'LRO Staffing' },
+  { name: 'Loop' },
+  { name: 'FOCAS Canada' },
+  { name: 'Akuma Patterson' },
+  { name: 'Crowned Spice' },
+  { name: 'Crowngate' },
+  { name: 'UNSVCC' },
+  { name: 'CHHA-NCR' },
+];
 
 const RingsSvg = () => (
   <svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" aria-hidden="true" focusable="false">
@@ -72,6 +87,10 @@ export default function HeroSection() {
           from { opacity: 0; transform: translateY(24px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
         @keyframes heroRingPulse {
           0%, 100% { opacity: 0.85; }
           50% { opacity: 0.5; }
@@ -79,6 +98,12 @@ export default function HeroSection() {
         .hero-fade-in {
           animation: fadeSlideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
+        }
+        .hero-marquee {
+          animation: marquee 36s linear infinite;
+        }
+        .hero-marquee:hover {
+          animation-play-state: paused;
         }
         .hero-rings {
           animation: heroRingPulse 7s ease-in-out infinite;
@@ -90,7 +115,7 @@ export default function HeroSection() {
         .hero-delay-500 { animation-delay: 0.52s; }
         @media (prefers-reduced-motion: reduce) {
           .hero-fade-in { animation-duration: 0.01ms; }
-          .hero-rings { animation: none; }
+          .hero-marquee, .hero-rings { animation: none; }
         }
       `}</style>
 
@@ -200,25 +225,6 @@ export default function HeroSection() {
               and infrastructure their most ambitious projects demand.
             </p>
 
-            {/* Proof strip - client wordmarks read BEFORE the first ask */}
-            <div className="hero-fade-in hero-delay-300 flex flex-wrap items-baseline gap-x-6 gap-y-2">
-              <span
-                className="text-[11px] font-medium uppercase tracking-[0.18em]"
-                style={{ color: 'rgba(255,255,255,0.62)' }}
-              >
-                Trusted by
-              </span>
-              {PROOF_CLIENTS.map((client) => (
-                <span
-                  key={client}
-                  className="text-sm font-bold tracking-tight whitespace-nowrap cursor-default"
-                  style={{ color: 'rgba(255,255,255,0.78)' }}
-                >
-                  {client}
-                </span>
-              ))}
-            </div>
-
             {/* Buttons */}
             <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4 pt-2">
               <Link
@@ -301,6 +307,33 @@ export default function HeroSection() {
                   <StatItem value="25+" label="Years" />
                   <StatItem value="24/7" label="Support" />
                   <StatItem value="3" label="Countries" />
+                </div>
+              </div>
+            </div>
+
+            {/* Client partner marquee - scrolls continuously, pauses on hover */}
+            <div className="hero-fade-in hero-delay-500 relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] py-7 backdrop-blur-xl">
+              <h2 className="mb-5 px-7 sm:px-8 text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-400">
+                Selected Client Partners
+              </h2>
+
+              <div
+                className="relative flex overflow-hidden"
+                style={{
+                  maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+                }}
+              >
+                {/* Duplicated once so the -50% translate loops seamlessly */}
+                <div className="hero-marquee flex items-center gap-10 whitespace-nowrap px-4">
+                  {[...PARTNERS, ...PARTNERS].map((partner, i) => (
+                    <span
+                      key={`${partner.name}-${i}`}
+                      className="text-lg font-bold tracking-tight text-white/70 transition-colors hover:text-white cursor-default"
+                    >
+                      {partner.name}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
