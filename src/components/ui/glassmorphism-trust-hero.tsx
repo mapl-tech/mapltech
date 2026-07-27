@@ -3,18 +3,25 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 
-// Real client roster - pulled from the portfolio (config/site.ts)
-const CLIENTS = [
-  'LRO Staffing',
-  'Loop',
-  'MAPL Tours',
-  'Akuma Patterson',
-  'FOCAS Canada',
-  'Crowned Spice',
-  'Crowngate',
-  'UNSVCC',
-  'CHHA-NCR',
-];
+// Hero proof strip - strongest THIRD-PARTY clients only, read before the first CTA.
+// Deliberately excludes MAPL Tours: it is our own product (see /labs), so listing it
+// under "Trusted by" would misrepresent it as an external client.
+const PROOF_CLIENTS = ['LRO Staffing', 'Loop', 'FOCAS Canada', 'UNSVCC', 'CHHA-NCR'];
+
+const RingsSvg = () => (
+  <svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" aria-hidden="true" focusable="false">
+    <circle cx="300" cy="300" r="280" stroke="rgba(240,51,80,0.08)" strokeWidth="1" />
+    <circle cx="300" cy="300" r="240" stroke="rgba(240,51,80,0.1)" strokeWidth="1" />
+    <circle cx="300" cy="300" r="200" stroke="rgba(240,51,80,0.12)" strokeWidth="1" />
+    <circle cx="300" cy="300" r="160" stroke="rgba(240,51,80,0.15)" strokeWidth="1" />
+    <circle cx="300" cy="300" r="120" stroke="rgba(240,51,80,0.18)" strokeWidth="1.5" />
+    <circle cx="300" cy="300" r="80" stroke="rgba(240,51,80,0.22)" strokeWidth="1.5" />
+    <circle cx="300" cy="300" r="40" stroke="rgba(240,51,80,0.28)" strokeWidth="1.5" />
+    <circle cx="300" cy="300" r="4" fill="#F03350" />
+    <circle cx="300" cy="300" r="8" fill="rgba(240,51,80,0.3)" />
+    <circle cx="300" cy="300" r="16" fill="rgba(240,51,80,0.08)" />
+  </svg>
+);
 
 const StatItem = ({ value, label }: { value: string; label: string }) => (
   <div className="flex flex-col items-center justify-center transition-transform hover:-translate-y-1 cursor-default">
@@ -65,10 +72,6 @@ export default function HeroSection() {
           from { opacity: 0; transform: translateY(24px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes marquee {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
         @keyframes heroRingPulse {
           0%, 100% { opacity: 0.85; }
           50% { opacity: 0.5; }
@@ -76,12 +79,6 @@ export default function HeroSection() {
         .hero-fade-in {
           animation: fadeSlideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
-        }
-        .hero-marquee {
-          animation: marquee 36s linear infinite;
-        }
-        .hero-marquee:hover {
-          animation-play-state: paused;
         }
         .hero-rings {
           animation: heroRingPulse 7s ease-in-out infinite;
@@ -93,7 +90,7 @@ export default function HeroSection() {
         .hero-delay-500 { animation-delay: 0.52s; }
         @media (prefers-reduced-motion: reduce) {
           .hero-fade-in { animation-duration: 0.01ms; }
-          .hero-marquee, .hero-rings { animation: none; }
+          .hero-rings { animation: none; }
         }
       `}</style>
 
@@ -135,7 +132,7 @@ export default function HeroSection() {
         }}
       />
 
-      {/* Concentric circles - engineering blueprint motif (desktop only) */}
+      {/* Concentric circles - engineering blueprint motif (desktop: cursor-parallax) */}
       <div
         className="hero-rings absolute pointer-events-none hidden lg:block"
         style={{
@@ -148,18 +145,23 @@ export default function HeroSection() {
           aspectRatio: '1',
         }}
       >
-        <svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          <circle cx="300" cy="300" r="280" stroke="rgba(240,51,80,0.08)" strokeWidth="1" />
-          <circle cx="300" cy="300" r="240" stroke="rgba(240,51,80,0.1)" strokeWidth="1" />
-          <circle cx="300" cy="300" r="200" stroke="rgba(240,51,80,0.12)" strokeWidth="1" />
-          <circle cx="300" cy="300" r="160" stroke="rgba(240,51,80,0.15)" strokeWidth="1" />
-          <circle cx="300" cy="300" r="120" stroke="rgba(240,51,80,0.18)" strokeWidth="1.5" />
-          <circle cx="300" cy="300" r="80" stroke="rgba(240,51,80,0.22)" strokeWidth="1.5" />
-          <circle cx="300" cy="300" r="40" stroke="rgba(240,51,80,0.28)" strokeWidth="1.5" />
-          <circle cx="300" cy="300" r="4" fill="#F03350" />
-          <circle cx="300" cy="300" r="8" fill="rgba(240,51,80,0.3)" />
-          <circle cx="300" cy="300" r="16" fill="rgba(240,51,80,0.08)" />
-        </svg>
+        <RingsSvg />
+      </div>
+
+      {/* Mobile: static rings, clipped off the right edge - designed degradation,
+          the motif survives touch instead of disappearing. Deliberately NOT
+          .hero-rings: that class animates opacity, which would override this one. */}
+      <div
+        className="hero-rings-static absolute pointer-events-none lg:hidden"
+        style={{
+          top: '4%',
+          right: '-38%',
+          width: 'min(88vw, 420px)',
+          aspectRatio: '1',
+          opacity: 0.55,
+        }}
+      >
+        <RingsSvg />
       </div>
 
       {/* Content */}
@@ -197,6 +199,25 @@ export default function HeroSection() {
               We partner with agencies to build, ship, and scale the systems, automation,
               and infrastructure their most ambitious projects demand.
             </p>
+
+            {/* Proof strip - client wordmarks read BEFORE the first ask */}
+            <div className="hero-fade-in hero-delay-300 flex flex-wrap items-baseline gap-x-6 gap-y-2">
+              <span
+                className="text-[11px] font-medium uppercase tracking-[0.18em]"
+                style={{ color: 'rgba(255,255,255,0.62)' }}
+              >
+                Trusted by
+              </span>
+              {PROOF_CLIENTS.map((client) => (
+                <span
+                  key={client}
+                  className="text-sm font-bold tracking-tight whitespace-nowrap cursor-default"
+                  style={{ color: 'rgba(255,255,255,0.78)' }}
+                >
+                  {client}
+                </span>
+              ))}
+            </div>
 
             {/* Buttons */}
             <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4 pt-2">
@@ -280,32 +301,6 @@ export default function HeroSection() {
                   <StatItem value="25+" label="Years" />
                   <StatItem value="24/7" label="Support" />
                   <StatItem value="3" label="Countries" />
-                </div>
-              </div>
-            </div>
-
-            {/* Client Marquee */}
-            <div className="hero-fade-in hero-delay-500 relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] py-7 backdrop-blur-xl">
-              <h2 className="mb-5 px-7 sm:px-8 text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500">
-                Selected Client Partners
-              </h2>
-
-              <div
-                className="relative flex overflow-hidden"
-                style={{
-                  maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
-                }}
-              >
-                <div className="hero-marquee flex items-baseline gap-10 whitespace-nowrap px-4">
-                  {[...CLIENTS, ...CLIENTS].map((client, i) => (
-                    <span
-                      key={i}
-                      className="text-lg font-bold tracking-tight text-white/45 transition-colors hover:text-white cursor-default"
-                    >
-                      {client}
-                    </span>
-                  ))}
                 </div>
               </div>
             </div>

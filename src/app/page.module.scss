@@ -172,6 +172,53 @@
   }
 }
 
+// Oversized index numeral  - engineering-catalogue signal, quiet until hover
+.serviceNumber {
+  position: absolute;
+  top: $space-lg;
+  right: $space-xl;
+  font-family: $font-display;
+  font-size: 3.5rem;
+  font-weight: $font-weight-extrabold;
+  line-height: 1;
+  color: rgba($color-white, 0.06);
+  letter-spacing: $letter-spacing-tight;
+  pointer-events: none;
+  transition: color $transition-base;
+  z-index: 2;
+
+  .serviceCard:hover & {
+    color: rgba($color-red, 0.28);
+  }
+}
+
+// Real stack chips  - concrete tech beats capability prose
+.serviceStack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  position: relative;
+  z-index: 2;
+
+  li {
+    padding: 4px 12px;
+    border: 1px solid rgba($color-white, 0.14);
+    border-radius: $radius-full;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+    color: $color-text-muted;
+    transition: border-color $transition-base, color $transition-base;
+  }
+
+  .serviceCard:hover & li {
+    border-color: rgba($color-red, 0.3);
+    color: $color-white-muted;
+  }
+}
+
 .serviceIcon {
   width: 56px;
   height: 56px;
@@ -719,6 +766,38 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: $space-md;
+}
+
+// Microcopy under the ask  - pre-empts the "this becomes a sales process" objection
+.ctaMicrocopy {
+  margin-top: $space-md;
+  font-family: $font-mono;
+  font-size: $font-size-sm; // prose under the primary CTA - not a label, keep it readable
+  letter-spacing: $letter-spacing-wide;
+  color: $color-text-muted;
+  text-align: center;
+}
+
+// Three reassurances  - real differentiators, not filler
+.ctaReassurance {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-md $space-xl;
+  margin-top: $space-xl;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    font-size: $font-size-sm;
+    color: $color-text-body;
+  }
+
+  svg {
+    color: $color-red;
+    flex-shrink: 0;
+  }
 }
 
 // ===== BACKGROUND ORBS  - zigzag left/right behind section content =====

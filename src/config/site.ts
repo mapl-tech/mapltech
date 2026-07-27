@@ -324,8 +324,8 @@ export const portfolioProjects = [
   {
     title: 'MAPL Tours',
     category: 'Automation and AI Workflows',
-    description: 'A travel and tourism company fully managed by AI - from trip planning and booking to customer communication and itinerary generation.',
-    tags: ['AI', 'Travel', 'Automation'],
+    description: 'Our own product: a travel and tourism company fully managed by AI - from trip planning and booking to customer communication and itinerary generation. Built and operated in-house by MAPL Labs.',
+    tags: ['MAPL Labs', 'AI', 'Automation'],
     image: '/images/project-mapl-tours.png',
     url: 'https://mapltours.com/',
   },

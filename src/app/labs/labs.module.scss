@@ -69,6 +69,64 @@
   }
 }
 
+// ===== SHIPPING PIPELINE =====
+.pipeline {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+
+  @include sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(4, 1fr);
+    gap: $space-lg;
+  }
+}
+
+.pipelineStep {
+  position: relative;
+  padding-top: $space-lg;
+  border-top: 1px solid rgba($color-dark-border, 0.9);
+  height: 100%;
+
+  // Red stage marker riding the top rule
+  &::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 0;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: $color-red;
+  }
+
+  h3 {
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    color: $color-white;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    line-height: $line-height-relaxed;
+  }
+}
+
+.pipelineNum {
+  display: block;
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-wider;
+  color: $color-red-text;
+  margin-bottom: $space-sm;
+}
+
 // ===== SHOWCASE ROWS =====
 .showcase {
   display: flex;

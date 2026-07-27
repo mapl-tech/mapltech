@@ -20,6 +20,14 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://mapltech.com/labs' },
 };
 
+// How a Labs product moves from idea to operating business
+const pipeline = [
+  { stage: 'Prototype', desc: 'Validate the idea with working software, not slide decks.' },
+  { stage: 'Harden', desc: 'Production infrastructure, monitoring, and security before launch.' },
+  { stage: 'Launch', desc: 'Ship it publicly and put real users on it.' },
+  { stage: 'Operate', desc: 'Keep it running: monitoring, iteration, and support after launch.' },
+];
+
 const ethos = [
   {
     title: 'We ship it',
@@ -169,6 +177,30 @@ export default function LabsPage() {
                 </BlurReveal>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Shipping pipeline */}
+      <section className={`${pageStyles.section} ${pageStyles.navy}`}>
+        <div className={pageStyles.sectionInner}>
+          <SectionHeading
+            label="How It Ships"
+            title="From Prototype to Operating Business"
+            subtitle="The four stages every MAPL Labs product moves through."
+          />
+          {/* Not <ol>: BlurReveal wraps each child in a motion.div, which would
+              make <li> a non-child of the list and break list semantics. */}
+          <div className={styles.pipeline}>
+            {pipeline.map((step, i) => (
+              <BlurReveal key={step.stage} delay={i * 0.08}>
+                <div className={styles.pipelineStep}>
+                  <span className={styles.pipelineNum}>{String(i + 1).padStart(2, '0')}</span>
+                  <h3>{step.stage}</h3>
+                  <p>{step.desc}</p>
+                </div>
+              </BlurReveal>
+            ))}
           </div>
         </div>
       </section>

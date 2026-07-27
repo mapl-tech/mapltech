@@ -11,6 +11,7 @@ import {
   HiArrowRight,
   HiChevronLeft,
   HiChevronRight,
+  HiCheck,
 } from 'react-icons/hi2';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
@@ -36,6 +37,7 @@ export default function HomePage() {
       description:
         'Custom-coded sites engineered for speed, accessibility, and maintainability. No page builders, no shortcuts - just clean architecture your team can own.',
       href: '/services/web-development',
+      stack: ['Next.js', 'React', 'TypeScript', 'WordPress'],
     },
     {
       icon: <HiCpuChip size={24} />,
@@ -43,6 +45,7 @@ export default function HomePage() {
       description:
         'Connect your CRM, project tools, invoicing, and client intake into one seamless pipeline. We build AI agents and intelligent workflows that eliminate manual busywork.',
       href: '/services/automation-ai-workflow-setup',
+      stack: ['AI Agents', 'Python', 'APIs', 'CRM'],
     },
     {
       icon: <HiWrenchScrewdriver size={24} />,
@@ -50,6 +53,7 @@ export default function HomePage() {
       description:
         'Dashboards, client portals, and reporting systems built around how your agency actually works - not how a SaaS product thinks you should.',
       href: '/services/custom-internal-tools',
+      stack: ['React', 'Node.js', 'PostgreSQL'],
     },
     {
       icon: <HiCloud size={24} />,
@@ -57,6 +61,7 @@ export default function HomePage() {
       description:
         'Scalable cloud infrastructure, CI/CD pipelines, and monitoring - designed, deployed, and managed so your agency never worries about uptime or scaling.',
       href: '/services/cloud-engineering',
+      stack: ['AWS', 'GCP', 'Terraform', 'CI/CD'],
     },
   ];
 
@@ -104,9 +109,21 @@ export default function HomePage() {
             {services.map((service, i) => (
               <BlurReveal key={service.title} delay={i * 0.12}>
                 <SpotlightCard className={styles.serviceCard}>
+                  <span className={styles.serviceNumber} aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
                   <div className={styles.serviceIcon}>{service.icon}</div>
                   <h3 className={styles.serviceTitle}>{service.title}</h3>
                   <p className={styles.serviceDescription}>{service.description}</p>
+                  <ul
+                    className={styles.serviceStack}
+                    role="list"
+                    aria-label={`${service.title} technologies`}
+                  >
+                    {service.stack.map((tech) => (
+                      <li key={tech}>{tech}</li>
+                    ))}
+                  </ul>
                   <Link href={service.href} className={styles.serviceLink}>
                     Learn more <HiArrowRight aria-hidden="true" />
                   </Link>
@@ -376,6 +393,21 @@ export default function HomePage() {
                 View Pricing
               </MagneticButton>
             </div>
+            <p className={styles.ctaMicrocopy}>
+              Takes 2 minutes. No discovery-call gauntlet.
+            </p>
+            <ul className={styles.ctaReassurance}>
+              {[
+                'Transparent public pricing',
+                'Teams in 3 countries',
+                'Code your team can own',
+              ].map((item) => (
+                <li key={item}>
+                  <HiCheck size={16} aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </BlurReveal>
         </div>
         <ParallaxOrb

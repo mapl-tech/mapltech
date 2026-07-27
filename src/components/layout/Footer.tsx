@@ -136,10 +136,24 @@ export default function Footer() {
                   {siteConfig.phone}
                 </a>
               </div>
-              <div className={styles.contactItem}>
-                <HiMapPin size={16} aria-hidden="true" />
-                <span>Canada &bull; Nigeria &bull; Jamaica</span>
-              </div>
+            </div>
+
+            {/* Where we operate - headquarters + regional branches.
+                Worded as HQ/branch (not "office") to match what siteConfig evidences. */}
+            <div className={styles.offices}>
+              {[
+                { place: 'Canada', role: 'Headquarters', href: '/about-us' },
+                { place: 'Nigeria', role: 'Regional Branch', href: '/nigeria' },
+                { place: 'Jamaica', role: 'Regional Branch', href: '/jamaica' },
+              ].map((loc) => (
+                <Link key={loc.place} href={loc.href} className={styles.office}>
+                  <HiMapPin size={14} aria-hidden="true" />
+                  <span>
+                    <strong>{loc.place}</strong>
+                    <em>{loc.role}</em>
+                  </span>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
