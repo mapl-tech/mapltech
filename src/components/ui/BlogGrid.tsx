@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import Image from 'next/image';
 import { HiArrowRight, HiClock, HiCalendar } from 'react-icons/hi2';
 import { blogPosts, categories, type BlogCategory } from '@/data/blog-posts';
@@ -17,16 +18,13 @@ export default function BlogGrid() {
   const nonFeatured = blogPosts.filter((p) => !p.featured);
   const featured = blogPosts.find((p) => p.featured);
 
-  const filtered = useMemo(
-    () => (active === 'All' ? nonFeatured : nonFeatured.filter((p) => p.category === active)),
-    [active]
-  );
+  const filtered =
+    active === 'All' ? nonFeatured : nonFeatured.filter((p) => p.category === active);
 
-  const counts = useMemo(() => {
-    const map: Record<string, number> = { All: nonFeatured.length };
-    categories.forEach((c) => { map[c] = nonFeatured.filter((p) => p.category === c).length; });
-    return map;
-  }, []);
+  const counts: Record<string, number> = { All: nonFeatured.length };
+  categories.forEach((c) => {
+    counts[c] = nonFeatured.filter((p) => p.category === c).length;
+  });
 
   return (
     <>
@@ -122,7 +120,7 @@ export default function BlogGrid() {
             ) : (
               filtered.map((post) => (
                 <li key={post.slug} role="listitem">
-                  <Link
+                  <SpotlightCard
                     href={`/blog/${post.slug}`}
                     className={styles.card}
                     aria-label={`${post.title} - ${post.category}, ${post.readTime} min read`}
@@ -163,7 +161,7 @@ export default function BlogGrid() {
                         </div>
                       </div>
                     </div>
-                  </Link>
+                  </SpotlightCard>
                 </li>
               ))
             )}

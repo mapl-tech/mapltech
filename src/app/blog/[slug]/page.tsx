@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import Image from 'next/image';
 import { HiArrowLeft, HiArrowRight, HiClock, HiCalendar, HiChevronRight } from 'react-icons/hi2';
 import { getPostBySlug, getRelatedPosts, blogPosts } from '@/data/blog-posts';
@@ -192,7 +193,7 @@ export default async function BlogPostPage({ params }: Props) {
             <ul className={styles.relatedGrid} role="list">
               {related.map((rel) => (
                 <li key={rel.slug} role="listitem">
-                  <Link
+                  <SpotlightCard
                     href={`/blog/${rel.slug}`}
                     className={styles.card}
                     aria-label={`${rel.title} - ${rel.category}, ${rel.readTime} min read`}
@@ -228,7 +229,7 @@ export default async function BlogPostPage({ params }: Props) {
                         </div>
                       </div>
                     </div>
-                  </Link>
+                  </SpotlightCard>
                 </li>
               ))}
             </ul>

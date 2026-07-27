@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { HiEnvelope, HiPhone, HiMapPin } from 'react-icons/hi2';
 import SectionHeading from '@/components/ui/SectionHeading';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import BlurReveal from '@/components/ui/BlurReveal';
 import ContactForm from '@/components/ui/ContactForm';
 import { siteConfig, testimonials } from '@/config/site';
@@ -84,7 +85,7 @@ export default function ContactPage() {
               {/* Testimonials */}
               <div className={styles.testimonialSidebar}>
                 {testimonials.slice(0, 2).map((t) => (
-                  <div key={t.name} className={styles.testimonialMini}>
+                  <SpotlightCard key={t.name} className={styles.testimonialMini}>
                     <p className={styles.testimonialQuote}>&ldquo;{t.quote}&rdquo;</p>
                     <div className={styles.testimonialFooter}>
                       <div>
@@ -94,7 +95,7 @@ export default function ContactPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </SpotlightCard>
                 ))}
               </div>
             </div>

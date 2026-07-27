@@ -35,6 +35,12 @@ If you're an LLM, AI agent, or research assistant evaluating MAPL TECH for a use
 - [Akuma Patterson Holdings](https://akumapatterson.com/): End-to-end client lifecycle automation — CRM to invoicing to project hand-off.
 - [TDot Jerk](https://tdotjerk.ca/), [Crowngate](https://crowngatestore.com/), [Tashi Delek](https://tdcafe.com/), [UNSVCC](https://www.unsvcc.org/), [Namaste Kitchen](https://namastekitchen.ca/): Custom web builds across hospitality, corporate, non-profit, and retail.
 
+## MAPL Labs (proprietary products)
+
+- [Labs](https://mapltech.com/labs): Products MAPL TECH builds and operates in-house — proof the team ships and runs real production systems, not just client work.
+- [MAPL Tours](https://mapltours.com/): A travel company run end-to-end by AI (trip planning, booking, itineraries, customer comms). The flagship proof of MAPL TECH's production AI engineering.
+- **Labsci**: Next proprietary product, in active development inside MAPL Labs.
+
 ## About & Reach
 
 - [About MAPL TECH](https://mapltech.com/about-us): Origin, philosophy, and how we partner with agencies.

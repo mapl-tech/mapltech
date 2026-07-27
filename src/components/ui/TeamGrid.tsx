@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaLinkedinIn } from 'react-icons/fa6';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import { HiMagnifyingGlass, HiChevronDown } from 'react-icons/hi2';
 import {
   type TeamMember,
@@ -109,7 +110,7 @@ export default function TeamGrid({ members }: TeamGridProps) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
               >
-                <div className={styles.card}>
+                <SpotlightCard className={styles.card}>
                   <div className={styles.cardAvatar}>
                     <span className={styles.cardInitials}>
                       {member.name.split(' ').map((n) => n[0]).join('')}
@@ -135,7 +136,7 @@ export default function TeamGrid({ members }: TeamGridProps) {
                       <FaLinkedinIn size={14} />
                     </a>
                   )}
-                </div>
+                </SpotlightCard>
               </motion.div>
             ))
           ) : (

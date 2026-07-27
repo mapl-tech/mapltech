@@ -1,0 +1,289 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ===== HERO EYEBROW + ACTIONS =====
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+  color: $color-red-text;
+  margin-bottom: $space-lg;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: rgba($color-red, 0.5);
+  }
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md;
+  margin-top: $space-2xl;
+}
+
+// ===== ETHOS STRIP =====
+.ethos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-xl;
+  padding: $space-2xl 0;
+  border-top: 1px solid rgba($color-dark-border, 0.7);
+  border-bottom: 1px solid rgba($color-dark-border, 0.7);
+
+  @include md {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-3xl;
+  }
+}
+
+.ethosItem {
+  .ethosNum {
+    font-family: $font-mono;
+    font-size: $font-size-xs;
+    letter-spacing: $letter-spacing-wider;
+    color: $color-red-text;
+    display: block;
+    margin-bottom: $space-sm;
+  }
+
+  h3 {
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    color: $color-white;
+    margin-bottom: $space-xs;
+  }
+
+  p {
+    font-size: $font-size-base;
+    color: $color-text-body;
+    line-height: $line-height-relaxed;
+  }
+}
+
+// ===== SHOWCASE ROWS =====
+.showcase {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4xl;
+
+  @include lg {
+    gap: $space-5xl;
+  }
+}
+
+.showcaseRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-2xl;
+  align-items: center;
+
+  @include lg {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: $space-4xl;
+  }
+}
+
+.showcaseMedia {
+  position: relative;
+  order: -1; // media always on top when stacked (mobile)
+  border-radius: $radius-xl;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: $gradient-card;
+  @include gradient-border(1px, $radius-xl);
+
+  a {
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    @include focus-ring;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition-slow;
+  }
+
+  @include lg {
+    order: 0;
+  }
+}
+
+.showcaseRow:hover .showcaseMedia img {
+  transform: scale(1.04);
+}
+
+// Reversed row: media moves to the right on desktop (still first on mobile)
+.reverse {
+  @include lg {
+    .showcaseMedia {
+      order: 1;
+    }
+  }
+}
+
+// Coming-soon media: dim the placeholder + label it so it reads intentional
+.comingSoonMedia {
+  img {
+    opacity: 0.35;
+    filter: grayscale(0.4);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 0%, rgba($color-dark, 0.55) 100%);
+    pointer-events: none;
+  }
+}
+
+.comingSoonStamp {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-mono;
+  font-size: $font-size-sm;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-widest;
+  color: $color-white-dim;
+}
+
+// ===== SHOWCASE BODY =====
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: 6px 14px;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-dark-border, 0.9);
+  background: rgba($color-dark-card, 0.6);
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-wider;
+  text-transform: uppercase;
+  color: $color-text-body;
+  margin-bottom: $space-lg;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &.live {
+    color: #4ade80;
+
+    .dot {
+      background: #22c55e;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+      animation: labsPulse 2.4s ease-out infinite;
+    }
+  }
+
+  &.soon {
+    color: $color-text-muted;
+
+    .dot {
+      background: $color-text-muted;
+    }
+  }
+}
+
+@keyframes labsPulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.showcaseName {
+  font-family: $font-display;
+  font-size: clamp($font-size-3xl, 4vw, $font-size-4xl);
+  font-weight: $font-weight-extrabold;
+  color: $color-white;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+  margin-bottom: $space-sm;
+}
+
+.tagline {
+  font-size: clamp($font-size-md, 2vw, $font-size-lg);
+  color: $color-red-text;
+  margin-bottom: $space-lg;
+}
+
+.showcaseDesc {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  line-height: $line-height-relaxed;
+  margin-bottom: $space-xl;
+  max-width: 46ch;
+}
+
+.capabilities {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  margin-bottom: $space-2xl;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-md;
+    font-size: $font-size-base;
+    color: $color-text-body;
+    line-height: $line-height-normal;
+  }
+
+  svg {
+    color: $color-red;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+}
+
+.visitLink {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  min-height: 44px; // touch-target floor (WCAG 2.5.5 / mobile audit)
+  color: $color-red-text;
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-wider;
+  text-transform: uppercase;
+  transition: gap $transition-base, color $transition-base;
+
+  @include focus-ring;
+
+  &:hover {
+    gap: $space-md;
+    color: $color-pink-hot;
+  }
+}
+
+.soonNote {
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  letter-spacing: $letter-spacing-wider;
+  text-transform: uppercase;
+  color: $color-text-muted;
+}

@@ -23,15 +23,18 @@ export const siteConfig = {
       { label: 'Cloud Engineering', href: '/services/cloud-engineering' },
     ]},
     { label: 'Pricing', href: '/pricing' },
+    { label: 'Our Work', href: '/our-work', children: [
+      { label: 'Client Work', href: '/our-work' },
+      { label: 'MAPL Labs', href: '/labs' },
+    ]},
     { label: 'About Us', href: '/about-us', children: [
       { label: 'About MAPL TECH', href: '/about-us' },
       { label: 'MAPL TECH Nigeria', href: '/nigeria' },
       { label: 'MAPL TECH Jamaica', href: '/jamaica' },
+      { label: 'Careers', href: '/careers' },
+      { label: 'Referral Program', href: '/referral' },
     ]},
-    { label: 'Our Work', href: '/our-work' },
     { label: 'Blog', href: '/blog' },
-    { label: 'Careers', href: '/careers' },
-    { label: 'Referral', href: '/referral' },
   ],
 };
 
@@ -304,6 +307,13 @@ export const testimonials = [
 
 export const portfolioProjects = [
   {
+    title: 'Loop',
+    category: 'Web Development',
+    description: 'A high-performance, custom-coded web platform engineered for speed, scale, and clean maintainability - built without the constraints of page builders or plugin stacks.',
+    tags: ['Web Development', 'Custom Development', 'Performance'],
+    image: '/images/mockup-web-dev.svg',
+  },
+  {
     title: 'LRO Staffing',
     category: 'Custom Internal Tools',
     description: 'Interactive salary guide tool with dynamic filtering, real-time data visualization, and role-based salary benchmarking for recruiters and hiring managers.',
@@ -335,14 +345,6 @@ export const portfolioProjects = [
     image: '/images/mockup-event-platform.svg',
   },
   {
-    title: 'TDot Jerk',
-    category: 'Web Development',
-    description: 'Food service site with catering request workflow, multi-location finder, and mobile-first design.',
-    tags: ['Restaurant', 'Custom Development', 'Maps'],
-    image: '/images/mockup-catering.svg',
-    url: 'https://tdotjerk.ca/',
-  },
-  {
     title: 'Crowned Spice',
     category: 'Automation and AI Workflows',
     description: 'End-to-end e-commerce automation - inventory syncing, shipping triggers, and post-purchase communication flows.',
@@ -356,14 +358,6 @@ export const portfolioProjects = [
     tags: ['Corporate', 'Custom Development', 'Branding'],
     image: '/images/mockup-corporate.svg',
     url: 'https://crowngatestore.com/',
-  },
-  {
-    title: 'Tashi Delek',
-    category: 'Web Development',
-    description: 'Restaurant website with cultural storytelling, menu showcase, and location-driven local SEO for Tibetan cuisine.',
-    tags: ['Restaurant', 'CMS', 'Local SEO'],
-    image: '/images/mockup-restaurant.svg',
-    url: 'https://tdcafe.com/',
   },
   {
     title: 'Tricia Walters',
@@ -381,12 +375,45 @@ export const portfolioProjects = [
     url: 'https://www.unsvcc.org/',
   },
   {
-    title: 'Namaste Tibetan Kitchen',
+    title: 'CHHA-NCR',
     category: 'Web Development',
-    description: 'Custom restaurant site with online ordering, real-time menu management, and SEO-optimized local search presence.',
-    tags: ['Restaurant', 'E-commerce', 'CMS'],
-    image: '/images/mockup-portal.svg',
-    url: 'https://namastekitchen.ca/',
+    description: 'Accessible, standards-compliant website for a community non-profit - built with WCAG accessibility at the core, clear content structure, and an easy-to-maintain CMS.',
+    tags: ['Non-Profit', 'Accessibility', 'Web Development'],
+    image: '/images/mockup-corporate.svg',
+  },
+];
+
+// MAPL Labs - proprietary products MAPL TECH builds and operates in-house.
+// Proof that the team ships and runs real production systems, not just client work.
+export const labsProjects = [
+  {
+    name: 'MAPL Tours',
+    status: 'Live',
+    tagline: 'A travel company run end-to-end by AI',
+    description:
+      'A full travel and tourism business where AI handles the entire journey - trip planning, booking, itinerary generation, and customer communication. Our proving ground for production AI: the same agents, pipelines, and infrastructure we build for clients, running a live company 24/7.',
+    capabilities: [
+      'Autonomous trip planning & booking',
+      'AI-generated itineraries',
+      'Automated customer communication',
+      'Self-operating booking pipeline',
+    ],
+    image: '/images/project-mapl-tours.png',
+    url: 'https://mapltours.com',
+  },
+  {
+    name: 'Labsci',
+    status: 'Coming Soon',
+    tagline: 'An in-house R&D initiative in active development',
+    description:
+      'Our next proprietary product, currently being engineered inside MAPL Labs. Built on the same principles as everything we ship: real systems, intelligent automation, and infrastructure designed to scale. Details revealed soon.',
+    capabilities: [
+      'In active development',
+      'Built & operated in-house',
+      'Production-grade from day one',
+    ],
+    image: '/images/portfolio-placeholder.svg',
+    url: null,
   },
 ];
 

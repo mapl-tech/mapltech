@@ -18,6 +18,7 @@ import TextReveal from '@/components/ui/TextReveal';
 import FloatingOrbs from '@/components/ui/FloatingOrbs';
 import AnimatedCounter from '@/components/ui/AnimatedCounter';
 import MagneticButton from '@/components/ui/MagneticButton';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import ScrollOrb from '@/components/ui/ScrollOrb';
 import ParallaxOrb from '@/components/ui/ParallaxOrb';
 import ContactForm from '@/components/ui/ContactForm';
@@ -102,14 +103,14 @@ export default function HomePage() {
           <div className={styles.servicesGrid}>
             {services.map((service, i) => (
               <BlurReveal key={service.title} delay={i * 0.12}>
-                <div className={styles.serviceCard}>
+                <SpotlightCard className={styles.serviceCard}>
                   <div className={styles.serviceIcon}>{service.icon}</div>
                   <h3 className={styles.serviceTitle}>{service.title}</h3>
                   <p className={styles.serviceDescription}>{service.description}</p>
                   <Link href={service.href} className={styles.serviceLink}>
                     Learn more <HiArrowRight aria-hidden="true" />
                   </Link>
-                </div>
+                </SpotlightCard>
               </BlurReveal>
             ))}
           </div>
@@ -207,11 +208,11 @@ export default function HomePage() {
           <div className={styles.whyUsGrid}>
             {whyUsCards.map((card, i) => (
               <BlurReveal key={card.title} delay={i * 0.1}>
-                <div className={styles.whyUsCard}>
+                <SpotlightCard className={styles.whyUsCard}>
                   <span className={styles.whyUsNumber}>{String(i + 1).padStart(2, '0')}</span>
                   <h3>{card.title}</h3>
                   <p>{card.description}</p>
-                </div>
+                </SpotlightCard>
               </BlurReveal>
             ))}
           </div>
@@ -237,7 +238,7 @@ export default function HomePage() {
           <div className={styles.portfolioGrid}>
             {featuredProjects.map((project, i) => {
               const card = (
-                <div className={styles.portfolioCard}>
+                <SpotlightCard className={styles.portfolioCard}>
                   <div className={styles.portfolioImage}>
                     <Image
                       src={project.image}
@@ -252,7 +253,7 @@ export default function HomePage() {
                     <h3>{project.title}</h3>
                     <p>{project.description}</p>
                   </div>
-                </div>
+                </SpotlightCard>
               );
 
               return (

@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // High-value pages
     { path: '/pricing', changeFrequency: 'monthly', priority: 0.85 },
     { path: '/our-work', changeFrequency: 'weekly', priority: 0.85 },
+    { path: '/labs', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/about-us', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/contact-us', changeFrequency: 'monthly', priority: 0.8 },
 

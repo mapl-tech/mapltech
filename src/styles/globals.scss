@@ -258,6 +258,34 @@ input, textarea, select {
   }
 }
 
+// ===== Spotlight cards  - cursor-follow highlight (premium micro-interaction) =====
+.spotlight-card {
+  position: relative;
+
+  .spotlight-card__glow {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: radial-gradient(
+      520px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+      rgba(240, 51, 80, 0.14) 0%,
+      rgba(240, 51, 80, 0.05) 22%,
+      transparent 45%
+    );
+  }
+
+  // Reveal only on real hover-capable, fine pointers  - touch pays nothing
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .spotlight-card__glow {
+      opacity: 1;
+    }
+  }
+}
+
 // Lenis smooth scroll integration
 html.lenis, html.lenis body {
   height: auto;

@@ -6,6 +6,7 @@ import { HiArrowRight } from 'react-icons/hi2';
 import MagneticButton from '@/components/ui/MagneticButton';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import { portfolioProjects } from '@/config/site';
 import styles from '@/styles/page-common.module.scss';
 
@@ -80,7 +81,7 @@ export default function OurWorkPage() {
           <div className={styles.cardsGrid}>
             {filtered.map((project, i) => {
               const card = (
-                <div className={styles.portfolioCard}>
+                <SpotlightCard className={styles.portfolioCard}>
                   <div className={styles.portfolioImage}>
                     <Image
                       src={project.image}
@@ -98,7 +99,7 @@ export default function OurWorkPage() {
                       ))}
                     </div>
                   </div>
-                </div>
+                </SpotlightCard>
               );
 
               return (

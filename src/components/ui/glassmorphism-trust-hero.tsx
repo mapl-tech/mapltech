@@ -1,19 +1,19 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 // Real client roster - pulled from the portfolio (config/site.ts)
 const CLIENTS = [
   'LRO Staffing',
+  'Loop',
   'MAPL Tours',
   'Akuma Patterson',
   'FOCAS Canada',
-  'TDot Jerk',
   'Crowned Spice',
   'Crowngate',
   'UNSVCC',
-  'Namaste Kitchen',
-  'Tashi Delek',
+  'CHHA-NCR',
 ];
 
 const StatItem = ({ value, label }: { value: string; label: string }) => (
@@ -26,8 +26,39 @@ const StatItem = ({ value, label }: { value: string; label: string }) => (
 );
 
 export default function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const raf = useRef(0);
+  const parallaxOn = useRef(false);
+
+  useEffect(() => {
+    const fine = window.matchMedia('(pointer: fine)').matches;
+    const noReduce = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    parallaxOn.current = fine && noReduce;
+    return () => cancelAnimationFrame(raf.current);
+  }, []);
+
+  const handleMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (!parallaxOn.current) return;
+    const el = sectionRef.current;
+    if (!el) return;
+    const cx = e.clientX;
+    const cy = e.clientY;
+    if (raf.current) return;
+    raf.current = requestAnimationFrame(() => {
+      raf.current = 0;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--hx', ((cx - r.left) / r.width - 0.5).toFixed(3));
+      el.style.setProperty('--hy', ((cy - r.top) / r.height - 0.5).toFixed(3));
+    });
+  };
+
   return (
-    <section className="relative w-full min-h-screen overflow-hidden" style={{ background: '#000' }}>
+    <section
+      ref={sectionRef}
+      onMouseMove={handleMove}
+      className="relative w-full min-h-screen overflow-hidden"
+      style={{ background: '#000' }}
+    >
       {/* Scoped animations */}
       <style>{`
         @keyframes fadeSlideIn {
@@ -75,6 +106,8 @@ export default function HeroSection() {
           width: '64%',
           height: '92%',
           background: 'radial-gradient(ellipse at center, rgba(240,51,80,0.09) 0%, transparent 68%)',
+          transform: 'translate3d(calc(var(--hx, 0) * -32px), calc(var(--hy, 0) * -32px), 0)',
+          transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       />
       <div
@@ -85,6 +118,8 @@ export default function HeroSection() {
           width: '50%',
           height: '60%',
           background: 'radial-gradient(ellipse at center, rgba(196,33,60,0.07) 0%, transparent 70%)',
+          transform: 'translate3d(calc(var(--hx, 0) * 28px), calc(var(--hy, 0) * 28px), 0)',
+          transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       />
 
@@ -106,7 +141,8 @@ export default function HeroSection() {
         style={{
           top: '50%',
           right: '2%',
-          transform: 'translateY(-45%)',
+          transform: 'translateY(-45%) translate3d(calc(var(--hx, 0) * 24px), calc(var(--hy, 0) * 24px), 0)',
+          transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
           width: '42vw',
           maxWidth: '620px',
           aspectRatio: '1',

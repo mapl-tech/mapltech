@@ -12,6 +12,7 @@ import {
 } from 'react-icons/hi2';
 import Image from 'next/image';
 import MagneticButton from '@/components/ui/MagneticButton';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
 import ContactForm from '@/components/ui/ContactForm';
@@ -255,14 +256,14 @@ export default function JamaicaPage() {
           <div className={styles.cardsGrid}>
             {services.map((service, i) => (
               <BlurReveal key={service.title} delay={i * 0.1}>
-                <div className={styles.card}>
+                <SpotlightCard className={styles.card}>
                   <div className={styles.cardIcon}>{service.icon}</div>
                   <h3 className={styles.cardTitle}>{service.title}</h3>
                   <p className={styles.cardDescription}>{service.description}</p>
                   <MagneticButton href={service.href} variant="secondary" size="small">
                     Learn More <HiArrowRight />
                   </MagneticButton>
-                </div>
+                </SpotlightCard>
               </BlurReveal>
             ))}
           </div>
@@ -280,11 +281,11 @@ export default function JamaicaPage() {
           <div className={`${styles.cardsGrid} ${styles.twoCol}`}>
             {whyChoose.map((item, i) => (
               <BlurReveal key={item.title} delay={i * 0.08}>
-                <div className={styles.card}>
+                <SpotlightCard className={styles.card}>
                   <div className={styles.cardIcon}>{item.icon}</div>
                   <h3 className={styles.cardTitle}>{item.title}</h3>
                   <p className={styles.cardDescription}>{item.description}</p>
-                </div>
+                </SpotlightCard>
               </BlurReveal>
             ))}
           </div>

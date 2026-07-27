@@ -9,6 +9,7 @@ import {
 } from 'react-icons/hi2';
 import Image from 'next/image';
 import MagneticButton from '@/components/ui/MagneticButton';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import SectionHeading from '@/components/ui/SectionHeading';
 import BlurReveal from '@/components/ui/BlurReveal';
 import styles from '@/styles/page-common.module.scss';
@@ -184,11 +185,11 @@ export default function AboutPage() {
           <div className={styles.cardsGrid}>
             {values.map((value, i) => (
               <BlurReveal key={value.title} delay={i * 0.08}>
-                <div className={styles.card}>
+                <SpotlightCard className={styles.card}>
                   <div className={styles.cardIcon}>{value.icon}</div>
                   <h3 className={styles.cardTitle}>{value.title}</h3>
                   <p className={styles.cardDescription}>{value.description}</p>
-                </div>
+                </SpotlightCard>
               </BlurReveal>
             ))}
           </div>
