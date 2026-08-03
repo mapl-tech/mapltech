@@ -414,53 +414,18 @@ export const labsProjects = [
 export const careers = [
   // Canada
   {
-    title: 'SEO Expert',
+    title: 'Full-Stack Developer',
     type: 'Contract',
     location: 'Remote',
     country: 'Canada',
-    description: 'Drive organic growth for agency clients through technical SEO audits, keyword strategy, and measurable ranking improvements.',
+    description: 'Build and maintain custom web applications, internal tools, and automation pipelines for agency clients.',
   },
   {
-    title: 'Copywriter',
-    type: 'Contract',
-    location: 'Remote',
-    country: 'Canada',
-    description: 'Write conversion-focused copy for landing pages, email sequences, and campaigns across our agency client portfolio.',
-  },
-  {
-    title: 'Brand Specialist',
-    type: 'Contract',
-    location: 'Remote',
-    country: 'Canada',
-    description: 'Shape brand identity systems - from visual guidelines to messaging frameworks - for agencies and their clients.',
-  },
-  {
-    title: 'Social Media Manager',
-    type: 'Contract',
-    location: 'Remote',
-    country: 'Canada',
-    description: 'Manage and grow social media presence for multiple agency clients.',
-  },
-  {
-    title: 'Cloud Engineer',
+    title: 'Cloud / DevOps Engineer',
     type: 'Contract',
     location: 'Remote',
     country: 'Canada',
     description: 'Design, deploy, and manage cloud infrastructure on AWS, GCP, or Azure. Build CI/CD pipelines, IaC modules, and observability stacks for agency clients.',
-  },
-  {
-    title: 'Coding Instructor',
-    type: 'Contract',
-    location: 'Ottawa, ON',
-    country: 'Canada',
-    description: 'Teach coding fundamentals and web development to aspiring developers.',
-  },
-  {
-    title: 'Coding Instructor',
-    type: 'Contract',
-    location: 'Toronto, ON',
-    country: 'Canada',
-    description: 'Teach coding fundamentals and web development to aspiring developers.',
   },
   // Nigeria
   {
