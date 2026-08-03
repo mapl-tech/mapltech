@@ -5,22 +5,25 @@ import Link from 'next/link';
 
 // Client partners for the hero marquee.
 //
-// TO ADD LOGOS LATER: drop each SVG/PNG into /public/images/clients/ and give the
-// entry a `logo` path (e.g. { name: 'Loop', logo: '/images/clients/loop.svg' }).
-// Entries with a logo render the image; entries without keep the wordmark - so
-// logos can be added one at a time without breaking the row.
+// Logos live in /public/images/clients/. Entries with a `logo` render the image
+// on a light plate; entries without fall back to a wordmark - so new logos can be
+// added one at a time without breaking the row.
+//
+// The plate is deliberate: these logos are heterogeneous (FOCAS is black type,
+// UNSVCC has navy elements) and would be invisible or muddy directly on black.
+// A uniform light plate makes every brand legible and the row consistent.
 //
 // Deliberately excludes MAPL Tours: it is our own product (see /labs), so listing
 // it among client partners would misrepresent it as an external client.
 const PARTNERS: { name: string; logo?: string }[] = [
-  { name: 'LRO Staffing' },
-  { name: 'Loop' },
-  { name: 'FOCAS Canada' },
+  { name: 'LRO Staffing', logo: '/images/clients/lro-staffing.png' },
+  { name: 'Loop', logo: '/images/clients/loop.webp' },
+  { name: 'FOCAS Canada', logo: '/images/clients/focas-canada.png' },
+  { name: 'UNSVCC', logo: '/images/clients/unsvcc.svg' },
+  { name: 'CHHA-NCR', logo: '/images/clients/chha-ncr.svg' },
+  { name: 'Crowned Spice', logo: '/images/clients/crowned-spice.png' },
   { name: 'Akuma Patterson' },
-  { name: 'Crowned Spice' },
   { name: 'Crowngate' },
-  { name: 'UNSVCC' },
-  { name: 'CHHA-NCR' },
 ];
 
 const RingsSvg = () => (
@@ -104,6 +107,39 @@ export default function HeroSection() {
         }
         .hero-marquee:hover {
           animation-play-state: paused;
+        }
+        /* Uniform light plate: normalizes six logos of different colors,
+           aspect ratios and ink coverage into one consistent row. */
+        .hero-partner {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          height: 56px;
+          min-width: 128px;
+          padding: 0 18px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.92);
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .hero-partner:hover {
+          background: #fff;
+          transform: translateY(-2px);
+        }
+        .hero-partner__logo {
+          max-height: 30px;
+          max-width: 132px;
+          width: auto;
+          object-fit: contain;
+          display: block;
+        }
+        .hero-partner__name {
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: -0.01em;
+          color: #111;
+          white-space: nowrap;
         }
         .hero-rings {
           animation: heroRingPulse 7s ease-in-out infinite;
@@ -320,19 +356,31 @@ export default function HeroSection() {
               <div
                 className="relative flex overflow-hidden"
                 style={{
-                  maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+                  // Full fade to transparent at both edges so nothing is ever
+                  // half-visible / clipped mid-logo as it enters or leaves.
+                  maskImage: 'linear-gradient(to right, transparent 0, black 12%, black 88%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0, black 12%, black 88%, transparent 100%)',
                 }}
               >
                 {/* Duplicated once so the -50% translate loops seamlessly */}
-                <div className="hero-marquee flex items-center gap-10 whitespace-nowrap px-4">
+                <div className="hero-marquee flex items-center gap-4 whitespace-nowrap px-4">
                   {[...PARTNERS, ...PARTNERS].map((partner, i) => (
-                    <span
-                      key={`${partner.name}-${i}`}
-                      className="text-lg font-bold tracking-tight text-white/70 transition-colors hover:text-white cursor-default"
-                    >
-                      {partner.name}
-                    </span>
+                    <div key={`${partner.name}-${i}`} className="hero-partner" aria-hidden={i >= PARTNERS.length}>
+                      {partner.logo ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- plain <img>: these
+                        // are tiny pre-sized logos duplicated in a marquee; next/image adds no
+                        // benefit and its lazy default causes visible pop-in as items scroll in.
+                        <img
+                          src={partner.logo}
+                          alt={partner.name}
+                          loading="eager"
+                          decoding="async"
+                          className="hero-partner__logo"
+                        />
+                      ) : (
+                        <span className="hero-partner__name">{partner.name}</span>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>

@@ -281,20 +281,22 @@ export const pricing = {
 export const testimonials = [
   {
     quote:
-      'MAPL TECH rebuilt our entire client onboarding pipeline. What used to take our team hours now happens automatically - and our clients notice the difference.',
-    name: 'Mimi Akuma',
-    company: 'Akuma Patterson Holdings',
-    role: 'CEO',
-    image: '/images/headshot-mimi.jpg',
-  },
-  {
-    quote:
       'They don\'t feel like an outside vendor. MAPL TECH embedded into our workflow, learned our tools, and shipped production-ready code that our own devs could maintain.',
     name: 'Alita Fabiano',
     company: 'LRO Staffing',
     role: 'Operations Director',
     image: '/images/headshot-alita.jpg',
   },
+  // STAGED - Kenneth Coghiel (UNSVCC): his actual review text could not be found
+  // publicly (unsvcc.org, DesignRush, web search), and we never publish words a
+  // real person did not say. Paste his verbatim quote + title to activate:
+  // {
+  //   quote: '<Kenneth\'s exact words>',
+  //   name: 'Kenneth Coghiel',
+  //   company: 'UNSVCC',
+  //   role: '<his title>',
+  //   image: '/images/headshot-kenneth.jpg',
+  // },
   {
     quote:
       'We stopped wasting time patching together fragile WordPress plugins. MAPL TECH gave us a clean, fast, custom-coded site that actually performs.',

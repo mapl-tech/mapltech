@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Local skill scratch (not part of the site)
 sentinel-ultra/
+
+# Raw logo drop folder (optimized copies live in public/images/clients/)
+client-logo/
