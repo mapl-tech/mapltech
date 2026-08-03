@@ -30,18 +30,18 @@ export default function BlogGrid() {
     <>
       {/* Filter bar */}
       <nav className={styles.filterSection} aria-label="Filter blog posts by category">
-        <div className={styles.filterInner} role="list">
+        {/* Plain buttons with aria-pressed: list/listitem roles are invalid on
+            button elements, and the visible text IS the accessible name. */}
+        <div className={styles.filterInner}>
           {(['All', ...categories] as const).map((cat) => (
             <button
               key={cat}
-              role="listitem"
               className={`${styles.filterBtn} ${active === cat ? styles.active : ''}`}
               onClick={() => setActive(cat)}
               aria-pressed={active === cat}
-              aria-label={`Show ${cat === 'All' ? 'all posts' : cat + ' posts'} (${counts[cat] ?? 0} posts)`}
             >
               {cat}
-              <span className={styles.filterCount} aria-hidden="true">{counts[cat] ?? 0}</span>
+              <span className={styles.filterCount}>{counts[cat] ?? 0}</span>
             </button>
           ))}
         </div>
@@ -54,7 +54,6 @@ export default function BlogGrid() {
             <Link
               href={`/blog/${featured.slug}`}
               className={styles.featuredCard}
-              aria-label={`Read featured post: ${featured.title}`}
             >
               {/* Image side */}
               <div className={styles.featuredImageSide}>
@@ -123,7 +122,6 @@ export default function BlogGrid() {
                   <SpotlightCard
                     href={`/blog/${post.slug}`}
                     className={styles.card}
-                    aria-label={`${post.title} - ${post.category}, ${post.readTime} min read`}
                   >
                     <div className={styles.cardImageBlock}>
                       <Image

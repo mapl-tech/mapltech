@@ -196,7 +196,6 @@ export default async function BlogPostPage({ params }: Props) {
                   <SpotlightCard
                     href={`/blog/${rel.slug}`}
                     className={styles.card}
-                    aria-label={`${rel.title} - ${rel.category}, ${rel.readTime} min read`}
                   >
                     <div className={styles.cardImageBlock}>
                       <Image

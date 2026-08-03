@@ -64,6 +64,7 @@ export default function OurWorkPage() {
 
       <section className={`${styles.section} ${styles.navy}`}>
         <div className={styles.sectionInner}>
+          <h2 className="sr-only">Project Portfolio</h2>
           <div className={styles.filterBar} role="tablist" aria-label="Filter projects by category">
             {categories.map((cat) => (
               <button
@@ -88,6 +89,7 @@ export default function OurWorkPage() {
                       alt={`${project.title} project preview`}
                       width={600}
                       height={400}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                   </div>
                   <div className={styles.portfolioContent}>

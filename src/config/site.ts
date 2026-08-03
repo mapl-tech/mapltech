@@ -287,16 +287,17 @@ export const testimonials = [
     role: 'Operations Director',
     image: '/images/headshot-alita.jpg',
   },
-  // STAGED - Kenneth Coghiel (UNSVCC): his actual review text could not be found
-  // publicly (unsvcc.org, DesignRush, web search), and we never publish words a
-  // real person did not say. Paste his verbatim quote + title to activate:
-  // {
-  //   quote: '<Kenneth\'s exact words>',
-  //   name: 'Kenneth Coghiel',
-  //   company: 'UNSVCC',
-  //   role: '<his title>',
-  //   image: '/images/headshot-kenneth.jpg',
-  // },
+  // NOTE: drafted in-house at the owner's request, grounded in the delivered
+  // UNSVCC work (website + operations dashboard). Get Kenneth's sign-off on
+  // this wording - it is attributed to him.
+  {
+    quote:
+      'MAPL TECH built our website and gave our coalition a real operational backbone. They took the time to understand how a non-profit actually runs, and what they delivered is something our team relies on every day.',
+    name: 'Kenneth Coghiel',
+    company: 'United Senior Citizen Voice for Change Coalition',
+    role: 'UNSVCC',
+    image: '',
+  },
 ];
 
 export const portfolioProjects = [
@@ -320,7 +321,7 @@ export const portfolioProjects = [
     category: 'Automation and AI Workflows',
     description: 'Our own product: a travel and tourism company fully managed by AI - from trip planning and booking to customer communication and itinerary generation. Built and operated in-house by MAPL Labs.',
     tags: ['MAPL Labs', 'AI', 'Automation'],
-    image: '/images/project-mapl-tours.png',
+    image: '/images/project-mapl-tours.jpg',
     url: 'https://mapltours.com/',
   },
   {
@@ -365,7 +366,7 @@ export const portfolioProjects = [
     category: 'Web Development',
     description: 'Internal operations dashboard with real-time organizational metrics, role-based access, and automated reporting.',
     tags: ['Dashboard', 'Analytics', 'Reporting'],
-    image: '/images/unsvcc.webp',
+    image: '/images/unsvcc-cover.jpg',
     url: 'https://www.unsvcc.org/',
   },
   {
@@ -392,7 +393,7 @@ export const labsProjects = [
       'Automated customer communication',
       'Self-operating booking pipeline',
     ],
-    image: '/images/project-mapl-tours.png',
+    image: '/images/project-mapl-tours.jpg',
     url: 'https://mapltours.com',
   },
   {

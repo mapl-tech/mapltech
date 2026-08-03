@@ -60,6 +60,7 @@
     transition: color $transition-fast, transform $transition-fast;
     display: flex;
     align-items: center;
+    padding: 6px; // 14px icon + 12px padding = 26px tap target (WCAG target-size)
 
     @include focus-ring;
 

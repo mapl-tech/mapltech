@@ -264,7 +264,7 @@ export default function NigeriaPage() {
                   <h3 className={styles.cardTitle}>{service.title}</h3>
                   <p className={styles.cardDescription}>{service.description}</p>
                   <MagneticButton href={service.href} variant="secondary" size="small">
-                    Learn More <HiArrowRight />
+                    Learn More<span className="sr-only"> about {service.title}</span> <HiArrowRight />
                   </MagneticButton>
                 </SpotlightCard>
               </BlurReveal>
@@ -310,15 +310,15 @@ export default function NigeriaPage() {
                 <p style={{ opacity: 0.6, marginBottom: '1.5rem', fontSize: '0.9rem' }}>
                   {caseStudy.location}
                 </p>
-                <h4 style={{ marginBottom: '0.5rem' }}>The Challenge</h4>
+                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.125rem' }}>The Challenge</h3>
                 <p style={{ marginBottom: '1.5rem' }}>{caseStudy.challenge}</p>
-                <h4 style={{ marginBottom: '0.5rem' }}>Our Solution</h4>
+                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.125rem' }}>Our Solution</h3>
                 <p>{caseStudy.solution}</p>
               </div>
             </BlurReveal>
             <BlurReveal delay={0.15}>
               <div className={styles.textContent}>
-                <h4 style={{ marginBottom: '1rem' }}>Results</h4>
+                <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem' }}>Results</h3>
                 <ul style={{ listStyle: 'none', padding: 0 }}>
                   {caseStudy.results.map((result) => (
                     <li

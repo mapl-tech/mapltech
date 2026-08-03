@@ -54,7 +54,7 @@ export default function ContactPage() {
                     <HiEnvelope size={18} />
                   </div>
                   <div className={styles.contactText}>
-                    <h4>Email</h4>
+                    <h3>Email</h3>
                     <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
                   </div>
                 </div>
@@ -64,7 +64,7 @@ export default function ContactPage() {
                     <HiPhone size={18} />
                   </div>
                   <div className={styles.contactText}>
-                    <h4>Phone</h4>
+                    <h3>Phone</h3>
                     <a href={`tel:${siteConfig.phone}`}>
                       {siteConfig.phone}
                     </a>
@@ -76,7 +76,7 @@ export default function ContactPage() {
                     <HiMapPin size={18} />
                   </div>
                   <div className={styles.contactText}>
-                    <h4>Locations</h4>
+                    <h3>Locations</h3>
                     <p>Canada (HQ) &bull; Nigeria &bull; Jamaica</p>
                   </div>
                 </div>

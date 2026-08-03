@@ -191,7 +191,7 @@ export default function PricingPage() {
               {pricing.webDevelopment.maintenance.map((m, i) => (
                 <BlurReveal key={m.name} delay={i * 0.1}>
                   <div className={styles.retainerCard}>
-                    <h4>{m.name}</h4>
+                    <h3>{m.name}</h3>
                     <div className={styles.retainerPrice}>{m.price}</div>
                     <p className={styles.retainerDescription}>{m.description}</p>
                   </div>
@@ -294,7 +294,7 @@ export default function PricingPage() {
               {pricing.automation.retainers.map((r, i) => (
                 <BlurReveal key={r.name} delay={i * 0.1}>
                   <div className={styles.retainerCard}>
-                    <h4>{r.name}</h4>
+                    <h3>{r.name}</h3>
                     <div className={styles.retainerPrice}>{r.price}</div>
                   </div>
                 </BlurReveal>
@@ -347,7 +347,7 @@ export default function PricingPage() {
               {pricing.internalTools.retainers.map((r, i) => (
                 <BlurReveal key={r.name} delay={i * 0.1}>
                   <div className={styles.retainerCard}>
-                    <h4>{r.name}</h4>
+                    <h3>{r.name}</h3>
                     <div className={styles.retainerPrice}>{r.price}</div>
                   </div>
                 </BlurReveal>
@@ -400,7 +400,7 @@ export default function PricingPage() {
               {pricing.cloudEngineering.retainers.map((r, i) => (
                 <BlurReveal key={r.name} delay={i * 0.1}>
                   <div className={styles.retainerCard}>
-                    <h4>{r.name}</h4>
+                    <h3>{r.name}</h3>
                     <div className={styles.retainerPrice}>{r.price}</div>
                   </div>
                 </BlurReveal>

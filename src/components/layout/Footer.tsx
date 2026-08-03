@@ -85,7 +85,7 @@ export default function Footer() {
 
           {/* Services column */}
           <div className={styles.column}>
-            <h4>Services</h4>
+            <h2>Services</h2>
             <ul>
               <li>
                 <Link href="/services/web-development">Web Development</Link>
@@ -108,7 +108,7 @@ export default function Footer() {
 
           {/* Company column */}
           <div className={styles.column}>
-            <h4>Company</h4>
+            <h2>Company</h2>
             <ul>
               <li><Link href="/about-us">About Us</Link></li>
               <li><Link href="/team">Team</Link></li>
@@ -124,7 +124,7 @@ export default function Footer() {
 
           {/* Contact column */}
           <div className={styles.column}>
-            <h4>Contact</h4>
+            <h2>Contact</h2>
             <div className={styles.contactInfo}>
               <div className={styles.contactItem}>
                 <HiEnvelope size={16} aria-hidden="true" />

@@ -125,7 +125,7 @@ export default function HomePage() {
                     ))}
                   </ul>
                   <Link href={service.href} className={styles.serviceLink}>
-                    Learn more <HiArrowRight aria-hidden="true" />
+                    Learn more<span className="sr-only"> about {service.title}</span> <HiArrowRight aria-hidden="true" />
                   </Link>
                 </SpotlightCard>
               </BlurReveal>
@@ -168,7 +168,7 @@ export default function HomePage() {
                   <div key={i} className={styles.approachStep}>
                     <div className={styles.stepNumber}>{i + 1}</div>
                     <div className={styles.approachStepContent}>
-                      <h4>{step.title}</h4>
+                      <h3>{step.title}</h3>
                       <p>{step.desc}</p>
                     </div>
                   </div>

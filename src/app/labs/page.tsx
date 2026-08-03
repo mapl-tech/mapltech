@@ -85,7 +85,7 @@ export default function LabsPage() {
               <BlurReveal key={item.title} delay={i * 0.1}>
                 <div className={styles.ethosItem}>
                   <span className={styles.ethosNum}>0{i + 1}</span>
-                  <h3>{item.title}</h3>
+                  <h2>{item.title}</h2>
                   <p>{item.desc}</p>
                 </div>
               </BlurReveal>
