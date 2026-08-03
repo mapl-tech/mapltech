@@ -15,7 +15,8 @@ export default function CursorGlow() {
     const mq = window.matchMedia('(pointer: fine)');
     if (!mq.matches) return;
 
-    setVisible(true);
+    // Deferred to a frame: synchronous setState in an effect cascades renders
+    const raf = requestAnimationFrame(() => setVisible(true));
 
     const handleMouse = (e: MouseEvent) => {
       x.set(e.clientX);
@@ -23,7 +24,10 @@ export default function CursorGlow() {
     };
 
     window.addEventListener('mousemove', handleMouse);
-    return () => window.removeEventListener('mousemove', handleMouse);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('mousemove', handleMouse);
+    };
   }, [x, y]);
 
   if (!visible) return null;

@@ -34,9 +34,9 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+  // Menu closes via onClick on its links (not a pathname effect - synchronous
+  // setState in effects triggers cascading renders under the React compiler).
+  const closeMobile = () => setMobileOpen(false);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
@@ -150,6 +150,7 @@ export default function Header() {
             {siteConfig.nav.map((item) => (
               <div key={item.href}>
                 <Link
+                  onClick={closeMobile}
                   href={item.href}
                   className={`${styles.mobileNavLink} ${
                     pathname === item.href ? styles.active : ''
@@ -160,6 +161,7 @@ export default function Header() {
                 {item.children?.map((child) => (
                   <Link
                     key={child.href}
+                    onClick={closeMobile}
                     href={child.href}
                     className={styles.mobileSubLink}
                   >
@@ -187,7 +189,7 @@ export default function Header() {
             })}
           </div>
 
-          <Link href="/contact-us" className={styles.mobileCta}>
+          <Link href="/contact-us" onClick={closeMobile} className={styles.mobileCta}>
             Contact Us
           </Link>
         </div>
