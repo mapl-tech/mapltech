@@ -13,18 +13,20 @@ import Link from 'next/link';
 //
 // Deliberately excludes MAPL Tours: it is our own product (see /labs), so listing
 // it among client partners would misrepresent it as an external client.
+// Heights are optically balanced, not equal: compact discs/crests carry more
+// visual mass per pixel than wide wordmarks, so wordmarks run shorter.
 const PARTNERS: { name: string; logo: string; h: number; filter: string }[] = [
   // red/black wordmark -> light mono
-  { name: 'LRO Staffing', logo: '/images/clients/lro-staffing.png', h: 34, filter: 'grayscale(1) invert(1)' },
+  { name: 'LRO Staffing', logo: '/images/clients/lro-staffing.png', h: 30, filter: 'grayscale(1) invert(1)' },
   // yellow disc, white script -> grey disc keeps the script knockout readable
-  { name: 'Loop', logo: '/images/clients/loop.webp', h: 34, filter: 'grayscale(1)' },
-  // black type + red "Canada" -> light mono
-  { name: 'FOCAS Canada', logo: '/images/clients/focas-canada.png', h: 24, filter: 'grayscale(1) invert(1)' },
-  // teal crest -> light mono, brightened
-  { name: 'UNSVCC', logo: '/images/clients/unsvcc.svg', h: 40, filter: 'grayscale(1) invert(1) brightness(1.1)' },
-  { name: 'CHHA-NCR', logo: '/images/clients/chha-ncr.svg', h: 36, filter: 'grayscale(1) invert(1) brightness(1.1)' },
+  { name: 'Loop', logo: '/images/clients/loop.webp', h: 32, filter: 'grayscale(1)' },
+  // black type + red "Canada" -> light mono (wide wordmark, so shortest)
+  { name: 'FOCAS Canada', logo: '/images/clients/focas-canada.png', h: 22, filter: 'grayscale(1) invert(1)' },
+  // teal portrait crest -> light mono, brightened (narrow, so tallest)
+  { name: 'UNSVCC', logo: '/images/clients/unsvcc.svg', h: 38, filter: 'grayscale(1) invert(1) brightness(1.1)' },
+  { name: 'CHHA-NCR', logo: '/images/clients/chha-ncr.svg', h: 32, filter: 'grayscale(1) invert(1) brightness(1.1)' },
   // black disc melts into the background, leaving the crown ring + text floating
-  { name: 'Crowned Spice', logo: '/images/clients/crowned-spice.png', h: 40, filter: 'grayscale(1)' },
+  { name: 'Crowned Spice', logo: '/images/clients/crowned-spice.png', h: 34, filter: 'grayscale(1)' },
 ];
 
 const RingsSvg = () => (
@@ -124,11 +126,12 @@ export default function HeroSection() {
           object-fit: contain;
           display: block;
           opacity: 0.72;
-          transition: opacity 0.3s ease, filter 0.3s ease;
+          transition: opacity 0.3s ease;
         }
+        /* Hover brightens the mono mark only. Never restore true colors here:
+           several logos use dark ink that would vanish against the dark card. */
         .hero-partner:hover .hero-partner__logo {
           opacity: 1;
-          filter: none !important;
         }
         .hero-rings {
           animation: heroRingPulse 7s ease-in-out infinite;
