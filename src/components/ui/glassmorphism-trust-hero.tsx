@@ -5,25 +5,26 @@ import Link from 'next/link';
 
 // Client partners for the hero marquee.
 //
-// Logos live in /public/images/clients/. Entries with a `logo` render the image
-// on a light plate; entries without fall back to a wordmark - so new logos can be
-// added one at a time without breaking the row.
-//
-// The plate is deliberate: these logos are heterogeneous (FOCAS is black type,
-// UNSVCC has navy elements) and would be invisible or muddy directly on black.
-// A uniform light plate makes every brand legible and the row consistent.
+// Logos live in /public/images/clients/ and render directly on the dark card as
+// light monochrome marks - no plates. Because the source files are heterogeneous
+// (black type, navy crests, colored discs), each entry carries its own CSS
+// `filter` recipe to land in the same light-grey family, plus its own height
+// (`h`) since aspect ratios differ wildly. Hover reveals the true brand colors.
 //
 // Deliberately excludes MAPL Tours: it is our own product (see /labs), so listing
 // it among client partners would misrepresent it as an external client.
-const PARTNERS: { name: string; logo?: string }[] = [
-  { name: 'LRO Staffing', logo: '/images/clients/lro-staffing.png' },
-  { name: 'Loop', logo: '/images/clients/loop.webp' },
-  { name: 'FOCAS Canada', logo: '/images/clients/focas-canada.png' },
-  { name: 'UNSVCC', logo: '/images/clients/unsvcc.svg' },
-  { name: 'CHHA-NCR', logo: '/images/clients/chha-ncr.svg' },
-  { name: 'Crowned Spice', logo: '/images/clients/crowned-spice.png' },
-  { name: 'Akuma Patterson' },
-  { name: 'Crowngate' },
+const PARTNERS: { name: string; logo: string; h: number; filter: string }[] = [
+  // red/black wordmark -> light mono
+  { name: 'LRO Staffing', logo: '/images/clients/lro-staffing.png', h: 34, filter: 'grayscale(1) invert(1)' },
+  // yellow disc, white script -> grey disc keeps the script knockout readable
+  { name: 'Loop', logo: '/images/clients/loop.webp', h: 34, filter: 'grayscale(1)' },
+  // black type + red "Canada" -> light mono
+  { name: 'FOCAS Canada', logo: '/images/clients/focas-canada.png', h: 24, filter: 'grayscale(1) invert(1)' },
+  // teal crest -> light mono, brightened
+  { name: 'UNSVCC', logo: '/images/clients/unsvcc.svg', h: 40, filter: 'grayscale(1) invert(1) brightness(1.1)' },
+  { name: 'CHHA-NCR', logo: '/images/clients/chha-ncr.svg', h: 36, filter: 'grayscale(1) invert(1) brightness(1.1)' },
+  // black disc melts into the background, leaving the crown ring + text floating
+  { name: 'Crowned Spice', logo: '/images/clients/crowned-spice.png', h: 40, filter: 'grayscale(1)' },
 ];
 
 const RingsSvg = () => (
@@ -108,38 +109,26 @@ export default function HeroSection() {
         .hero-marquee:hover {
           animation-play-state: paused;
         }
-        /* Uniform light plate: normalizes six logos of different colors,
-           aspect ratios and ink coverage into one consistent row. */
+        /* Logos sit directly on the dark card as light monochrome marks
+           (per-logo filter + height set inline). Hover restores true color. */
         .hero-partner {
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          height: 56px;
-          min-width: 128px;
-          padding: 0 18px;
-          border-radius: 12px;
-          background: rgba(255, 255, 255, 0.92);
-          border: 1px solid rgba(255, 255, 255, 0.14);
-          transition: background 0.3s ease, transform 0.3s ease;
-        }
-        .hero-partner:hover {
-          background: #fff;
-          transform: translateY(-2px);
+          height: 48px;
         }
         .hero-partner__logo {
-          max-height: 30px;
-          max-width: 132px;
           width: auto;
+          max-width: 150px;
           object-fit: contain;
           display: block;
+          opacity: 0.72;
+          transition: opacity 0.3s ease, filter 0.3s ease;
         }
-        .hero-partner__name {
-          font-size: 15px;
-          font-weight: 700;
-          letter-spacing: -0.01em;
-          color: #111;
-          white-space: nowrap;
+        .hero-partner:hover .hero-partner__logo {
+          opacity: 1;
+          filter: none !important;
         }
         .hero-rings {
           animation: heroRingPulse 7s ease-in-out infinite;
@@ -363,23 +352,20 @@ export default function HeroSection() {
                 }}
               >
                 {/* Duplicated once so the -50% translate loops seamlessly */}
-                <div className="hero-marquee flex items-center gap-4 whitespace-nowrap px-4">
+                <div className="hero-marquee flex items-center gap-12 whitespace-nowrap px-6">
                   {[...PARTNERS, ...PARTNERS].map((partner, i) => (
                     <div key={`${partner.name}-${i}`} className="hero-partner" aria-hidden={i >= PARTNERS.length}>
-                      {partner.logo ? (
-                        // eslint-disable-next-line @next/next/no-img-element -- plain <img>: these
-                        // are tiny pre-sized logos duplicated in a marquee; next/image adds no
-                        // benefit and its lazy default causes visible pop-in as items scroll in.
-                        <img
-                          src={partner.logo}
-                          alt={partner.name}
-                          loading="eager"
-                          decoding="async"
-                          className="hero-partner__logo"
-                        />
-                      ) : (
-                        <span className="hero-partner__name">{partner.name}</span>
-                      )}
+                      {/* eslint-disable-next-line @next/next/no-img-element -- plain <img>: tiny
+                          pre-sized logos duplicated in a marquee; next/image's lazy default
+                          causes visible pop-in as items scroll in. */}
+                      <img
+                        src={partner.logo}
+                        alt={partner.name}
+                        loading="eager"
+                        decoding="async"
+                        className="hero-partner__logo"
+                        style={{ height: partner.h, filter: partner.filter }}
+                      />
                     </div>
                   ))}
                 </div>
