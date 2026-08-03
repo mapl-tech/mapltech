@@ -144,3 +144,20 @@
     color: $color-pink;
   }
 }
+
+// reCAPTCHA attribution (required when the floating badge is hidden)
+.recaptchaNotice {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  text-align: center;
+
+  a {
+    color: $color-text-muted;
+    text-decoration: underline;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-text-body;
+    }
+  }
+}

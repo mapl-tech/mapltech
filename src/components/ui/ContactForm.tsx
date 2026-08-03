@@ -1,7 +1,47 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, useRef, FormEvent } from 'react';
 import styles from './ContactForm.module.scss';
+
+// reCAPTCHA v3 (invisible). Script loads lazily on first interaction with the
+// form, so visitors who never touch it never download Google's JS. If the site
+// key env is absent the form simply works without it (dev/preview safe).
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+declare global {
+  interface Window {
+    grecaptcha?: {
+      ready: (cb: () => void) => void;
+      execute: (siteKey: string, opts: { action: string }) => Promise<string>;
+    };
+  }
+}
+
+let recaptchaLoader: Promise<void> | null = null;
+
+function loadRecaptcha(): Promise<void> {
+  if (!RECAPTCHA_SITE_KEY) return Promise.resolve();
+  if (recaptchaLoader) return recaptchaLoader;
+  recaptchaLoader = new Promise((resolve) => {
+    const s = document.createElement('script');
+    s.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    s.async = true;
+    s.onload = () => window.grecaptcha?.ready(resolve);
+    s.onerror = () => resolve(); // never let a blocked script brick the form
+    document.head.appendChild(s);
+  });
+  return recaptchaLoader;
+}
+
+async function getRecaptchaToken(): Promise<string | undefined> {
+  if (!RECAPTCHA_SITE_KEY) return undefined;
+  try {
+    await loadRecaptcha();
+    return await window.grecaptcha?.execute(RECAPTCHA_SITE_KEY, { action: 'contact' });
+  } catch {
+    return undefined; // server decides what to do with a missing token
+  }
+}
 
 interface ContactFormProps {
   showPhone?: boolean;
@@ -20,6 +60,15 @@ export default function ContactForm({
 }: ContactFormProps) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const warmedUp = useRef(false);
+
+  // Start fetching Google's script the moment the visitor engages the form,
+  // so the token is instant by the time they hit submit.
+  const warmUpRecaptcha = () => {
+    if (warmedUp.current) return;
+    warmedUp.current = true;
+    void loadRecaptcha();
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,6 +77,7 @@ export default function ContactForm({
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    const recaptchaToken = await getRecaptchaToken();
 
     const data = {
       name: formData.get('name') as string,
@@ -36,6 +86,7 @@ export default function ContactForm({
       contactMethod: formData.get('contactMethod') as string || undefined,
       subject: formData.get('subject') as string || undefined,
       message: formData.get('message') as string,
+      recaptchaToken,
     };
 
     try {
@@ -69,7 +120,12 @@ export default function ContactForm({
   }
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit} aria-label="Contact form">
+    <form
+      className={styles.form}
+      onSubmit={handleSubmit}
+      onFocusCapture={warmUpRecaptcha}
+      aria-label="Contact form"
+    >
       {status === 'error' && (
         <div className={`${styles.message} ${styles.error}`} role="alert">
           {errorMessage}
@@ -174,6 +230,20 @@ export default function ContactForm({
       <button type="submit" className={styles.submit} disabled={status === 'sending'}>
         {status === 'sending' ? 'Sending...' : submitLabel}
       </button>
+
+      {RECAPTCHA_SITE_KEY && (
+        // Required by Google's terms when the floating badge is hidden
+        <p className={styles.recaptchaNotice}>
+          Protected by reCAPTCHA -{' '}
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
+            Privacy
+          </a>{' '}
+          &middot;{' '}
+          <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">
+            Terms
+          </a>
+        </p>
+      )}
     </form>
   );
 }

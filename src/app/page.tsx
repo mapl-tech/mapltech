@@ -324,6 +324,8 @@ export default function HomePage() {
               </div>
             </BlurReveal>
 
+            {/* Dots and arrows are navigation - meaningless with a single testimonial */}
+            {testimonials.length > 1 && (
             <div className={styles.testimonialControls} role="tablist" aria-label="Testimonial navigation">
               {testimonials.map((_, i) => (
                 <button
@@ -336,7 +338,9 @@ export default function HomePage() {
                 />
               ))}
             </div>
+            )}
 
+            {testimonials.length > 1 && (
             <div className={styles.testimonialArrows}>
               <button
                 className={styles.arrowButton}
@@ -361,6 +365,7 @@ export default function HomePage() {
                 <HiChevronRight size={20} />
               </button>
             </div>
+            )}
           </div>
 
         </div>

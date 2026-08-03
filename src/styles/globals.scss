@@ -345,3 +345,9 @@ html.lenis, html.lenis body {
     }
   }
 }
+
+// reCAPTCHA v3: hide the floating badge; the contact form shows the required
+// attribution notice inline instead (per Google's branding guidelines).
+.grecaptcha-badge {
+  visibility: hidden;
+}

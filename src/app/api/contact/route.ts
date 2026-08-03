@@ -1,13 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Verify a reCAPTCHA v3 token with Google. Enforced only when the secret is
+// configured; without it the form works unprotected (dev/preview safe).
+async function verifyRecaptcha(token: string | undefined): Promise<boolean> {
+  const secret = process.env.RECAPTCHA_SECRET_KEY;
+  if (!secret) return true;
+  if (!token) return false;
+
+  try {
+    const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ secret, response: token }),
+    });
+    const data = await res.json();
+    // v3 returns a 0-1 score; 0.5 is Google's recommended default threshold
+    return data.success === true && data.action === 'contact' && (data.score ?? 0) >= 0.5;
+  } catch (err) {
+    // Google unreachable: fail open so a transient outage never blocks real leads
+    console.error('reCAPTCHA verification unavailable:', err);
+    return true;
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, phone, contactMethod, subject, message } = body;
+    const { name, email, phone, contactMethod, subject, message, recaptchaToken } = body;
 
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: 'Name, email, and message are required.' },
+        { status: 400 }
+      );
+    }
+
+    if (!(await verifyRecaptcha(recaptchaToken))) {
+      return NextResponse.json(
+        { error: 'Verification failed. Please refresh the page and try again.' },
         { status: 400 }
       );
     }

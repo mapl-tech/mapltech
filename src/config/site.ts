@@ -297,14 +297,6 @@ export const testimonials = [
   //   role: '<his title>',
   //   image: '/images/headshot-kenneth.jpg',
   // },
-  {
-    quote:
-      'We stopped wasting time patching together fragile WordPress plugins. MAPL TECH gave us a clean, fast, custom-coded site that actually performs.',
-    name: 'James Chen',
-    company: 'Digital Partners Co.',
-    role: 'Technical Director',
-    image: '/images/headshot-james.jpg',
-  },
 ];
 
 export const portfolioProjects = [
