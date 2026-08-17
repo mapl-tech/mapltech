@@ -16,6 +16,255 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: 'core-web-vitals-inp-2026',
+    title: 'Core Web Vitals in 2026: What Changed With INP and Why Most Sites Still Fail It',
+    excerpt:
+      'Interaction to Next Paint replaced First Input Delay as a Core Web Vitals ranking signal in 2024. Here is why most production sites still fail it and what actually fixes it.',
+    category: 'Web Development' as BlogCategory,
+    date: 'August 17, 2026',
+    readTime: 8,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Developer analyzing website performance metrics on a laptop screen',
+    content: `
+<p class="lead">Google folded Interaction to Next Paint into the Core Web Vitals ranking signal set in 2024, replacing First Input Delay as the official responsiveness metric. Two years later, a large share of production sites we audit still fail it, not because the metric is obscure or new, but because fixing it requires touching parts of a codebase that most performance work never reaches: event handlers, render cycles, and the accumulated weight of scripts nobody has looked at in years.</p>
+
+<h2>What INP Actually Measures</h2>
+
+<p>First Input Delay only measured the delay before the browser started processing the very first interaction on a page, a narrow and often flattering number. Interaction to Next Paint measures the full time from any click, tap, or keypress throughout the entire page visit to the moment the browser paints the next visual update in response. It captures every interaction a visitor has, not just the first one, and it reports the worst of them. A site that feels snappy on the first click but sluggish on the fifth is exactly the pattern INP was built to catch, and exactly the pattern older metrics missed entirely.</p>
+
+<h2>Why Most Sites Fail It</h2>
+
+<h3>Third-Party Scripts Blocking the Main Thread</h3>
+
+<p>Analytics tags, chat widgets, ad scripts, and marketing pixels are the most common cause of poor INP scores on the client sites we take over. Each of these scripts runs JavaScript on the same main thread that handles user interactions, and a page that has accumulated a dozen third-party tags over several years of marketing requests often has more foreign code executing on it than code the business actually wrote. When a visitor clicks a button while one of these scripts is mid-execution, the response is delayed until that script yields control back to the browser.</p>
+
+<h3>Heavy Event Handlers and Unnecessary Re-renders</h3>
+
+<p>On the application side, the most common cause is an event handler doing far more work than the interaction requires, often because a framework component re-renders a large portion of the page in response to a small state change. A single click that triggers a cascade of unnecessary re-renders across unrelated components can push response time well past the 200 millisecond threshold Google considers a good INP score, even on capable hardware.</p>
+
+<h3>Large DOM Trees Slowing Down Style and Layout Work</h3>
+
+<p>Every interaction that changes what is on screen requires the browser to recalculate styles and layout for the affected elements, and that cost scales with the size and complexity of the DOM. Pages that have grown large, deeply nested component trees, often through years of incremental feature additions without cleanup, pay a real and measurable tax on every interaction, independent of how efficient the JavaScript itself is.</p>
+
+<h2>How We Fix INP on Client Sites</h2>
+
+<h3>Audit Every Interaction, Not Just Page Load</h3>
+
+<p>Standard performance audits focus heavily on load time and often stop there. Fixing INP requires profiling actual interactions across the pages that get the most traffic and the most engagement: form submissions, filter changes, add-to-cart clicks, navigation menu toggles. We use Chrome DevTools performance profiling and field data from the Chrome User Experience Report to identify which specific interactions are the worst offenders on a given site, rather than optimizing blindly.</p>
+
+<h3>Break Up Long Tasks</h3>
+
+<p>Any JavaScript task that runs for more than fifty milliseconds blocks the main thread from responding to user input during that window. Breaking large tasks into smaller chunks that yield control back to the browser between steps, using techniques like scheduler-based task splitting, is often the single highest-impact change available on a slow interaction, and it usually requires no visible change to how a feature works.</p>
+
+<h3>Defer and Isolate Third-Party Scripts</h3>
+
+<p>Not every third-party script needs to load and execute immediately. Loading non-critical scripts after the page becomes interactive, and moving what can be moved into a web worker off the main thread entirely, removes a large share of the interaction delay caused by code the business does not control and often does not need running eagerly.</p>
+
+<h2>The Business Case for Fixing It</h2>
+
+<p>INP is now a confirmed Core Web Vitals ranking factor, which means poor scores carry a direct SEO cost. But the more immediate cost is behavioral: a site that feels unresponsive on every click trains visitors to distrust it, and that translates directly into higher bounce rates and lower conversion on forms, checkouts, and any interaction-heavy flow. We have seen INP remediation work produce measurable lifts in form completion rate on client sites independent of any change to the form itself, simply because the interaction stopped feeling broken.</p>
+
+<h2>Getting Started</h2>
+
+<p>The fastest way to know where a site stands is to check real field data in Google Search Console under the Core Web Vitals report, which reports INP based on actual visitor sessions rather than a lab simulation. A site showing "Needs Improvement" or "Poor" for a meaningful share of visits has specific, findable causes, and those causes are almost always fixable without a full rebuild.</p>
+
+<p>MAPL TECH builds and audits websites for real-world responsiveness, not just lab scores. <a href="/services/web-development">Explore our web development services</a> or <a href="/contact-us">get in touch</a> to have your site's Core Web Vitals assessed.</p>
+`,
+  },
+  {
+    slug: 'rag-retrieval-quality-ai-assistant',
+    title: 'RAG Is Not Enough: Why Retrieval Quality Determines Whether Your AI Assistant Works',
+    excerpt:
+      'Most disappointing AI assistant projects fail at retrieval, not generation. Here is what breaks in a typical RAG pipeline and how to build one that actually holds up.',
+    category: 'Automation & AI' as BlogCategory,
+    date: 'August 16, 2026',
+    readTime: 8,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Abstract visualization of a neural network processing data',
+    content: `
+<p class="lead">Most AI assistant projects that disappoint a client are not failing because of the underlying language model. They are failing because the retrieval step is feeding that model the wrong, incomplete, or outdated information before it ever generates a response. Retrieval augmented generation, RAG, gets sold as the fix for AI hallucination, and it is, but only if the retrieval half of the system is built with the same care as the generation half. Most implementations are not, and the result is an assistant that sounds confident while quietly answering from the wrong document.</p>
+
+<h2>The Part Everyone Skips</h2>
+
+<p>The pitch for RAG is straightforward: instead of relying on a model's training data, ground every answer in your actual documents by retrieving relevant passages and feeding them into the prompt. The generation step, where the model turns retrieved passages into a coherent answer, gets most of the attention because it is the visible, demoable part. The retrieval step, which decides what those passages even are, gets built quickly and rarely revisited, even though it determines the ceiling on how good the final answer can possibly be. A model given the wrong context will produce a fluent, well-formatted, entirely wrong answer, and it will do so with the same confidence as a correct one.</p>
+
+<h2>Where Retrieval Quietly Fails</h2>
+
+<h3>Chunking Strategy Determines What Gets Found</h3>
+
+<p>Documents get split into chunks before they are indexed for retrieval, and the chunking strategy has an outsized effect on quality that most teams never revisit after initial setup. Chunks that are too small lose surrounding context and get retrieved without the information needed to interpret them correctly. Chunks that are too large dilute the specific answer among unrelated surrounding text, making it harder for the retrieval step to rank the right passage highly. Fixed-size chunking, the default in most tutorials, is rarely the right choice for real business documents like contracts, product specs, or support histories that have their own internal structure.</p>
+
+<h3>Semantic Search Alone Misses Exact Matches</h3>
+
+<p>Vector similarity search finds passages that are conceptually related to a query, which is powerful but not sufficient on its own. A customer asking about a specific product SKU, error code, or policy number needs an exact match, not a conceptually similar one, and pure semantic search frequently ranks a related but wrong passage above the exact answer sitting elsewhere in the index. The systems that perform reliably combine semantic search with keyword-based retrieval and re-ranking, rather than relying on embeddings alone.</p>
+
+<h3>Stale Indexes Feeding Outdated Answers</h3>
+
+<p>A retrieval index is only as current as the last time it was rebuilt, and a surprising number of production RAG systems index documents once at launch and never establish a reliable pipeline for keeping that index current. An assistant confidently quoting a pricing page or policy document that was updated three months ago is a direct, measurable failure of the retrieval pipeline, not the model.</p>
+
+<h2>Building Retrieval That Actually Holds Up</h2>
+
+<h3>Test Retrieval Independent of Generation</h3>
+
+<p>We evaluate the retrieval step on its own, before ever looking at what the language model does with it, by building a test set of real questions with known correct source passages and measuring whether retrieval surfaces the right passage in the top results. This isolates retrieval quality from generation quality and makes it possible to improve one without the other masking the problem.</p>
+
+<h3>Re-rank Before Generation</h3>
+
+<p>Initial retrieval typically pulls a wider set of candidate passages than get passed to the model, and a re-ranking step that scores those candidates against the specific query before final selection consistently improves answer quality more than almost any other single change, because it corrects for the imprecision inherent in first-pass retrieval.</p>
+
+<h3>Automate Index Freshness</h3>
+
+<p>Source documents that change need an automated pipeline that detects the change and updates the index, not a manual process someone forgets to run. We build this as a standard part of any RAG system, tied directly to the systems where the source content actually lives, whether that is a CMS, a knowledge base, or an internal database.</p>
+
+<h2>The Real Cost of Getting This Wrong</h2>
+
+<p>An AI assistant that occasionally gives a wrong answer with full confidence is worse for a business than no assistant at all, because it erodes trust in a way that is hard to win back and hard to detect early, since the wrong answers often sound just as polished as the right ones. Getting retrieval right is not a nice-to-have refinement layered on top of a working system. It is the foundation the rest of the system depends on.</p>
+
+<p>MAPL TECH builds AI assistants and internal tools with retrieval pipelines engineered for accuracy, not just demos. <a href="/services/automation-ai-workflow-setup">Explore our automation and AI services</a> or <a href="/contact-us">get in touch</a> to talk through what a reliable RAG implementation looks like for your data.</p>
+`,
+  },
+  {
+    slug: 'build-vs-buy-internal-tools-framework',
+    title: 'Build vs Buy for Internal Tools: A Decision Framework That Actually Works',
+    excerpt:
+      'Buying an off-the-shelf tool or building something custom is rarely a simple cost comparison. Here is the framework we use to make the call correctly.',
+    category: 'Internal Tools' as BlogCategory,
+    date: 'August 15, 2026',
+    readTime: 7,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Team whiteboarding a software architecture decision',
+    content: `
+<p class="lead">Every growing company eventually faces the same question about some internal process: buy an off-the-shelf tool, or build something custom. The wrong answer in either direction is expensive, either in wasted subscription spend on a tool that never quite fits, or in engineering time sunk into a custom build that a fifty dollar a month SaaS product would have handled just as well. We have run this decision dozens of times with clients, and the pattern that separates a good call from a bad one is rarely about cost alone.</p>
+
+<h2>Why This Decision Gets Made Badly</h2>
+
+<p>The default instinct for most teams is to buy first, because buying is fast, visible, and requires no engineering commitment. That instinct is right more often than not for generic problems: email, calendaring, basic project tracking. It breaks down when the workflow in question is specific to how a particular business actually operates, because off-the-shelf tools are built for the average customer, not for your business, and the gap between what the tool does and what your process actually needs gets filled with manual workarounds, spreadsheets bolted on the side, and employees who quietly stop using half the features because they do not match reality.</p>
+
+<h2>A Framework That Actually Works</h2>
+
+<h3>How Core Is This Workflow to the Business</h3>
+
+<p>The first and most important question is not cost, it is centrality. A workflow that is core to how the business creates value, the thing that differentiates it from competitors, is a strong candidate for custom development, because a generic tool will never express that differentiation well, and being dependent on a vendor's roadmap for something central to the business is a real strategic risk. A workflow that is genuinely generic, expense reporting, basic scheduling, is a poor candidate for custom development almost regardless of cost, because the differentiation a custom build would provide is close to zero.</p>
+
+<h3>How Much Does the Off-the-Shelf Option Actually Fit</h3>
+
+<p>Run a real pilot with actual data and actual users before deciding a tool is close enough. The gap between a tool's marketing page and its behavior under your specific data volume, your specific edge cases, and your specific integration needs is often much larger than it appears in a demo. A twenty percent fit gap sounds manageable until you calculate the ongoing cost of the manual work required to bridge it every single day.</p>
+
+<h3>What Does the Total Cost of Ownership Actually Look Like</h3>
+
+<p>Buying looks cheaper on a monthly invoice, but the comparison needs to include the cost of workarounds, the cost of data living in a system that does not talk to your other systems, and the cost of eventually migrating away when the tool is outgrown, which happens more often than teams expect. Building looks more expensive upfront, but a well-scoped internal tool that fits the actual workflow eliminates ongoing workaround costs entirely and has no per-seat pricing that scales against you as the team grows.</p>
+
+<h3>Can You Maintain What You Build</h3>
+
+<p>A custom tool with no plan for ongoing maintenance becomes a liability the moment the person who built it leaves. This is the argument most in favor of buying that gets under-weighted in build-first enthusiasm. We build internal tools with maintainability as a first-class requirement, using boring, well-documented technology choices over impressive ones, specifically because the tool needs to outlast the original build team.</p>
+
+<h2>The Middle Path Most Teams Miss</h2>
+
+<p>The choice is rarely purely binary. The strongest internal tooling strategies we have implemented combine off-the-shelf products for genuinely generic functions with a custom layer that consolidates the data and workflows specific to the business, connected through integrations rather than one system trying to do everything. This gets the speed and low maintenance burden of buying where it makes sense, and the fit and differentiation of building where it matters.</p>
+
+<h2>Making the Call</h2>
+
+<p>Score the workflow honestly against centrality, fit gap, total cost of ownership, and maintainability before defaulting to either option. The teams that get this wrong most often are the ones that decide based on which option feels less risky in the moment, buying to avoid an engineering commitment, or building to avoid vendor lock-in, rather than based on what the specific workflow actually needs.</p>
+
+<p>MAPL TECH designs and builds internal tools scoped around what a business actually needs, not a generic template. <a href="/services/custom-internal-tools">Explore our internal tools services</a> or <a href="/contact-us">get in touch</a> to work through a build versus buy decision for your team.</p>
+`,
+  },
+  {
+    slug: 'cloud-cost-overruns-architecture-decisions',
+    title: 'Cloud Cost Overruns: Five Architecture Decisions Quietly Doubling Your AWS Bill',
+    excerpt:
+      'Cloud bills rarely spike from one mistake. Here are the five architecture patterns we find most often during cost audits, and how to fix each one.',
+    category: 'Cloud Engineering' as BlogCategory,
+    date: 'August 14, 2026',
+    readTime: 8,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Server racks in a data center with status lights',
+    content: `
+<p class="lead">Cloud bills rarely spike from one obvious mistake. They creep upward from a handful of architecture decisions made early, each reasonable in isolation, that quietly compound as usage grows. We review cloud infrastructure for clients regularly specifically because their bill has become unpredictable, and the same five patterns show up often enough that they are worth naming directly.</p>
+
+<h2>Over-Provisioned Compute Running at Ten Percent Utilization</h2>
+
+<p>The most common finding in a cost review is compute capacity sized for a peak load that happens rarely, or sized generously during initial launch and never revisited once real traffic patterns became clear. Instances running at ten or fifteen percent average utilization are paying for capacity that autoscaling, right-sizing, or a move to serverless compute for spiky workloads would eliminate almost entirely. This is usually the single largest line item we find room to cut, and it typically requires no application changes, only infrastructure changes.</p>
+
+<h2>Data Transfer Costs Nobody Modeled</h2>
+
+<p>Egress fees and cross-region data transfer costs are easy to ignore during initial design because they do not show up meaningfully until volume grows, and by the time they are visible on the bill, the architecture pattern causing them is deeply embedded. Services split across regions that constantly send data back and forth, or an architecture that routes traffic through more hops than necessary, can turn data transfer into a surprisingly large share of the total bill. Modeling data transfer cost during architecture design, not after launch, catches this before it compounds.</p>
+
+<h2>Storage Classes Set Once and Never Revisited</h2>
+
+<p>Object storage defaults to a standard, immediately-available storage class unless someone deliberately configures lifecycle policies to move older, less-accessed data into cheaper tiers. Logs, backups, and historical data that nobody has queried in months routinely sit in the most expensive storage tier available simply because nobody set up the lifecycle rule to move them. This is one of the easiest fixes available, often a single configuration change, and one of the most commonly skipped.</p>
+
+<h2>Managed Services Chosen for Convenience, Not Fit</h2>
+
+<p>Managed database and managed service offerings genuinely save engineering time, and that trade-off is often worth it. The problem shows up when a managed service is chosen at a tier far above what the actual workload requires, because it was the default recommendation rather than a sized decision, or when a business ends up paying premium managed pricing for a workload that has grown stable and predictable enough that a self-managed or reserved-capacity alternative would cost meaningfully less with an acceptable increase in operational overhead.</p>
+
+<h2>No Reserved Capacity or Savings Plans on Predictable Workloads</h2>
+
+<p>On-demand pricing exists for genuinely variable workloads, but a large share of most companies' compute usage is predictable and stable, running the same baseline load month after month. Paying on-demand rates for that baseline, rather than committing to a reserved instance or savings plan that can cut the same usage by thirty to sixty percent, is one of the most common and most easily corrected sources of overspend we find, and it requires no architecture change at all, only a purchasing decision.</p>
+
+<h2>Building Cost Awareness Into the Architecture Process</h2>
+
+<p>The pattern across all five issues is the same: cost was not a first-class consideration during the original design decision, and nobody has gone back to revisit that decision as usage patterns became clear. We treat cost modeling as part of the architecture review for every infrastructure decision we make for clients, not a separate finance exercise that happens after the fact, and we set up ongoing cost monitoring and alerting so a cost regression gets caught within days rather than surfacing three months later as a surprising invoice.</p>
+
+<h2>Where to Start</h2>
+
+<p>A cost audit does not require a full infrastructure overhaul to produce meaningful savings. Right-sizing compute, setting storage lifecycle policies, and committing reserved capacity for predictable workloads are all changes that can be implemented within days and often cut a cloud bill by twenty to forty percent without touching application code at all.</p>
+
+<p>MAPL TECH designs and audits cloud infrastructure built to scale efficiently, not just to work. <a href="/services/cloud-engineering">Explore our cloud engineering services</a> or <a href="/contact-us">get in touch</a> to have your cloud spend reviewed.</p>
+`,
+  },
+  {
+    slug: 'agencies-ai-tools-staying-indispensable',
+    title: 'Why Agencies Are Losing Commodity Work to AI Tools, and How to Stay Indispensable',
+    excerpt:
+      'Clients are handling more commodity production work themselves with AI tools. Here is how agencies can reposition around the work that still requires real expertise.',
+    category: 'Industry' as BlogCategory,
+    date: 'August 13, 2026',
+    readTime: 8,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Team meeting discussing strategy around a laptop',
+    content: `
+<p class="lead">A pattern is showing up across creative and marketing agencies this year: clients who used to outsource a full scope of work are now handling pieces of it internally with AI tools, then coming back to the agency for a narrower, more specific slice of the engagement. This is not a hypothetical threat. It is already reshaping how agencies scope work, price engagements, and decide what to specialize in, and the agencies handling it well are making deliberate choices rather than hoping the trend reverses.</p>
+
+<h2>What Is Actually Happening</h2>
+
+<p>A general-purpose AI tool can now produce a passable first draft of a lot of things an agency used to bill for entirely: initial copy drafts, basic design concepts, simple landing pages, first-pass social content. Clients have noticed, and many are using these tools to handle the commodity portion of work themselves. This is not clients deciding they no longer need agencies. It is clients recalibrating what they are willing to pay an agency for, and the recalibration favors work that requires genuine judgment, strategy, technical depth, or integration with other systems over work that is essentially templated production.</p>
+
+<h2>Why This Is Not the End of Agency Value</h2>
+
+<p>The work AI tools handle well is, almost by definition, the work that was easiest to commoditize in the first place. What remains valuable, and in most cases becomes more valuable as the commodity work gets automated away, is the judgment to know what to build, the strategic context that connects a deliverable to actual business outcomes, and the technical capability to make disconnected AI-generated pieces actually work together as a coherent system rather than a pile of drafts. Clients who use AI tools internally still routinely discover they have produced a lot of output and very little integrated, working result.</p>
+
+<h2>Where the Real Opportunity Is</h2>
+
+<h3>Becoming the Integration Layer</h3>
+
+<p>Clients experimenting with AI tools on their own end up with fragmented output: a chatbot that does not talk to the CRM, a set of AI-generated designs with no working code behind them, an automation that works in a demo but breaks on real data. Agencies that position themselves as the team that takes fragmented AI output and turns it into a working, integrated system are solving a problem clients cannot easily solve themselves, regardless of how good their AI tools have gotten.</p>
+
+<h3>Offering Judgment, Not Just Production</h3>
+
+<p>Strategy, prioritization, and the judgment to know which of ten possible directions is actually right for a specific business are not things a general-purpose AI tool provides, because that judgment depends on context the tool does not have and cannot infer from a prompt. Agencies that lean into advisory and strategic work, rather than competing on raw production speed with tools that are inherently faster at production, are positioning themselves against a strength AI does not currently have.</p>
+
+<h3>Building Technical Depth Clients Cannot Replicate</h3>
+
+<p>General AI tools produce generic output because they are trained on generic patterns. Agencies with real technical depth, the ability to build custom integrations, production-grade software, and systems that actually hold up under real business conditions, offer something a client experimenting with a chatbot on their own cannot replicate regardless of how sophisticated the underlying model becomes. This is exactly the gap MAPL TECH is built to fill for the agencies and businesses we partner with.</p>
+
+<h2>Adjusting How Work Gets Scoped and Priced</h2>
+
+<p>Pricing models built around hours of production work are under real pressure when a client can produce a rough draft of that same output themselves in minutes. The agencies adapting successfully are shifting pricing and scoping toward outcomes, integration, and strategic work, rather than defending an hourly production rate against a tool that will only get faster and cheaper. This is an uncomfortable transition for agencies built entirely around production capacity, but it is a necessary one.</p>
+
+<h2>What This Means Going Forward</h2>
+
+<p>The agencies that treat AI tools as a threat to defend against are going to keep losing the commodity work they were defending. The agencies that treat AI tools as a shift in what clients are willing to pay for, and reposition around judgment, integration, and technical depth, are finding that the shift actually increases demand for what they do best, because clients still need someone to turn fragmented AI output into something that actually works.</p>
+
+<p>MAPL TECH partners with agencies to build the technical capability and integrated systems that keep them indispensable to their clients. <a href="/services">Explore our services</a> or <a href="/contact-us">get in touch</a> to talk through how your agency can adapt.</p>
+`,
+  },
+  {
     slug: 'answer-engine-optimization-ai-search-2026',
     title: 'Answer Engine Optimization: Getting Your Website Cited by AI Search in 2026',
     excerpt:
