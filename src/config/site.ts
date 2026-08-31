@@ -313,7 +313,7 @@ export const portfolioProjects = [
     category: 'Custom Internal Tools',
     description: 'Interactive salary guide tool with dynamic filtering, real-time data visualization, and role-based salary benchmarking for recruiters and hiring managers.',
     tags: ['Interactive Tool', 'Data Visualization', 'Custom Development'],
-    image: '/images/project-lro-staffing.jpg',
+    image: '/images/case-lro.jpg',
     url: 'https://www.lrostaffing.com/lro-salary-guide/2026-interactive-salary-guide/',
   },
   {
@@ -321,7 +321,7 @@ export const portfolioProjects = [
     category: 'Automation and AI Workflows',
     description: 'Our own product: a travel and tourism company fully managed by AI - from trip planning and booking to customer communication and itinerary generation. Built and operated in-house by MAPL Labs.',
     tags: ['MAPL Labs', 'AI', 'Automation'],
-    image: '/images/project-mapl-tours.jpg',
+    image: '/images/case-mapl-tours.jpg',
     url: 'https://mapltours.com/',
   },
   {
@@ -337,7 +337,8 @@ export const portfolioProjects = [
     category: 'Web Development',
     description: 'Event-driven web platform with member portal, registration workflows, and community engagement tools.',
     tags: ['WordPress', 'Member Portal', 'Events'],
-    image: '/images/mockup-event-platform.svg',
+    image: '/images/case-focas-canada.jpg',
+    url: 'https://focascanada.org/',
   },
   {
     title: 'Crowned Spice',
@@ -359,22 +360,24 @@ export const portfolioProjects = [
     category: 'Web Development',
     description: 'Personal brand site with CMS-powered content, integrated booking system, and optimized page speed.',
     tags: ['Portfolio', 'CMS', 'Booking'],
-    image: '/images/project-trisha-walters.webp',
+    image: '/images/case-tricia-walters.jpg',
+    url: 'https://triciawalters.com/',
   },
   {
     title: 'UNSVCC',
     category: 'Web Development',
     description: 'Internal operations dashboard with real-time organizational metrics, role-based access, and automated reporting.',
     tags: ['Dashboard', 'Analytics', 'Reporting'],
-    image: '/images/unsvcc-cover.jpg',
+    image: '/images/case-unsvcc.jpg',
     url: 'https://www.unsvcc.org/',
   },
   {
     title: 'CHHA-NCR',
     category: 'Web Development',
-    description: 'Accessible, standards-compliant website for a community non-profit - built with WCAG accessibility at the core, clear content structure, and an easy-to-maintain CMS.',
+    description: 'Full relaunch for the Canadian Hard of Hearing Association\'s National Capital Region branch - a journey-based information architecture, a searchable hearing-clinic directory, and WCAG accessibility built into every page, all on a CMS volunteers can maintain themselves.',
     tags: ['Non-Profit', 'Accessibility', 'Web Development'],
-    image: '/images/mockup-corporate.svg',
+    image: '/images/case-chha-ncr.jpg',
+    url: 'https://www.chhancr.ca/',
   },
 ];
 
