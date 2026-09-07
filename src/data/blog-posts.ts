@@ -16,6 +16,295 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: 'wcag-accessibility-compliance-guide-2026',
+    title: 'Web Accessibility in 2026: A Practical WCAG Compliance Guide for Growing Businesses',
+    excerpt:
+      'Accessibility lawsuits against small and mid-size business websites have climbed every year since 2020, and most sites still fail basic WCAG checks. Here is what actually needs fixing and how to prioritize the work.',
+    category: 'Web Development' as BlogCategory,
+    date: 'September 7, 2026',
+    readTime: 8,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Developer testing a website interface for accessibility on a laptop',
+    content: `
+<p class="lead">Most businesses treat accessibility as a legal checkbox they will get to eventually, right up until a demand letter arrives or a customer using a screen reader cannot complete a purchase. Web accessibility lawsuits targeting small and mid-size business websites have grown steadily for years, and the technical reality behind that trend is simple: the overwhelming majority of live business websites fail basic WCAG checks the moment you run them through an automated scanner, let alone a manual audit with real assistive technology.</p>
+
+<h2>Why Accessibility Keeps Getting Deprioritized</h2>
+
+<p>Accessibility work rarely shows up on a roadmap until something forces it there, because the cost of skipping it is invisible until a specific user hits a specific barrier. A missing alt attribute or a color contrast ratio that fails WCAG AA does not throw an error, break a build, or show up in a typical QA pass built around visual review. The site looks fine to the person testing it, so the gap between what ships and what is actually usable stays hidden until a real user with a real assistive technology need runs into it, and by then it is a support ticket, a complaint, or worse, a legal notice.</p>
+
+<h2>Where Business Sites Actually Fail</h2>
+
+<h3>Color Contrast That Passes a Glance Test, Not a Contrast Ratio</h3>
+
+<p>Light gray text on white backgrounds, low-contrast button states, and brand colors chosen for aesthetics rather than accessibility are the single most common failure we find in audits. WCAG AA requires a 4.5:1 contrast ratio for normal text, and a huge share of modern, minimalist business websites fail that threshold on body copy, form labels, or secondary navigation without anyone on the team ever noticing, because it reads fine to someone without a visual impairment.</p>
+
+<h3>Forms Without Programmatic Labels</h3>
+
+<p>A form field that looks labeled to a sighted user because the label sits visually next to the input is often not actually associated with that input in the markup. Screen reader users rely on the programmatic relationship between a label element and its input, not the visual proximity, and a form built with divs and placeholder text instead of proper label and for attributes can be effectively unusable for anyone navigating by screen reader, even though it looks completely normal.</p>
+
+<h3>Keyboard Traps and Missing Focus States</h3>
+
+<p>Modals, dropdown menus, and custom-built interactive components frequently trap keyboard focus or fail to show any visible focus indicator at all, which makes the site unusable for anyone who cannot use a mouse. This includes not just users with motor disabilities but power users who prefer keyboard navigation, and it is one of the most common gaps we find in custom-built components that were never tested without a mouse in hand.</p>
+
+<h3>Images and Icons Without Meaningful Alt Text</h3>
+
+<p>Decorative images that should have empty alt attributes get verbose descriptions that clutter screen reader output, while meaningful images, like a chart conveying data or an icon that is the only label for a button, get no alt text at all. Both directions of this mistake come from treating alt text as a formality rather than as the only description a screen reader user will ever receive of that visual content.</p>
+
+<h2>A Practical Path to Compliance</h2>
+
+<h3>Start With an Automated Scan, Then Go Manual</h3>
+
+<p>Automated tools catch roughly a third of WCAG failures reliably, things like missing alt attributes and contrast ratio violations, and they are the fastest way to find the highest volume of easy fixes. But automated scanning cannot tell you whether a screen reader user can actually complete your checkout flow or whether your custom dropdown traps keyboard focus, so a genuine audit needs manual testing with a screen reader and keyboard-only navigation on every critical user flow, not just a scan report.</p>
+
+<h3>Fix by User Impact, Not by Violation Count</h3>
+
+<p>A compliance report might list a hundred issues, but they are not equally important. Prioritize anything blocking a core conversion path, checkout, contact forms, account creation, over cosmetic issues on secondary pages. A perfectly labeled footer does nothing for a user who cannot complete the purchase form two clicks earlier.</p>
+
+<h3>Build Accessibility Checks Into the Development Process</h3>
+
+<p>Retrofitting accessibility onto a finished site is expensive and incomplete, because a lot of the real fixes require component-level changes rather than surface patches. Automated accessibility linting in CI, a component library built with accessible patterns from the start, and a manual review step before launch keep new work from reintroducing the same failures that got fixed in the original audit.</p>
+
+<h2>The Business Case Beyond Legal Risk</h2>
+
+<p>Accessible sites tend to perform better across the board because the practices that make a site usable for assistive technology, semantic markup, clear focus order, meaningful alt text, also improve SEO crawlability and usability for every visitor on a slow connection or a small screen. Treating accessibility as a core engineering requirement rather than a legal afterthought produces a better site for every user, not just the subset the legal risk is nominally about.</p>
+
+<p>MAPL TECH builds and audits websites for WCAG compliance as part of our standard web development process, not as a separate bolt-on service. <a href="/services/web-development">Explore our web development services</a> or <a href="/contact-us">get in touch</a> to have your site audited before it becomes a liability.</p>
+`,
+  },
+  {
+    slug: 'ai-agent-evaluation-observability-2026',
+    title: 'Why Most Teams Ship AI Agents Blind: The Case for Evals and Observability',
+    excerpt:
+      'Teams spend weeks tuning prompts and agent logic, then deploy with no systematic way to measure whether the agent is actually getting better or worse. Here is what a real evaluation pipeline looks like.',
+    category: 'Automation & AI' as BlogCategory,
+    date: 'September 6, 2026',
+    readTime: 8,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Dashboard displaying AI agent performance metrics and logs',
+    content: `
+<p class="lead">Ask most teams running an AI agent in production how they know it is working well, and the honest answer is that someone spot-checks a handful of conversations occasionally and nothing has caught fire recently. That is not a monitoring strategy, it is the absence of one, and it means every prompt tweak, every model swap, and every new tool the agent gets access to ships on faith rather than evidence. Teams that would never deploy a backend change without tests routinely deploy agent changes with nothing more rigorous than a few manual test messages.</p>
+
+<h2>Why AI Agents Are Different From Normal Software</h2>
+
+<p>Traditional software either works or throws an error, and traditional testing catches most regressions before they reach production. AI agents fail differently: they produce a plausible-sounding, confidently wrong answer that passes every syntax check and looks completely normal in a log line. A prompt change that improves performance on the five scenarios someone happened to test can quietly degrade performance on twenty scenarios nobody thought to check, and nothing in a standard deployment pipeline will catch that.</p>
+
+<h2>What Teams Skip When They Skip Evals</h2>
+
+<h3>No Baseline to Measure Against</h3>
+
+<p>Without a fixed set of test cases and expected outcomes, there is no way to know whether a change made the agent better or worse, only whether it seems fine on whatever the developer happened to try. Every subsequent change becomes a judgment call made from memory rather than a measurement against a known baseline, and the agent's actual quality trend becomes invisible.</p>
+
+<h3>No Visibility Into Real Production Failures</h3>
+
+<p>The failures that matter are the ones happening to real users on real inputs, not the ones a developer can anticipate while writing prompts. Without structured logging of agent inputs, outputs, tool calls, and outcomes, a pattern of failure on a specific type of request can run for weeks, invisible, because nobody has a systematic way to review what is actually happening at scale.</p>
+
+<h3>No Regression Detection When Models Change</h3>
+
+<p>Every model provider update, every version bump, every switch between models carries the risk of silently changing agent behavior in ways that are not obvious from the release notes. A team with no eval suite finds out about a regression from customer complaints. A team with an eval suite finds out before the change ships, because the same test cases run automatically against the new model and flag the drop.</p>
+
+<h2>Building an Evaluation Pipeline That Actually Works</h2>
+
+<h3>Start With a Test Set Built From Real Usage</h3>
+
+<p>The most valuable eval cases come from actual production logs, not hypothetical scenarios a developer imagines. Pull a representative sample of real user inputs, including the messy, off-topic, and adversarial ones, and build a growing test set from patterns that have actually caused problems. This set should expand every time a new failure mode is discovered in production.</p>
+
+<h3>Combine Automated Scoring With Human Review</h3>
+
+<p>Some outcomes are checkable automatically, did the agent call the correct tool, did it return a response in the expected format, did it avoid a list of prohibited claims. Others require human or model-graded judgment, was the response actually helpful, did it match the intended tone. A real evaluation pipeline uses both, automated checks for anything objective and a structured, sampled human or LLM-graded review process for everything that requires judgment.</p>
+
+<h3>Run Evals on Every Meaningful Change</h3>
+
+<p>Prompt edits, tool additions, model swaps, and system message changes should all run against the eval suite before shipping, the same way a code change runs against a test suite before merging. This turns agent development from an intuition-driven process into a measurable one, where a change either moves the score in the right direction or it does not ship.</p>
+
+<h3>Monitor Production Continuously, Not Periodically</h3>
+
+<p>Evals catch regressions before launch, but ongoing production monitoring catches drift and failure patterns that only show up at scale. Structured logging, sampled review of live conversations, and alerting on unusual patterns, like a spike in fallback responses or a specific tool failing repeatedly, close the loop between what was tested and what is actually happening with real users.</p>
+
+<h2>Making the Investment Pay Off</h2>
+
+<p>Building an eval pipeline feels like overhead when a team is racing to ship an agent, but it is the difference between an agent that improves steadily over time and one that lurches between unmeasured, well-intentioned changes with no way to tell whether things are actually getting better. The teams running the most reliable AI agents in production are not the ones with the cleverest prompts, they are the ones who can prove, with data, that this week's version is better than last week's.</p>
+
+<p>MAPL TECH builds AI agents and automation systems with evaluation and observability designed in from the start, not added after something breaks. <a href="/services/automation-ai">Explore our automation and AI services</a> or <a href="/contact-us">get in touch</a> to talk about building an agent you can actually measure.</p>
+`,
+  },
+  {
+    slug: 'internal-tools-audit-trail-compliance-risk',
+    title: 'The Audit Trail Problem: Why Internal Tools Without Change History Create Real Risk',
+    excerpt:
+      'Most internal tools track the current state of the data and nothing about how it got there. When something goes wrong, and it eventually does, that missing history turns a quick fix into a weeks-long investigation.',
+    category: 'Internal Tools' as BlogCategory,
+    date: 'September 5, 2026',
+    readTime: 7,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6e?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Team reviewing operational records and change history on a screen',
+    content: `
+<p class="lead">A customer's order status is wrong. A price got changed and nobody remembers approving it. An account got flagged, then unflagged, and now finance wants to know who did that and why. Every operations team eventually hits a moment where they need to know not just what the data says right now, but what it said before, who changed it, and when, and a huge share of internal tools simply cannot answer that question, because nobody built it to.</p>
+
+<h2>Why Audit Trails Get Skipped</h2>
+
+<p>Change history is invisible until the moment someone urgently needs it, which makes it one of the easiest requirements to cut when a team is building an internal tool under deadline pressure. The tool works, it saves data, it retrieves data, and shipping it feels complete. The absence of a record showing every previous state and who caused each change does not show up in a demo, a QA pass, or the first several months of normal use, so it rarely gets prioritized until an incident forces the question.</p>
+
+<h2>What Actually Breaks Without One</h2>
+
+<h3>Disputes Become Unwinnable</h3>
+
+<p>When a customer disputes a charge, a status, or a decision, and the internal system only shows the current state, the team has no way to reconstruct what actually happened. Was the price changed before or after the customer's call. Did the refund get approved and then reversed, or was it never approved at all. Without a timestamped record of every change and who made it, these disputes get resolved by whoever argues more convincingly rather than by what the system can actually show.</p>
+
+<h3>Compliance and Client Trust Take the Hit</h3>
+
+<p>Agencies and service businesses handling client data, financial records, or regulated information increasingly face the expectation, sometimes contractual, sometimes regulatory, that changes to sensitive records are logged and attributable. A tool with no audit trail cannot answer a client or auditor who asks who accessed or modified a specific record, and that gap becomes a real liability the moment it gets tested.</p>
+
+<h3>Debugging Becomes Archaeology</h3>
+
+<p>When something goes wrong in a system with no change history, engineers end up reconstructing what happened from scattered evidence: application logs that were not built for this purpose, Slack messages, and people's memory of what they clicked three weeks ago. What should be a five-minute query against a change log becomes a multi-day investigation that still ends with an incomplete picture.</p>
+
+<h3>Bad Actors, Internal or External, Are Harder to Catch</h3>
+
+<p>Whether it is an external account compromise or an internal employee making unauthorized changes, a system with no record of who did what has no way to detect a pattern of misuse until the damage is already visible elsewhere. Audit trails are often the first thing a security or fraud investigation looks for, and their absence turns a containable incident into an open-ended one.</p>
+
+<h2>What a Real Audit Trail Looks Like</h2>
+
+<h3>Every Meaningful Change Gets Recorded, Not Just the Final State</h3>
+
+<p>A proper audit log captures the previous value, the new value, who made the change, and when, for every field that matters to the business, not just a generic "record updated" timestamp. The granularity should match what the business would actually need to answer a dispute or an investigation, which usually means field-level history on anything customer-facing or financially relevant.</p>
+
+<h3>The Log Itself Needs to Be Tamper-Resistant</h3>
+
+<p>An audit trail that can be edited or deleted by the same people whose actions it is meant to record protects nobody. Change history should be append-only, ideally stored separately from the primary application data, so that even someone with elevated access to the main system cannot quietly rewrite what actually happened.</p>
+
+<h3>History Needs to Be Usable, Not Just Stored</h3>
+
+<p>Logging changes to a database table that nobody can query without writing SQL by hand is barely better than not logging them at all. A usable audit trail surfaces change history directly in the tool, on the record itself, so a support agent or manager can see what happened without escalating to engineering every time a question comes up.</p>
+
+<h2>Building It In From the Start</h2>
+
+<p>Adding proper change history to an internal tool after the fact is possible but far more expensive than designing for it from the beginning, because it usually means restructuring how data gets written across the entire application rather than adding a single feature. Teams that treat audit trails as a core requirement for any tool touching customer or financial data, not an optional add-on, avoid the moment where an urgent question has no answer.</p>
+
+<p>MAPL TECH builds internal tools with change history and access logging as a standard part of the architecture, not an afterthought bolted on after an incident. <a href="/services/internal-tools">Explore our internal tools services</a> or <a href="/contact-us">get in touch</a> to talk about tools that can actually answer what happened.</p>
+`,
+  },
+  {
+    slug: 'cloud-iam-misconfiguration-security-risk',
+    title: 'The IAM Misconfiguration Problem: How Overly Permissive Cloud Access Becomes a Breach',
+    excerpt:
+      'Cloud breaches rarely start with a sophisticated exploit. Most start with a role or key that had far more access than it needed. Here is how permissive IAM configurations accumulate and how to fix them before they cause damage.',
+    category: 'Cloud Engineering' as BlogCategory,
+    date: 'September 4, 2026',
+    readTime: 8,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Engineer reviewing cloud infrastructure access permissions on multiple screens',
+    content: `
+<p class="lead">When a cloud breach makes the news, the technical postmortem rarely involves a novel exploit or a zero-day vulnerability. Far more often, it involves a single leaked credential or compromised service that, because of how permissions were configured, had access to far more of the environment than the task it was created for actually required. The initial compromise is often small. The damage is large because the IAM configuration let it become large.</p>
+
+<h2>How Permissive Access Accumulates</h2>
+
+<p>Nobody sets out to build an over-permissioned cloud environment. It happens gradually, one convenience decision at a time. A developer hits a permissions error while debugging, and instead of scoping the fix to the specific action that failed, someone attaches a broad policy that makes the error go away. A service account gets created for one task and then gets reused for three more because creating a new one felt like unnecessary overhead. Nobody revisits these decisions later, because the system works, and working systems rarely get audited until something forces the question.</p>
+
+<h2>Where the Real Risk Concentrates</h2>
+
+<h3>Wildcard Permissions Granted Under Deadline Pressure</h3>
+
+<p>The single most common pattern we find in cloud security reviews is a role or policy using a wildcard resource or action, effectively granting access to everything of a certain type, or in the worst cases, everything in the account, because it was the fastest way to unblock a deploy. These wildcards almost never get narrowed later, because doing so requires understanding exactly what the role actually uses, work that only gets prioritized after an incident, not before one.</p>
+
+<h3>Long-Lived Credentials With No Rotation</h3>
+
+<p>Static access keys that never expire and get embedded in code, configuration files, or CI pipelines are one of the most common paths to a breach, because a single leaked key, through a public repository, a misconfigured log, or a compromised laptop, grants standing access until someone notices and revokes it, which can be months or never. Short-lived, automatically rotated credentials limit the blast radius of exactly this scenario.</p>
+
+<h3>Cross-Account and Third-Party Access That Outlives Its Purpose</h3>
+
+<p>Integrations with third-party tools, contractors who needed temporary access, and cross-account roles set up for a specific project frequently outlive the reason they were created. Nobody owns the process of reviewing and revoking access that is no longer needed, so it accumulates indefinitely, and every one of these forgotten grants is a path into the environment that the security team does not know to watch.</p>
+
+<h3>No Separation Between Human and Service Permissions</h3>
+
+<p>Service accounts and application roles frequently get provisioned with the same broad permissions as a human administrator, because it is easier than scoping access to exactly what the service does. This means a compromised application, not just a compromised person, can carry full administrative reach across the environment, turning a single application vulnerability into a full account compromise.</p>
+
+<h2>Fixing the Problem Without Breaking Everything</h2>
+
+<h3>Move to Least Privilege Incrementally, With Real Usage Data</h3>
+
+<p>Rewriting every policy to least privilege in one pass is how teams break production and abandon the effort halfway through. Cloud providers offer access analysis tools that show what permissions a role has actually used over a given period, and starting from that real usage data, rather than guessing what a role might need, makes it possible to narrow permissions safely and incrementally.</p>
+
+<h3>Replace Long-Lived Keys With Short-Lived, Role-Based Access</h3>
+
+<p>Wherever the cloud provider supports it, replace static access keys with short-lived credentials issued through role assumption, tied to a specific task and expiring automatically. This single change removes an entire category of risk, the leaked key that still works six months later, without requiring a redesign of the surrounding system.</p>
+
+<h3>Build Access Review Into a Recurring Process</h3>
+
+<p>Quarterly or even monthly review of who and what has access to the environment, with an explicit owner for revoking anything no longer needed, catches the slow accumulation of forgotten grants before they become the entry point for an incident. This does not need to be elaborate. It needs to actually happen on a schedule, with someone accountable for acting on what it finds.</p>
+
+<h3>Separate Human and Service Identity by Design</h3>
+
+<p>Service accounts should be scoped to exactly the actions the service performs, reviewed separately from human access, and never granted broad administrative permissions as a shortcut. This containment means a compromised service cannot automatically become a compromised environment.</p>
+
+<h2>Why This Matters More as Environments Grow</h2>
+
+<p>The complexity of cloud IAM grows faster than most teams' processes for managing it, and the gap between the two is exactly where breaches originate. Fixing this is rarely glamorous work, it is unglamorous policy review and access cleanup, but it consistently prevents more damage than any amount of investment in detecting an attacker after they are already inside.</p>
+
+<p>MAPL TECH designs and audits cloud infrastructure with least-privilege access as a foundational requirement, not a cleanup project. <a href="/services/cloud-engineering">Explore our cloud engineering services</a> or <a href="/contact-us">get in touch</a> to have your environment's access model reviewed.</p>
+`,
+  },
+  {
+    slug: 'vendor-lock-in-custom-platform-decision',
+    title: 'The Vendor Lock-In Trap: What Businesses Give Up When They Build on Someone Else’s Platform',
+    excerpt:
+      'Every SaaS platform and no-code tool promises speed today and quietly charges for it later. Here is how to weigh that tradeoff honestly before a growing business finds itself boxed in by a vendor it cannot easily leave.',
+    category: 'Industry' as BlogCategory,
+    date: 'September 3, 2026',
+    readTime: 7,
+    author: { name: 'MAPL TECH', role: 'Technology Agency' },
+    coverImage: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=80',
+    coverImageAlt: 'Business team discussing technology strategy and platform decisions around a table',
+    content: `
+<p class="lead">Every vendor pitch sounds the same at the start: get up and running in a day, no engineering required, focus on your business instead of your infrastructure. That pitch is often true, and for a long stretch of a company's growth, building on someone else's platform is genuinely the right call. The problem shows up later, quietly, when the business has grown around the platform's constraints, the pricing has scaled past what anyone budgeted for, and leaving would mean rebuilding years of accumulated workflow rather than just switching tools.</p>
+
+<h2>Why Lock-In Is Easy to Miss While It Is Happening</h2>
+
+<p>Vendor lock-in rarely arrives as a single decision. It accumulates through dozens of small, individually reasonable choices: a workflow built around a platform's specific automation rules, a data model shaped by what the platform's fields support, an integration that only exists because the vendor built it, a team that has spent two years learning the platform's specific interface instead of transferable skills. None of these choices looks like a risk in isolation. Together, they describe a business that cannot leave without a project large enough to require its own budget line.</p>
+
+<h2>Where the Cost Actually Shows Up</h2>
+
+<h3>Pricing That Scales With Your Success, Not Your Usage</h3>
+
+<p>Per-seat and per-record pricing models that felt trivial at ten users and a thousand records become a material line item at two hundred users and a million records, and the vendor knows this growth curve better than the customer does when they sign the initial contract. The platform did not get more expensive to run at that scale. The pricing model was built to capture more value as the customer succeeds, and by the time it is expensive, switching costs have grown right alongside it.</p>
+
+<h3>Feature Requests That Depend on Someone Else's Roadmap</h3>
+
+<p>A capability the business genuinely needs, a specific integration, a workflow rule, a reporting view, either exists on the vendor's roadmap or it does not, and a single growing customer rarely has the leverage to change that roadmap's priorities. Businesses running on a platform they do not control end up designing their operations around what the vendor has decided to build, rather than what the business actually needs.</p>
+
+<h3>Data That Is Technically Exportable and Practically Unusable</h3>
+
+<p>Most platforms allow data export, satisfying the letter of "your data is yours," while the actual structure, relationships, and business logic embedded in how that platform organizes information do not export cleanly, or at all. A CSV of records is not the same as the workflow, permissions, and automation logic built around them, and rebuilding that logic on a new system is where the real migration cost lives.</p>
+
+<h3>Outages and Deprecations Outside Your Control</h3>
+
+<p>When core business operations run on a third-party platform, that platform's downtime, pricing changes, feature deprecations, and even acquisition by another company become the business's operational risk, with no ability to fix, delay, or opt out of the change. A vendor's decision to sunset a feature the business depends on is not negotiable from the customer side.</p>
+
+<h2>Making the Build vs Buy Decision Honestly</h2>
+
+<h3>Platforms Win for Undifferentiated, Fast-Moving Needs</h3>
+
+<p>For functions that are not core to the business's competitive advantage, and where speed to launch matters more than long-term control, a mature platform is usually the right call. Email infrastructure, payment processing, and generic CRM functionality rarely benefit from being custom-built, because the platform's economies of scale and specialization outweigh the loss of control.</p>
+
+<h3>Custom Build Wins When the Workflow Is the Business</h3>
+
+<p>When the specific way a business operates, its client workflow, its pricing logic, its operational process, is actually the source of its competitive advantage, building that on someone else's platform means competing with one hand tied to a vendor's constraints. The businesses that grow past their platform limitations are usually the ones whose core differentiation was never something a generic tool was built to support in the first place.</p>
+
+<h3>Evaluate Exit Cost Before Signing, Not After</h3>
+
+<p>Before committing to a platform for anything operationally important, ask what a genuine migration away from it would look like in a year, in three years, and at ten times the current scale. A platform that looks cheap today and prohibitively expensive to leave in three years is not actually cheap, the cost has just been deferred to a point where the business has less leverage to negotiate or walk away.</p>
+
+<h2>Finding the Middle Ground</h2>
+
+<p>The choice is rarely a clean binary between fully custom and fully platform-dependent. The businesses that navigate this well use platforms for genuinely undifferentiated infrastructure while building custom systems around the specific workflows that define how they actually compete, and they make that split deliberately rather than by accumulated accident.</p>
+
+<p>MAPL TECH helps growing businesses build the custom systems that protect their competitive advantage, without over-building where a platform genuinely makes sense. <a href="/contact-us">Get in touch</a> to talk through where your business should build versus buy.</p>
+`,
+  },
+  {
     slug: 'server-components-vs-client-components-react-2026',
     title: 'Server Components vs Client Components: A Practical Framework for React Architecture Decisions in 2026',
     excerpt:
