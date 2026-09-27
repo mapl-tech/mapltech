@@ -6,6 +6,9 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import SmoothScroll from '@/components/ui/SmoothScroll';
 import CursorGlow from '@/components/ui/CursorGlow';
+import MobileActionBar from '@/components/ui/MobileActionBar';
+import JsonLd from '@/components/seo/JsonLd';
+import { siteGraph } from '@/lib/schema';
 import '@/styles/tailwind.css';
 import '@/styles/globals.scss';
 
@@ -151,55 +154,6 @@ export const viewport: Viewport = {
   themeColor: '#0a0a0a',
 };
 
-// TODO(schema): replace this inline graph with <JsonLd graph={organizationGraph()} />
-// from src/components/seo/JsonLd.tsx + src/lib/schema.ts once they land (that
-// graph drops SearchAction, adds legalName/contactPoint/founder per the SEO plan).
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Organization',
-      '@id': `${siteConfig.url}/#organization`,
-      name: 'MAPL TECH',
-      alternateName: 'MAPL TECH Inc.',
-      url: siteConfig.url,
-      email: siteConfig.email,
-      sameAs: [
-        siteConfig.social.instagram,
-        siteConfig.social.x,
-        siteConfig.social.facebook,
-        siteConfig.social.linkedin,
-        siteConfig.social.tiktok,
-      ],
-      logo: {
-        '@type': 'ImageObject',
-        url: `${siteConfig.url}/images/mapl-tech-logo.svg`,
-        caption: 'MAPL TECH',
-      },
-      description:
-        'MAPL TECH is a systems, automation, cloud, and infrastructure partner for digital agencies. We design and build scalable websites, custom internal tools, AI-driven workflows, and cloud infrastructure that support complex client projects beyond design and marketing.',
-      address: {
-        '@type': 'PostalAddress',
-        addressRegion: 'ON',
-        addressCountry: 'Canada',
-        addressLocality: 'Toronto',
-      },
-    },
-    {
-      '@type': 'WebSite',
-      '@id': `${siteConfig.url}/#website`,
-      url: siteConfig.url,
-      name: 'MAPL TECH',
-      publisher: { '@id': `${siteConfig.url}/#organization` },
-      inLanguage: 'en-CA',
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: `${siteConfig.url}/?s={search_term_string}`,
-        'query-input': 'required name=search_term_string',
-      },
-    },
-  ],
-};
 
 export default function RootLayout({
   children,
@@ -245,15 +199,8 @@ export default function RootLayout({
             })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
           `}
         </Script>
-
-        {/* Structured Data. `<` is escaped so the JSON can never close the script tag. */}
-        {/* TODO(schema): swap for <JsonLd graph={...} /> - see the note above `jsonLd`. */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
-          }}
-        />
+        {/* Structured data: one @graph (Organization + WebSite) from src/lib/schema.ts; pages add their own nodes via pageGraph(). */}
+        <JsonLd data={siteGraph()} />
       </head>
       <body>
         <a href="#main" className="skip-to-content">
@@ -274,6 +221,8 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        {/* Mobile sticky action bar (md:hidden): estimate + call, shown once the hero CTA scrolls out. */}
+        <MobileActionBar />
       </body>
     </html>
   );

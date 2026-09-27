@@ -323,3 +323,11 @@
     }
   }
 }
+
+// Clear the mobile sticky action bar (MobileActionBar, md:hidden) so the last
+// footer links are never covered; the bar is 52px + safe-area inset.
+.footer {
+  @media (max-width: 767px) {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+}

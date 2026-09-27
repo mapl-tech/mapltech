@@ -115,8 +115,8 @@ export default function Header() {
             ))}
           </nav>
 
-          <Link href="/contact-us" className={styles.ctaButton}>
-            Contact Us
+          <Link href="/pricing#estimator" className={styles.ctaButton} data-cta-placement="header">
+            Get a 60-second estimate
           </Link>
 
           <button
@@ -189,8 +189,8 @@ export default function Header() {
             })}
           </div>
 
-          <Link href="/contact-us" onClick={closeMobile} className={styles.mobileCta}>
-            Contact Us
+          <Link href="/pricing#estimator" onClick={closeMobile} className={styles.mobileCta} data-cta-placement="mobile_menu">
+            Get a 60-second estimate
           </Link>
         </div>
       )}
