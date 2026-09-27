@@ -1,427 +1,272 @@
-'use client';
-
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import JsonLd from '@/components/seo/JsonLd';
+import { faqPage, howTo, itemList, pageGraph } from '@/lib/schema';
+import Backbone from '@/components/ui/Backbone';
+import { LiveClocks } from '@/components/ui/TimezoneOverlap';
+import Cta from '@/components/home/Cta';
+import LogoMarquee from '@/components/home/LogoMarquee';
+import TrustWall from '@/components/home/TrustWall';
+import PinnedPlugIn from '@/components/home/PinnedPlugIn';
+import ServiceRows from '@/components/home/ServiceRows';
+import WorkRows from '@/components/home/WorkRows';
+import TestimonialRow from '@/components/home/TestimonialRow';
+import EstimateTeaser from '@/components/home/EstimateTeaser';
+import HomeFaq from '@/components/home/HomeFaq';
 import {
-  HiCodeBracket,
-  HiCpuChip,
-  HiWrenchScrewdriver,
-  HiCloud,
-  HiArrowRight,
-  HiChevronLeft,
-  HiChevronRight,
-  HiCheck,
-} from 'react-icons/hi2';
-import SectionHeading from '@/components/ui/SectionHeading';
-import BlurReveal from '@/components/ui/BlurReveal';
-import TextReveal from '@/components/ui/TextReveal';
-import FloatingOrbs from '@/components/ui/FloatingOrbs';
-import AnimatedCounter from '@/components/ui/AnimatedCounter';
-import MagneticButton from '@/components/ui/MagneticButton';
-import SpotlightCard from '@/components/ui/SpotlightCard';
-import ScrollOrb from '@/components/ui/ScrollOrb';
-import ParallaxOrb from '@/components/ui/ParallaxOrb';
-import ContactForm from '@/components/ui/ContactForm';
-import HeroSection from '@/components/ui/glassmorphism-trust-hero';
-import { testimonials, portfolioProjects } from '@/config/site';
+  BACKBONE_SECTIONS,
+  CTA,
+  ESTIMATE_SECTION,
+  FAQ_ITEMS,
+  FAQ_SECTION,
+  HERO,
+  HOME_PAGE_DESCRIPTION,
+  HOME_PAGE_NAME,
+  KEY_FACTS,
+  PLUG_IN,
+  PROOF_ITEMS,
+  PROOF_SECTION,
+  SERVICES_SECTION,
+  SERVICE_ROWS,
+  START,
+  WORK_ROWS,
+  WORK_SECTION,
+} from '@/components/home/data';
 import styles from './page.module.scss';
 
-export default function HomePage() {
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
+/*
+ * Homepage — Server Component (synthesis §2.1).
+ *
+ * Metadata: none exported on purpose. The title, description, Open Graph and
+ * canonical (https://mapltech.com) are inherited unchanged from the root
+ * layout, exactly as before this rewrite.
+ *
+ * Anatomy: H1 → lede → key facts <dl> → CTAs, all in the SSR HTML, no reveal.
+ * The Backbone (interaction #1) is the page signature; "How we plug in" is the
+ * single engineered peak. Every other section reveals with the CSS view()
+ * timeline and skips paint until it is near (data-below-fold).
+ */
 
-  const services = [
-    {
-      icon: <HiCodeBracket size={24} />,
-      title: 'Web Development',
-      description:
-        'Custom-coded sites engineered for speed, accessibility, and maintainability. No page builders, no shortcuts - just clean architecture your team can own.',
-      href: '/services/web-development',
-      stack: ['Next.js', 'React', 'TypeScript', 'WordPress'],
-    },
-    {
-      icon: <HiCpuChip size={24} />,
-      title: 'Automation & AI Workflows',
-      description:
-        'Connect your CRM, project tools, invoicing, and client intake into one seamless pipeline. We build AI agents and intelligent workflows that eliminate manual busywork.',
-      href: '/services/automation-ai-workflow-setup',
-      stack: ['AI Agents', 'Python', 'APIs', 'CRM'],
-    },
-    {
-      icon: <HiWrenchScrewdriver size={24} />,
-      title: 'Custom Internal Tools',
-      description:
-        'Dashboards, client portals, and reporting systems built around how your agency actually works - not how a SaaS product thinks you should.',
-      href: '/services/custom-internal-tools',
-      stack: ['React', 'Node.js', 'PostgreSQL'],
-    },
-    {
-      icon: <HiCloud size={24} />,
-      title: 'Cloud Engineering',
-      description:
-        'Scalable cloud infrastructure, CI/CD pipelines, and monitoring - designed, deployed, and managed so your agency never worries about uptime or scaling.',
-      href: '/services/cloud-engineering',
-      stack: ['AWS', 'GCP', 'Terraform', 'CI/CD'],
-    },
-  ];
+const homeGraph = pageGraph({
+  path: '/',
+  name: HOME_PAGE_NAME,
+  description: HOME_PAGE_DESCRIPTION,
+  nodes: [
+    howTo(
+      PLUG_IN.steps.map((step) => ({ name: step.name, text: step.text, url: `/#${step.id}` })),
+      { name: PLUG_IN.heading, description: PLUG_IN.description, path: '/' },
+    ),
+    itemList(
+      SERVICE_ROWS.map((row) => ({ name: row.name, path: row.href, description: row.situation })),
+      { path: '/', name: 'Services' },
+    ),
+    faqPage(FAQ_ITEMS, { path: '/', name: FAQ_SECTION.heading }),
+  ],
+});
 
-  const whyUsCards = [
-    {
-      title: 'Built for Agency Workflows',
-      description:
-        'We know how agencies run - multi-client juggling, tight turnarounds, evolving scopes. Our solutions fit the way you already work.',
-    },
-    {
-      title: 'Engineering, Not Templates',
-      description:
-        'Every system is custom-built. No cookie-cutter themes, no fragile plugin stacks. Just clean, purpose-built code your team can actually maintain.',
-    },
-    {
-      title: 'We Don\'t Disappear After Launch',
-      description:
-        'Retainer and partnership models keep your systems maintained, optimized, and evolving. We\'re in it for the long run.',
-    },
-    {
-      title: 'Transparent From Day One',
-      description:
-        'Regular updates, documented code, clean handoffs. You always know where things stand - and your team can pick up right where we left off.',
-    },
-  ];
-
-  const featuredProjects = portfolioProjects.filter((project) =>
-    ['LRO Staffing', 'MAPL Tours', 'UNSVCC'].includes(project.title)
-  );
-
+function Eyebrow({ index, children }: { index: string; children: React.ReactNode }) {
   return (
-    <>
-      {/* Hero Section */}
-      <HeroSection />
+    <p className="eyebrow">
+      <span className={styles.idx}>{index}</span>
+      {children}
+    </p>
+  );
+}
 
-      {/* How We Support Agencies */}
-      <section id="services" className={styles.services} aria-label="Services">
-        <div className={styles.servicesInner}>
-          <SectionHeading
-            label="What We Do"
-            title="The Technical Work Agencies Can't Afford to Get Wrong"
-            subtitle="Systems, automation, and infrastructure - built by engineers who understand agency life."
-          />
-          <div className={styles.servicesGrid}>
-            {services.map((service, i) => (
-              <BlurReveal key={service.title} delay={i * 0.12}>
-                <SpotlightCard className={styles.serviceCard}>
-                  <span className={styles.serviceNumber} aria-hidden="true">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <div className={styles.serviceIcon}>{service.icon}</div>
-                  <h3 className={styles.serviceTitle}>{service.title}</h3>
-                  <p className={styles.serviceDescription}>{service.description}</p>
-                  <ul
-                    className={styles.serviceStack}
-                    role="list"
-                    aria-label={`${service.title} technologies`}
-                  >
-                    {service.stack.map((tech) => (
-                      <li key={tech}>{tech}</li>
-                    ))}
-                  </ul>
-                  <Link href={service.href} className={styles.serviceLink}>
-                    Learn more<span className="sr-only"> about {service.title}</span> <HiArrowRight aria-hidden="true" />
-                  </Link>
-                </SpotlightCard>
-              </BlurReveal>
-            ))}
-          </div>
-        </div>
-        <ParallaxOrb
-          className={styles.bgOrbRight}
-          side="right"
-          variant="mixed"
-          rotationMultiplier={1.5}
-        />
-      </section>
+export default function HomePage() {
+  return (
+    <div className={styles.page}>
+      <JsonLd data={homeGraph} />
+      {/* Backbone: position: fixed, so this wrapper (and its ancestors) carry no transform. */}
+      <Backbone sections={[...BACKBONE_SECTIONS]} />
 
-      {/* Our Approach */}
-      <section className={styles.approach} aria-label="Our Approach">
-        <div className={styles.approachInner}>
-          <BlurReveal>
-            <div className={styles.approachContent}>
-              <SectionHeading
-                label="Our Approach"
-                title="We Embed Into Your Team"
-                align="left"
-              />
-              <p>
-                Most vendors hand off a deliverable and disappear. We join your Slack,
-                attend your standups, and ship code like we sit in your office.
-              </p>
-              <p>
-                The result: clean implementation, maintainable systems, and zero
-                lost-in-translation moments between design and development.
-              </p>
-              <div className={styles.approachSteps}>
-                {[
-                  { title: 'Discover & Scope', desc: 'We learn your agency, your clients, and your pain points' },
-                  { title: 'Architect & Plan', desc: 'We design systems around your workflow, not ours' },
-                  { title: 'Build & Iterate', desc: 'Transparent development with weekly check-ins' },
-                  { title: 'Deploy & Support', desc: 'Smooth launches with ongoing maintenance built in' },
-                ].map((step, i) => (
-                  <div key={i} className={styles.approachStep}>
-                    <div className={styles.stepNumber}>{i + 1}</div>
-                    <div className={styles.approachStepContent}>
-                      <h3>{step.title}</h3>
-                      <p>{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </BlurReveal>
-
-          <BlurReveal delay={0.15}>
-            <div className={styles.approachImage}>
-              <Image
-                src="/images/homepage-approach.jpg"
-                alt="Diverse tech professionals collaborating at a laptop"
-                width={600}
-                height={440}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            </div>
-          </BlurReveal>
-        </div>
-      </section>
-
-      {/* Why Agencies Choose Us */}
-      <section className={styles.whyUs} aria-label="Why Agencies Choose Us">
-        <div className={styles.whyUsInner}>
-          <SectionHeading
-            label="Why Agencies Choose Us"
-            title="The Numbers Speak. The Work Speaks Louder."
-            subtitle="Real results from real agency partnerships."
-          />
-
-          <div className={`${styles.metrics} grid grid-cols-1 sm:grid-cols-3 gap-8`}>
-            <div className={styles.metric}>
-              <div className={styles.metricValue}>
-                <AnimatedCounter target={200} suffix="+" delay={0} />
-              </div>
-              <div className={styles.metricLabel}>Projects Supported</div>
-            </div>
-            <div className={styles.metric}>
-              <div className={styles.metricValue}>
-                <AnimatedCounter target={25} suffix="+" delay={0.3} />
-              </div>
-              <div className={styles.metricLabel}>Years Combined Experience</div>
-            </div>
-            <div className={styles.metric}>
-              <div className={styles.metricValue}>
-                <AnimatedCounter target={100} suffix="%" delay={0.6} />
-              </div>
-              <div className={styles.metricLabel}>Client Satisfaction</div>
-            </div>
+      {/* 01 Hero */}
+      <section id="hero" className={styles.hero} aria-labelledby="home-h1">
+        <div className={styles.heroInner}>
+          <div className={styles.heroMain}>
+            <p className={`eyebrow ${styles.heroEyebrow}`}>
+              <span className={styles.eyebrowRule} aria-hidden="true" />
+              {HERO.eyebrow}
+            </p>
+            <h1 id="home-h1" className={`display ${styles.heroTitle}`}>
+              {HERO.title}
+            </h1>
+            <p className={`lede ${styles.heroLede}`}>{HERO.lede}</p>
           </div>
 
-          <div className={styles.whyUsGrid}>
-            {whyUsCards.map((card, i) => (
-              <BlurReveal key={card.title} delay={i * 0.1}>
-                <SpotlightCard className={styles.whyUsCard}>
-                  <span className={styles.whyUsNumber}>{String(i + 1).padStart(2, '0')}</span>
-                  <h3>{card.title}</h3>
-                  <p>{card.description}</p>
-                </SpotlightCard>
-              </BlurReveal>
-            ))}
-          </div>
-
-        </div>
-        <ParallaxOrb
-          className={styles.bgOrbLeft}
-          side="left"
-          variant="red"
-          rotationMultiplier={2}
-        />
-      </section>
-
-      {/* Portfolio Teaser */}
-      <section className={styles.portfolio} aria-label="Selected Projects">
-        <div className={styles.portfolioInner}>
-          <SectionHeading
-            label="Featured on DesignRush's Best Designs"
-            labelHref="https://www.designrush.com/best-designs"
-            title="Selected Projects & Technical Deliveries"
-          />
-
-          <div className={styles.portfolioGrid}>
-            {featuredProjects.map((project, i) => {
-              const card = (
-                <SpotlightCard className={styles.portfolioCard}>
-                  <div className={styles.portfolioImage}>
-                    <Image
-                      src={project.image}
-                      alt={`${project.title} project preview`}
-                      width={600}
-                      height={400}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                    <span className={styles.portfolioCategory}>{project.category}</span>
-                  </div>
-                  <div className={styles.portfolioContent}>
-                    <h3>{project.title}</h3>
-                    <p>{project.description}</p>
-                  </div>
-                </SpotlightCard>
-              );
-
-              return (
-                <BlurReveal key={project.title} delay={i * 0.08}>
-                  {project.url ? (
-                    <a href={project.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
-                      {card}
-                    </a>
-                  ) : (
-                    card
-                  )}
-                </BlurReveal>
-              );
-            })}
-          </div>
-
-          <BlurReveal>
-            <div className={styles.portfolioCta}>
-              <MagneticButton href="/our-work" variant="secondary">
-                View All Projects
-              </MagneticButton>
-            </div>
-          </BlurReveal>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className={styles.testimonials} aria-label="Client Testimonials">
-        <div className={styles.testimonialsInner}>
-          <SectionHeading
-            label="Testimonials"
-            title="Don't Take Our Word for It"
-            subtitle="Hear directly from the agencies and teams we've partnered with."
-          />
-
-          <div className={styles.testimonialSlider} role="region" aria-label="Testimonial carousel">
-            <BlurReveal>
-              <div className={styles.testimonialCard} role="tabpanel" aria-label={`Testimonial from ${testimonials[activeTestimonial].name}`}>
-                <p className={styles.quote}>{testimonials[activeTestimonial].quote}</p>
-                <div className={styles.author}>
-                  <div>
-                    <div className={styles.authorName}>
-                      {testimonials[activeTestimonial].name}
-                    </div>
-                    <div className={styles.authorRole}>
-                      {testimonials[activeTestimonial].role},{' '}
-                      {testimonials[activeTestimonial].company}
-                    </div>
-                  </div>
+          <aside className={styles.heroAside} aria-label="Key facts">
+            <dl className={`kv kv--stack ${styles.heroFacts}`}>
+              {KEY_FACTS.map((fact) => (
+                <div key={fact.term}>
+                  <dt>{fact.term}</dt>
+                  <dd>{fact.dateTime ? <time dateTime={fact.dateTime}>{fact.detail}</time> : fact.detail}</dd>
                 </div>
-              </div>
-            </BlurReveal>
-
-            {/* Dots and arrows are navigation - meaningless with a single testimonial */}
-            {testimonials.length > 1 && (
-            <div className={styles.testimonialControls} role="tablist" aria-label="Testimonial navigation">
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  className={`${styles.testimonialDot} ${i === activeTestimonial ? styles.activeDot : ''}`}
-                  onClick={() => setActiveTestimonial(i)}
-                  aria-label={`View testimonial ${i + 1}`}
-                  aria-selected={i === activeTestimonial}
-                  role="tab"
-                />
               ))}
+            </dl>
+            <div className={styles.heroClocks}>
+              <LiveClocks />
+              <p className={styles.heroClocksCaption}>{HERO.clocksCaption}</p>
             </div>
-            )}
+          </aside>
 
-            {testimonials.length > 1 && (
-            <div className={styles.testimonialArrows}>
-              <button
-                className={styles.arrowButton}
-                onClick={() =>
-                  setActiveTestimonial((prev) =>
-                    prev === 0 ? testimonials.length - 1 : prev - 1
-                  )
-                }
-                aria-label="Previous testimonial"
-              >
-                <HiChevronLeft size={20} />
-              </button>
-              <button
-                className={styles.arrowButton}
-                onClick={() =>
-                  setActiveTestimonial((prev) =>
-                    prev === testimonials.length - 1 ? 0 : prev + 1
-                  )
-                }
-                aria-label="Next testimonial"
-              >
-                <HiChevronRight size={20} />
-              </button>
-            </div>
-            )}
+          <div className={styles.heroCtas}>
+            <Cta placement="home_hero_primary" hero href={CTA.primary.href} size="large">
+              {CTA.primary.label}
+            </Cta>
+            <Cta placement="home_hero_secondary" href={CTA.secondary.href} variant="secondary" size="large">
+              {CTA.secondary.label}
+            </Cta>
           </div>
-
         </div>
-        <ParallaxOrb
-          className={styles.bgOrbRight}
-          side="right"
-          variant="teal"
-          rotationMultiplier={0.6}
-        />
       </section>
 
-      {/* CTA Section */}
-      <section className={styles.cta} aria-label="Get in Touch">
-        <FloatingOrbs />
-        <div className={styles.ctaInner}>
-          <BlurReveal>
-            <TextReveal as="h2" className={styles.ctaTitle}>
-              Your Next Project Deserves Real Engineering
-            </TextReveal>
-            <p className={styles.ctaSubtitle}>
-              Tell us what you&apos;re building. We&apos;ll tell you exactly how we can help.
-            </p>
-          </BlurReveal>
-          <BlurReveal delay={0.15}>
-            <div className={styles.ctaActions}>
-              <MagneticButton href="/contact-us" size="large">
-                Start a Conversation <HiArrowRight aria-hidden="true" style={{ marginLeft: 8 }} />
-              </MagneticButton>
-              <MagneticButton href="/pricing" variant="secondary" size="large">
-                View Pricing
-              </MagneticButton>
+      {/* 01b Client logo marquee */}
+      <LogoMarquee />
+
+      {/* 02 Trust wall */}
+      <section id="trust" className={styles.section} aria-labelledby="h-trust" data-below-fold="">
+        <div className={`${styles.inner} reveal`}>
+          <div className={styles.sectionEyebrow}>
+            <Eyebrow index="02">Trust wall</Eyebrow>
+          </div>
+          <TrustWall />
+        </div>
+      </section>
+
+      {/* 03 How we plug in — PEAK */}
+      <PinnedPlugIn id="how" eyebrow="Process" heading={PLUG_IN.heading} steps={PLUG_IN.steps} />
+
+      {/* 04 Services */}
+      <section id="services" className={styles.section} aria-labelledby="h-services" data-below-fold="">
+        <div className={styles.inner}>
+          <header className={`${styles.sectionHead} reveal`}>
+            <Eyebrow index="04">{SERVICES_SECTION.eyebrow}</Eyebrow>
+            <h2 id="h-services">{SERVICES_SECTION.heading}</h2>
+            <p className={styles.sectionSub}>{SERVICES_SECTION.subtitle}</p>
+          </header>
+          <div className="reveal">
+            <ServiceRows rows={SERVICE_ROWS} />
+          </div>
+        </div>
+      </section>
+
+      {/* 05 Selected work */}
+      <section id="work" className={styles.section} aria-labelledby="h-work" data-below-fold="">
+        <div className={styles.inner}>
+          <header className={`${styles.sectionHead} ${styles.sectionHeadRow} reveal`}>
+            <div>
+              <Eyebrow index="05">Work</Eyebrow>
+              <h2 id="h-work">{WORK_SECTION.heading}</h2>
             </div>
-            <p className={styles.ctaMicrocopy}>
-              Takes 2 minutes. No discovery-call gauntlet.
-            </p>
-            <ul className={styles.ctaReassurance}>
-              {[
-                'Transparent public pricing',
-                'Teams in 3 countries',
-                'Code your team can own',
-              ].map((item) => (
-                <li key={item}>
-                  <HiCheck size={16} aria-hidden="true" />
-                  {item}
-                </li>
+            <Cta placement="home_work_all" href={WORK_SECTION.allHref} variant="secondary" size="small">
+              {WORK_SECTION.allLabel}
+            </Cta>
+          </header>
+          <div className="reveal">
+            <WorkRows rows={WORK_ROWS} />
+          </div>
+        </div>
+      </section>
+
+      {/* 06 Proof */}
+      <section id="proof" className={styles.section} aria-labelledby="h-proof" data-below-fold="">
+        <div className={styles.inner}>
+          <header className={`${styles.sectionHead} reveal`}>
+            <Eyebrow index="06">{PROOF_SECTION.eyebrow}</Eyebrow>
+            <h2 id="h-proof">{PROOF_SECTION.heading}</h2>
+          </header>
+          <div className="reveal">
+            <TestimonialRow items={PROOF_ITEMS} />
+          </div>
+        </div>
+      </section>
+
+      {/* 07 Estimate teaser */}
+      <section id="estimate" className={styles.section} aria-labelledby="h-est" data-below-fold="">
+        <div className={styles.inner}>
+          <header className={`${styles.sectionHead} reveal`}>
+            <Eyebrow index="07">Estimate</Eyebrow>
+            <h2 id="h-est">{ESTIMATE_SECTION.heading}</h2>
+            <p className={styles.sectionSub}>{ESTIMATE_SECTION.subtitle}</p>
+          </header>
+          <EstimateTeaser />
+        </div>
+      </section>
+
+      {/* 08 FAQ */}
+      <section id="faq" className={styles.section} aria-labelledby="h-faq" data-below-fold="">
+        <div className={`${styles.inner} ${styles.faqGrid}`}>
+          <header className={`${styles.sectionHead} ${styles.faqHead} reveal`}>
+            <Eyebrow index="08">FAQ</Eyebrow>
+            <h2 id="h-faq">{FAQ_SECTION.heading}</h2>
+            <p className={styles.sectionSub}>{FAQ_SECTION.intro}</p>
+          </header>
+          <div className="reveal">
+            <HomeFaq items={FAQ_ITEMS} />
+          </div>
+        </div>
+      </section>
+
+      {/* 09 Start a project */}
+      <section id="start" className={`${styles.section} ${styles.start}`} aria-labelledby="h-start" data-below-fold="">
+        <div className={`${styles.inner} ${styles.startGrid}`}>
+          <div className={`${styles.startMain} reveal`}>
+            <Eyebrow index="09">Start a project</Eyebrow>
+            <h2 id="h-start" className={styles.startTitle}>
+              {START.heading}
+            </h2>
+            <p className={styles.startSub}>{START.subtitle}</p>
+
+            <div className={styles.include}>
+              <p className={styles.includeLabel}>{START.includeLabel}</p>
+              <ul className={styles.includeList}>
+                {START.include.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className={styles.startCtas}>
+              <Cta placement="home_footer_primary" href={CTA.primary.href} size="large">
+                {CTA.primary.label}
+              </Cta>
+              <Cta placement="home_footer_secondary" href={CTA.secondary.href} variant="secondary" size="large">
+                {CTA.secondary.label}
+              </Cta>
+            </div>
+            <p className={styles.microcopy}>{START.microcopy}</p>
+            <ul className={styles.reassurance}>
+              {START.reassurance.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </BlurReveal>
+          </div>
+
+          <aside className={`${styles.startAside} reveal`} aria-label="Contact">
+            <dl className="kv kv--stack">
+              <div>
+                <dt>General</dt>
+                <dd>
+                  <a href={`mailto:${START.contact.email}`} data-cta-placement="home_footer_email">
+                    {START.contact.email}
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt>Phone</dt>
+                <dd>
+                  <a href={START.contact.phoneHref} data-cta-placement="home_footer_phone">
+                    {START.contact.phoneDisplay}
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt>Offices</dt>
+                <dd>{START.contact.offices}</dd>
+              </div>
+            </dl>
+            <LiveClocks className={styles.startClocks} />
+          </aside>
         </div>
-        <ParallaxOrb
-          className={styles.bgOrbLeft}
-          side="left"
-          variant="red"
-          rotationMultiplier={1.8}
-        />
       </section>
-    </>
+    </div>
   );
 }

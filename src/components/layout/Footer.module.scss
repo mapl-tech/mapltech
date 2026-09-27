@@ -1,325 +1,354 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-.footer {
-  background: $color-navy;
-  border-top: 1px solid rgba($color-dark-border, 0.5);
-  padding-top: $space-5xl;
-  position: relative;
+// One step below the page ground (#0a0a0a).
+$footer-ground: #050505;
 
-  // Glow accent line at top
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(400px, 50%);
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba($color-pink, 0.3) 50%, transparent 100%);
-  }
+.footer {
+  background: $footer-ground;
+  border-top: 1px solid $color-hairline;
+  padding-top: $space-section-sm;
+  color: $color-text-body;
 }
 
 .inner {
   @include container;
 }
 
+// ===== Grid =====
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $space-3xl;
-  padding-bottom: $space-4xl;
+  gap: $space-2xl;
+  padding-bottom: $space-2xl;
 
-  // 4 columns at md squeezed Contact to ~102px, clipping the email address.
-  // Break to 2 columns first, and only go 4-up once there is room.
   @include md {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: $space-2xl $space-xl;
   }
 
   @include lg {
-    grid-template-columns: 2fr 1fr 1fr 1.3fr;
+    grid-template-columns: 1.5fr 1fr 0.9fr 1.2fr;
     gap: $space-3xl $space-xl;
   }
 
-  // Grid items default to min-width:auto, which lets long strings push out
   > * {
     min-width: 0;
   }
 }
 
+// ===== Brand block =====
 .brand {
-  .logo {
-    font-family: $font-display;
-    font-size: $font-size-xl;
-    font-weight: $font-weight-extrabold;
-    color: $color-white;
-    letter-spacing: 1px;
-    margin-bottom: $space-lg;
-
-    .pipe {
-      @include gradient-text;
-    }
-  }
-
-  .description {
-    color: $color-text-body;
-    font-size: $font-size-base;
-    line-height: $line-height-relaxed;
-    max-width: 320px;
-    margin-bottom: $space-xl;
-  }
-}
-
-.socialLinks {
-  display: flex;
-  gap: $space-md;
-
-  a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: $radius-full;
-    border: 1px solid rgba($color-dark-border, 0.6);
-    color: $color-text-muted;
-    font-size: $font-size-base;
-    transition: all $transition-fast;
-
-    @include focus-ring;
-
-    &:hover {
-      border-color: $color-pink;
-      color: $color-pink;
-      background: rgba($color-pink, 0.1);
-      transform: translateY(-2px);
-    }
-  }
-}
-
-.column {
-  h2 {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    color: $color-white;
-    text-transform: capitalize;
-    letter-spacing: $letter-spacing-wide;
-    margin-bottom: $space-xl;
-  }
-
-  ul {
-    display: flex;
-    flex-direction: column;
-    gap: $space-md;
-  }
-
-  a {
-    color: $color-text-body;
-    font-size: $font-size-base;
-    transition: color $transition-fast;
-
-    @include focus-ring;
-
-    &:hover {
-      color: $color-pink;
-    }
-  }
-}
-
-.contactInfo {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: $space-md;
 
-  .contactItem {
-    display: flex;
-    align-items: center;
-    gap: $space-sm;
-    color: $color-text-body;
-    font-size: $font-size-base;
-    min-width: 0; // let long addresses wrap instead of pushing the column wider
+  @include md {
+    grid-column: 1 / -1;
+  }
 
-    svg {
-      color: $color-pink;
-      flex-shrink: 0;
+  @include lg {
+    grid-column: auto;
+  }
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+
+  img {
+    width: 150px;
+    height: auto;
+  }
+}
+
+.tagline {
+  @include display-type($font-size-h3, $line-height-snug);
+  margin: 0;
+  max-width: 18ch;
+  color: $color-fg;
+}
+
+.description {
+  margin: 0;
+  max-width: 40ch;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-fg-muted;
+}
+
+.clocksBlock {
+  display: grid;
+  gap: $space-8;
+  margin-top: $space-8;
+}
+
+.clocksLabel {
+  @include mono-label($color-fg-dim);
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.clocks {
+  gap: $space-8;
+}
+
+// ===== Intent columns =====
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-md;
+}
+
+.heading {
+  @include mono-label($color-fg-muted);
+  margin: 0;
+  padding-top: 6px;
+}
+
+.subheading {
+  @include mono-label($color-fg-muted);
+  margin: $space-8 0 0;
+}
+
+.columnCta {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.btn {
+  min-height: 44px;
+  padding: 0 18px;
+  font-size: $font-size-sm;
+  white-space: normal;
+  text-align: left;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    font-size: $font-size-sm;
+    color: $color-text-body;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-fg;
     }
+  }
+}
+
+.contact {
+  display: grid;
+  gap: $space-8;
+  margin: 0;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  dt {
+    @include mono-label($color-fg-dim);
+  }
+
+  dd {
+    margin: 0;
+    font-size: $font-size-sm;
 
     a {
-      color: $color-text-body;
-      transition: color $transition-fast;
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      color: $color-fg;
       overflow-wrap: anywhere;
+      transition: color $transition-fast;
 
       &:hover {
-        color: $color-pink;
+        color: $color-fg-muted;
       }
     }
   }
 }
 
-// Offices  - three countries stated explicitly (trust signal)
-.offices {
+.social {
   display: flex;
-  flex-direction: column;
-  gap: $space-sm;
-  margin-top: $space-lg;
-  padding-top: $space-lg;
-  border-top: 1px solid rgba($color-dark-border, 0.8);
-}
+  flex-wrap: wrap;
+  gap: $space-8;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
-.office {
-  display: flex;
-  align-items: flex-start;
-  gap: $space-sm;
-  min-height: 44px;
-  padding: 4px 0;
-  color: $color-text-body;
-  transition: color $transition-fast;
-
-  @include focus-ring;
-
-  svg {
-    color: $color-pink;
-    flex-shrink: 0;
-    margin-top: 4px;
-  }
-
-  span {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.35;
-  }
-
-  strong {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    color: $color-white;
-    transition: color $transition-fast;
-  }
-
-  em {
-    font-family: $font-mono;
-    font-size: 0.6875rem;
-    font-style: normal;
-    letter-spacing: $letter-spacing-wide;
-    text-transform: uppercase;
-    color: $color-text-muted;
-  }
-
-  &:hover strong {
-    color: $color-pink;
-  }
-}
-
-.newsletter {
-  padding: $space-2xl 0;
-  border-top: 1px solid rgba($color-dark-border, 0.5);
-  border-bottom: 1px solid rgba($color-dark-border, 0.5);
-  margin-bottom: $space-xl;
-
-  .newsletterInner {
-    display: flex;
-    flex-direction: column;
-    gap: $space-xl;
+  a {
+    display: inline-flex;
     align-items: center;
-    text-align: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid $color-hairline-strong;
+    border-radius: $radius-full;
+    color: $color-fg-muted;
+    transition:
+      color $transition-fast,
+      border-color $transition-fast;
 
-    @include md {
-      flex-direction: row;
-      text-align: left;
+    &:hover {
+      color: $color-fg;
+      border-color: rgba($color-red, 0.6);
     }
-  }
-
-  .newsletterText {
-    flex: 1;
-
-    h3 {
-      font-size: $font-size-xl;
-      margin-bottom: $space-xs;
-    }
-
-    p {
-      color: $color-text-body;
-      font-size: $font-size-base;
-    }
-  }
-
-  .newsletterForm {
-    display: flex;
-    gap: $space-sm;
-    width: 100%;
-    max-width: 440px;
-
-    input {
-      flex: 1;
-      padding: 0.75rem 1.125rem;
-      background: $color-dark-card;
-      border: 1px solid rgba($color-dark-border, 0.8);
-      border-radius: $radius-full;
-      color: $color-white;
-      font-size: $font-size-base;
-      transition: border-color $transition-fast;
-
-      &::placeholder {
-        color: $color-text-muted;
-      }
-
-      &:focus {
-        outline: none;
-        border-color: $color-pink;
-      }
-    }
-
-    button {
-      @include button-primary;
-      font-size: $font-size-sm;
-      padding: 0.75rem 1.75rem;
-      flex-shrink: 0;
-
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-    }
-  }
-
-  .newsletterSuccess {
-    color: #4ade80;
-    font-size: $font-size-base;
-    font-weight: 500;
   }
 }
 
+// ===== Newsletter =====
+.newsletter {
+  display: grid;
+  gap: $space-lg;
+  padding: $space-xl 0;
+  border-top: 1px solid $color-hairline;
+  border-bottom: 1px solid $color-hairline;
+
+  @include md {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+    align-items: center;
+    gap: $space-2xl;
+  }
+}
+
+.newsletterText {
+  display: grid;
+  gap: $space-4;
+
+  p {
+    margin: 0;
+    font-size: $font-size-sm;
+    color: $color-fg-muted;
+  }
+}
+
+.newsletterHeading {
+  @include display-type($font-size-xl, $line-height-snug);
+  margin: 0;
+  color: $color-fg;
+}
+
+.form {
+  display: grid;
+  gap: $space-8;
+  width: 100%;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+  align-items: stretch;
+}
+
+.input {
+  flex: 1 1 200px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 $space-md;
+  background: $color-surface-1;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-full;
+  color: $color-fg;
+  font-family: $font-body;
+  font-size: $font-size-base; // 17px: never below 16px on phones
+  transition: border-color $transition-fast;
+
+  &::placeholder {
+    color: $color-fg-dim;
+  }
+
+  &:focus {
+    border-color: rgba($color-red, 0.7);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.formBtn {
+  min-height: 48px;
+  padding: 0 22px;
+  font-size: $font-size-sm;
+  white-space: nowrap;
+}
+
+.formMessage {
+  margin: 0;
+  min-height: 1.4em;
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  letter-spacing: 0.02em;
+  color: $color-fg-muted;
+
+  &[data-state='error'] {
+    color: $color-red-text;
+  }
+
+  &[data-state='success'] {
+    color: $color-signal;
+  }
+}
+
+// ===== Bottom bar =====
 .bottom {
   display: flex;
   flex-direction: column;
   gap: $space-md;
-  align-items: center;
-  padding-bottom: $space-2xl;
-  text-align: center;
+  padding: $space-lg 0 $space-xl;
 
   @include md {
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
   }
+}
 
-  p {
-    color: $color-text-muted;
-    font-size: $font-size-sm;
-  }
+.copyright {
+  margin: 0;
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  letter-spacing: 0.02em;
+  color: $color-fg-dim;
+}
 
-  .bottomLinks {
-    display: flex;
-    gap: $space-xl;
+.bottomLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md $space-lg;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
-    a {
-      color: $color-text-muted;
-      font-size: $font-size-sm;
-      transition: color $transition-fast;
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: $font-mono;
+    font-size: $font-size-xs;
+    letter-spacing: 0.02em;
+    color: $color-fg-muted;
+    transition: color $transition-fast;
 
-      &:hover {
-        color: $color-pink;
-      }
+    &:hover {
+      color: $color-fg;
     }
   }
 }

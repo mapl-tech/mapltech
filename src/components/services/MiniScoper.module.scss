@@ -1,0 +1,340 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.scoper {
+  position: relative;
+  border-top: $border-hairline;
+  padding-block: $space-section-sm;
+}
+
+.head {
+  margin-bottom: $space-2xl;
+}
+
+.h2 {
+  @include display-type($font-size-h2, $line-height-tight);
+  color: $color-fg;
+  margin-bottom: $space-md;
+}
+
+.sub {
+  @include lede;
+  font-size: $font-size-md;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: $space-2xl;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: start;
+  }
+}
+
+// --------------------------------------------
+// Inputs: 44px chips built on real radios/checkboxes
+// --------------------------------------------
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  min-width: 0;
+}
+
+.group {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.legend {
+  @include mono-label;
+  padding: 0;
+  margin-bottom: $space-md;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.chipInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.chipText {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.5rem $space-md;
+  border: $border-hairline-strong;
+  border-radius: $radius-pill;
+  background: $color-surface-1;
+  color: $color-text-body;
+  font-size: 1rem;
+  line-height: 1.25;
+  text-wrap: balance;
+  transition: border-color $transition-fast, color $transition-fast, background-color $transition-fast;
+}
+
+.chipInput:hover + .chipText {
+  border-color: rgba($color-red, 0.5);
+  color: $color-fg;
+}
+
+.chipInput:checked + .chipText {
+  border-color: $color-red;
+  background: rgba($color-red, 0.1);
+  color: $color-fg;
+}
+
+.chipInput:active + .chipText {
+  border-color: $color-red-pressed;
+}
+
+.chipInput:focus-visible + .chipText {
+  outline: $focus-ring;
+  outline-offset: $focus-ring-offset;
+}
+
+.mapping {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-fg-muted;
+  max-width: $measure-lede;
+}
+
+// --------------------------------------------
+// Summary card (md and up). Teal = the live value only.
+// --------------------------------------------
+.summary {
+  display: none;
+
+  @include md {
+    display: block;
+    position: sticky;
+    top: 7.5rem;
+    padding: $space-xl;
+    background: $color-surface-1;
+    border: $border-hairline;
+    border-radius: $radius-lg;
+  }
+}
+
+.summaryLabel,
+.stripLabel {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  margin-bottom: $space-sm;
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: $radius-pill;
+  border: 1px solid rgba($color-signal, 0.5);
+  color: $color-signal;
+  font-size: 0.625rem;
+  letter-spacing: $letter-spacing-wider;
+}
+
+.range {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 0.1em;
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: clamp(2rem, 1.5rem + 2vw, 2.75rem);
+  line-height: 1;
+  letter-spacing: $letter-spacing-display;
+  color: $color-signal;
+  @include tabular;
+}
+
+.rangeSmall {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0 0.1em;
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: $letter-spacing-display;
+  color: $color-signal;
+  @include tabular;
+}
+
+.dash {
+  color: $color-signal-muted;
+  color: rgba($color-signal, 0.6);
+}
+
+.tierLine {
+  margin-top: $space-md;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-fg-muted;
+}
+
+.monthly {
+  margin-top: $space-xs;
+  font-size: $font-size-base;
+  color: $color-fg;
+  @include tabular;
+}
+
+.driversLabel {
+  @include mono-label($color-fg-dim);
+  margin-top: $space-lg;
+  margin-bottom: $space-sm;
+  padding-top: $space-md;
+  border-top: $border-hairline;
+}
+
+.drivers {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  margin: 0 0 $space-md;
+  padding: 0;
+  list-style: none;
+
+  li {
+    font-size: $font-size-sm;
+    line-height: $line-height-normal;
+    color: $color-text-body;
+    padding-left: $space-md;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.7em;
+      width: 6px;
+      height: 1px;
+      background: $color-fg-dim;
+    }
+  }
+}
+
+.note {
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+}
+
+.ctas {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  margin-top: $space-lg;
+}
+
+.ctaBox {
+  display: block;
+
+  :global(.magnetic-btn-box),
+  :global(.magnetic-btn) {
+    width: 100%;
+  }
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-fg;
+
+  &:hover {
+    color: $color-red-hover;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+    border-radius: $radius-sm;
+  }
+}
+
+// --------------------------------------------
+// Phone strip: sticks to the bottom while the inputs are in view
+// --------------------------------------------
+.strip {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  margin: $space-xl calc(-1 * #{$container-padding}) 0;
+  padding: $space-md $container-padding;
+  @include safe-area-bottom($space-md);
+  background: $color-ground;
+  border-top: $border-hairline-strong;
+
+  @include md {
+    display: none;
+  }
+}
+
+.stripRange {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  .stripLabel {
+    margin-bottom: 2px;
+  }
+}
+
+.stripButton {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 $space-md;
+  border: $border-hairline-strong;
+  border-radius: $radius-pill;
+  font-family: $font-body;
+  font-size: 1rem;
+  font-weight: $font-weight-medium;
+  color: $color-fg;
+  background: $color-surface-1;
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
+.sheetBody {
+  padding-top: $space-md;
+  color: $color-text-body;
+}

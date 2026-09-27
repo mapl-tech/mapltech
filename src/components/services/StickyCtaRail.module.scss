@@ -1,0 +1,98 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+$ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+.card {
+  position: sticky;
+  top: 7.5rem; // below the fixed header
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding: $space-xl;
+  background: $color-surface-1;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+}
+
+.facts {
+  display: grid;
+  gap: $space-sm;
+  // Collapses (max-height + opacity) while the scoper is on screen.
+  max-height: 20rem;
+  overflow: hidden;
+  transition: max-height 400ms $ease, opacity 300ms $ease;
+
+  .card[data-collapsed] & {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+.label {
+  @include mono-label;
+}
+
+.price {
+  @include display-type($font-size-h3, 1.1);
+  @include tabular;
+  color: $color-fg;
+}
+
+.note {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-fg-muted;
+}
+
+.ctas {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.box {
+  display: block;
+
+  :global(.magnetic-btn-box),
+  :global(.magnetic-btn) {
+    width: 100%;
+  }
+}
+
+.primary {
+  display: block;
+  max-height: 5rem;
+  overflow: hidden;
+  transition: max-height 400ms $ease, opacity 300ms $ease;
+
+  .card[data-collapsed] & {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.call {
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+  @include tabular;
+
+  a {
+    color: $color-fg;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+
+    &:hover {
+      color: $color-red-hover;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .facts,
+  .primary {
+    transition: none;
+  }
+}

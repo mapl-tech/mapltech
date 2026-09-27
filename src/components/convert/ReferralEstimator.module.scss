@@ -1,0 +1,125 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.estimator {
+  display: grid;
+  gap: $space-24;
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: $space-48;
+    align-items: start;
+  }
+}
+
+.inputs {
+  display: grid;
+  gap: $space-32;
+}
+
+.stepper {
+  display: inline-grid;
+  grid-template-columns: 48px minmax(88px, 120px) 48px;
+  gap: $space-8;
+  align-items: center;
+}
+
+.stepBtn {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 50%;
+  background: transparent;
+  color: $color-fg;
+  font-family: $font-mono;
+  font-size: $font-size-lg;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color $transition-fast, color $transition-fast, opacity $transition-fast;
+
+  @include pointer-fine {
+    &:hover:not(:disabled) {
+      border-color: rgba($color-red, 0.6);
+      color: $color-red-hover;
+    }
+  }
+
+  &:active:not(:disabled) {
+    border-color: $color-red-pressed;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.count {
+  text-align: center;
+  font-family: $font-mono;
+  @include tabular;
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+}
+
+// ---- Output card: teal = live value ------------------------------------------
+.output {
+  @include surface(2);
+  display: grid;
+  gap: $space-12;
+  padding: $space-24;
+
+  @include md {
+    padding: $space-32;
+  }
+
+  // Phones: the output stays pinned at the bottom of the screen while the
+  // estimator is in view, so the figure is visible as the inputs change.
+  @media (max-width: #{$breakpoint-lg - 1px}) {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    @include safe-area-bottom($space-24);
+  }
+}
+
+.outputLabel {
+  @include mono-label($color-fg-muted);
+  margin: 0;
+}
+
+.outputValue {
+  display: block;
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: $letter-spacing-display;
+  @include tabular;
+}
+
+.formula {
+  margin: 0;
+  color: $color-fg-muted;
+  font-size: $font-size-sm;
+}
+
+.reward {
+  margin: 0;
+  color: $color-fg;
+  padding-top: $space-12;
+  border-top: $border-hairline;
+}
+
+.outputCta {
+  padding-top: $space-8;
+}

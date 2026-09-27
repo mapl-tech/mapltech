@@ -1,0 +1,795 @@
+// ============================================
+// Company pages: /about-us, /team, /nigeria, /jamaica
+// Engineered Editorial: warm ground, Instrument Serif display (400),
+// JetBrains Mono labels, DM Sans body. Red only on interactive states;
+// teal only for live values (the estimator range lives in its own module).
+// Motion here is CSS only: the process connector draws with a view() timeline.
+// ============================================
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+// Fixed header (+ optional top bar) clearance for the hero.
+$header-clearance: clamp(7rem, 5.5rem + 6vw, 10rem);
+$anchor-offset: 112px;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  background: $color-ground;
+  color: $color-text-body;
+}
+
+// --------------------------------------------
+// Hero anatomy: eyebrow → H1 → lede → key facts + CTAs
+// --------------------------------------------
+.hero {
+  padding: $header-clearance 0 $space-section-sm;
+}
+
+.heroInner {
+  @include container;
+}
+
+.heroEyebrow {
+  display: inline-flex;
+  margin: 0 0 $space-lg;
+  color: $color-fg-muted;
+}
+
+.h1 {
+  @include display-type($font-size-h1, 1.02);
+  margin: 0;
+  max-width: 22ch;
+  color: $color-fg;
+}
+
+.lede {
+  margin: $space-lg 0 0;
+}
+
+.heroGrid {
+  display: grid;
+  gap: $space-xl;
+  align-items: start;
+  margin-top: $space-xl;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: $space-3xl;
+  }
+}
+
+.kv {
+  max-width: 780px;
+}
+
+.ctas {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: $space-sm;
+
+  @include sm {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  @include lg {
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 280px;
+  }
+}
+
+// A CTA slot is a grid so the <a> box inside becomes a block that fills the
+// slot; in a flex row the slot shrinks to the button's natural width.
+.ctaSlot {
+  display: grid;
+
+  :global(.magnetic-btn) {
+    width: 100%;
+  }
+}
+
+// --------------------------------------------
+// Sections
+// --------------------------------------------
+.section {
+  @include section-padding;
+  border-top: $border-hairline;
+  scroll-margin-top: $anchor-offset;
+}
+
+.sectionInner {
+  @include container;
+}
+
+// The page's single signature interaction sits on a raised surface.
+.peak {
+  background: $color-surface-1;
+}
+
+.sectionHead {
+  max-width: 960px;
+  margin-bottom: $space-stack;
+}
+
+.sectionEyebrow {
+  display: inline-flex;
+  margin: 0 0 $space-md;
+}
+
+.sectionHeadRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $space-md $space-xl;
+}
+
+.h2 {
+  @include display-type($font-size-h2, 1.05);
+  margin: 0;
+  color: $color-fg;
+}
+
+.intro {
+  margin: $space-md 0 0;
+  max-width: $measure-lede;
+  font-size: $font-size-md;
+  line-height: 1.55;
+  color: $color-text-body;
+}
+
+// Paragraph that follows a list or grid (holds an inline link).
+.after {
+  margin: $space-lg 0 0;
+}
+
+.inlineLink {
+  @include mono-label($color-fg);
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  min-height: 44px;
+  transition: color $transition-fast;
+
+  svg {
+    transition: translate $transition-fast;
+  }
+
+  &:hover {
+    color: $color-red-hover;
+
+    svg {
+      translate: 4px 0;
+    }
+  }
+
+  &:active {
+    color: $color-red-pressed;
+  }
+}
+
+// --------------------------------------------
+// Founder story (text only)
+// --------------------------------------------
+.founder {
+  display: grid;
+  gap: $space-xl;
+
+  @include lg {
+    grid-template-columns: 5fr 7fr;
+    gap: $space-3xl;
+    align-items: start;
+  }
+}
+
+.pullQuote {
+  margin: $space-sm 0 0;
+  font-family: $font-display;
+  font-style: italic;
+  font-weight: $font-weight-display;
+  font-size: clamp(1.75rem, 1.2rem + 2.2vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+  text-wrap: balance;
+
+  p {
+    margin: 0;
+  }
+}
+
+.signature {
+  display: grid;
+  gap: $space-sm;
+  margin: $space-xl 0 0;
+  padding: $space-md 0 0;
+  list-style: none;
+  border-top: $border-hairline;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px $space-md;
+  }
+}
+
+.signatureName {
+  font-family: $font-display;
+  font-size: $font-size-lg;
+  color: $color-fg;
+}
+
+.signatureRole {
+  @include mono-label($color-fg-dim);
+}
+
+.prose {
+  .h2 {
+    margin-bottom: $space-lg;
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-size-md;
+    line-height: 1.6;
+    color: $color-text-body;
+
+    + p {
+      margin-top: $space-md;
+    }
+  }
+}
+
+// --------------------------------------------
+// How we work: numbered steps with a self-drawing connector
+// --------------------------------------------
+.steps {
+  position: relative;
+  display: grid;
+  gap: $space-xl;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  // Vertical rule behind the number circles on phones.
+  &::before {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: 22px;
+    bottom: 22px;
+    width: 1px;
+    background: $color-hairline-strong;
+    transform-origin: top center;
+  }
+
+  @include md {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: $space-2xl;
+
+    // Horizontal rule through the numbers on wider screens.
+    &::before {
+      left: 0;
+      right: 0;
+      top: 22px;
+      bottom: auto;
+      width: auto;
+      height: 1px;
+      transform-origin: left center;
+    }
+  }
+}
+
+@keyframes draw-vertical {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes draw-horizontal {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+// Zero JS: the rule draws itself as the list enters the viewport. Where
+// view() is unsupported or motion is reduced the rule is simply fully drawn.
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .steps::before {
+      animation: draw-vertical linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 80%;
+    }
+
+    @include md {
+      .steps::before {
+        animation-name: draw-horizontal;
+      }
+    }
+  }
+}
+
+.step {
+  position: relative;
+  padding-left: 60px;
+
+  @include md {
+    padding-left: 0;
+  }
+}
+
+.stepNum {
+  @include mono-label($color-fg);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: $border-hairline-strong;
+  background: $color-ground;
+
+  @include md {
+    position: relative;
+    margin-bottom: $space-md;
+  }
+}
+
+.stepTitle {
+  @include display-type($font-size-h3, 1.1);
+  margin: 0 0 $space-sm;
+  padding-top: 8px;
+  color: $color-fg;
+
+  @include md {
+    padding-top: 0;
+  }
+}
+
+.stepBody {
+  margin: 0;
+  line-height: 1.6;
+  color: $color-text-body;
+}
+
+.stepsFoot {
+  margin: $space-xl 0 0;
+  max-width: $measure-lede;
+  color: $color-fg-muted;
+}
+
+// --------------------------------------------
+// Values: three editorial columns, no cards
+// --------------------------------------------
+.values {
+  display: grid;
+  gap: $space-xl;
+
+  @include md {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: $space-2xl;
+  }
+}
+
+.value {
+  padding-top: $space-md;
+  border-top: $border-hairline;
+}
+
+.valueTitle {
+  @include display-type($font-size-h3, 1.1);
+  margin: 0 0 $space-sm;
+  color: $color-fg;
+}
+
+.valueBody {
+  margin: 0;
+  line-height: 1.6;
+  color: $color-text-body;
+}
+
+// --------------------------------------------
+// Executives
+// --------------------------------------------
+.execGrid {
+  display: grid;
+  gap: $space-md;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-lg;
+  }
+}
+
+.execCard {
+  @include surface(1);
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: $space-md;
+  align-items: start;
+  padding: $space-lg;
+  scroll-margin-top: $anchor-offset;
+
+  @include sm {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: $space-lg;
+  }
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: $border-hairline-strong;
+  background: $color-surface-3;
+
+  @include sm {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.initials {
+  font-family: $font-display;
+  font-size: $font-size-xl;
+  letter-spacing: 0.02em;
+  color: $color-fg;
+}
+
+.execBody {
+  min-width: 0;
+}
+
+.execHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-sm;
+}
+
+.execName {
+  @include display-type($font-size-xl, 1.1);
+  margin: 0;
+  color: $color-fg;
+}
+
+.execTitle {
+  @include mono-label($color-fg-muted);
+  margin: $space-xs 0 $space-md;
+}
+
+.execBio {
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  color: $color-text-body;
+}
+
+.linkedin {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: $radius-pill;
+  border: $border-hairline-strong;
+  color: $color-fg-muted;
+  transition: color $transition-fast, border-color $transition-fast;
+
+  &:hover {
+    color: $color-fg;
+    border-color: rgba($color-red, 0.6);
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+}
+
+// Touch has no cursor pill, so the same data-cursor="external" intent renders as a chip.
+.externalChip {
+  display: none;
+  @include mono-label($color-fg-dim);
+  font-size: 0.625rem;
+
+  @include pointer-coarse {
+    display: inline;
+  }
+}
+
+// --------------------------------------------
+// Editorial rows (services, careers)
+// --------------------------------------------
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: $border-hairline;
+}
+
+.row {
+  position: relative;
+  display: grid;
+  gap: $space-sm;
+  min-height: 56px;
+  padding: $space-lg 0;
+  border-bottom: $border-hairline;
+  color: inherit;
+
+  @include md {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) 24px;
+    gap: $space-lg;
+    align-items: start;
+  }
+
+  @include pointer-fine {
+    &:hover {
+      .rowTitle {
+        color: $color-red-hover;
+      }
+
+      .rowArrow {
+        translate: 6px 0;
+        color: $color-red-hover;
+      }
+    }
+  }
+
+  &:active .rowTitle {
+    color: $color-red-pressed;
+  }
+}
+
+.rowHead {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  min-width: 0;
+}
+
+.rowTitle {
+  @include display-type($font-size-h3, 1.1);
+  margin: 0;
+  color: $color-fg;
+  transition: color $transition-fast;
+}
+
+.rowMeta {
+  @include mono-label($color-fg-muted);
+}
+
+.rowDesc {
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-text-body;
+}
+
+.rowArrow {
+  display: none;
+  color: $color-fg-muted;
+  transition: translate $transition-fast, color $transition-fast;
+
+  @include md {
+    display: block;
+    justify-self: end;
+    margin-top: 6px;
+  }
+}
+
+// --------------------------------------------
+// Local case study
+// --------------------------------------------
+.case {
+  display: grid;
+  gap: $space-xl;
+
+  @include lg {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: $space-3xl;
+  }
+}
+
+.caseCompany {
+  @include display-type($font-size-h3, 1.1);
+  margin: 0;
+  color: $color-fg;
+}
+
+.caseLocation {
+  @include mono-label($color-fg-muted);
+  margin: $space-xs 0 $space-lg;
+}
+
+.caseLabel {
+  @include mono-label($color-fg-dim);
+  margin: $space-lg 0 $space-xs;
+}
+
+.caseLabelFirst {
+  margin-top: 0;
+}
+
+.caseText {
+  margin: 0;
+  line-height: 1.6;
+  color: $color-text-body;
+}
+
+.results {
+  margin: $space-sm 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: $border-hairline;
+
+  li {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: $space-md;
+    padding: $space-md 0;
+    border-bottom: $border-hairline;
+    line-height: 1.5;
+    color: $color-fg;
+  }
+}
+
+.resultIndex {
+  @include mono-label($color-fg-dim);
+  padding-top: 4px;
+}
+
+// --------------------------------------------
+// NAP block: first on phones, before the CTA band on desktop
+// --------------------------------------------
+.napSection {
+  order: 0;
+
+  @include md {
+    order: 10;
+  }
+}
+
+.nap {
+  @include surface(1);
+  display: grid;
+  gap: $space-lg;
+  padding: $space-lg;
+
+  @include md {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    padding: $space-xl;
+  }
+}
+
+.napName {
+  @include display-type($font-size-h3, 1.1);
+  margin: 0;
+  color: $color-fg;
+}
+
+.napAddress {
+  margin: $space-md 0 0;
+  font-style: normal;
+  line-height: 1.9;
+  color: $color-text-body;
+
+  a {
+    color: $color-fg;
+    text-decoration: underline;
+    text-decoration-color: $color-hairline-strong;
+    text-underline-offset: 3px;
+
+    &:hover {
+      color: $color-red-hover;
+      text-decoration-color: currentColor;
+    }
+  }
+}
+
+.napActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-sm;
+
+  @include md {
+    grid-template-columns: auto auto;
+  }
+}
+
+// --------------------------------------------
+// FAQ: native accordion, full width of the column
+// --------------------------------------------
+.faq .faqList {
+  max-width: none;
+  margin: 0;
+}
+
+// Static time-zone facts under the overlap strip.
+.tzFoot {
+  margin: $space-lg 0 0;
+  max-width: $measure-lede;
+  font-family: $font-mono;
+  font-size: $font-size-sm;
+  line-height: 1.6;
+  color: $color-fg-muted;
+}
+
+// --------------------------------------------
+// CTA band (always the last section)
+// --------------------------------------------
+.ctaBand {
+  @include section-padding-sm;
+  background: $color-surface-1;
+  border-top: $border-hairline;
+
+  @include md {
+    order: 11;
+  }
+}
+
+.ctaBandInner {
+  display: grid;
+  gap: $space-xl;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: $space-3xl;
+  }
+}
+
+.ctaBandTitle {
+  @include display-type($font-size-h2, 1.05);
+  margin: 0;
+  max-width: 20ch;
+  color: $color-fg;
+}
+
+.ctaBandBody {
+  margin: $space-md 0 0;
+  max-width: $measure-lede;
+  font-size: $font-size-md;
+  color: $color-text-body;
+}
+
+.ctaBandActions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: $space-sm;
+
+  @include sm {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+}

@@ -1,0 +1,107 @@
+// ============================================
+// View Transitions  - Next 16.3 App Router + React <ViewTransition>
+//
+// Wire-up: globals.scss adds `@use 'transitions';` next to `@use 'motion';`.
+// The page boundary lives in src/app/template.tsx (enter / exit / update
+// classes below); the header is anchored with `view-transition-name:
+// site-header` in Header.module.scss; work-row thumbnails morph through
+// <WorkTransition share="morph">.
+//
+// Budget: opacity + translate only, nothing longer than 400ms, and every
+// duration is zeroed under prefers-reduced-motion. Emitted unlayered.
+// ============================================
+
+$vt-ease: cubic-bezier(0.16, 1, 0.3, 1);
+$vt-exit: 140ms;
+$vt-enter: 260ms;
+$vt-move: 400ms;
+
+// The transition overlay must never swallow clicks on the live page.
+::view-transition {
+  pointer-events: none;
+}
+
+// Header: the one fixed reference point. No group animation, the old snapshot
+// is hidden so two headers are never visible at once, and it sits above the
+// moving page content.
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+// Root (ground + footer): keep the browser's default crossfade short.
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: $vt-enter;
+}
+
+// Page content (template.tsx). Asymmetric on purpose: the old page leaves
+// fast so it never competes for attention; the new page fades in once it is
+// gone and settles up by 12px.
+::view-transition-old(.page-exit),
+::view-transition-old(.page-update) {
+  animation: $vt-exit ease-in both vt-fade reverse;
+}
+
+::view-transition-new(.page-enter),
+::view-transition-new(.page-update) {
+  animation:
+    $vt-enter $vt-ease $vt-exit both vt-fade,
+    $vt-move $vt-ease both vt-rise;
+}
+
+// Same-instance update (nested navigation inside one top-level segment): the
+// group would otherwise tween its box from the old page height to the new one.
+::view-transition-group(.page-update) {
+  animation-duration: 0s;
+}
+
+// Interaction #4: work-row thumbnail -> case-study hero morph.
+::view-transition-group(.morph) {
+  animation-duration: $vt-move;
+  animation-timing-function: $vt-ease;
+}
+
+::view-transition-old(.morph),
+::view-transition-new(.morph) {
+  animation-duration: $vt-move;
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-rise {
+  from {
+    translate: 0 12px;
+  }
+
+  to {
+    translate: 0 0;
+  }
+}
+
+// Reduced motion: instant swap (the browser's no-transition behaviour).
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}

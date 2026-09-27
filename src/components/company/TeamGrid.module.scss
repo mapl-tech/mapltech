@@ -1,0 +1,294 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Anchors (#canada, #chioma-eze) land below the fixed header.
+$anchor-offset: 112px;
+
+.wrapper {
+  display: grid;
+  gap: $space-lg;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+}
+
+// ---- Country tabs (anchors) ----
+
+.tabs {
+  display: flex;
+  gap: $space-sm;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  min-height: 44px;
+  padding: 0 $space-md;
+  border-radius: $radius-pill;
+  border: $border-hairline-strong;
+  @include mono-label($color-fg-muted);
+  white-space: nowrap;
+  transition: color $transition-fast, border-color $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    color: $color-fg;
+    border-color: rgba($color-red, 0.6);
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+
+  &[aria-current='true'] {
+    background: $color-fg;
+    border-color: $color-fg;
+    color: $color-ground;
+  }
+}
+
+.count {
+  @include tabular;
+  opacity: 0.7;
+}
+
+// ---- Department filter ----
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.filterLabel {
+  @include mono-label($color-fg-dim);
+}
+
+.select {
+  min-height: 44px;
+  padding: 0 40px 0 14px;
+  font-family: $font-body;
+  font-size: 1rem;
+  color: $color-fg;
+  background: $color-surface-2
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A09F9C' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 14px center;
+  border: $border-hairline-strong;
+  border-radius: $radius-md;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-red, 0.6);
+  }
+
+  option {
+    background: $color-surface-2;
+    color: $color-fg;
+  }
+}
+
+// ---- Panels ----
+
+.panel {
+  scroll-margin-top: $anchor-offset;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.empty {
+  margin: $space-md 0 0;
+  color: $color-fg-muted;
+}
+
+// ---- Cards: native snap row on phones, grid from md ----
+
+.grid {
+  display: flex;
+  gap: $space-md;
+  margin: 0 calc(-1 * #{$container-padding});
+  padding: 2px $container-padding $space-sm;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: $container-padding;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  > li {
+    flex: 0 0 85vw;
+    max-width: 420px;
+    scroll-snap-align: start;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  @include md {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-lg;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+    align-items: start;
+
+    > li {
+      flex: none;
+      max-width: none;
+    }
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+// Dots without JS where ::scroll-marker exists (phones only).
+@supports selector(::scroll-marker) {
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    .grid {
+      scroll-marker-group: after;
+
+      &::scroll-marker-group {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        padding-top: 12px;
+      }
+
+      > li::scroll-marker {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba($color-white, 0.25);
+      }
+
+      > li::scroll-marker:target-current {
+        background: $color-red;
+      }
+    }
+  }
+}
+
+.card {
+  @include surface(1);
+  display: grid;
+  gap: $space-xs;
+  height: 100%;
+  padding: $space-lg;
+  scroll-margin-top: $anchor-offset;
+  transition: border-color $transition-fast;
+
+  &[data-expanded='true'] {
+    border-color: $color-hairline-strong;
+  }
+
+  // Hover-to-expand on real pointers; touch uses the delegated tap.
+  @include pointer-fine {
+    &:hover,
+    &:focus-within {
+      border-color: $color-hairline-strong;
+
+      .bio {
+        -webkit-line-clamp: unset;
+        color: $color-fg;
+      }
+    }
+  }
+}
+
+.cardAvatar {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: $space-sm;
+  border-radius: 50%;
+  border: $border-hairline-strong;
+  background: $color-surface-3;
+
+  span {
+    font-family: $font-display;
+    font-size: $font-size-md;
+    color: $color-fg;
+  }
+}
+
+.cardName {
+  @include display-type($font-size-xl, 1.1);
+  margin: 0;
+  color: $color-fg;
+}
+
+.cardRole {
+  margin: 0;
+  font-size: $font-size-base;
+  color: $color-text-body;
+}
+
+.cardMeta {
+  @include mono-label($color-fg-dim);
+  margin: $space-xs 0 $space-sm;
+}
+
+// Bio is always in the DOM; clipped to two lines at rest.
+.bio {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  line-height: 1.55;
+  color: $color-fg-muted;
+  transition: color $transition-fast;
+
+  .card[data-expanded='true'] & {
+    -webkit-line-clamp: unset;
+    color: $color-fg;
+  }
+}
+
+.toggle {
+  justify-self: start;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  @include mono-label($color-fg-muted);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-red-hover;
+  }
+
+  &:active {
+    color: $color-red-pressed;
+  }
+}

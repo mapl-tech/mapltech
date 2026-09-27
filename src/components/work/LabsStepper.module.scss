@@ -1,0 +1,179 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.stepper {
+  display: grid;
+  gap: $space-24;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-16;
+}
+
+// Demo control, not a conversion CTA: hairline ghost with a play glyph.
+.run {
+  @include button-secondary;
+  gap: $space-12;
+  font-family: $font-mono;
+  font-size: $font-size-sm;
+  letter-spacing: $letter-spacing-wide;
+
+  @include focus-ring;
+}
+
+// Live system signal while the sequence runs (teal is reserved for this).
+.status {
+  @include mono-label($color-signal);
+  min-height: 1.2em;
+  text-transform: none;
+  letter-spacing: $letter-spacing-wide;
+}
+
+// Phones: one node + takeaway per slide, native snap row bleeding to the gutters.
+.steps {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 85vw;
+  gap: $space-16;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: $container-padding;
+  overscroll-behavior-x: contain;
+  margin-inline: calc(-1 * #{$container-padding});
+  padding: 4px $container-padding $space-16;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include md {
+    --step-gap: #{$space-32};
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--step-gap);
+    overflow: visible;
+    margin-inline: 0;
+    padding: 0;
+  }
+}
+
+.step {
+  scroll-snap-align: start;
+  display: grid;
+  align-content: start;
+  gap: $space-8;
+  padding: $space-24;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+  background: $color-surface-1;
+
+  @include md {
+    padding: $space-24 0 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+}
+
+// Node + connector strip above each step
+.rail {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  margin-bottom: $space-8;
+}
+
+.node {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 50%;
+}
+
+// Filled by useAnimate (desktop), IntersectionObserver (mobile) or CSS (reduced motion).
+.fill {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: $color-red;
+  opacity: 0;
+  scale: 0.6;
+}
+
+// Connector to the next node: a hairline track with a red fill that scales in
+// from the left. The negative margin bridges the grid gap so the line meets
+// the next node.
+.connector {
+  display: none;
+  position: relative;
+  flex: 1;
+  height: 1px;
+  margin-left: $space-8;
+  margin-right: calc(-1 * var(--step-gap, #{$space-32}) + 2px);
+  background: $color-hairline-strong;
+
+  @include md {
+    display: block;
+  }
+}
+
+.connectorFill {
+  position: absolute;
+  inset: 0;
+  background: $color-red;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+// Mobile: the slide in view lights its node
+@media (max-width: #{$breakpoint-md - 1px}) {
+  .step[data-active='true'] .fill {
+    opacity: 1;
+    scale: 1;
+    transition: opacity 200ms ease, scale 200ms ease;
+  }
+}
+
+// Reduced motion: everything drawn, nothing animates
+.stepper[data-reduced='true'] {
+  .fill {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .connectorFill {
+    transform: scaleX(1);
+  }
+}
+
+.no {
+  @include mono-label($color-red-bright);
+}
+
+.stepTitle {
+  @include display-type($font-size-h3, $line-height-snug);
+  color: $color-fg;
+}
+
+.stepText {
+  color: $color-text-body;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+}
+
+.slideMeta {
+  margin-top: $space-8;
+  @include mono-label($color-fg-dim);
+
+  @include md {
+    display: none;
+  }
+}

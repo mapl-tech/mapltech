@@ -1,0 +1,288 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Shared form primitives for the convert islands. Inputs are 17px (no iOS
+// zoom), 48px tall; chips are 44px+ targets; red only on focus/selection.
+
+.form {
+  display: grid;
+  gap: $space-24;
+}
+
+.fieldset {
+  display: grid;
+  gap: $space-12;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+// The UA `[hidden] { display: none }` rule loses to any author `display`;
+// every class here that sets one must re-assert it.
+.fieldset[hidden],
+.field[hidden],
+.row[hidden],
+.chips[hidden],
+.radios[hidden],
+.actions[hidden],
+.hint[hidden],
+.error[hidden] {
+  display: none;
+}
+
+.legend {
+  @include mono-label($color-fg-muted);
+  padding: 0;
+  margin-bottom: $space-8;
+}
+
+.row {
+  display: grid;
+  gap: $space-16;
+
+  @include sm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.field {
+  display: grid;
+  gap: $space-8;
+  min-width: 0;
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-fg;
+}
+
+.optional {
+  color: $color-fg-dim;
+  font-weight: $font-weight-regular;
+}
+
+.hint {
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+  margin: 0;
+}
+
+.error {
+  font-size: $font-size-sm;
+  color: $color-red-text;
+  margin: 0;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  background: $color-surface-2;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-md;
+  color: $color-fg;
+  font-size: $font-size-base; // 17px: no zoom on iOS
+  line-height: 1.4;
+  transition: border-color $transition-fast, background-color $transition-fast;
+
+  &::placeholder {
+    color: $color-fg-dim;
+  }
+
+  &:hover {
+    border-color: rgba($color-fg, 0.2);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-red;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: $color-red-text;
+  }
+}
+
+.textarea {
+  min-height: 132px;
+  resize: vertical;
+}
+
+.select {
+  appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a09f9c' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.875rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25rem;
+  cursor: pointer;
+
+  option {
+    background: $color-surface-2;
+    color: $color-fg;
+  }
+}
+
+// ---- Chips (native radio/checkbox inside a label) ------------------------
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  min-height: 44px;
+  padding: 0.625rem 1rem;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-pill;
+  background: transparent;
+  color: $color-fg;
+  font-size: $font-size-sm;
+  line-height: 1.2;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color $transition-fast, background-color $transition-fast, color $transition-fast;
+  user-select: none;
+
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-red, 0.6);
+    }
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+
+  &:has(input:checked) {
+    border-color: $color-red;
+    background: rgba($color-red, 0.1);
+  }
+
+  &:has(input:focus-visible) {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
+.chipSub {
+  @include mono-label($color-fg-muted);
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+// Taller card-style chips (scope options with a tier line under the label)
+.chipCard {
+  flex: 1 1 200px;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: $space-4;
+  padding: 0.875rem 1rem;
+  border-radius: $radius-md;
+}
+
+// Radio pair (preferred contact method)
+.radios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8 $space-16;
+}
+
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  min-height: 44px;
+  cursor: pointer;
+  color: $color-fg;
+  font-size: $font-size-base;
+
+  input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: $color-red;
+  }
+}
+
+// ---- Actions + status --------------------------------------------------------
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-12 $space-16;
+}
+
+.textButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 $space-8;
+  background: none;
+  border: 0;
+  color: $color-fg-muted;
+  font-size: $font-size-base;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+  text-decoration-color: $color-hairline-strong;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-red-hover;
+    text-decoration-color: currentColor;
+  }
+}
+
+.status {
+  padding: $space-16 $space-24;
+  border-radius: $radius-md;
+  border: $border-hairline-strong;
+  background: $color-surface-1;
+  color: $color-fg;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+}
+
+.statusSuccess {
+  border-color: rgba($color-signal, 0.4);
+}
+
+.statusError {
+  border-color: rgba($color-red, 0.5);
+  color: $color-red-text;
+}
+
+.statusTitle {
+  display: block;
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: $font-size-xl;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+  margin-bottom: $space-8;
+}
+
+.recaptcha {
+  font-size: $font-size-xs;
+  color: $color-fg-dim;
+  margin: 0;
+
+  a {
+    color: $color-fg-muted;
+    text-decoration: underline;
+  }
+}

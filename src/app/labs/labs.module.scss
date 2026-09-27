@@ -1,347 +1,334 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../components/work/shared' as work;
 
-// ===== HERO EYEBROW + ACTIONS =====
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-sm;
-  font-family: $font-mono;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  text-transform: uppercase;
-  letter-spacing: $letter-spacing-widest;
-  color: $color-red-text;
-  margin-bottom: $space-lg;
+// ===========================================================================
+// /labs — MAPL Labs
+// ===========================================================================
 
-  &::before {
-    content: '';
-    display: block;
-    width: 24px;
-    height: 1px;
-    background: rgba($color-red, 0.5);
-  }
+// ---- Hero: eyebrow → H1 → lede → key facts → CTAs, poster beside (desktop) ----
+.hero {
+  @include work.work-hero;
 }
 
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-md;
-  margin-top: $space-2xl;
-}
-
-// ===== ETHOS STRIP =====
-.ethos {
+.heroInner {
+  @include container;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-xl;
-  padding: $space-2xl 0;
-  border-top: 1px solid rgba($color-dark-border, 0.7);
-  border-bottom: 1px solid rgba($color-dark-border, 0.7);
-
-  @include md {
-    grid-template-columns: repeat(3, 1fr);
-    gap: $space-3xl;
-  }
-}
-
-.ethosItem {
-  .ethosNum {
-    font-family: $font-mono;
-    font-size: $font-size-xs;
-    letter-spacing: $letter-spacing-wider;
-    color: $color-red-text;
-    display: block;
-    margin-bottom: $space-sm;
-  }
-
-  h2 {
-    font-family: $font-display;
-    font-size: $font-size-lg;
-    color: $color-white;
-    margin-bottom: $space-xs;
-  }
-
-  p {
-    font-size: $font-size-base;
-    color: $color-text-body;
-    line-height: $line-height-relaxed;
-  }
-}
-
-// ===== SHIPPING PIPELINE =====
-.pipeline {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-xl;
-
-  @include sm {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  gap: $space-stack;
 
   @include lg {
-    grid-template-columns: repeat(4, 1fr);
-    gap: $space-lg;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: start;
+    column-gap: $space-64;
   }
 }
 
-.pipelineStep {
+.heroCopy {
+  display: grid;
+  gap: 0;
+}
+
+.title {
+  @include work.work-title;
+  max-width: 16ch;
+}
+
+.lede {
+  @include work.work-lede;
+}
+
+.facts {
+  margin-top: $space-24;
+}
+
+.ctas {
+  @include work.cta-row;
+  margin-top: $space-24;
+}
+
+.textLink {
+  @include work.text-link;
+}
+
+// Poster only in v1 (no product loop exists yet). Never the LCP on phones.
+.poster {
   position: relative;
-  padding-top: $space-lg;
-  border-top: 1px solid rgba($color-dark-border, 0.9);
-  height: 100%;
-
-  // Red stage marker riding the top rule
-  &::before {
-    content: '';
-    position: absolute;
-    top: -3px;
-    left: 0;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: $color-red;
-  }
-
-  h2 {
-    font-family: $font-display;
-    font-size: $font-size-lg;
-    color: $color-white;
-    margin-bottom: $space-sm;
-  }
-
-  p {
-    font-size: $font-size-base;
-    color: $color-text-body;
-    line-height: $line-height-relaxed;
-  }
-}
-
-.pipelineNum {
-  display: block;
-  font-family: $font-mono;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  letter-spacing: $letter-spacing-wider;
-  color: $color-red-text;
-  margin-bottom: $space-sm;
-}
-
-// ===== SHOWCASE ROWS =====
-.showcase {
-  display: flex;
-  flex-direction: column;
-  gap: $space-4xl;
-
-  @include lg {
-    gap: $space-5xl;
-  }
-}
-
-.showcaseRow {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-2xl;
-  align-items: center;
-
-  @include lg {
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: $space-4xl;
-  }
-}
-
-.showcaseMedia {
-  position: relative;
-  order: -1; // media always on top when stacked (mobile)
-  border-radius: $radius-xl;
-  overflow: hidden;
+  align-self: start;
   aspect-ratio: 16 / 10;
-  background: $gradient-card;
-  @include gradient-border(1px, $radius-xl);
-
-  a {
-    display: block;
-    width: 100%;
-    height: 100%;
-
-    @include focus-ring;
-  }
+  overflow: hidden;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+  background: $color-surface-2;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform $transition-slow;
   }
 
   @include lg {
-    order: 0;
+    margin-top: $space-24;
   }
 }
 
-.showcaseRow:hover .showcaseMedia img {
-  transform: scale(1.04);
-}
-
-// Reversed row: media moves to the right on desktop (still first on mobile)
-.reverse {
-  @include lg {
-    .showcaseMedia {
-      order: 1;
-    }
-  }
-}
-
-// Coming-soon media: dim the placeholder + label it so it reads intentional
-.comingSoonMedia {
-  img {
-    opacity: 0.35;
-    filter: grayscale(0.4);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, transparent 0%, rgba($color-dark, 0.55) 100%);
-    pointer-events: none;
-  }
-}
-
-.comingSoonStamp {
+.posterCaption {
   position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: $font-mono;
-  font-size: $font-size-sm;
-  text-transform: uppercase;
-  letter-spacing: $letter-spacing-widest;
-  color: $color-white-dim;
-}
-
-// ===== SHOWCASE BODY =====
-.statusBadge {
+  left: $space-12;
+  bottom: $space-12;
   display: inline-flex;
   align-items: center;
-  gap: $space-sm;
-  padding: 6px 14px;
-  border-radius: $radius-full;
-  border: 1px solid rgba($color-dark-border, 0.9);
-  background: rgba($color-dark-card, 0.6);
-  font-family: $font-mono;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  letter-spacing: $letter-spacing-wider;
-  text-transform: uppercase;
-  color: $color-text-body;
-  margin-bottom: $space-lg;
+  gap: $space-8;
+  padding: 6px $space-12;
+  border-radius: $radius-pill;
+  background: rgba($color-ground, 0.8);
+  @include mono-label($color-fg);
 
   .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    flex-shrink: 0;
+    background: $color-signal;
+  }
+}
+
+// ---- Generic section scaffolding ----
+.section {
+  @include container;
+  padding-top: $space-section-sm;
+  padding-bottom: $space-section-sm;
+  border-top: $border-hairline;
+}
+
+.sectionHead {
+  @include work.section-head;
+}
+
+.numbered {
+  @include work.numbered-list;
+}
+
+.indexLabel {
+  @include work.index-label;
+}
+
+// ---- Experiment track (snap / drag row of labsProjects) ----
+.trackSection {
+  padding-top: $space-section-sm;
+  padding-bottom: $space-section-sm;
+  border-top: $border-hairline;
+
+  .sectionHead {
+    @include container;
+  }
+}
+
+.track {
+  @include container;
+  --snap-card: min(560px, calc(50vw - 3rem));
+}
+
+.card {
+  display: grid;
+  height: 100%;
+  overflow: hidden;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+  background: $color-surface-1;
+}
+
+.cardMedia {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: $color-surface-2;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.cardMediaSoon img {
+  opacity: 0.4;
+  filter: grayscale(0.4);
+}
+
+.stamp {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  @include mono-label($color-fg-muted);
+}
+
+.swipe {
+  position: absolute;
+  top: $space-12;
+  right: $space-12;
+  padding: 4px $space-12;
+  border-radius: $radius-pill;
+  background: rgba($color-ground, 0.8);
+  @include mono-label($color-fg);
+
+  @include pointer-fine {
+    display: none;
+  }
+}
+
+.cardBody {
+  display: grid;
+  gap: $space-12;
+  padding: $space-24;
+
+  h3 {
+    @include display-type($font-size-h3, $line-height-snug);
+  }
+}
+
+// Status: teal dot only for a live product (system signal), grey otherwise.
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  @include mono-label($color-fg-muted);
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $color-fg-dim;
   }
 
   &.live {
-    color: #4ade80;
+    color: $color-signal;
 
     .dot {
-      background: #22c55e;
-      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
-      animation: labsPulse 2.4s ease-out infinite;
+      background: $color-signal;
     }
   }
-
-  &.soon {
-    color: $color-text-muted;
-
-    .dot {
-      background: $color-text-muted;
-    }
-  }
-}
-
-@keyframes labsPulse {
-  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
-  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-}
-
-.showcaseName {
-  font-family: $font-display;
-  font-size: clamp($font-size-3xl, 4vw, $font-size-4xl);
-  font-weight: $font-weight-extrabold;
-  color: $color-white;
-  line-height: $line-height-tight;
-  letter-spacing: $letter-spacing-tight;
-  margin-bottom: $space-sm;
 }
 
 .tagline {
-  font-size: clamp($font-size-md, 2vw, $font-size-lg);
-  color: $color-red-text;
-  margin-bottom: $space-lg;
+  color: $color-fg;
+  font-size: $font-size-md;
 }
 
-.showcaseDesc {
-  font-size: $font-size-base;
+.desc {
   color: $color-text-body;
-  line-height: $line-height-relaxed;
-  margin-bottom: $space-xl;
-  max-width: 46ch;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
 }
 
-.capabilities {
-  display: flex;
-  flex-direction: column;
-  gap: $space-md;
-  margin-bottom: $space-2xl;
+.caps {
+  display: grid;
+  gap: $space-8;
 
   li {
-    display: flex;
-    align-items: flex-start;
-    gap: $space-md;
-    font-size: $font-size-base;
+    position: relative;
+    padding-left: $space-24;
     color: $color-text-body;
-    line-height: $line-height-normal;
-  }
+    font-size: $font-size-sm;
 
-  svg {
-    color: $color-red;
-    flex-shrink: 0;
-    margin-top: 3px;
-  }
-}
-
-.visitLink {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-sm;
-  min-height: 44px; // touch-target floor (WCAG 2.5.5 / mobile audit)
-  color: $color-red-text;
-  font-family: $font-mono;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  letter-spacing: $letter-spacing-wider;
-  text-transform: uppercase;
-  transition: gap $transition-base, color $transition-base;
-
-  @include focus-ring;
-
-  &:hover {
-    gap: $space-md;
-    color: $color-pink-hot;
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.75em;
+      width: 12px;
+      height: 1px;
+      background: $color-red;
+    }
   }
 }
 
 .soonNote {
-  font-family: $font-mono;
-  font-size: $font-size-xs;
-  letter-spacing: $letter-spacing-wider;
-  text-transform: uppercase;
-  color: $color-text-muted;
+  @include mono-label($color-fg-dim);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+// ---- MAPL Tours deep-dive with the workflow stepper (PEAK) ----
+.deepDive {
+  @include container;
+  padding-top: $space-section-sm;
+  padding-bottom: $space-section-sm;
+  border-top: $border-hairline;
+  display: grid;
+  gap: $space-32;
+}
+
+.deepDiveHead {
+  display: grid;
+  gap: $space-12;
+
+  h2 {
+    @include display-type($font-size-h2, 1.05);
+    max-width: 20ch;
+  }
+
+  p {
+    @include lede;
+  }
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: $space-64;
+    align-items: end;
+
+    h2 {
+      grid-column: 1;
+    }
+
+    .eyebrowRow {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.eyebrowRow {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  @include mono-label($color-fg-muted);
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $color-signal;
+  }
+
+  a {
+    color: $color-fg;
+
+    &:hover {
+      color: $color-red-bright;
+    }
+  }
+}
+
+// ---- Closing CTA band ----
+.band {
+  @include work.cta-band;
+}
+
+.bandInner {
+  @include container;
+  display: grid;
+  gap: $space-24;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: end;
+  }
+}
+
+.bandActions {
+  @include work.cta-row;
+
+  @include lg {
+    justify-content: flex-end;
+  }
 }

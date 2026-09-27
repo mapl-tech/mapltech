@@ -1,615 +1,141 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-.hero {
-  position: relative;
-  padding: 180px 0 $space-5xl;
-  background: $gradient-hero, $color-dark;
+// ============================================
+// /pricing - hero (SSR block, no reveal) + estimator shell.
+// Static sections style themselves in components/pricing/sections.module.scss.
+// ============================================
 
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 120px;
-    background: linear-gradient(to bottom, transparent, $color-navy);
-    pointer-events: none;
-  }
+.hero {
+  padding: clamp(6.5rem, 12vw, 10rem) 0 $space-64;
 }
 
 .heroInner {
   @include container;
-  text-align: center;
-  position: relative;
-  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); // the jump row scrolls; it must never widen the page
+  gap: $space-32;
 }
 
-.heroLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-sm;
-  font-family: $font-body;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  text-transform: capitalize;
-  letter-spacing: $letter-spacing-widest;
-  @include gradient-text;
-  margin-bottom: $space-xl;
-  justify-content: center;
+.eyebrow {
+  @include mono-label($color-fg-muted);
 }
 
-.heroTitle {
-  font-family: $font-display;
-  font-size: clamp($font-size-2xl, 4.5vw, $font-size-5xl);
-  font-weight: $font-weight-extrabold;
-  color: $color-white;
-  letter-spacing: $letter-spacing-tight;
-  margin-bottom: $space-xl;
-  max-width: min(750px, 100%);
-  margin-left: auto;
-  margin-right: auto;
+.title {
+  @include display-type($font-size-display, $line-height-display);
+  color: $color-fg;
+  max-width: 16ch;
 }
 
-.heroSubtitle {
-  font-size: clamp($font-size-base, 1.5vw, $font-size-md);
-  color: $color-text-body;
-  max-width: min(580px, 100%);
-  margin: 0 auto;
-  line-height: $line-height-relaxed;
+.lede {
+  @include lede;
 }
 
-// Quick nav
-.quickNav {
+.kv {
+  max-width: $max-width;
+}
+
+.reviewed {
+  @include tabular;
+}
+
+.ctas {
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-wrap: wrap;
-  gap: $space-md;
-  margin-top: $space-3xl;
-  padding: $space-lg $space-xl;
-  border-radius: $radius-full;
-  background: rgba($color-dark-card, 0.6);
-  border: 1px solid rgba($color-dark-border, 0.6);
-  backdrop-filter: blur(8px);
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.quickNavLink {
-  color: $color-text-muted;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  text-decoration: none;
-  transition: color $transition-fast;
-  white-space: nowrap;
-
-  &:hover {
-    color: $color-white;
-  }
-}
-
-.quickNavDivider {
-  width: 1px;
-  height: 16px;
-  background: rgba($color-dark-border, 0.8);
-}
-
-// Category sections
-.category {
-  @include section-padding;
-
-  &:nth-of-type(odd) {
-    background: $color-navy;
-  }
-
-  &:nth-of-type(even) {
-    background: $color-dark;
-  }
-}
-
-.categoryInner {
-  @include container;
-}
-
-.tiersGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-xl;
-  margin-bottom: $space-3xl;
-  justify-content: center;
-
-  @include sm {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include lg {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.tierCard {
-  @include gradient-border(1px, $radius-xl);
-  background: $gradient-card;
-  border-radius: $radius-xl;
-  padding: $space-2xl;
-  display: flex;
-  flex-direction: column;
-  transition: transform $transition-base, box-shadow $transition-base;
-  position: relative;
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: $shadow-glow;
-  }
-
-  &.featured {
-    background: linear-gradient(145deg, rgba($color-purple-dark, 0.3) 0%, $color-dark-card 100%);
-  }
-}
-
-.tierBadge {
-  display: inline-block;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-bold;
-  text-transform: capitalize;
-  letter-spacing: 1px;
-  background: $gradient-primary;
-  color: $color-white;
-  padding: $space-xs $space-md;
-  border-radius: $radius-full;
-  margin-bottom: $space-lg;
-  width: fit-content;
-}
-
-.tierName {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
-  color: $color-white;
-  margin-bottom: $space-sm;
-}
-
-.tierDescription {
-  font-size: $font-size-base;
-  color: $color-text-muted;
-  margin-bottom: $space-xl;
-  line-height: $line-height-relaxed;
-}
-
-.tierPrice {
-  display: flex;
-  flex-direction: column;
-  gap: $space-xs;
-  // Ranges like "$10,000-$18,000" overflow a fixed 2rem in narrow cards -
-  // scale with the viewport and allow breaking so nothing ever clips.
-  font-size: clamp(1.5rem, 4.5vw, #{$font-size-2xl});
-  font-weight: $font-weight-extrabold;
-  @include gradient-text;
-  margin-bottom: $space-lg;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.tierPriceLabel {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  text-transform: capitalize;
-  letter-spacing: $letter-spacing-wide;
-  background: none;
-  -webkit-background-clip: unset;
-  background-clip: unset;
-  -webkit-text-fill-color: $color-text-muted;
-  color: $color-text-muted;
-}
-
-.tierDivider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba($color-dark-border, 0.8), transparent);
-  margin-bottom: $space-lg;
-}
-
-.includedLabel {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  text-transform: capitalize;
-  letter-spacing: $letter-spacing-wide;
-  color: $color-text-muted;
-  margin-bottom: $space-md;
-}
-
-.tierFeatures {
-  display: flex;
-  flex-direction: column;
-  gap: $space-sm;
-  margin-bottom: $space-xl;
-  flex: 1;
-
-  li {
-    display: flex;
-    align-items: flex-start;
-    gap: $space-sm;
-    font-size: $font-size-base;
-    color: $color-text-body;
-
-    svg {
-      color: $color-pink;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-  }
-}
-
-// Web Development 4-column grid
-.webDevGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-xl;
-  margin-bottom: $space-3xl;
-
-  @include sm {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .tierCard {
-    padding: $space-xl;
-  }
-}
-
-.customPrice {
-  font-size: clamp(1.375rem, 5.2vw, #{$font-size-2xl});
-  font-weight: $font-weight-extrabold;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-// Not sure callout
-.notSureCallout {
-  margin-top: $space-3xl;
-  text-align: center;
-  padding: $space-2xl $space-xl;
-  border-radius: $radius-xl;
-  background: linear-gradient(160deg, rgba($color-red-deep, 0.1) 0%, rgba($color-dark-card, 0.8) 100%);
-  border: 1px solid rgba($color-dark-border, 0.5);
-
-  h3 {
-    font-size: $font-size-xl;
-    color: $color-white;
-    margin-bottom: $space-sm;
-  }
-
-  p {
-    font-size: $font-size-base;
-    color: $color-text-body;
-    max-width: 480px;
-    margin: 0 auto $space-xl;
-    line-height: $line-height-relaxed;
-  }
-}
-
-// Retainers
-.retainersSection {
-  margin-top: $space-xl;
-  padding-top: $space-2xl;
-  border-top: 1px solid rgba($color-dark-border, 0.5);
-}
-
-.retainersTitle {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-bold;
-  color: $color-white;
-  text-align: center;
-  margin-bottom: $space-sm;
-}
-
-.retainersSubtitle {
-  font-size: $font-size-base;
-  color: $color-text-muted;
-  text-align: center;
-  margin-bottom: $space-xl;
-}
-
-.retainersGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-lg;
-  justify-content: center;
-
-  @include sm {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include lg {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.retainerCard {
-  @include card;
-  text-align: center;
-
-  h3 {
-    font-size: $font-size-lg;
-    color: $color-white;
-    margin-bottom: $space-sm;
-  }
-
-  .retainerPrice {
-    font-size: clamp(1.125rem, 3.6vw, #{$font-size-xl});
-    font-weight: $font-weight-bold;
-    @include gradient-text;
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-
-  .retainerDescription {
-    font-size: $font-size-sm;
-    color: $color-text-muted;
-    margin-top: $space-sm;
-    line-height: $line-height-normal;
-  }
-}
-
-// What Makes Us Different
-.differentiators {
-  @include section-padding;
-  background: $color-dark;
-}
-
-.differentiatorsInner {
-  @include container;
-}
-
-.differentiatorsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-lg;
-
-  @include sm {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include lg {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.differentiatorCard {
-  padding: $space-xl;
-  border-radius: $radius-xl;
-  background: $color-dark-card;
-  border: 1px solid rgba($color-dark-border, 0.5);
-  transition: border-color $transition-fast, transform $transition-base;
-
-  &:hover {
-    border-color: rgba($color-red, 0.2);
-    transform: translateY(-3px);
-  }
-
-  h3 {
-    font-size: $font-size-base;
-    font-weight: $font-weight-bold;
-    color: $color-white;
-    margin-bottom: $space-sm;
-  }
-
-  p {
-    font-size: $font-size-sm;
-    color: $color-text-muted;
-    line-height: $line-height-relaxed;
-  }
-}
-
-.differentiatorIcon {
-  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: $radius-lg;
-  background: rgba($color-red, 0.1);
-  color: $color-red;
-  margin-bottom: $space-md;
+  gap: $space-16;
 }
 
-// FAQ
-.faqSection {
-  @include section-padding;
-  background: $color-navy;
-}
-
-.faqInner {
-  @include container($max-width-narrow);
-}
-
-// Bundles
-.bundlesSection {
-  @include section-padding;
-  background: $color-dark;
-}
-
-.bundlesInner {
-  @include container;
-}
-
-.bundlesDescription {
-  text-align: center;
-  font-size: $font-size-base;
-  color: $color-text-body;
-  max-width: 600px;
-  margin: -$space-lg auto $space-3xl;
-  line-height: $line-height-relaxed;
-}
-
-.bundlesGrid {
+// Jump links: anchor row on desktop, horizontal snap row on phones (IX-9)
+.jump {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-xl;
-
-  // 2-up at md left each card ~336px, too narrow for the price ranges and
-  // feature lines. Hold single-column until lg.
-  @include lg {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  > * {
-    min-width: 0;
-  }
-}
-
-.bundleCard {
-  @include gradient-border(1px, $radius-xl);
-  background: linear-gradient(145deg, rgba($color-purple-dark, 0.2) 0%, $color-dark-card 100%);
-  border-radius: $radius-xl;
-  padding: $space-2xl;
-  display: flex;
-  flex-direction: column;
-  transition: transform $transition-base, box-shadow $transition-base;
-  position: relative;
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: $shadow-glow;
-  }
-
-  h3 {
-    font-size: $font-size-xl;
-    color: $color-white;
-    margin-bottom: $space-sm;
-  }
-}
-
-.bundleDescription {
-  font-size: $font-size-base;
-  color: $color-text-muted;
-  margin-bottom: $space-xl;
-  line-height: $line-height-relaxed;
-}
-
-.bundlePrice {
-  display: flex;
-  flex-direction: column;
-  gap: $space-xs;
-  // Same reason as .tierPrice: "$7,500-$12,000/month" clips at a fixed 2rem
-  font-size: clamp(1.5rem, 4.5vw, #{$font-size-2xl});
-  font-weight: $font-weight-extrabold;
-  @include gradient-text;
-  margin-bottom: $space-lg;
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
-  overflow-wrap: anywhere;
+  gap: $space-12;
+  padding-top: $space-16;
+  border-top: $border-hairline;
 }
 
-.bundleFeatures {
+.jumpLabel {
+  @include mono-label($color-fg-dim);
+}
+
+.jumpList {
   display: flex;
-  flex-direction: column;
-  gap: $space-sm;
-  margin-bottom: $space-xl;
-  flex: 1;
+  min-width: 0;
+  gap: $space-8 $space-24;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: $container-padding;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  // Bleed to the viewport edge on phones so the row peeks
+  margin-inline: calc(-1 * #{$container-padding});
+  padding-inline: $container-padding;
 
-  li {
-    display: flex;
-    align-items: center;
-    gap: $space-sm;
-    font-size: $font-size-base;
-    color: $color-text-body;
-
-    svg {
-      color: $color-pink;
-      flex-shrink: 0;
-    }
+  &::-webkit-scrollbar {
+    display: none;
   }
-}
-
-// Hourly
-.hourlySection {
-  @include section-padding;
-  background: $color-navy;
-}
-
-.hourlyInner {
-  @include container($max-width-narrow);
-}
-
-.hourlyGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-xl;
-  margin-bottom: $space-3xl;
 
   @include md {
-    grid-template-columns: 1fr 1fr;
+    flex-wrap: wrap;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
   }
 }
 
-.hourlyCard {
-  @include card;
-  text-align: center;
-  padding: $space-2xl;
+.jumpLink {
+  @include mono-label($color-fg-muted);
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 44px;
+  scroll-snap-align: start;
+  white-space: nowrap;
+  border-bottom: 1px solid transparent;
+  transition: color $transition-fast, border-color $transition-fast;
 
-  h3 {
-    font-size: $font-size-lg;
-    color: $color-white;
-    margin-bottom: $space-sm;
+  @include pointer-fine {
+    &:hover {
+      color: $color-fg;
+      border-color: $color-red;
+    }
   }
 
-  .hourlyPrice {
-    font-size: $font-size-2xl;
-    font-weight: $font-weight-extrabold;
-    @include gradient-text;
-    margin-bottom: $space-sm;
-  }
-
-  p {
-    font-size: $font-size-base;
-    color: $color-text-body;
-  }
-}
-
-.hourlyNote {
-  text-align: center;
-  font-size: $font-size-base;
-  color: $color-text-muted;
-  font-style: italic;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-// CTA
-.cta {
-  @include section-padding;
-  background: radial-gradient(ellipse at center, rgba($color-purple-dark, 0.25) 0%, $color-navy 70%);
-  text-align: center;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(500px, 70%);
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, $color-pink-hot 50%, transparent 100%);
-    opacity: 0.3;
+  &:active {
+    color: $color-fg;
+    border-color: $color-red-pressed;
   }
 }
 
-.ctaInner {
-  @include container($max-width-narrow);
+// --------------------------------------------
+// Estimator section shell (the island lives inside)
+// --------------------------------------------
+.estimatorSection {
+  padding: $space-section 0;
+  border-top: $border-hairline;
+  scroll-margin-top: 88px;
+}
 
-  h2 {
-    font-size: clamp($font-size-2xl, 4vw, $font-size-4xl);
-    color: $color-white;
-    margin-bottom: $space-lg;
-  }
+.estimatorInner {
+  @include container;
+}
 
-  p {
-    color: $color-text-body;
-    font-size: $font-size-base;
-    margin-bottom: $space-2xl;
-    max-width: 520px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: $line-height-relaxed;
-  }
+.estimatorHead {
+  display: grid;
+  gap: $space-12;
+  max-width: 62ch;
+  margin-bottom: $space-48;
+}
+
+.sectionTitle {
+  @include display-type($font-size-h2, $line-height-tight);
+  color: $color-fg;
+}
+
+.sectionSub {
+  font-size: $font-size-md;
+  line-height: $line-height-normal;
+  color: $color-fg-muted;
 }

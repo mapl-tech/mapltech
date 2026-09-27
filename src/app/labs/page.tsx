@@ -1,11 +1,22 @@
 import type { Metadata } from 'next';
+import type { CSSProperties } from 'react';
 import Image from 'next/image';
-import { HiArrowRight, HiArrowUpRight, HiCheck } from 'react-icons/hi2';
-import BlurReveal from '@/components/ui/BlurReveal';
-import SectionHeading from '@/components/ui/SectionHeading';
-import MagneticButton from '@/components/ui/MagneticButton';
-import { labsProjects } from '@/config/site';
-import pageStyles from '@/styles/page-common.module.scss';
+import JsonLd from '@/components/seo/JsonLd';
+import SnapRow from '@/components/ui/SnapRow';
+import Cta, { TextCta } from '@/components/work/Cta';
+import LabsStepper from '@/components/work/LabsStepper';
+import {
+  LABS_ETHOS,
+  LABS_PIPELINE,
+  MAPL_TOURS_WORKFLOW,
+  estimateLinkFor,
+  hostOf,
+  scopingCallLinkFor,
+  startingPriceLabel,
+} from '@/components/work/work-data';
+import { routeLastModified } from '@/config/routes';
+import { labsProjects, portfolioProjects } from '@/config/site';
+import { creativeWork, pageGraph } from '@/lib/schema';
 import styles from './labs.module.scss';
 
 export const metadata: Metadata = {
@@ -20,207 +31,273 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://mapltech.com/labs' },
 };
 
-// How a Labs product moves from idea to operating business
-const pipeline = [
-  { stage: 'Prototype', desc: 'Validate the idea with working software, not slide decks.' },
-  { stage: 'Harden', desc: 'Production infrastructure, monitoring, and security before launch.' },
-  { stage: 'Launch', desc: 'Ship it publicly and put real users on it.' },
-  { stage: 'Operate', desc: 'Keep it running: monitoring, iteration, and support after launch.' },
-];
+const PAGE_DESCRIPTION = metadata.description as string;
 
-const ethos = [
-  {
-    title: 'We ship it',
-    desc: 'Real, production-grade products - not prototypes or slide decks. Same engineering discipline we apply to every client build.',
-  },
-  {
-    title: 'We run it',
-    desc: 'These products are live and operating 24/7 with real users, real infrastructure, and real uptime on the line.',
-  },
-  {
-    title: 'We prove it',
-    desc: 'The AI agents, automations, and cloud systems we sell are the exact stack we trust to run our own companies.',
-  },
-];
+const pad = (n: number) => String(n).padStart(2, '0');
 
 export default function LabsPage() {
+  const tours = labsProjects.find((p) => p.slug === 'mapl-tours') ?? labsProjects[0];
+  const toursHost = hostOf(tours.url ?? undefined);
+  // The portfolio entry's screenshot (1200×800) is the hero poster; the card keeps the Labs image,
+  // so the two above-the-fold uses of MAPL Tours do not share one src.
+  const toursPoster = portfolioProjects.find((p) => p.slug === tours.slug)?.image ?? tours.image;
+  const liveCount = labsProjects.filter((p) => p.status === 'Live').length;
+  const buildingCount = labsProjects.length - liveCount;
+
+  const automationFrom = startingPriceLabel('automation');
+  const toolsFrom = startingPriceLabel('tools');
+  const estimateHref = estimateLinkFor('automation');
+  const callHref = scopingCallLinkFor('automation');
+
+  const lastModified = routeLastModified('/labs');
+  const reviewed = lastModified ? lastModified.slice(0, 7) : undefined;
+
+  const graph = pageGraph({
+    path: '/labs',
+    name: 'Labs',
+    description: PAGE_DESCRIPTION,
+    type: 'CollectionPage',
+    breadcrumbs: [
+      { name: 'Our Work', path: '/our-work' },
+      { name: 'MAPL Labs', path: '/labs' },
+    ],
+    nodes: labsProjects.map((project) => creativeWork(project)),
+  });
+
   return (
     <>
-      {/* Hero */}
-      <section className={pageStyles.hero}>
-        <div className={pageStyles.heroInner}>
-          <BlurReveal>
-            <span className={styles.eyebrow}>MAPL Labs</span>
-          </BlurReveal>
-          <BlurReveal delay={0.1}>
-            <h1 className={pageStyles.heroTitle}>
+      <JsonLd data={graph} />
+
+      {/* 01 · Hero: H1 (LCP) → lede → key facts → CTAs; poster only in v1, never the LCP on phones. */}
+      <section className={styles.hero} aria-labelledby="labs-title">
+        <div className={styles.heroInner}>
+          <div className={styles.heroCopy}>
+            <p className="eyebrow">MAPL Labs · /labs</p>
+            <h1 id="labs-title" className={styles.title}>
               We don&apos;t just build for clients. We build for ourselves.
             </h1>
-          </BlurReveal>
-          <BlurReveal delay={0.2}>
-            <p className={pageStyles.heroSubtitle}>
-              MAPL Labs is where we engineer and operate our own products - the proving
-              ground for the systems, automation, and infrastructure we bring to every
-              client engagement.
+            <p className={styles.lede}>
+              MAPL Labs is where MAPL TECH runs its own products, starting with MAPL Tours, an AI-operated travel
+              company. It is the proving ground for the systems, automation and infrastructure we bring to every
+              agency engagement: {liveCount === 1 ? 'one product' : `${liveCount} products`} live today,{' '}
+              {buildingCount === 1 ? 'one' : buildingCount} in development, {labsProjects.length === 2 ? 'both' : 'all'} built and operated in-house.
             </p>
-          </BlurReveal>
-          <BlurReveal delay={0.3}>
-            <div className={styles.heroActions}>
-              <MagneticButton href="/contact-us" size="large">
-                Build Something With Us <HiArrowRight aria-hidden="true" style={{ marginLeft: 8 }} />
-              </MagneticButton>
-              <MagneticButton href="/our-work" variant="secondary" size="large">
-                See Client Work
-              </MagneticButton>
-            </div>
-          </BlurReveal>
-        </div>
-      </section>
 
-      {/* Ethos strip */}
-      <section className={`${pageStyles.section} ${pageStyles.navy}`}>
-        <div className={pageStyles.sectionInner}>
-          <div className={styles.ethos}>
-            {ethos.map((item, i) => (
-              <BlurReveal key={item.title} delay={i * 0.1}>
-                <div className={styles.ethosItem}>
-                  <span className={styles.ethosNum}>0{i + 1}</span>
-                  <h2>{item.title}</h2>
-                  <p>{item.desc}</p>
-                </div>
-              </BlurReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Product showcase */}
-      <section className={`${pageStyles.section} ${pageStyles.dark}`}>
-        <div className={pageStyles.sectionInner}>
-          <SectionHeading
-            label="Inside the Lab"
-            title="Products We Build & Operate"
-            subtitle="Owned, engineered, and run by MAPL TECH."
-          />
-
-          <div className={styles.showcase}>
-            {labsProjects.map((project, i) => {
-              const isLive = project.status === 'Live';
-              const reversed = i % 2 === 1;
-
-              const image = (
-                <Image
-                  src={project.image}
-                  alt={`${project.name} preview`}
-                  width={720}
-                  height={450}
-                  sizes="(max-width: 1024px) 100vw, 55vw"
-                />
-              );
-
-              return (
-                <BlurReveal key={project.name} delay={0.05}>
-                  <div className={`${styles.showcaseRow} ${reversed ? styles.reverse : ''}`}>
-                    <div
-                      className={`${styles.showcaseMedia} ${isLive ? '' : styles.comingSoonMedia}`}
-                    >
-                      {project.url ? (
-                        <a
-                          href={project.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`Visit ${project.name}`}
-                        >
-                          {image}
-                        </a>
-                      ) : (
-                        image
-                      )}
-                      {!isLive && <span className={styles.comingSoonStamp}>In Development</span>}
-                    </div>
-
-                    <div className={styles.showcaseBody}>
-                      <span
-                        className={`${styles.statusBadge} ${isLive ? styles.live : styles.soon}`}
-                      >
-                        <span className={styles.dot} />
-                        {project.status}
-                      </span>
-                      <h3 className={styles.showcaseName}>{project.name}</h3>
-                      <p className={styles.tagline}>{project.tagline}</p>
-                      <p className={styles.showcaseDesc}>{project.description}</p>
-
-                      <ul className={styles.capabilities}>
-                        {project.capabilities.map((cap) => (
-                          <li key={cap}>
-                            <HiCheck size={18} aria-hidden="true" />
-                            {cap}
-                          </li>
-                        ))}
-                      </ul>
-
-                      {project.url ? (
-                        <a
-                          href={project.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.visitLink}
-                        >
-                          Visit {project.name}
-                          <HiArrowUpRight aria-hidden="true" />
-                        </a>
-                      ) : (
-                        <span className={styles.soonNote}>Announcing soon</span>
-                      )}
-                    </div>
-                  </div>
-                </BlurReveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Shipping pipeline */}
-      <section className={`${pageStyles.section} ${pageStyles.navy}`}>
-        <div className={pageStyles.sectionInner}>
-          <SectionHeading
-            label="How It Ships"
-            title="From Prototype to Operating Business"
-            subtitle="The four stages every MAPL Labs product moves through."
-          />
-          {/* Not <ol>: BlurReveal wraps each child in a motion.div, which would
-              make <li> a non-child of the list and break list semantics. */}
-          <div className={styles.pipeline}>
-            {pipeline.map((step, i) => (
-              <BlurReveal key={step.stage} delay={i * 0.08}>
-                <div className={styles.pipelineStep}>
-                  <span className={styles.pipelineNum}>{String(i + 1).padStart(2, '0')}</span>
-                  <h3>{step.stage}</h3>
-                  <p>{step.desc}</p>
-                </div>
-              </BlurReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA band */}
-      <section className={pageStyles.cta}>
-        <div className={pageStyles.ctaInner}>
-          <div className={pageStyles.ctaContent}>
-            <BlurReveal>
-              <h2>Your Product Could Be Next</h2>
-              <p>
-                The engineering that runs our own companies is the same engineering we bring
-                to yours. Tell us what you&apos;re building.
-              </p>
-              <div style={{ marginTop: 30 }}>
-                <MagneticButton href="/contact-us" size="large">
-                  Start a Project <HiArrowRight aria-hidden="true" style={{ marginLeft: 8 }} />
-                </MagneticButton>
+            <dl className={`kv ${styles.facts}`}>
+              <div>
+                <dt>Products</dt>
+                <dd>
+                  {labsProjects.length} —{' '}
+                  {labsProjects.map((p) => `${p.name} (${p.status.toLowerCase()})`).join(' · ')}
+                </dd>
               </div>
-            </BlurReveal>
+              <div>
+                <dt>Operated from</dt>
+                <dd>Toronto (HQ) · Lagos · Kingston</dd>
+              </div>
+              <div>
+                <dt>Stack</dt>
+                <dd>The same AI agents, automations and cloud systems we sell to clients</dd>
+              </div>
+              <div>
+                <dt>Want it for your agency</dt>
+                <dd>
+                  Automation &amp; AI {automationFrom?.toLowerCase()} · Custom Internal Tools {toolsFrom?.toLowerCase()}
+                </dd>
+              </div>
+              {reviewed ? (
+                <div>
+                  <dt>Last reviewed</dt>
+                  <dd>
+                    <time dateTime={lastModified}>{reviewed}</time>
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+
+            <div className={styles.ctas}>
+              <Cta href={estimateHref} size="large" placement="labs_hero_primary" hero>
+                Get a 60-second estimate
+              </Cta>
+              <Cta href={callHref} variant="secondary" size="large" placement="labs_hero_secondary">
+                Book a 20-min scoping call
+              </Cta>
+              <TextCta href="/our-work" placement="labs_hero_tertiary" className={styles.textLink} cursor="view">
+                See the work
+              </TextCta>
+            </div>
+          </div>
+
+          <div className={styles.poster}>
+            <Image
+              src={toursPoster}
+              alt={`${tours.name} — ${tours.tagline}`}
+              width={1200}
+              height={750}
+              sizes="(max-width: 1023px) 100vw, 42vw"
+              loading="eager"
+            />
+            <span className={styles.posterCaption}>
+              <span className={styles.dot} aria-hidden="true" />
+              {tours.name} · {tours.status.toLowerCase()}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* 02 · Ethos strip: real copy, static, revealed on scroll */}
+      <section className={`${styles.section} reveal`} data-below-fold aria-labelledby="labs-ethos">
+        <div className={styles.sectionHead}>
+          <p className="eyebrow">Why we run our own products</p>
+          <h2 id="labs-ethos">Ship it. Run it. Prove it.</h2>
+        </div>
+        <ol className={styles.numbered}>
+          {LABS_ETHOS.map((item, i) => (
+            <li key={item.title}>
+              <span className={styles.indexLabel}>{pad(i + 1)}</span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* 03 · Experiment track: snap / drag row generated from labsProjects */}
+      <section className={styles.trackSection} aria-labelledby="labs-track">
+        <div className={styles.sectionHead}>
+          <p className="eyebrow">Inside the lab</p>
+          <h2 id="labs-track">Products we build and operate</h2>
+          <p>
+            Owned, engineered, and run by MAPL TECH. {labsProjects.length === 2 ? 'Two entries today' : `${labsProjects.length} entries today`};
+            the track is generated from the config.
+          </p>
+        </div>
+        <SnapRow label="Products we build and operate" className={styles.track}>
+          {labsProjects.map((project) => {
+            const isLive = project.status === 'Live';
+            return (
+              <article
+                key={project.slug}
+                id={project.slug === 'mapl-tours' ? undefined : project.slug}
+                className={styles.card}
+                aria-labelledby={`labs-card-${project.slug}`}
+              >
+                <div className={`${styles.cardMedia} ${isLive ? '' : styles.cardMediaSoon}`}>
+                  <Image
+                    src={project.image}
+                    alt={`${project.name} — ${project.tagline}`}
+                    width={720}
+                    height={450}
+                    sizes="(max-width: 767px) 85vw, 560px"
+                  />
+                  {!isLive ? <span className={styles.stamp}>In development</span> : null}
+                  <span className={styles.swipe} aria-hidden="true">
+                    Swipe
+                  </span>
+                </div>
+                <div className={styles.cardBody}>
+                  <p className={`${styles.status} ${isLive ? styles.live : ''}`}>
+                    <span className={styles.dot} aria-hidden="true" />
+                    {project.status}
+                  </p>
+                  <h3 id={`labs-card-${project.slug}`}>{project.name}</h3>
+                  <p className={styles.tagline}>{project.tagline}</p>
+                  <p className={styles.desc}>{project.description}</p>
+                  <ul className={styles.caps} aria-label={`${project.name} capabilities`}>
+                    {project.capabilities.map((cap) => (
+                      <li key={cap}>{cap}</li>
+                    ))}
+                  </ul>
+                  {project.url ? (
+                    <TextCta href={project.url} external placement="labs_card_visit" className={styles.textLink}>
+                      Visit {project.name}
+                    </TextCta>
+                  ) : (
+                    <span className={styles.soonNote}>Announcing soon</span>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </SnapRow>
+      </section>
+
+      {/* 04 · MAPL Tours deep-dive: "Run this workflow" stepper (PEAK). Step text is real <h3>/<p>. */}
+      <section id="mapl-tours" className={styles.deepDive} aria-labelledby="labs-tours">
+        <div className={styles.deepDiveHead}>
+          <p className={styles.eyebrowRow}>
+            <span className={styles.dot} aria-hidden="true" />
+            {tours.name} · {tours.status.toLowerCase()}
+            {tours.url && toursHost ? (
+              <>
+                {' · '}
+                <a href={tours.url} target="_blank" rel="noopener noreferrer" data-cursor="external">
+                  {toursHost}
+                  <span className="visually-hidden"> (opens in a new tab)</span>
+                </a>
+              </>
+            ) : null}
+          </p>
+          <h2 id="labs-tours">{tours.tagline}</h2>
+          <p>
+            AI handles the entire journey — trip planning, booking, itinerary generation, and customer communication —
+            on the same agents, pipelines and infrastructure we build for clients, running a live company 24/7.
+          </p>
+        </div>
+
+        <LabsStepper steps={MAPL_TOURS_WORKFLOW} productName={tours.name} />
+
+        {tours.url ? (
+          <p>
+            <TextCta href={tours.url} external placement="labs_tours_visit" className={styles.textLink}>
+              Visit {tours.name}
+            </TextCta>
+          </p>
+        ) : null}
+      </section>
+
+      {/* 05 · How it ships: static <ol>, real copy */}
+      <section className={`${styles.section} reveal`} data-below-fold aria-labelledby="labs-ships">
+        <div className={styles.sectionHead}>
+          <p className="eyebrow">How it ships</p>
+          <h2 id="labs-ships">From prototype to operating business</h2>
+          <p>The four stages every MAPL Labs product moves through.</p>
+        </div>
+        <ol className={styles.numbered} style={{ '--cols': 4 } as CSSProperties}>
+          {LABS_PIPELINE.map((step, i) => (
+            <li key={step.stage}>
+              <span className={styles.indexLabel}>{pad(i + 1)}</span>
+              <div>
+                <h3>{step.stage}</h3>
+                <p>{step.desc}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* 06 · CTA band */}
+      <section className={`${styles.band} reveal`} data-below-fold aria-labelledby="labs-band">
+        <div className={styles.bandInner}>
+          <div>
+            <h2 id="labs-band">Want this for your agency?</h2>
+            <p>
+              The engineering that runs our own companies is the same engineering we bring to yours. Tell us what
+              you&apos;re building.
+            </p>
+          </div>
+          <div className={styles.bandActions}>
+            <Cta href={estimateHref} size="large" placement="labs_band_primary">
+              Get a 60-second estimate
+            </Cta>
+            <Cta href={callHref} variant="secondary" size="large" placement="labs_band_secondary">
+              Book a 20-min scoping call
+            </Cta>
+            <TextCta href="/our-work" placement="labs_band_tertiary" className={styles.textLink} cursor="view">
+              See the work
+            </TextCta>
           </div>
         </div>
       </section>

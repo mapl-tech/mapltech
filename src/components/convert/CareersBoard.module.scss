@@ -1,0 +1,273 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.board {
+  display: grid;
+  gap: $space-32;
+}
+
+.filters {
+  display: grid;
+  gap: $space-16;
+}
+
+.filterGroup {
+  display: grid;
+  gap: $space-8;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+// Chip row: wraps on desktop, scroll-snaps horizontally on phones.
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 0;
+    padding-bottom: $space-4;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    > * {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+    }
+  }
+}
+
+.filterChip {
+  gap: $space-8;
+}
+
+.count {
+  @include mono-label($color-fg-muted);
+  letter-spacing: 0.04em;
+}
+
+.searchRow {
+  display: grid;
+  gap: $space-8;
+  align-items: center;
+
+  @include sm {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: $space-16;
+  }
+}
+
+.search {
+  max-width: 420px;
+}
+
+.showing {
+  @include mono-label($color-fg-muted);
+  margin: 0;
+}
+
+// ---- Roles as native <details> --------------------------------------------
+.list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: $border-hairline-strong;
+}
+
+.role {
+  border-bottom: $border-hairline;
+}
+
+.summary {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'title icon'
+    'meta icon';
+  align-items: center;
+  gap: $space-4 $space-16;
+  min-height: 64px;
+  padding: $space-16 0;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::marker {
+    content: '';
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  @include pointer-fine {
+    &:hover .roleTitle {
+      color: $color-red-hover;
+    }
+  }
+
+  @include md {
+    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.7fr) auto;
+    grid-template-areas: 'title loc country type icon';
+    gap: $space-24;
+  }
+
+  // The red rule (styles/_motion.scss) spans the row edges here.
+  &::after {
+    left: 0 !important;
+    right: 0 !important;
+  }
+}
+
+.roleTitle {
+  grid-area: title;
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: $font-size-xl;
+  line-height: $line-height-snug;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+  transition: color $transition-fast;
+
+  @include md {
+    font-size: $font-size-2xl;
+  }
+}
+
+// Phones: one block under the title holding the three meta values inline;
+// desktop: the wrapper dissolves (display: contents) so each value takes its
+// own grid area.
+.metaGroup {
+  grid-area: meta;
+  display: block;
+  min-width: 0;
+
+  @include md {
+    display: contents;
+  }
+}
+
+.meta {
+  @include mono-label($color-fg-muted);
+  letter-spacing: 0.06em;
+  text-transform: none;
+  display: inline;
+
+  & + &::before {
+    content: ' · ';
+    color: $color-fg-dim;
+  }
+
+  @include md {
+    display: block;
+
+    & + &::before {
+      content: none;
+    }
+  }
+}
+
+.metaLocation {
+  @include md {
+    grid-area: loc;
+  }
+}
+
+.metaCountry {
+  @include md {
+    grid-area: country;
+  }
+}
+
+.metaType {
+  @include md {
+    grid-area: type;
+  }
+}
+
+.icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 50%;
+  color: $color-fg-muted;
+  transition: transform $transition-base, color $transition-fast, border-color $transition-fast;
+
+  .role[open] & {
+    transform: rotate(45deg);
+    color: $color-red;
+    border-color: rgba($color-red, 0.5);
+  }
+}
+
+.body {
+  display: grid;
+  gap: $space-24;
+  padding: $space-8 0 $space-32;
+
+  @include md {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: $space-48;
+  }
+}
+
+.description {
+  margin: 0;
+  color: $color-text-body;
+  font-size: $font-size-md;
+  line-height: $line-height-relaxed;
+  max-width: 62ch;
+}
+
+.roleFacts {
+  align-self: start;
+
+  @include md {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+.roleActions {
+  @include md {
+    grid-column: 1;
+  }
+}
+
+.empty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-8;
+  margin: 0;
+  color: $color-fg-muted;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.filterGroup[hidden],
+.list > li[hidden] {
+  display: none;
+}

@@ -1,0 +1,61 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.nav {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-4 $space-8;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  white-space: nowrap;
+  min-width: 0;
+  @include mono-label($color-fg-muted);
+}
+
+// Trail items keep their width; the current page wraps to its own line when
+// it cannot fit and truncates there with an ellipsis.
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  flex: 0 0 auto;
+
+  &:last-child {
+    flex: 1 1 auto;
+    min-width: min(16ch, 100%);
+    max-width: 100%;
+  }
+}
+
+.link {
+  color: $color-fg-muted;
+  padding: $space-4 0;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    color: $color-red-hover;
+  }
+}
+
+.current {
+  display: block;
+  min-width: 0;
+  color: $color-fg;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sep {
+  color: $color-fg-dim;
+  flex: 0 0 auto;
+}

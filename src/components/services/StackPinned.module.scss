@@ -1,0 +1,330 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+$ease: cubic-bezier(0.16, 1, 0.3, 1);
+$plate-h: 116px;
+$plate-gap: 96px;
+
+// Pinned only on wide viewports with motion allowed; everywhere else the
+// same DOM is a stacked three-card layout.
+@mixin pinned {
+  @media (min-width: $breakpoint-md) and (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
+.stack {
+  position: relative;
+  border-top: $border-hairline;
+  padding-block: $space-section-sm;
+
+  @include pinned {
+    height: 300vh;
+    padding-block: 0;
+  }
+}
+
+.sticky {
+  display: grid;
+  gap: $space-2xl;
+
+  @include pinned {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 42%);
+    align-items: center;
+    align-content: center;
+    column-gap: $space-3xl;
+    padding-top: 4rem; // clear the fixed header
+  }
+}
+
+.copy {
+  position: relative;
+  min-width: 0;
+}
+
+.heading {
+  @include display-type($font-size-h2, $line-height-tight);
+  color: $color-fg;
+  margin-bottom: $space-xl;
+  max-width: 16ch;
+}
+
+// --------------------------------------------
+// Left: the three layers (accessible source of truth)
+// --------------------------------------------
+.steps {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include pinned {
+    gap: $space-lg;
+    padding-left: $space-xl;
+
+    // Static hairline track behind the red progress rail
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: $color-hairline;
+    }
+  }
+}
+
+.listWrap {
+  position: relative;
+}
+
+.progress {
+  display: none;
+
+  @include pinned {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $color-red;
+    transform-origin: top;
+    pointer-events: none;
+  }
+}
+
+// Stacked card (phones, tablets in portrait, reduced motion)
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: $space-md;
+  padding: $space-lg;
+  background: $color-surface-1;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+
+  &[data-yours] {
+    margin-inline: $space-sm;
+    border-color: rgba($color-red, 0.5);
+    background: $color-surface-2;
+
+    // "yours": the red rule is already drawn on the stacked layout
+    &::after {
+      content: '';
+      position: absolute;
+      left: $space-lg;
+      right: $space-lg;
+      bottom: 0;
+      height: 1px;
+      background: $color-red;
+    }
+  }
+
+  // Pinned: plain list rows, inactive rows recede
+  @include pinned {
+    padding: $space-sm 0;
+    background: transparent;
+    border: 0;
+    opacity: 0.42;
+    transition: opacity 420ms $ease;
+
+    &[data-yours] {
+      margin-inline: 0;
+      background: transparent;
+
+      &::after {
+        display: none;
+      }
+    }
+
+    &[data-active] {
+      opacity: 1;
+    }
+  }
+}
+
+.num {
+  @include mono-label($color-fg-dim);
+  padding-top: 0.45em;
+  @include tabular;
+
+  .step[data-active] & {
+    color: $color-red;
+  }
+}
+
+.stepBody {
+  min-width: 0;
+}
+
+.stepTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-sm;
+  font-family: $font-body;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-snug;
+  letter-spacing: 0;
+  color: $color-fg;
+  margin-bottom: $space-xs;
+}
+
+.yoursTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: $radius-pill;
+  border: 1px solid rgba($color-red, 0.6);
+  color: $color-red-text;
+  font-family: $font-mono;
+  font-size: 0.6875rem;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-wider;
+  text-transform: uppercase;
+}
+
+.stepText {
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+  text-wrap: pretty;
+  max-width: 52ch;
+}
+
+// --------------------------------------------
+// Right: the diagram (decorative; pinned only)
+// --------------------------------------------
+.diagram {
+  display: none;
+
+  @include pinned {
+    display: block;
+    min-width: 0;
+  }
+}
+
+.plates {
+  position: relative;
+  height: calc(#{$plate-h} + 2 * #{$plate-gap} + 20px);
+}
+
+.plate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--i, 0) * #{$plate-gap} + 14px);
+  height: $plate-h;
+  padding: $space-lg;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: $color-surface-1;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+  opacity: 0.55;
+  transform: translateY(0);
+  transition:
+    transform 640ms $ease,
+    opacity 420ms $ease,
+    border-color 320ms $ease,
+    background-color 320ms $ease;
+  will-change: transform;
+
+  &[data-active] {
+    z-index: 1;
+    opacity: 1;
+    transform: translateY(-14px);
+    background: $color-surface-2;
+    border-color: $color-hairline-strong;
+  }
+
+  &[data-yours][data-active] {
+    border-color: rgba($color-red, 0.7);
+  }
+}
+
+.plateIndex {
+  @include mono-label($color-fg-dim);
+  @include tabular;
+
+  .plate[data-active] & {
+    color: $color-red;
+  }
+}
+
+.plateTitle {
+  font-family: $font-display;
+  font-size: $font-size-xl;
+  line-height: 1.1;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+}
+
+.plateYours {
+  position: absolute;
+  right: $space-lg;
+  top: $space-lg;
+  font-family: $font-display;
+  font-style: italic;
+  font-size: $font-size-lg;
+  color: $color-red-text;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 360ms $ease 120ms, transform 360ms $ease 120ms;
+
+  .plate[data-active] & {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Red hairline that draws in under the "yours" plate when it is active.
+.plateRule {
+  position: absolute;
+  left: $space-lg;
+  right: $space-lg;
+  bottom: 0;
+  height: 1px;
+  background: $color-red;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 720ms $ease 80ms;
+
+  .plate[data-yours][data-active] & {
+    transform: scaleX(1);
+  }
+}
+
+.captions {
+  margin-top: $space-lg;
+  min-height: 2.4em;
+  padding-left: $space-lg;
+}
+
+.caption {
+  @include mono-label($color-fg-muted);
+  animation: caption-in 420ms $ease both;
+}
+
+@keyframes caption-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}

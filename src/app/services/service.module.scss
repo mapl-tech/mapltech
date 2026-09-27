@@ -1,0 +1,807 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ============================================
+// /services hub + /services/[service] template
+// Engineered Editorial: hairlines, mono metadata, serif display, one accent.
+// Motion here is CSS only (.reveal from _motion.scss); the islands carry theirs.
+// ============================================
+
+$rail-width: 320px;
+$header-offset: clamp(6.5rem, 10vw, 9rem); // fixed header: 64px bar (+36px top bar on lg)
+
+.page {
+  padding-top: $header-offset;
+  background: $color-ground;
+  color: $color-text-body;
+}
+
+// --------------------------------------------
+// Two-column shell: main column + sticky rail (lg and up)
+// --------------------------------------------
+.layout {
+  @include container;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) $rail-width;
+    column-gap: $space-3xl;
+    align-items: start;
+  }
+}
+
+.main {
+  min-width: 0;
+}
+
+.rail {
+  display: none;
+
+  @include lg {
+    display: block;
+    align-self: stretch;
+  }
+}
+
+// Single column for the FAQ and the CTA band
+.narrow {
+  @include container($max-width-narrow);
+}
+
+// --------------------------------------------
+// Breadcrumb
+// --------------------------------------------
+.crumbs {
+  margin-bottom: $space-xl;
+
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-sm;
+    @include mono-label($color-fg-dim);
+    letter-spacing: $letter-spacing-wider;
+  }
+
+  a {
+    color: $color-fg-muted;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+
+    &:hover {
+      color: $color-fg;
+    }
+  }
+
+  li + li::before {
+    content: '/';
+    margin-right: $space-sm;
+    color: $color-fg-dim;
+  }
+
+  [aria-current='page'] {
+    color: $color-fg;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+// --------------------------------------------
+// Hero (all SSR, never revealed)
+// --------------------------------------------
+.hero {
+  padding-bottom: $space-section-sm;
+}
+
+.eyebrow {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  margin-bottom: $space-lg;
+
+  &::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: $color-red;
+  }
+}
+
+.title {
+  @include display-type($font-size-h1, 1.02);
+  color: $color-fg;
+  margin-bottom: $space-lg;
+  max-width: 18ch;
+}
+
+.hubTitle {
+  @include display-type($font-size-display, $line-height-display);
+  color: $color-fg;
+  margin-bottom: $space-lg;
+  max-width: 14ch;
+}
+
+.lede {
+  @include lede;
+  margin-bottom: $space-2xl;
+}
+
+.kv {
+  margin-bottom: $space-2xl;
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md;
+  align-items: center;
+}
+
+.ctaBox {
+  display: inline-block;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    width: 100%;
+
+    :global(.magnetic-btn-box),
+    :global(.magnetic-btn) {
+      width: 100%;
+    }
+  }
+}
+
+.fine {
+  margin-top: $space-lg;
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+}
+
+// --------------------------------------------
+// Sections inside the main column
+// --------------------------------------------
+.section {
+  padding-block: $space-section-sm;
+  border-top: $border-hairline;
+}
+
+.sectionHead {
+  margin-bottom: $space-2xl;
+}
+
+.h2 {
+  @include display-type($font-size-h2, $line-height-tight);
+  color: $color-fg;
+  margin-bottom: $space-md;
+}
+
+.sub {
+  @include lede;
+  font-size: $font-size-md;
+}
+
+// --------------------------------------------
+// 02 Buyer situation: three chips, each an anchor to a tier row
+// --------------------------------------------
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    display: flex;
+    flex: 1 1 260px;
+    min-width: 0;
+  }
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: $space-md;
+  flex: 1 1 auto;
+  min-height: 44px;
+  padding: $space-lg;
+  background: $color-surface-1;
+  border: $border-hairline-strong;
+  border-radius: $radius-lg;
+  color: $color-fg;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  text-wrap: pretty;
+  transition: border-color $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-red, 0.6);
+    background: $color-surface-2;
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+}
+
+.chipTo {
+  @include mono-label($color-red-text);
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+}
+
+// Phone: native snap row, 85vw cards, 10% peek, zero JS
+@include phone {
+  .chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: $container-padding;
+    overscroll-behavior-x: contain;
+    margin-inline: calc(-1 * #{$container-padding});
+    padding-inline: $container-padding;
+    padding-bottom: $space-sm;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .chips > li {
+    flex: 0 0 85vw;
+    scroll-snap-align: start;
+  }
+}
+
+// --------------------------------------------
+// 03 Deliverables: "every tier" dl + editorial tier rows
+// --------------------------------------------
+.everyTier {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 $space-2xl;
+  margin-bottom: $space-3xl;
+
+  @include sm {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  > div {
+    padding-block: $space-md;
+    border-top: $border-hairline;
+  }
+
+  dt {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $color-fg;
+    margin-bottom: $space-xs;
+  }
+
+  dd {
+    margin: 0;
+    font-size: $font-size-sm;
+    line-height: $line-height-normal;
+    color: $color-fg-muted;
+  }
+}
+
+.everyTierLabel {
+  @include mono-label($color-fg-dim);
+  display: block;
+  margin-bottom: $space-sm;
+}
+
+.tiers {
+  display: flex;
+  flex-direction: column;
+}
+
+.tier {
+  border-top: $border-hairline;
+  scroll-margin-top: calc(#{$header-offset} + 1rem);
+
+  &:last-of-type {
+    border-bottom: $border-hairline;
+  }
+}
+
+.tierSummary {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'name toggle'
+    'price toggle'
+    'desc desc';
+  column-gap: $space-md;
+  row-gap: $space-xs;
+  min-height: 56px;
+  padding-block: $space-lg;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: -2px;
+    border-radius: $radius-sm;
+  }
+
+  @include md {
+    grid-template-columns: 260px minmax(0, 1fr) auto;
+    grid-template-areas: 'name desc toggle' 'price desc toggle';
+    column-gap: $space-2xl;
+    cursor: default;
+  }
+}
+
+.tierName {
+  grid-area: name;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-sm;
+  @include mono-label;
+  font-size: $font-size-xs;
+  color: $color-fg-muted;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: $radius-pill;
+  border: 1px solid rgba($color-red, 0.6);
+  color: $color-red-text;
+  font-family: $font-mono;
+  font-size: 0.6875rem;
+  letter-spacing: $letter-spacing-wider;
+  text-transform: uppercase;
+}
+
+.tierPrice {
+  grid-area: price;
+  @include display-type($font-size-h3, 1.1);
+  @include tabular;
+  color: $color-fg;
+}
+
+.tierDesc {
+  grid-area: desc;
+  font-size: $font-size-base;
+  color: $color-text-body;
+  align-self: center;
+  text-wrap: pretty;
+}
+
+.tierToggle {
+  grid-area: toggle;
+  align-self: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: -8px -8px 0 0;
+  color: $color-fg-muted;
+  transition: transform $transition-base, color $transition-fast;
+
+  .tier[open] & {
+    transform: rotate(45deg);
+    color: $color-red;
+  }
+
+  @include md {
+    display: none;
+  }
+}
+
+.tierBody {
+  padding-bottom: $space-xl;
+
+  @include md {
+    padding-left: calc(260px + #{$space-2xl});
+  }
+}
+
+.features {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-sm $space-xl;
+  margin: 0 0 $space-lg;
+  padding: 0;
+  list-style: none;
+
+  @include sm {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  li {
+    display: flex;
+    gap: $space-sm;
+    align-items: flex-start;
+    font-size: $font-size-base;
+    color: $color-text-body;
+    line-height: $line-height-normal;
+
+    svg {
+      flex: 0 0 auto;
+      margin-top: 0.45em;
+      color: $color-fg-dim;
+    }
+  }
+}
+
+.inlineCta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  gap: $space-sm;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-red-text;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-red-hover;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+    border-radius: $radius-sm;
+  }
+}
+
+.afterLaunch {
+  margin-top: $space-xl;
+  font-size: $font-size-sm;
+  line-height: $line-height-relaxed;
+  color: $color-fg-muted;
+  @include tabular;
+}
+
+.afterLaunchLabel {
+  @include mono-label($color-fg-dim);
+  margin-right: $space-sm;
+}
+
+// --------------------------------------------
+// 06 Proof: one case row + one paired quote
+// --------------------------------------------
+.case {
+  margin-bottom: $space-2xl;
+}
+
+.caseLink {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40%;
+  gap: $space-lg;
+  align-items: start;
+  padding-block: $space-lg;
+  border-top: $border-hairline;
+  border-bottom: $border-hairline;
+  color: inherit;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: $color-hairline-strong;
+
+    .caseCta {
+      color: $color-red-hover;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 4px;
+    border-radius: $radius-sm;
+  }
+
+  @include md {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: $space-2xl;
+  }
+}
+
+.caseMeta {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  min-width: 0;
+}
+
+.caseTitle {
+  @include display-type($font-size-h3, 1.1);
+  color: $color-fg;
+}
+
+.caseKind {
+  @include mono-label($color-fg-dim);
+}
+
+.caseDesc {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  text-wrap: pretty;
+}
+
+.caseCta {
+  @include mono-label($color-red-text);
+  margin-top: $space-sm;
+  transition: color $transition-fast;
+}
+
+.caseThumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: $radius-md;
+  border: $border-hairline;
+  background: $color-surface-1;
+
+  img {
+    object-fit: cover;
+  }
+}
+
+.caseLive {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: $space-xs;
+  gap: $space-xs;
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+
+  &:hover {
+    color: $color-fg;
+  }
+}
+
+.quote {
+  margin: 0;
+  padding: $space-xl 0 0;
+
+  blockquote {
+    margin: 0;
+  }
+
+  blockquote p {
+    font-family: $font-display;
+    font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2rem);
+    line-height: 1.25;
+    letter-spacing: $letter-spacing-display;
+    color: $color-fg;
+    text-wrap: pretty;
+    max-width: 34ch;
+  }
+
+  figcaption {
+    margin-top: $space-md;
+    @include mono-label($color-fg-muted);
+  }
+}
+
+.pairing {
+  margin-top: $space-lg;
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+  max-width: $measure-lede;
+}
+
+.proofCta {
+  margin-top: $space-xl;
+}
+
+// --------------------------------------------
+// 07 Static price line beneath the scoper (SSR, crawlable)
+// --------------------------------------------
+.staticLine {
+  margin-top: $space-xl;
+  font-size: $font-size-sm;
+  line-height: $line-height-relaxed;
+  color: $color-fg-muted;
+  @include tabular;
+}
+
+// --------------------------------------------
+// 09 CTA band
+// --------------------------------------------
+.band {
+  border-top: $border-hairline;
+  padding-block: $space-section;
+}
+
+.bandGrid {
+  @include container;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: $space-3xl;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.bandCopy {
+  max-width: 60ch;
+
+  p {
+    font-size: $font-size-lede;
+    line-height: 1.5;
+    color: $color-text-body;
+    margin-bottom: $space-xl;
+  }
+}
+
+// --------------------------------------------
+// Hub: four service rows
+// --------------------------------------------
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: $border-hairline;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'index title'
+    'index desc'
+    'index price';
+  column-gap: $space-lg;
+  row-gap: $space-xs;
+  padding-block: $space-xl;
+  border-bottom: $border-hairline;
+  color: inherit;
+  transition: background-color $transition-fast;
+
+  @include md {
+    grid-template-columns: 3rem minmax(0, 1fr) 200px 2rem;
+    grid-template-areas:
+      'index title price arrow'
+      'index desc price arrow';
+    column-gap: $space-2xl;
+    align-items: start;
+  }
+
+  &:hover {
+    .rowTitle {
+      color: $color-red-hover;
+    }
+
+    .rowArrow {
+      transform: translateX(6px);
+      color: $color-red-hover;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 4px;
+    border-radius: $radius-sm;
+  }
+}
+
+.rowIndex {
+  grid-area: index;
+  @include mono-label($color-fg-dim);
+  padding-top: 0.6em;
+}
+
+.rowTitle {
+  grid-area: title;
+  @include display-type($font-size-h2, $line-height-tight);
+  color: $color-fg;
+  transition: color $transition-fast;
+}
+
+.rowDesc {
+  grid-area: desc;
+  font-size: $font-size-base;
+  color: $color-text-body;
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+
+.rowPrice {
+  grid-area: price;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  padding-top: 0.35em;
+  @include tabular;
+
+  span:first-child {
+    @include mono-label($color-fg-dim);
+  }
+
+  span:last-child {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    color: $color-fg;
+  }
+}
+
+.rowArrow {
+  grid-area: arrow;
+  display: none;
+  color: $color-fg-dim;
+  font-size: $font-size-xl;
+  transition: transform $transition-base, color $transition-fast;
+  padding-top: 0.35em;
+
+  @include md {
+    display: block;
+  }
+}
+
+.bundles {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: $border-hairline;
+
+  @include md {
+    grid-template-columns: 1fr 1fr;
+    column-gap: $space-2xl;
+  }
+
+  li {
+    padding-block: $space-xl;
+    border-bottom: $border-hairline;
+  }
+}
+
+.bundleName {
+  @include mono-label;
+  display: block;
+  margin-bottom: $space-sm;
+}
+
+.bundlePrice {
+  @include display-type($font-size-h3, 1.1);
+  @include tabular;
+  color: $color-fg;
+  margin-bottom: $space-sm;
+}
+
+.bundleDesc {
+  font-size: $font-size-base;
+  color: $color-text-body;
+  margin-bottom: $space-md;
+}
+
+.bundleFeatures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-xs $space-md;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0;
+    border: 0;
+    font-size: $font-size-sm;
+    color: $color-fg-muted;
+  }
+}

@@ -1,820 +1,345 @@
 @use '../styles/variables' as *;
 @use '../styles/mixins' as *;
 
-// ===== HERO  - atmospheric, bold, asymmetric =====
+// ===========================================================================
+// Homepage shell — Engineered Editorial. Warm ground, hairlines, serif
+// display, mono metadata. Red only on interactive accents; teal only on the
+// live clocks and the estimator range (their own modules).
+// ===========================================================================
+
+// Left gutter clears the Backbone's node labels (spine + index + name) at lg;
+// on wide screens the centred container's own margin takes over.
+.page {
+  position: relative;
+  --home-gutter: #{$container-padding};
+
+  @include lg {
+    --home-gutter: max(#{$container-padding}, calc(216px - max(0px, (100vw - #{$max-width}) / 2)));
+  }
+}
+
+.inner {
+  @include container;
+  padding-left: var(--home-gutter);
+}
+
+.section {
+  @include section-padding;
+  border-top: $border-hairline;
+  scroll-margin-top: 96px;
+}
+
+.idx {
+  color: $color-red-bright;
+}
+
+.sectionEyebrow {
+  margin-bottom: $space-24;
+}
+
+.sectionHead {
+  display: grid;
+  gap: $space-12;
+  max-width: 52rem;
+  margin-bottom: $space-40;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.sectionHeadRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $space-16 $space-24;
+  max-width: none;
+
+  > div {
+    display: grid;
+    gap: $space-12;
+  }
+}
+
+.sectionSub {
+  margin: 0;
+  max-width: $measure-lede;
+  font-size: $font-size-md;
+  line-height: $line-height-normal;
+  color: $color-fg-muted;
+  text-wrap: pretty;
+}
+
+// Primary/secondary pair: inline on desktop, stacked full-width on phones.
+@mixin cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-12 $space-16;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    display: grid;
+
+    > span {
+      display: block !important;
+    }
+
+    :global(.magnetic-btn-box) {
+      display: block !important;
+      width: 100%;
+    }
+
+    :global(.magnetic-btn) {
+      width: 100%;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 01 Hero — the LCP is the H1; the background is a CSS gradient.
+// ---------------------------------------------------------------------------
+
 .hero {
   position: relative;
-  min-height: 100vh;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  background: $gradient-hero, $color-dark;
-
-  // Decorative grid lines for depth
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba($color-dark-border, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba($color-dark-border, 0.06) 1px, transparent 1px);
-    background-size: 80px 80px;
-    pointer-events: none;
-    mask-image: radial-gradient(ellipse at 30% 50%, black 15%, transparent 65%);
-    -webkit-mask-image: radial-gradient(ellipse at 30% 50%, black 15%, transparent 65%);
-  }
+  min-height: 100svh;
+  padding: clamp(7.5rem, 18vh, 11rem) 0 $space-48;
+  background:
+    radial-gradient(ellipse 55% 45% at 78% 18%, rgba($color-red-deep, 0.22), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 8% 92%, rgba($color-red-deep, 0.12), transparent 70%);
 }
 
-.heroGrid {
+.heroInner {
   @include container;
-  position: relative;
-  z-index: 1;
+  padding-left: var(--home-gutter);
   display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  padding-top: 180px;
-  padding-bottom: $space-5xl;
+  gap: $space-32;
+  // Phones: CTAs directly under the lede, facts + clocks after (DOM order stays
+  // H1 -> lede -> <dl> -> CTAs; the <dl> holds nothing focusable).
+  grid-template-areas:
+    'main'
+    'ctas'
+    'aside';
 
   @include lg {
-    grid-template-columns: 1fr 1fr;
-    gap: $space-3xl;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 22.5rem);
+    grid-template-areas:
+      'main aside'
+      'ctas aside';
+    column-gap: $space-64;
+    row-gap: $space-40;
+    align-items: start;
   }
 }
 
-.heroContent {
-  position: relative;
+.heroMain {
+  grid-area: main;
+  display: grid;
+  gap: $space-24;
+  min-width: 0;
 }
 
-.heroOrb {
-  position: relative;
-  width: 100%;
-  max-width: 340px;
-  margin: 0 auto;
-
-  @include lg {
-    max-width: none;
-  }
+.heroEyebrow {
+  color: $color-red-bright;
 }
 
-.heroLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-sm;
-  font-size: $font-size-xs;
-  font-family: $font-body;
-  font-weight: $font-weight-semibold;
-  text-transform: capitalize;
-  letter-spacing: $letter-spacing-widest;
-  @include gradient-text;
-  margin-bottom: $space-xl;
-
-  &::before {
-    content: '';
-    display: block;
-    width: 36px;
-    height: 2px;
-    background: $gradient-primary;
-    border-radius: 1px;
-  }
+.eyebrowRule {
+  display: inline-block;
+  width: 2.5rem;
+  height: 2px;
+  background: $color-red;
 }
 
 .heroTitle {
-  font-family: $font-display;
-  font-size: clamp($font-size-2xl, 4.5vw, $font-size-5xl);
-  font-weight: $font-weight-extrabold;
-  color: $color-white;
-  line-height: $line-height-tight;
-  letter-spacing: $letter-spacing-tight;
-  margin-bottom: $space-xl;
+  margin: 0;
+  max-width: 14ch;
 
-  .highlight {
-    @include gradient-text;
+  @include lg {
+    max-width: 12ch;
   }
 }
 
-.heroSubtitle {
-  font-size: clamp($font-size-base, 2vw, $font-size-lg);
-  color: $color-text-body;
-  line-height: $line-height-relaxed;
-  max-width: min(560px, 100%);
-  margin-bottom: $space-2xl;
+.heroLede {
+  margin: 0;
 }
 
-.heroCta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-md;
+.heroCtas {
+  grid-area: ctas;
+  @include cta-row;
 }
 
-.heroGlow {
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba($color-pink-hot, 0.05) 0%, transparent 60%);
-  right: -120px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  filter: blur(50px);
-}
-
-// ===== SERVICES CARDS  - gradient top stroke, depth =====
-.services {
-  @include section-padding;
-  @include section-divider;
-  background: $gradient-mesh, $color-navy;
-  position: relative;
-  overflow: hidden;
-}
-
-.servicesInner {
-  @include container;
-  position: relative;
-  z-index: 1;
-}
-
-.servicesGrid {
+.heroAside {
+  grid-area: aside;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-xl;
+  gap: $space-16;
+  min-width: 0;
+}
 
-  @include md {
-    grid-template-columns: repeat(2, 1fr);
+.heroFacts {
+  @include surface(1);
+  padding: $space-8 $space-24;
+
+  > div:last-child {
+    border-bottom: 0;
   }
 }
 
-.serviceCard {
-  @include card;
-  display: flex;
-  flex-direction: column;
-  gap: $space-lg;
-  overflow: hidden;
-  padding: $space-2xl;
-  height: 100%;
-
-  // Gradient stroke on top
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: $gradient-primary;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform $transition-smooth;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
-  }
+.heroClocks {
+  @include surface(1);
+  display: grid;
+  gap: $space-12;
+  padding: $space-16 $space-24;
 }
 
-// Oversized index numeral  - engineering-catalogue signal, quiet until hover
-.serviceNumber {
-  position: absolute;
-  top: $space-lg;
-  right: $space-xl;
-  font-family: $font-display;
-  font-size: 3.5rem;
-  font-weight: $font-weight-extrabold;
-  line-height: 1;
-  color: rgba($color-white, 0.06);
-  letter-spacing: $letter-spacing-tight;
-  pointer-events: none;
-  transition: color $transition-base;
-  z-index: 2;
-
-  .serviceCard:hover & {
-    color: rgba($color-red, 0.28);
-  }
-}
-
-// Real stack chips  - concrete tech beats capability prose
-.serviceStack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-sm;
-  position: relative;
-  z-index: 2;
-
-  li {
-    padding: 4px 12px;
-    border: 1px solid rgba($color-white, 0.14);
-    border-radius: $radius-full;
-    font-family: $font-mono;
-    font-size: 0.6875rem;
-    font-weight: $font-weight-medium;
-    letter-spacing: $letter-spacing-wide;
-    text-transform: uppercase;
-    color: $color-text-muted;
-    transition: border-color $transition-base, color $transition-base;
-  }
-
-  .serviceCard:hover & li {
-    border-color: rgba($color-red, 0.3);
-    color: $color-white-muted;
-  }
-}
-
-.serviceIcon {
-  width: 56px;
-  height: 56px;
-  border-radius: $radius-lg;
-  background: rgba($color-pink-hot, 0.08);
-  border: 1px solid rgba($color-pink, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $color-pink;
-  transition: background $transition-base, border-color $transition-base, transform $transition-base;
-
-  .serviceCard:hover & {
-    background: rgba($color-pink-hot, 0.15);
-    border-color: rgba($color-pink, 0.25);
-    transform: scale(1.05);
-  }
-}
-
-.serviceTitle {
-  font-family: $font-display;
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
-  color: $color-white;
-}
-
-.serviceDescription {
-  font-size: $font-size-base;
-  color: $color-text-body;
-  line-height: $line-height-relaxed;
-  flex: 1;
-}
-
-.serviceLink {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-sm;
-  color: $color-red-text;
+.heroClocksCaption {
+  margin: 0;
   font-family: $font-mono;
   font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  letter-spacing: $letter-spacing-wider;
-  text-transform: uppercase;
-  transition: gap $transition-base, color $transition-base;
-
-  &:hover {
-    gap: $space-md;
-    color: $color-pink-hot;
-  }
+  letter-spacing: 0.02em;
+  color: $color-fg-dim;
 }
 
-// ===== APPROACH  - split layout with visual =====
-.approach {
-  @include section-padding;
-  background: $color-dark;
-  position: relative;
-}
+// ---------------------------------------------------------------------------
+// 08 FAQ — heading column + accordion
+// ---------------------------------------------------------------------------
 
-.approachInner {
-  @include container;
+.faqGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-3xl;
-  align-items: center;
+  gap: $space-32;
 
   @include lg {
-    grid-template-columns: 1fr 1fr;
-    gap: $space-4xl;
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: $space-64;
+    align-items: start;
   }
 }
 
-.approachContent {
-  p {
-    color: $color-text-body;
-    font-size: $font-size-base;
-    line-height: $line-height-relaxed;
-    margin-bottom: $space-md;
-  }
-}
-
-.approachSteps {
-  display: flex;
-  flex-direction: column;
-  gap: $space-lg;
-  margin-top: $space-xl;
-}
-
-.approachStep {
-  display: flex;
-  gap: $space-lg;
-  align-items: flex-start;
-}
-
-.stepNumber {
-  width: 40px;
-  height: 40px;
-  border-radius: $radius-full;
-  background: $gradient-primary;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: $font-display;
-  font-size: $font-size-base;
-  font-weight: $font-weight-bold;
-  color: $color-white;
-  flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba($color-pink, 0.25);
-}
-
-.approachStepContent {
-  h3 {
-    font-family: $font-display;
-    font-size: $font-size-base;
-    font-weight: $font-weight-bold;
-    color: $color-white;
-    margin-bottom: $space-xs;
-  }
-
-  p {
-    font-size: $font-size-base;
-    color: $color-text-body;
-    line-height: $line-height-normal;
-    margin-bottom: 0;
-  }
-}
-
-.approachImage {
-  border-radius: $radius-xl;
-  overflow: hidden;
-  aspect-ratio: 4 / 3;
-  position: relative;
-
-  img {
-    border-radius: $radius-xl;
-  }
-}
-
-// ===== WHY US  - metrics + cards =====
-.whyUs {
-  @include section-padding;
-  @include section-divider;
-  background: $gradient-mesh, $color-navy;
-  position: relative;
-  overflow: hidden;
-}
-
-.whyUsInner {
-  @include container;
-  position: relative;
-  z-index: 1;
-}
-
-.metrics {
-  margin-bottom: $space-4xl;
-  // Grid layout handled by Tailwind classes on the element
-}
-
-.metric {
-  text-align: center;
-  padding: $space-xl $space-lg;
-  border-radius: $radius-xl;
-  background: rgba($color-dark-card, 0.5);
-  border: 1px solid rgba($color-dark-border, 0.5);
-  transition: border-color $transition-base, box-shadow $transition-base;
-
-  &:hover {
-    border-color: rgba($color-pink, 0.2);
-    box-shadow: 0 0 30px rgba($color-pink, 0.05);
-  }
-
-  .metricValue {
-    font-family: $font-display;
-    font-size: clamp($font-size-3xl, 5vw, $font-size-5xl);
-    font-weight: $font-weight-extrabold;
-    color: $color-white;
-    line-height: 1;
-    margin-bottom: $space-sm;
-  }
-
-  .metricLabel {
-    font-family: $font-mono;
-    font-size: $font-size-xs;
-    color: $color-text-muted;
-    letter-spacing: $letter-spacing-wider;
-    text-transform: uppercase;
-  }
-}
-
-.whyUsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-xl;
-
-  @include md {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.whyUsCard {
-  @include gradient-border(1px, $radius-xl);
-  background: linear-gradient(160deg, rgba($color-dark-card, 0.95) 0%, rgba($color-dark-elevated, 0.9) 100%);
-  border-radius: $radius-xl;
-  padding: $space-2xl;
-  transition: transform $transition-base, box-shadow $transition-base;
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-
-  // Corner glow on hover
-  &::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba($color-pink, 0.04) 0%, transparent 60%);
-    pointer-events: none;
-    transition: opacity $transition-base;
-    opacity: 0;
-  }
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: $shadow-card-hover;
-
-    &::after {
-      opacity: 1;
-    }
-
-    .whyUsNumber {
-      opacity: 0.8;
-    }
-  }
-
-  h3 {
-    font-family: $font-display;
-    font-size: $font-size-lg;
-    color: $color-white;
-    margin-bottom: $space-sm;
-  }
-
-  p {
-    font-size: $font-size-base;
-    color: $color-text-body;
-    line-height: $line-height-relaxed;
-  }
-}
-
-.whyUsNumber {
-  font-family: $font-display;
-  font-size: $font-size-4xl;
-  font-weight: $font-weight-extrabold;
-  color: $color-red;
-  opacity: 0.45;
-  line-height: 1;
-  margin-bottom: $space-md;
-  display: block;
-  transition: opacity $transition-base;
-}
-
-// ===== PORTFOLIO TEASER =====
-.portfolio {
-  @include section-padding;
-  background: $color-dark;
-}
-
-.portfolioInner {
-  @include container;
-}
-
-.portfolioGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-xl;
-  margin-bottom: $space-3xl;
-
-  @include sm {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.faqHead {
+  margin-bottom: 0;
 
   @include lg {
-    grid-template-columns: repeat(3, 1fr);
+    position: sticky;
+    top: 120px;
   }
 }
 
-.portfolioCard {
-  @include card;
-  padding: 0;
-  overflow: hidden;
-  cursor: pointer;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+// ---------------------------------------------------------------------------
+// 09 Start a project
+// ---------------------------------------------------------------------------
 
-  &:hover .portfolioImage img {
-    transform: scale(1.06);
+.start {
+  background: $color-surface-1;
+}
+
+.startGrid {
+  display: grid;
+  gap: $space-40;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 25rem);
+    gap: $space-64;
+    align-items: start;
   }
 }
 
-.portfolioImage {
-  width: 100%;
-  height: 220px;
-  overflow: hidden;
-  position: relative;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform $transition-slow;
-  }
-
-  .portfolioCategory {
-    position: absolute;
-    top: $space-md;
-    left: $space-md;
-    padding: 4px 12px;
-    background: rgba($color-dark, 0.88);
-    backdrop-filter: blur(8px);
-    border-radius: $radius-full;
-    font-family: $font-mono;
-    font-size: 0.6875rem;
-    color: $color-red-text;
-    font-weight: $font-weight-medium;
-    letter-spacing: $letter-spacing-wider;
-    text-transform: uppercase;
-  }
+.startMain {
+  display: grid;
+  gap: $space-24;
+  min-width: 0;
 }
 
-.portfolioContent {
-  padding: $space-xl;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-
-  h3 {
-    font-family: $font-display;
-    font-size: $font-size-lg;
-    color: $color-white;
-    margin-bottom: $space-sm;
-  }
-
-  p {
-    font-size: $font-size-base;
-    color: $color-text-body;
-    @include line-clamp(2);
-    flex: 1;
-  }
+.startTitle {
+  margin: 0;
+  font-size: clamp(2.5rem, 2rem + 3vw, 4.5rem);
 }
 
-.portfolioCta {
-  text-align: center;
+.startSub {
+  @include lede;
+  margin: 0;
 }
 
-// ===== TESTIMONIALS =====
-.testimonials {
-  @include section-padding;
-  @include section-divider;
-  background: $color-navy;
-  overflow: hidden;
+.include {
+  @include surface(2);
+  max-width: 36rem;
+  padding: $space-16 $space-24;
 }
 
-.testimonialsInner {
-  @include container;
-  position: relative;
-  z-index: 1;
+.includeLabel {
+  @include mono-label($color-fg-dim);
+  margin: 0 0 $space-8;
 }
 
-.testimonialSlider {
-  position: relative;
-}
-
-.testimonialCard {
-  @include gradient-border(1px, $radius-2xl);
-  background: $gradient-card;
-  border-radius: $radius-2xl;
-  padding: $space-4xl $space-2xl;
-  text-align: center;
-  max-width: min(720px, 100%);
-  margin: 0 auto;
-
-  @include md {
-    padding: $space-4xl $space-3xl;
-  }
-
-  .quote {
-    font-size: clamp($font-size-md, 2.5vw, $font-size-xl);
-    color: $color-off-white;
-    line-height: $line-height-relaxed;
-    font-style: italic;
-    margin-bottom: $space-xl;
-    position: relative;
-
-    &::before {
-      content: '\201C';
-      display: block;
-      font-family: $font-display;
-      font-size: 5rem;
-      line-height: 1;
-      @include gradient-text;
-      opacity: 0.2;
-      font-style: normal;
-      margin-bottom: $space-md;
-    }
-  }
-
-  .author {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $space-md;
-
-    .authorImage {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba($color-pink, 0.3);
-    }
-
-    .authorName {
-      font-family: $font-display;
-      font-size: $font-size-base;
-      font-weight: $font-weight-bold;
-      color: $color-white;
-    }
-
-    .authorRole {
-      font-size: $font-size-sm;
-      color: $color-text-muted;
-      margin-top: 4px;
-    }
-  }
-}
-
-.testimonialControls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: $space-xl;
-}
-
-.testimonialDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: none;
-  background: $color-dark-border;
-  cursor: pointer;
-  transition: all $transition-base;
-  padding: 0;
-
-  &.activeDot {
-    background: $color-pink-hot;
-    box-shadow: 0 0 16px rgba($color-pink-hot, 0.5);
-    width: 28px;
-    border-radius: 5px;
-  }
-
-  &:hover:not(.activeDot) {
-    background: rgba($color-pink, 0.4);
-  }
-}
-
-.testimonialArrows {
-  display: flex;
-  justify-content: center;
-  gap: $space-md;
-  margin-top: $space-lg;
-}
-
-.arrowButton {
-  width: 48px;
-  height: 48px;
-  border-radius: $radius-full;
-  border: 1px solid $color-dark-border;
-  background: transparent;
-  color: $color-white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all $transition-base;
-
-  @include focus-ring;
-
-  &:hover {
-    border-color: rgba($color-pink, 0.5);
-    color: $color-pink;
-    box-shadow: 0 0 24px rgba($color-pink, 0.12);
-    transform: scale(1.05);
-  }
-}
-
-// ===== CTA SECTION =====
-.cta {
-  @include section-padding;
-  background: radial-gradient(ellipse at center, rgba($color-purple-deep, 0.3) 0%, $color-dark 70%);
-  position: relative;
-  overflow: hidden;
-
-  // Top glow line
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(500px, 70%);
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, $color-pink-hot 50%, transparent 100%);
-    opacity: 0.3;
-    z-index: 1;
-  }
-}
-
-.ctaInner {
-  @include container($max-width-narrow);
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
-.ctaTitle {
-  font-family: $font-display;
-  font-size: clamp($font-size-2xl, 4vw, $font-size-4xl);
-  color: $color-white;
-  margin-bottom: $space-lg;
-}
-
-.ctaSubtitle {
-  font-size: $font-size-base;
-  color: $color-text-body;
-  margin-bottom: $space-3xl;
-  max-width: min(500px, 100%);
-  margin-left: auto;
-  margin-right: auto;
-  line-height: $line-height-relaxed;
-}
-
-.ctaActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: $space-md;
-}
-
-// Microcopy under the ask  - pre-empts the "this becomes a sales process" objection
-.ctaMicrocopy {
-  margin-top: $space-md;
-  font-family: $font-mono;
-  font-size: $font-size-sm; // prose under the primary CTA - not a label, keep it readable
-  letter-spacing: $letter-spacing-wide;
-  color: $color-text-muted;
-  text-align: center;
-}
-
-// Three reassurances  - real differentiators, not filler
-.ctaReassurance {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: $space-md $space-xl;
-  margin-top: $space-xl;
+.includeList {
+  display: grid;
+  gap: $space-4;
+  margin: 0;
+  padding-left: 1.1rem;
+  list-style: disc;
 
   li {
-    display: flex;
-    align-items: center;
-    gap: $space-sm;
     font-size: $font-size-sm;
+    line-height: $line-height-normal;
     color: $color-text-body;
   }
+}
 
-  svg {
-    color: $color-red;
-    flex-shrink: 0;
+.startCtas {
+  @include cta-row;
+}
+
+.microcopy {
+  margin: 0;
+  font-family: $font-mono;
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+}
+
+.reassurance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8 $space-24;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-8;
+    font-size: $font-size-sm;
+    color: $color-text-body;
+
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: $color-red;
+    }
   }
 }
 
-// ===== BACKGROUND ORBS  - zigzag left/right behind section content =====
-.bgOrb {
-  position: absolute;
-  width: clamp(280px, 35vw, 480px);
-  pointer-events: none;
-  z-index: 0;
-  top: 50%;
+.startAside {
+  @include surface(2);
+  display: grid;
+  gap: $space-16;
+  padding: $space-8 $space-24 $space-24;
+
+  a {
+    color: $color-fg;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    word-break: break-word;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-red-bright;
+    }
+  }
 }
 
-.bgOrbLeft {
-  composes: bgOrb;
-  left: -8%;
-}
-
-.bgOrbRight {
-  composes: bgOrb;
-  right: -8%;
+.startClocks {
+  margin-top: $space-4;
 }

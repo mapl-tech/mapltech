@@ -1,0 +1,148 @@
+// Shared mixins for the work family (/our-work, /our-work/[slug], /labs).
+// Page modules @use this file; it emits nothing on its own.
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Top-of-page anatomy: eyebrow → H1 → lede → key facts → CTAs. All SSR, no reveal.
+@mixin work-hero {
+  position: relative;
+  // Clears the fixed header (64px bar + 40px top strip) on every viewport.
+  padding: clamp(7.5rem, 14vw, 11rem) 0 clamp(2.5rem, 5vw, 4rem);
+  background: $color-ground;
+}
+
+@mixin work-hero-inner {
+  @include container;
+  display: grid;
+  gap: $space-stack;
+}
+
+@mixin work-title($size: $font-size-h1) {
+  @include display-type($size, 1.02);
+  color: $color-fg;
+  max-width: 18ch;
+  margin-top: $space-16;
+}
+
+@mixin work-lede {
+  @include lede;
+  margin-top: $space-16;
+}
+
+// Row of MagneticButtons; full-width stack on phones.
+@mixin cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-12 $space-16;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    flex-direction: column;
+    align-items: stretch;
+
+    :global(.magnetic-btn-box),
+    :global(.magnetic-btn) {
+      width: 100%;
+    }
+  }
+}
+
+// Text link used for tertiary actions ("See the work").
+@mixin text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  min-height: 44px;
+  padding: 0 $space-4;
+  font-family: $font-mono;
+  font-size: $font-size-label;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-label;
+  text-transform: uppercase;
+  color: $color-fg-muted;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-red-bright;
+  }
+
+  @include focus-ring;
+}
+
+// Closing CTA band: hairline above, serif heading, one paragraph, CTA row.
+@mixin cta-band {
+  @include section-padding-sm;
+  border-top: $border-hairline;
+
+  h2 {
+    @include display-type($font-size-h2, 1.05);
+    max-width: 20ch;
+  }
+
+  p {
+    @include lede;
+    margin-top: $space-16;
+  }
+}
+
+@mixin section-head {
+  display: grid;
+  gap: $space-12;
+  margin-bottom: $space-stack;
+
+  h2 {
+    @include display-type($font-size-h2, 1.05);
+    max-width: 22ch;
+  }
+
+  p {
+    color: $color-fg-muted;
+    max-width: $measure-lede;
+  }
+}
+
+// Numbered editorial list: mono index, serif title, body copy. Replaces icon cards.
+@mixin numbered-list {
+  display: grid;
+  gap: $space-24;
+  border-top: $border-hairline;
+
+  > li {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: $space-16;
+    padding-top: $space-24;
+    border-bottom: $border-hairline;
+    padding-bottom: $space-24;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  h3 {
+    @include display-type($font-size-h3, $line-height-snug);
+  }
+
+  p {
+    margin-top: $space-8;
+    color: $color-text-body;
+    max-width: $measure-prose;
+  }
+
+  @include md {
+    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+    gap: $space-32;
+
+    > li {
+      grid-template-columns: 1fr;
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+}
+
+@mixin index-label {
+  @include mono-label($color-red-bright);
+  padding-top: 0.45rem;
+}

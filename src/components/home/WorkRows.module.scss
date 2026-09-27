@@ -1,0 +1,187 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// data-mode="inline"  : coarse pointer + SSR — thumbnail inline, 40% wide, right-aligned
+// data-mode="preview" : fine pointer — one trailing 360px card, thumbnails stacked & preloaded
+
+.list {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: $border-hairline;
+}
+
+// Inline mode: the row is the positioned box, so the stretched link covers
+// text and thumbnail alike (one tap target).
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40%;
+  gap: $space-8 $space-16;
+  align-items: center;
+  padding: $space-24 0;
+  border-top: $border-hairline;
+}
+
+.rowBody {
+  display: grid;
+  grid-template-areas:
+    'title'
+    'meta'
+    'outcome'
+    'chip';
+  gap: $space-8;
+  min-width: 0;
+}
+
+.title {
+  grid-area: title;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: $space-8 $space-12;
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
+  line-height: 1.1;
+  transition: translate $transition-base;
+}
+
+.link {
+  color: $color-fg;
+
+  // Stretched over the row: one target, clean heading semantics.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:focus-visible::after {
+    outline: $focus-ring;
+    outline-offset: 4px;
+    border-radius: $radius-sm;
+  }
+}
+
+.badge {
+  @include mono-label($color-fg-dim);
+  font-size: 0.625rem;
+  padding: 3px 8px;
+  border: $border-hairline;
+  border-radius: $radius-pill;
+}
+
+.meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-12;
+  margin: 0;
+  @include mono-label($color-fg-dim);
+  line-height: 1.5;
+}
+
+.year {
+  color: $color-fg-muted;
+}
+
+.outcome {
+  grid-area: outcome;
+  margin: 0;
+  max-width: 60ch;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+}
+
+.chip {
+  grid-area: chip;
+  display: none;
+  width: fit-content;
+  @include mono-label($color-fg);
+  padding: 6px 12px;
+  border: $border-hairline-strong;
+  border-radius: $radius-pill;
+
+  @include pointer-coarse {
+    display: inline-flex;
+  }
+}
+
+.thumb {
+  align-self: center;
+}
+
+.thumbFrame {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border: $border-hairline;
+  border-radius: $radius-md;
+  background: $color-surface-1;
+}
+
+.thumbImage {
+  object-fit: cover;
+}
+
+// ---- Preview mode ----
+
+.list[data-mode='preview'] {
+  // The row goes static so the absolute thumbnail positions against the list;
+  // the stretched link now covers .rowBody (the whole text row).
+  .row {
+    position: static;
+    grid-template-columns: minmax(0, 1fr);
+    padding: $space-32 0;
+  }
+
+  .rowBody {
+    position: relative;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 14rem) minmax(0, 1fr);
+    grid-template-areas: 'title meta outcome';
+    gap: $space-24;
+    align-items: baseline;
+  }
+
+  .meta {
+    flex-direction: column;
+    gap: $space-4;
+  }
+
+  .thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 360px;
+    max-width: 60%;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 220ms ease,
+      visibility 0s linear 220ms;
+    will-change: transform;
+
+    &[data-active='true'] {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
+    }
+  }
+
+  .thumbFrame {
+    box-shadow: $shadow-lg;
+  }
+
+  @include pointer-fine-motion {
+    .row:hover .title {
+      translate: 6px 0;
+    }
+  }
+}

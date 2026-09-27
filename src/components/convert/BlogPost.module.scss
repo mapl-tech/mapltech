@@ -1,0 +1,374 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.post {
+  padding-bottom: $space-section-sm;
+}
+
+// ---- Hero (text first; the H1 is the LCP) ---------------------------------------
+.hero {
+  display: grid;
+  gap: $space-32;
+  padding-top: calc(64px + clamp(3rem, 7vw, 5.5rem));
+  padding-bottom: $space-32;
+}
+
+.hero > div {
+  display: grid;
+  gap: $space-16;
+}
+
+.crumbs {
+  margin-bottom: $space-8;
+}
+
+.title {
+  @include display-type(clamp(2rem, 1.4rem + 3.2vw, 3.75rem), 1.05);
+  margin: 0;
+}
+
+.lede {
+  @include lede;
+  margin: 0;
+}
+
+.byline {
+  @include mono-label($color-fg-muted);
+  text-transform: none;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  overflow: clip;
+  border-radius: $radius-lg;
+  border: $border-hairline;
+  background: $color-surface-1;
+}
+
+.coverImage {
+  object-fit: cover;
+}
+
+// ---- TL;DR (the citable block; static, plain HTML) --------------------------
+.tldr {
+  display: grid;
+  gap: $space-12;
+  margin: $space-24 0 $space-40;
+  padding: $space-24;
+  border: $border-hairline-strong;
+  border-left: 2px solid $color-fg;
+  border-radius: $radius-md;
+  background: $color-surface-1;
+}
+
+.tldrLabel {
+  @include mono-label($color-fg);
+  margin: 0;
+}
+
+.tldrText {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem);
+  line-height: 1.35;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+  text-wrap: pretty;
+
+  a {
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+  }
+}
+
+// ---- In this article ----------------------------------------------------------
+.contents {
+  margin: 0 0 $space-40;
+  padding-bottom: $space-24;
+  border-bottom: $border-hairline;
+}
+
+.contentsLabel {
+  @include mono-label($color-fg-muted);
+  margin: 0 0 $space-12;
+}
+
+.contentsList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: item;
+  display: grid;
+  gap: $space-8;
+
+  > li {
+    counter-increment: item;
+    display: flex;
+    gap: $space-12;
+
+    &::before {
+      content: counter(item, decimal-leading-zero);
+      @include mono-label($color-fg-dim);
+      padding-top: 0.25em;
+      flex: 0 0 auto;
+    }
+  }
+
+  a {
+    color: $color-fg-muted;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.14em;
+    transition: color $transition-fast, text-decoration-color $transition-fast;
+
+    &:hover {
+      color: $color-red-hover;
+      text-decoration-color: currentColor;
+    }
+  }
+}
+
+// ---- Body prose (existing post HTML, untouched) ----------------------------------
+.prose {
+  font-size: $font-size-md;
+  line-height: $line-height-relaxed;
+  color: $color-text-body;
+
+  > * + * {
+    margin-top: 1.25em;
+  }
+
+  h2 {
+    @include display-type(clamp(1.625rem, 1.3rem + 1.4vw, 2.25rem), $line-height-snug);
+    margin-top: 2.25em;
+    scroll-margin-top: 96px;
+  }
+
+  h3 {
+    font-family: $font-body;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-lg;
+    line-height: $line-height-snug;
+    letter-spacing: 0;
+    color: $color-fg;
+    margin-top: 1.75em;
+  }
+
+  h4 {
+    font-family: $font-body;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-md;
+    letter-spacing: 0;
+    color: $color-fg;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+
+  a {
+    color: $color-fg;
+    text-decoration: underline;
+    text-underline-offset: 0.16em;
+    text-decoration-color: $color-hairline-strong;
+    transition: color $transition-fast, text-decoration-color $transition-fast;
+
+    &:hover {
+      color: $color-red-hover;
+      text-decoration-color: currentColor;
+    }
+  }
+
+  strong {
+    color: $color-fg;
+    font-weight: $font-weight-semibold;
+  }
+
+  ul,
+  ol {
+    padding-left: 1.4em;
+    display: grid;
+    gap: 0.5em;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li::marker {
+    color: $color-fg-dim;
+  }
+
+  blockquote {
+    margin: 1.75em 0;
+    padding-left: $space-24;
+    border-left: 2px solid $color-red;
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    line-height: 1.35;
+    color: $color-fg;
+  }
+
+  code {
+    font-family: $font-mono;
+    font-size: 0.9em;
+    padding: 0.1em 0.35em;
+    border-radius: $radius-sm;
+    background: $color-surface-2;
+    border: $border-hairline;
+  }
+
+  pre {
+    padding: $space-16;
+    overflow-x: auto;
+    border-radius: $radius-md;
+    background: $color-surface-1;
+    border: $border-hairline;
+
+    code {
+      padding: 0;
+      background: none;
+      border: 0;
+    }
+  }
+
+  img {
+    border-radius: $radius-md;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $font-size-base;
+
+    th,
+    td {
+      text-align: left;
+      padding: $space-8 $space-12;
+      border-bottom: $border-hairline;
+      vertical-align: top;
+    }
+
+    th {
+      @include mono-label($color-fg-muted);
+    }
+  }
+
+  hr {
+    border: 0;
+    border-top: $border-hairline;
+  }
+}
+
+// ---- Related service card ---------------------------------------------------------
+.serviceCard {
+  padding-top: $space-64;
+}
+
+// ---- Newer / older ---------------------------------------------------------------
+.adjacentNav {
+  padding-top: $space-48;
+}
+
+.adjacentGrid {
+  display: grid;
+  gap: $space-16;
+  border-top: $border-hairline-strong;
+  padding-top: $space-16;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-32;
+  }
+}
+
+.adjacent {
+  display: grid;
+  gap: $space-8;
+  min-height: 64px;
+  padding: $space-12 0;
+  color: $color-fg;
+
+  @include md {
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  @include pointer-fine {
+    &:hover .adjacentTitle {
+      color: $color-red-hover;
+    }
+  }
+}
+
+.adjacentLabel {
+  @include mono-label($color-fg-dim);
+}
+
+.adjacentTitle {
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: $font-size-xl;
+  line-height: $line-height-snug;
+  letter-spacing: $letter-spacing-display;
+  transition: color $transition-fast;
+  text-wrap: balance;
+}
+
+.adjacentMeta {
+  @include mono-label($color-fg-muted);
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+// ---- Related articles -------------------------------------------------------------
+.related {
+  padding-top: $space-64;
+}
+
+.relatedTitle {
+  @include display-type($font-size-h3, $line-height-snug);
+  margin: $space-8 0 $space-24;
+}
+
+.relatedList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: $border-hairline-strong;
+}
+
+.relatedRow {
+  display: grid;
+  gap: $space-8;
+  min-height: 56px;
+  padding: $space-16 0;
+  border-bottom: $border-hairline;
+  color: $color-fg;
+
+  @include pointer-fine {
+    &:hover .relatedRowTitle {
+      color: $color-red-hover;
+    }
+  }
+}
+
+.relatedRowTitle {
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: $font-size-lg;
+  line-height: $line-height-snug;
+  letter-spacing: $letter-spacing-display;
+  transition: color $transition-fast;
+}

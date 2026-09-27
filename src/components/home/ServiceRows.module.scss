@@ -1,0 +1,156 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: $border-hairline;
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'title affordance'
+    'situation affordance'
+    'stack affordance'
+    'price affordance';
+  gap: $space-8 $space-24;
+  align-items: start;
+  padding: $space-24 0;
+  border-top: $border-hairline;
+
+  @include md {
+    grid-template-columns: 2.5rem minmax(0, 1fr) minmax(0, 12rem) 2.5rem;
+    grid-template-areas:
+      'index title stack affordance'
+      'index situation price affordance';
+    gap: $space-8 $space-24;
+  }
+
+  @include lg {
+    grid-template-columns: 2.5rem minmax(0, 15rem) minmax(0, 1fr) minmax(0, 13rem) 6.5rem 2.5rem;
+    grid-template-areas: 'index title situation stack price affordance';
+    align-items: baseline;
+  }
+
+  @include pointer-fine-motion {
+    &:hover .index {
+      color: $color-red-bright;
+    }
+
+    &:hover .arrow {
+      color: $color-red;
+      translate: 4px 0;
+    }
+  }
+}
+
+.index {
+  grid-area: index;
+  display: none;
+  @include mono-label($color-fg-dim);
+  transition: color $transition-fast;
+
+  @include md {
+    display: block;
+    padding-top: 0.6rem;
+  }
+}
+
+.title {
+  grid-area: title;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
+  line-height: 1.1;
+}
+
+.link {
+  color: $color-fg;
+  transition: color $transition-fast;
+
+  // Stretched over the whole row: one tap target, clean heading semantics.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:focus-visible::after {
+    outline: $focus-ring;
+    outline-offset: 4px;
+    border-radius: $radius-sm;
+  }
+}
+
+.situation {
+  grid-area: situation;
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+  max-width: 48ch;
+}
+
+.stack {
+  grid-area: stack;
+  margin: 0;
+  @include mono-label($color-fg-dim);
+  line-height: 1.5;
+}
+
+.price {
+  grid-area: price;
+  margin: 0;
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+
+  span {
+    color: $color-fg;
+  }
+
+  @include lg {
+    text-align: right;
+  }
+}
+
+.affordance {
+  grid-area: affordance;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  align-self: start;
+}
+
+.arrow {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: $color-fg-muted;
+  transition: color $transition-fast, translate $transition-base;
+
+  @include pointer-coarse {
+    display: none;
+  }
+}
+
+.chip {
+  display: none;
+  @include mono-label($color-fg);
+  padding: 6px 12px;
+  border: $border-hairline-strong;
+  border-radius: $radius-pill;
+
+  @include pointer-coarse {
+    display: inline-flex;
+  }
+}

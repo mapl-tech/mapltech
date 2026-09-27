@@ -1,0 +1,49 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.emailFallback {
+  display: grid;
+  gap: $space-12;
+  padding-top: $space-24;
+  border-top: $border-hairline;
+}
+
+// Team snap-row cards (plain links, source order)
+.teamCard {
+  display: grid;
+  gap: $space-8;
+  min-height: 160px;
+  height: 100%;
+  padding: $space-24;
+  @include surface(1);
+  color: $color-fg;
+  transition: border-color $transition-fast;
+
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-red, 0.5);
+    }
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+}
+
+.teamName {
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: $font-size-xl;
+  line-height: $line-height-snug;
+  letter-spacing: $letter-spacing-display;
+}
+
+.teamTitle {
+  color: $color-fg-muted;
+  font-size: $font-size-sm;
+}
+
+.teamMeta {
+  @include mono-label($color-fg-dim);
+  margin-top: auto;
+}

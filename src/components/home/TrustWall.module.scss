@@ -1,0 +1,176 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.grid {
+  display: grid;
+  gap: $space-48;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 27.5rem);
+    gap: $space-64;
+    align-items: start;
+  }
+}
+
+.copy {
+  min-width: 0;
+}
+
+.heading {
+  margin-bottom: $space-32;
+  max-width: 18ch;
+}
+
+.promises {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: $border-hairline;
+}
+
+.promise {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: $space-16;
+  padding: $space-24 0;
+  border-top: $border-hairline;
+}
+
+.index {
+  @include mono-label($color-fg-dim);
+  padding-top: 0.5rem;
+}
+
+.promiseTitle {
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
+  margin-bottom: $space-8;
+}
+
+.promiseBody {
+  max-width: 52ch;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+}
+
+.trustCta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-16 $space-24;
+  margin-top: $space-32;
+}
+
+.trustNote {
+  margin: 0;
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+}
+
+.visual {
+  display: grid;
+  gap: $space-16;
+  min-width: 0;
+}
+
+// ---- The wall ----
+
+.wall {
+  @include surface(1);
+  margin: 0;
+  padding: $space-24;
+}
+
+.wallSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.brick {
+  fill: none;
+  stroke: rgba($color-fg, 0.45);
+  stroke-width: 1.5;
+  stroke-linejoin: miter;
+}
+
+.flag {
+  fill: none;
+  stroke: $color-red;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+@keyframes wallDraw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+// Strokes draw with the figure's own view() timeline; bricks stagger via --i.
+// Where the timeline is unsupported (or motion is reduced) the wall is simply drawn.
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .wall {
+      view-timeline: --wall block;
+    }
+
+    .brick,
+    .flag {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: wallDraw linear both;
+      animation-timeline: --wall;
+      animation-range: entry calc(8% + var(--i, 0) * 4%) entry 92%;
+    }
+
+    .flag {
+      --i: 14;
+    }
+  }
+}
+
+.wallLabels {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-16;
+  margin-top: $space-16;
+  @include mono-label($color-fg-dim);
+
+  span:last-child {
+    color: $color-fg-muted;
+    text-align: right;
+  }
+}
+
+// ---- Literally true counts ----
+
+.metrics {
+  @include surface(1);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-12;
+  margin: 0;
+  padding: $space-24 $space-16;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column-reverse; // number above its label; dt still precedes dd in the DOM
+  align-items: center;
+  gap: $space-8;
+  text-align: center;
+}
+
+.metricValue {
+  margin: 0;
+  font-family: $font-display;
+  font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+  line-height: 1;
+  color: $color-fg;
+  @include tabular;
+}
+
+.metricLabel {
+  @include mono-label($color-fg-dim);
+  font-size: 0.6875rem;
+}

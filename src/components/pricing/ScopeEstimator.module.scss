@@ -1,0 +1,653 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ============================================
+// Scope Estimator (the page's PEAK): controls left, sticky summary rail right.
+// Red marks interactive state only; teal marks the live output only.
+// ============================================
+
+$rail-top: 88px; // fixed 64px header + 24px
+
+.estimator {
+  display: grid;
+  gap: $space-40;
+  align-items: start;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+    gap: $space-48;
+  }
+}
+
+.controls {
+  display: grid;
+  gap: $space-24;
+  min-width: 0;
+}
+
+// --------------------------------------------
+// Fieldsets
+// --------------------------------------------
+.group {
+  display: grid;
+  gap: $space-16;
+  margin: 0;
+  padding: $space-16 $space-24 $space-24;
+  min-width: 0;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.legend {
+  @include mono-label($color-fg-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: $space-8;
+  padding: 0 $space-8;
+  margin-left: -$space-8;
+}
+
+.step {
+  color: $color-fg-dim;
+}
+
+.legendHint {
+  color: $color-fg-dim;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.hint {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-fg-muted;
+}
+
+// --------------------------------------------
+// Chips (native radio / checkbox inside a label)
+// --------------------------------------------
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+}
+
+.srInput {
+  @include sr-only;
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  min-height: 44px;
+  padding: 0 $space-16;
+  border: $border-hairline-strong;
+  border-radius: $radius-md;
+  background: $color-surface-1;
+  color: $color-text-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.2;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: border-color $transition-fast, background-color $transition-fast, color $transition-fast;
+
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-red, 0.6);
+      color: $color-fg;
+    }
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+
+  &[data-checked] {
+    border-color: $color-red;
+    background: rgba($color-red, 0.12);
+    color: $color-fg;
+  }
+
+  &[data-locked] {
+    cursor: default;
+  }
+
+  &:has(input:focus-visible) {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.chipSub {
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-regular;
+  color: $color-fg-muted;
+  @include tabular;
+
+  .chip[data-checked] & {
+    color: $color-fg;
+  }
+}
+
+// --------------------------------------------
+// Switch rows (add-ons)
+// --------------------------------------------
+.switches {
+  display: grid;
+  column-gap: $space-24;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.switch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $space-12;
+  min-height: 48px;
+  padding: $space-8 0;
+  border-bottom: $border-hairline;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:has(input:focus-visible) .track {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
+.switchLabel {
+  flex: 1;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+
+  .switch[data-checked] & {
+    color: $color-fg;
+  }
+}
+
+.switchState {
+  @include mono-label($color-fg-dim);
+  min-width: 3ch;
+  text-align: right;
+
+  .switch[data-checked] & {
+    color: $color-fg-muted;
+  }
+}
+
+.track {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 24px;
+  border: $border-hairline-strong;
+  border-radius: $radius-pill;
+  background: $color-surface-3;
+  transition: background-color $transition-fast, border-color $transition-fast;
+
+  .switch[data-checked] & {
+    background: $color-red;
+    border-color: $color-red;
+  }
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: $color-fg;
+  transition: transform $transition-fast;
+
+  .switch[data-checked] & {
+    transform: translateX(16px);
+  }
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.note {
+  padding-left: $space-12;
+  border-left: 2px solid $color-red;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// --------------------------------------------
+// Summary rail (desktop sticky; inline on phones)
+// --------------------------------------------
+.rail {
+  min-width: 0;
+
+  @include lg {
+    position: sticky;
+    top: $rail-top;
+  }
+}
+
+.summary {
+  @include surface(2);
+  display: grid;
+  gap: $space-24;
+  padding: $space-24;
+}
+
+.headline {
+  display: grid;
+  gap: $space-12;
+}
+
+.eyebrow {
+  @include mono-label($color-fg-muted);
+}
+
+.total {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: $space-4 $space-12;
+  outline: none;
+}
+
+.live,
+.customTotal,
+.dash {
+  @include display-type(clamp(2.25rem, 3.2vw, 3rem), 1);
+  @include tabular;
+  color: $color-signal;
+  overflow-wrap: anywhere;
+}
+
+.dash {
+  color: rgba($color-signal, 0.55);
+}
+
+.compact {
+  gap: $space-4;
+}
+
+.compact .live,
+.compact .customTotal,
+.compact .dash {
+  font-size: 1.875rem;
+}
+
+// Sheet peek: tier, price and monthly line as one wrapping sentence.
+.compactLines {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+
+  strong {
+    font-weight: $font-weight-semibold;
+    color: $color-fg;
+  }
+}
+
+.totalUnit {
+  @include mono-label($color-fg-dim);
+  width: 100%;
+}
+
+.lines {
+  display: grid;
+  gap: $space-4;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+
+  strong {
+    font-weight: $font-weight-semibold;
+    color: $color-fg;
+  }
+}
+
+.lineService {
+  color: $color-fg-muted;
+}
+
+.monthly {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+}
+
+.monthlyValue {
+  font-weight: $font-weight-semibold;
+  color: $color-signal;
+  @include tabular;
+}
+
+.divider {
+  height: 1px;
+  background: $color-hairline;
+}
+
+.subhead {
+  @include mono-label($color-fg-muted);
+  margin-bottom: $space-12;
+}
+
+.drivers {
+  display: grid;
+  gap: $space-8;
+
+  li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: $space-12;
+    align-items: start;
+    font-size: $font-size-sm;
+    line-height: 1.45;
+    color: $color-text-body;
+  }
+}
+
+.tag {
+  @include mono-label($color-fg-muted);
+  font-size: 0.625rem;
+  min-width: 3.75em;
+  margin-top: 2px;
+  padding: 3px 5px;
+  border: $border-hairline-strong;
+  border-radius: $radius-sm;
+  text-align: center;
+}
+
+.notes {
+  display: grid;
+  gap: $space-4;
+  margin-top: $space-12;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-fg-muted;
+}
+
+.bundle {
+  display: grid;
+  gap: $space-8;
+  padding: $space-16;
+  border: $border-hairline-strong;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.bundleName {
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.bundlePrice {
+  color: $color-signal;
+  @include tabular;
+}
+
+.bundleLink {
+  @include mono-label($color-fg);
+  width: fit-content;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: underline;
+  text-decoration-color: $color-hairline-strong;
+  text-underline-offset: 5px;
+
+  @include pointer-fine {
+    &:hover {
+      color: $color-red-hover;
+      text-decoration-color: currentColor;
+    }
+  }
+}
+
+// --------------------------------------------
+// Send this estimate
+// --------------------------------------------
+.send {
+  display: grid;
+  gap: $space-8;
+}
+
+.label {
+  @include mono-label($color-fg-muted);
+
+  span {
+    color: $color-fg-dim;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}
+
+.sendRow {
+  display: grid;
+  gap: $space-8;
+
+  @include sm {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+}
+
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 $space-16;
+  border: $border-hairline-strong;
+  border-radius: $radius-md;
+  background: $color-surface-3;
+  color: $color-fg;
+  font-size: 1rem; // 16px+: no iOS zoom
+  line-height: 1.2;
+
+  &::placeholder {
+    color: $color-fg-dim;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 0;
+    border-color: $color-red;
+  }
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.sent {
+  display: block;
+  padding: $space-16;
+  border: 1px solid rgba($color-signal, 0.4);
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-fg;
+}
+
+.error {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-red-text;
+}
+
+.actions {
+  display: grid;
+  gap: $space-12;
+}
+
+// Matched tier features (collapsed in the rail, open in the sheet)
+.features {
+  border-top: $border-hairline;
+}
+
+.featuresSummary {
+  @include mono-label($color-fg-muted);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-12;
+  min-height: 48px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::marker {
+    content: '';
+  }
+
+  &::after {
+    content: '+';
+    font-family: $font-mono;
+    font-size: $font-size-base;
+    line-height: 1;
+    color: $color-fg-dim;
+  }
+
+  .features[open] > &::after {
+    content: '\2212';
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: -2px;
+  }
+}
+
+.featureGroup {
+  display: grid;
+  gap: $space-8;
+  padding-bottom: $space-16;
+
+  h4 {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0;
+    color: $color-fg;
+  }
+
+  ul {
+    display: grid;
+    gap: $space-4;
+  }
+
+  li {
+    display: flex;
+    gap: $space-8;
+    font-size: $font-size-sm;
+    line-height: $line-height-normal;
+    color: $color-text-body;
+
+    &::before {
+      content: '\2014';
+      flex-shrink: 0;
+      color: $color-fg-dim;
+    }
+  }
+}
+
+// --------------------------------------------
+// Mobile sheet (vaul) placements
+// --------------------------------------------
+.sheet {
+  // BottomSheet's own <h2> title stays for screen readers; the compact head
+  // row below carries the visible label so the 220px peek fits range + CTA.
+  :global(.bottom-sheet__head) > h2 {
+    @include sr-only;
+  }
+}
+
+.sheetHead {
+  display: grid;
+  gap: $space-8;
+
+  // The peek budget is ~225px: keep the CTA at the 48px minimum, not the rail's 52px.
+  .sheetCta :global(.magnetic-btn) {
+    min-height: 48px;
+  }
+}
+
+.sheetRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-12;
+  min-height: 44px;
+}
+
+.sheetToggle {
+  @include mono-label($color-fg);
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  min-height: 44px;
+  margin-right: -$space-8;
+  padding: 0 $space-8;
+  background: transparent;
+  text-decoration: underline;
+  text-decoration-color: $color-hairline-strong;
+  text-underline-offset: 5px;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    color: $color-red-pressed;
+  }
+}
+
+.sheetBody {
+  display: grid;
+  gap: $space-24;
+  padding-top: $space-16;
+}

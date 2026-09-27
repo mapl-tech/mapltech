@@ -1,344 +1,400 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
+$bar-mobile: 56px;
+$bar-desktop: 64px;
+$bar-compact: 56px;
+$ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+// ===== Bar =====
 .header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: $z-sticky;
-  transition: all $transition-smooth;
-}
-
-// ===== Top bar (email + socials) =====
-.topBar {
-  display: none;
-  background: rgba($color-dark, 0.6);
-  border-bottom: 1px solid rgba($color-dark-border, 0.4);
-  transition: all $transition-smooth;
-  overflow: hidden;
-  max-height: 40px;
+  // view-transition-name: site-header is set inline in Header.tsx (CSS Modules
+  // would hash the value here); _transitions.scss disables that group's animation.
+  // Brand ground; the one place backdrop-blur is allowed (nav only).
+  background: rgba($color-ground, 0.84);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
+  border-bottom: 1px solid $color-hairline;
+  --bar-h: #{$bar-mobile};
 
   @include lg {
-    display: block;
-  }
+    --bar-h: #{$bar-desktop};
 
-  &.topBarHidden {
-    max-height: 0;
-    border-bottom-color: transparent;
-  }
-}
-
-.topBarInner {
-  @include container;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 36px;
-  font-size: $font-size-xs;
-}
-
-.contactLink {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: $color-text-muted;
-  transition: color $transition-fast;
-
-  &:hover {
-    color: $color-pink;
-  }
-}
-
-.socialLinks {
-  display: flex;
-  align-items: center;
-  gap: $space-sm;
-
-  a {
-    color: $color-text-muted;
-    transition: color $transition-fast, transform $transition-fast;
-    display: flex;
-    align-items: center;
-    padding: 6px; // 14px icon + 12px padding = 26px tap target (WCAG target-size)
-
-    @include focus-ring;
-
-    &:hover {
-      color: $color-pink;
-      transform: scale(1.15);
+    &[data-compact] {
+      --bar-h: #{$bar-compact};
     }
   }
 }
 
-// ===== Main nav bar =====
-.navBar {
-  @include glass(rgba($color-dark, 0.5));
-  transition: all $transition-smooth;
-  border-bottom: 1px solid rgba($color-dark-border, 0.3);
-
-  .scrolled & {
-    background: rgba($color-dark, 0.95);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom-color: rgba($color-dark-border, 0.5);
-  }
-}
-
-.navBarInner {
+.bar {
   @include container;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
   gap: $space-md;
+  height: var(--bar-h);
+  transition: height 240ms $ease;
+
+  @include lg {
+    gap: $space-lg;
+  }
 }
 
 .logo {
-  font-family: $font-display;
-  font-size: $font-size-lg;
-  font-weight: $font-weight-extrabold;
-  color: $color-white;
-  letter-spacing: 1px;
-  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
+  min-height: 44px;
 
-  @include focus-ring;
+  img {
+    width: 124px;
+    height: auto;
 
-  .logoPipe {
-    @include gradient-text;
-    font-weight: $font-weight-extrabold;
+    @include lg {
+      width: 150px;
+    }
   }
 }
 
+// ===== Desktop nav =====
 .nav {
   display: none;
-  align-items: center;
-  gap: 2px;
 
   @include lg {
-    display: flex;
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 }
 
-.navItem {
+.list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.navLink {
-  display: block;
-  padding: 6px 12px;
-  color: $color-text-body;
-  font-size: $font-size-sm;
+// Mono label: 12px, 0.12em tracking, uppercase.
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 $space-12;
+  font-family: $font-mono;
+  font-size: $font-size-label;
   font-weight: $font-weight-medium;
-  border-radius: $radius-md;
-  transition: color $transition-fast, background $transition-fast;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $color-fg-muted;
   white-space: nowrap;
+  transition: color $transition-fast;
 
-  @include focus-ring;
-
-  &:hover {
-    color: $color-white;
+  &:hover,
+  &[data-active] {
+    color: $color-fg;
   }
 
-  &.active {
-    color: $color-pink;
-    background: rgba($color-pink, 0.08);
-  }
-}
-
-.dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  min-width: 220px;
-  background: $color-navy-light;
-  border: 1px solid $color-dark-border;
-  border-radius: $radius-lg;
-  padding: $space-sm;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-8px);
-  transition: all $transition-base;
-  box-shadow: $shadow-lg;
-  z-index: $z-dropdown;
-
-  // Invisible bridge to close the gap between navLink and dropdown
-  &::before {
+  // Active section: 1px red rule under the label (red = interactive state).
+  &[data-active]::after {
     content: '';
     position: absolute;
-    top: -12px;
-    left: 0;
-    right: 0;
-    height: 12px;
+    left: $space-12;
+    right: $space-12;
+    bottom: 10px;
+    height: 1px;
+    background: $color-red;
   }
+}
 
-  .navItem:hover &,
-  .navItem:focus-within & {
+.disclosure {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 44px;
+  margin-left: -6px;
+  color: $color-fg-muted;
+  border-radius: $radius-sm;
+  transition: color $transition-fast;
+
+  &:hover,
+  &[aria-expanded='true'] {
+    color: $color-fg;
+  }
+}
+
+.chevron {
+  transition: rotate 160ms $ease;
+
+  .disclosure[aria-expanded='true'] & {
+    rotate: 180deg;
+  }
+}
+
+// Outer wrapper carries the invisible bridge so the pointer can cross from the
+// label to the panel without leaving the item.
+.menuWrap {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding-top: 6px;
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 -6px;
+  transition:
+    opacity 160ms $ease,
+    translate 160ms $ease,
+    visibility 0s linear 160ms;
+  z-index: $z-dropdown;
+
+  .item[data-open] & {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    translate: 0 0;
+    transition-delay: 0s;
   }
 }
 
-.dropdownLink {
-  display: block;
-  padding: $space-sm $space-md;
-  color: $color-text-body;
-  font-size: $font-size-sm;
+.menu {
+  min-width: 248px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: $color-surface-1;
+  border: 1px solid $color-hairline-strong;
   border-radius: $radius-md;
-  transition: all $transition-fast;
+  box-shadow: $shadow-lg;
+}
 
-  @include focus-ring;
+.menuLink {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 $space-12;
+  border-radius: 6px;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-text-body;
+  white-space: nowrap;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
 
   &:hover {
-    background: rgba($color-pink, 0.1);
-    color: $color-white;
+    background: $color-surface-3;
+    color: $color-fg;
+  }
+
+  &[aria-current='page'] {
+    color: $color-fg;
+    box-shadow: inset 2px 0 0 $color-red;
   }
 }
 
-.ctaButton {
-  @include button-primary;
-  font-size: $font-size-xs;
-  padding: 8px 20px;
-  display: none;
+// ===== Utility cluster (email, CTA, hamburger) =====
+.utility {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: $space-8;
 
   @include lg {
+    gap: $space-md;
+  }
+}
+
+.email {
+  display: none;
+  align-items: center;
+  min-height: 44px;
+  font-family: $font-mono;
+  font-size: $font-size-label;
+  letter-spacing: 0.02em;
+  color: $color-fg-muted;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-fg;
+  }
+
+  @include xl {
     display: inline-flex;
   }
 }
 
+.cta {
+  display: none;
+
+  @include lg {
+    display: inline-block;
+  }
+}
+
+.ctaCompact {
+  display: inline-block;
+
+  @include lg {
+    display: none;
+  }
+}
+
+// MagneticButton surface overrides for the bar (module rules are unlayered, so
+// they win over the layered .magnetic-btn sizes). 44px targets, smaller type.
+.headerBtn {
+  min-height: 44px;
+  padding: 0 18px;
+  font-size: $font-size-sm;
+  white-space: nowrap;
+}
+
+.compactBtn {
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
 .menuButton {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: none;
-  border: 1px solid rgba($color-white, 0.15);
+  border: 1px solid $color-hairline-strong;
   border-radius: $radius-md;
-  color: $color-white;
-  font-size: $font-size-xl;
-  cursor: pointer;
-  transition: all $transition-fast;
-
-  @include focus-ring;
-  @include lg {
-    display: none;
-  }
-
-  &:hover {
-    border-color: $color-pink;
-    color: $color-pink;
-  }
-}
-
-// ===== Mobile menu =====
-.mobileMenu {
-  position: fixed;
-  inset: 0;
-  z-index: $z-overlay;
-  background: rgba($color-dark, 0.97);
-  backdrop-filter: blur(20px);
-  display: flex;
-  flex-direction: column;
-  padding: $space-xl;
-  overflow-y: auto;
-
-  @include lg {
-    display: none;
-  }
-}
-
-.mobileMenuHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $space-3xl;
-}
-
-.closeButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: none;
-  border: 1px solid rgba($color-white, 0.15);
-  border-radius: $radius-md;
-  color: $color-white;
-  font-size: $font-size-xl;
-  cursor: pointer;
-  transition: all $transition-fast;
-
-  @include focus-ring;
-
-  &:hover {
-    border-color: $color-pink;
-    color: $color-pink;
-  }
-}
-
-.mobileNav {
-  display: flex;
-  flex-direction: column;
-  gap: $space-xs;
-  flex: 1;
-}
-
-.mobileNavLink {
-  display: block;
-  padding: $space-sm $space-lg;
-  color: $color-text-body;
-  font-family: $font-display;
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-medium;
-  letter-spacing: -0.01em;
-  border-radius: $radius-md;
-  transition: all $transition-fast;
-
-  @include focus-ring;
+  color: $color-fg;
+  transition: border-color $transition-fast;
 
   &:hover,
-  &.active {
-    color: $color-white;
-    background: rgba($color-pink, 0.1);
+  &[aria-expanded='true'] {
+    border-color: rgba($color-red, 0.6);
+  }
+
+  @include lg {
+    display: none;
   }
 }
 
-.mobileSubLink {
-  @extend .mobileNavLink;
-  padding-left: $space-3xl;
-  padding-top: $space-xs;
-  padding-bottom: $space-xs;
+// ===== Mobile sheet (MobileNav, portaled by vaul) =====
+.sheet {
   font-family: $font-body;
-  font-size: $font-size-base;
-  font-weight: $font-weight-regular;
-  letter-spacing: 0;
-  color: $color-text-muted;
 }
 
-.mobileSocial {
+.sheetNav {
+  padding-top: $space-8;
+}
+
+.sheetList,
+.subList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
   display: flex;
-  gap: $space-lg;
-  padding-top: $space-2xl;
-  border-top: 1px solid $color-dark-border;
-  margin-top: $space-xl;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  min-height: 48px;
+  padding: 0 $space-4;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-fg;
+  border-bottom: 1px solid $color-hairline;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &[aria-current='page'] {
+    box-shadow: inset 2px 0 0 $color-red;
+    padding-left: $space-12;
+  }
+}
+
+.group {
+  &[open] .sheetChevron {
+    rotate: 180deg;
+  }
+}
+
+.sheetChevron {
+  flex-shrink: 0;
+  color: $color-fg-muted;
+  transition: rotate 160ms $ease;
+}
+
+.subList {
+  padding: $space-4 0 $space-8 $space-md;
+  border-bottom: 1px solid $color-hairline;
+}
+
+.subRow {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 $space-4;
+  font-size: $font-size-base;
+  color: $color-text-body;
+
+  &[aria-current='page'] {
+    color: $color-fg;
+    box-shadow: inset 2px 0 0 $color-red;
+    padding-left: $space-12;
+  }
+}
+
+.sheetCta {
+  display: block;
+  margin-top: $space-lg;
+
+  > :global(.magnetic-btn-box) {
+    display: block;
+    width: 100%;
+  }
+
+  :global(.magnetic-btn) {
+    width: 100%;
+    min-height: 52px;
+  }
+}
+
+.sheetContact {
+  display: grid;
+  gap: 2px;
+  margin: $space-md 0 0;
+  padding: 0;
+  list-style: none;
 
   a {
-    color: $color-text-muted;
-    font-size: $font-size-xl;
-    transition: color $transition-fast;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: $font-mono;
+    font-size: $font-size-xs;
+    letter-spacing: 0.02em;
+    color: $color-fg-muted;
 
     &:hover {
-      color: $color-pink;
+      color: $color-fg;
     }
   }
-}
-
-.mobileCta {
-  @include button-primary;
-  width: 100%;
-  margin-top: $space-xl;
-  text-align: center;
 }

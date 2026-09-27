@@ -1,0 +1,46 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.explorer {
+  display: grid;
+  gap: $space-lg;
+}
+
+.axis {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.axisLabel {
+  @include mono-label($color-fg-dim);
+  margin-right: $space-xs;
+}
+
+.zone {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: $radius-pill;
+  border: $border-hairline-strong;
+  background: transparent;
+  @include mono-label($color-fg-muted);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color $transition-fast, border-color $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    color: $color-fg;
+    border-color: rgba($color-red, 0.6);
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+
+  &[aria-pressed='true'] {
+    background: $color-fg;
+    border-color: $color-fg;
+    color: $color-ground;
+  }
+}

@@ -1,0 +1,93 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Featured post card: one image (lazy, static poster), text beside it.
+.featured {
+  display: grid;
+  gap: $space-24;
+  @include surface(1);
+  overflow: clip;
+  color: $color-fg;
+  transition: border-color $transition-fast;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+  }
+
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-red, 0.5);
+    }
+
+    &:hover .featuredTitle {
+      text-decoration-color: currentColor;
+    }
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+}
+
+.featuredMedia {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  background: $color-surface-2;
+
+  @include lg {
+    aspect-ratio: auto;
+    min-height: 100%;
+  }
+}
+
+.featuredImage {
+  object-fit: cover;
+}
+
+.featuredBody {
+  display: grid;
+  gap: $space-16;
+  padding: 0 $space-24 $space-24;
+
+  @include lg {
+    padding: $space-40;
+    align-content: center;
+  }
+}
+
+.featuredMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-8 $space-12;
+  @include mono-label($color-fg-muted);
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+.featuredBadge {
+  @include mono-label($color-fg);
+  padding: $space-4 $space-8;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-sm;
+}
+
+.featuredTitle {
+  @include display-type($font-size-h3, $line-height-snug);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color $transition-fast;
+}
+
+.featuredExcerpt {
+  color: $color-fg-muted;
+  line-height: $line-height-normal;
+}
+
+.featuredRead {
+  @include mono-label($color-fg);
+}

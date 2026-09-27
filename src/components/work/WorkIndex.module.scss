@@ -1,0 +1,566 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+// Desktop row grid shared by the header strip and each row link.
+// no · client · service · year · outcome  (+ "open" column on the <li>)
+.index {
+  --row-cols: 3rem minmax(0, 1.15fr) minmax(0, 0.9fr) 4rem minmax(0, 2.3fr);
+  --open-col: 8.5rem;
+  position: relative;
+}
+
+// ---------------------------------------------------------------------------
+// Toolbar: filter chips (URL-synced) + rows/grid toggle (desktop only)
+// ---------------------------------------------------------------------------
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-16;
+  padding-bottom: $space-16;
+  border-bottom: $border-hairline;
+}
+
+.chips {
+  display: flex;
+  gap: $space-8;
+  max-width: 100%;
+  padding-block: 2px;
+  // Phones: one horizontal snap row bleeding to the gutters.
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: $container-padding;
+  overscroll-behavior-x: contain;
+  margin-inline: calc(-1 * #{$container-padding});
+  padding-inline: $container-padding;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include md {
+    flex-wrap: wrap;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+
+.chip {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  min-height: 44px;
+  padding: 0 $space-16;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-pill;
+  background: transparent;
+  color: $color-fg;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+  transition: border-color $transition-fast, color $transition-fast, background-color $transition-fast;
+
+  &:hover:not(:disabled) {
+    border-color: rgba($color-red, 0.6);
+  }
+
+  &[aria-pressed='true'] {
+    border-color: $color-red;
+    background: rgba($color-red, 0.1);
+
+    .count {
+      color: $color-red-bright;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  @include focus-ring;
+}
+
+.count {
+  font-family: $font-mono;
+  font-size: $font-size-label;
+  color: $color-fg-muted;
+  @include tabular;
+}
+
+.layoutToggle {
+  display: none;
+
+  @include md {
+    display: inline-flex;
+    padding: 2px;
+    border: 1px solid $color-hairline-strong;
+    border-radius: $radius-pill;
+
+    button {
+      min-height: 40px;
+      padding: 0 $space-16;
+      border-radius: $radius-pill;
+      @include mono-label($color-fg-muted);
+      transition: background-color $transition-fast, color $transition-fast;
+
+      &[aria-pressed='true'] {
+        background: $color-surface-3;
+        color: $color-fg;
+      }
+
+      @include focus-ring;
+    }
+  }
+}
+
+.showing {
+  @include mono-label($color-fg-dim);
+  padding: $space-12 0;
+}
+
+// ---------------------------------------------------------------------------
+// Column header (desktop rows mode only)
+// ---------------------------------------------------------------------------
+.head {
+  display: none;
+
+  @include md {
+    .index[data-layout='rows'] & {
+      display: grid;
+      grid-template-columns: var(--row-cols) var(--open-col);
+      column-gap: $space-16;
+      padding: $space-8 0;
+      @include mono-label($color-fg-dim);
+    }
+  }
+}
+
+.headOpen {
+  text-align: right;
+}
+
+// ---------------------------------------------------------------------------
+// Rows (mobile-first: inline 40% thumbnail on the right)
+// ---------------------------------------------------------------------------
+.list {
+  display: grid;
+  border-top: $border-hairline;
+}
+
+.row {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border-bottom: $border-hairline;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @include pointer-fine-motion {
+    transition: opacity 220ms ease;
+
+    .list:hover &:not(:hover) {
+      opacity: 0.45;
+    }
+  }
+}
+
+.rowLink {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40%;
+  grid-template-areas:
+    'meta thumb'
+    'title thumb'
+    'outcome thumb'
+    'chip thumb';
+  column-gap: $space-16;
+  row-gap: $space-4;
+  align-content: start;
+  padding: $space-16 0;
+  color: inherit;
+
+  @include focus-ring;
+}
+
+.meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: $space-8;
+  min-width: 0;
+}
+
+.no {
+  @include mono-label($color-fg-dim);
+}
+
+.service,
+.year {
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  color: $color-fg-muted;
+  @include tabular;
+
+  // Mobile separators between the inline meta items
+  &::before {
+    content: '·';
+    margin-right: $space-8;
+    color: $color-fg-dim;
+  }
+}
+
+.dash {
+  color: $color-fg-dim;
+}
+
+.client {
+  grid-area: title;
+  min-width: 0;
+}
+
+.title {
+  position: relative;
+  display: inline-block;
+  @include display-type(clamp(1.375rem, 1.6vw, 1.75rem), 1.1);
+  color: $color-fg;
+
+  // Red rule that draws in under the title on hover (transform only).
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1px;
+    background: $color-red;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  @include pointer-fine-motion {
+    &::after {
+      transition: transform 320ms $ease-out;
+    }
+
+    .row:hover &::after {
+      transform: scaleX(1);
+    }
+  }
+
+  .rowLink:focus-visible &::after {
+    transform: scaleX(1);
+  }
+}
+
+.lab {
+  display: inline-block;
+  margin-left: $space-8;
+  padding: 2px $space-8;
+  border: $border-hairline-strong;
+  border-radius: $radius-pill;
+  vertical-align: middle;
+  @include mono-label($color-fg-muted);
+  font-size: 0.6875rem;
+}
+
+.outcome {
+  grid-area: outcome;
+  margin-top: $space-4;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  color: $color-text-body;
+  @include line-clamp(3);
+}
+
+.thumb {
+  grid-area: thumb;
+  align-self: start;
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border: $border-hairline;
+  border-radius: $radius-md;
+  background: $color-surface-2;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// Always-visible "View" chip on touch; the cursor pill takes over on fine pointers.
+.chip {
+  grid-area: chip;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: $space-8;
+  @include mono-label($color-red-bright);
+
+  &::after {
+    content: '→';
+  }
+
+  @include pointer-fine {
+    display: none;
+  }
+}
+
+// "Open" column: live-site link (desktop) or a muted "Case study" label.
+.live {
+  display: none;
+}
+
+.liveMuted {
+  color: $color-fg-dim;
+}
+
+.empty {
+  padding: $space-24 0;
+  color: $color-fg-muted;
+
+  a {
+    color: $color-red-bright;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Desktop rows mode
+// ---------------------------------------------------------------------------
+@include md {
+  .index[data-layout='rows'] {
+    .rowLink {
+      grid-template-columns: var(--row-cols);
+      grid-template-areas: 'no client service year outcome';
+      column-gap: $space-16;
+      row-gap: 0;
+      align-items: start;
+      padding: $space-24 0;
+    }
+
+    // The meta wrapper dissolves so no / service / year take their own columns.
+    .meta {
+      display: contents;
+    }
+
+    .no {
+      grid-area: no;
+      padding-top: 0.45rem;
+    }
+
+    .client {
+      grid-area: client;
+    }
+
+    .service {
+      grid-area: service;
+    }
+
+    .year {
+      grid-area: year;
+    }
+
+    .service,
+    .year {
+      font-size: $font-size-sm;
+      padding-top: 0.4rem;
+
+      &::before {
+        content: none;
+        margin: 0;
+      }
+    }
+
+    .outcome {
+      grid-area: outcome;
+      display: block;
+      margin-top: 0.3rem;
+      font-size: $font-size-base;
+      -webkit-line-clamp: unset;
+    }
+
+    .thumb,
+    .chip {
+      display: none;
+    }
+
+    // Touch tablets and reduced motion get no pointer preview: keep a fixed
+    // thumbnail slot beside the row instead (pure CSS, no layout shift).
+    @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+      .rowLink {
+        grid-template-columns: var(--row-cols) 7.5rem;
+        grid-template-areas: 'no client service year outcome thumb';
+      }
+
+      .thumb {
+        display: block;
+        grid-area: thumb;
+      }
+    }
+
+    .live {
+      flex: 0 0 var(--open-col);
+      display: inline-flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      gap: $space-8;
+      margin-left: $space-16;
+      padding-top: calc(#{$space-24} + 0.45rem);
+      text-align: right;
+      @include mono-label($color-fg-muted);
+      transition: color $transition-fast;
+
+      &:hover {
+        color: $color-red-bright;
+      }
+
+      @include focus-ring;
+    }
+
+    .liveMuted {
+      color: $color-fg-dim;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Desktop 2-column grid mode (same DOM nodes, CSS template change only)
+  // -------------------------------------------------------------------------
+  .index[data-layout='grid'] {
+    .list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: $space-24;
+      border-top: 0;
+      padding-top: $space-8;
+    }
+
+    .row {
+      flex-direction: column;
+      border: $border-hairline;
+      border-radius: $radius-lg;
+      background: $color-surface-1;
+      overflow: hidden;
+    }
+
+    .rowLink {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        'thumb'
+        'meta'
+        'title'
+        'outcome';
+      row-gap: $space-8;
+      padding: 0 $space-24 $space-16;
+    }
+
+    .thumb {
+      display: block;
+      aspect-ratio: 16 / 9;
+      margin: 0 calc(-1 * #{$space-24}) $space-8;
+      border: 0;
+      border-radius: 0;
+    }
+
+    .outcome {
+      font-size: $font-size-sm;
+      -webkit-line-clamp: 3;
+    }
+
+    .live {
+      display: inline-flex;
+      align-items: center;
+      gap: $space-8;
+      padding: $space-12 $space-24 $space-16;
+      @include mono-label($color-fg-muted);
+      transition: color $transition-fast;
+
+      &:hover {
+        color: $color-red-bright;
+      }
+
+      @include focus-ring;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Shared hover preview (fine pointer + motion only; mounted after hydration)
+// ---------------------------------------------------------------------------
+.preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 150; // below the fixed header ($z-sticky 200), above content
+  pointer-events: none;
+  overflow: hidden;
+  border: $border-hairline-strong;
+  border-radius: $radius-md;
+  background: $color-surface-2;
+  box-shadow: $shadow-lg;
+  will-change: transform, opacity;
+  // Visibility: data-visible is written from the pointer handlers; the
+  // position transform comes from Framer springs, so scale lives on the stack.
+  opacity: 0;
+  transition: opacity 180ms $ease-out;
+
+  &[data-visible='true'] {
+    opacity: 1;
+  }
+
+  &[data-visible='true'] .previewStack {
+    scale: 1;
+  }
+}
+
+.previewStack {
+  position: relative;
+  scale: 0.96;
+  transform-origin: left center;
+  transition: scale 220ms $ease-out;
+}
+
+.previewThumb {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 160ms ease;
+
+  &[data-active='true'] {
+    opacity: 1;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.previewCaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: $space-12;
+  padding: $space-24 $space-12 $space-12;
+  background: linear-gradient(to top, rgba($color-ground, 0.9), transparent);
+  @include mono-label($color-fg);
+}

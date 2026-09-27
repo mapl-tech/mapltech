@@ -1,0 +1,234 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.form {
+  display: grid;
+  gap: $space-32;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 23.75rem);
+    gap: $space-64;
+    align-items: start;
+  }
+}
+
+.inputs {
+  display: grid;
+  gap: $space-24;
+  min-width: 0;
+}
+
+.group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  @include mono-label($color-fg-muted);
+  margin-bottom: $space-12;
+  padding: 0;
+}
+
+.legendIndex {
+  color: $color-red-bright;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+}
+
+// 44px radio chips; the native input stays in the DOM (visually hidden, focusable).
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 $space-16;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-pill;
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+  color: $color-fg-muted;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: border-color $transition-fast, color $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-red, 0.6);
+    color: $color-fg;
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+
+  &[data-on='true'] {
+    border-color: $color-red;
+    background: rgba($color-red, 0.1);
+    color: $color-fg;
+  }
+
+  &:has(input:focus-visible) {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
+.footnote {
+  margin: 0;
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+}
+
+// ---- Summary: right rail on desktop, sticky bottom card on phones/tablets ----
+
+.summary {
+  @include surface(2);
+  display: grid;
+  gap: $space-16;
+  padding: $space-24;
+
+  @media (max-width: #{$breakpoint-lg - 1px}) {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    gap: $space-12;
+    padding: $space-16 $space-16 $space-24;
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.55);
+  }
+}
+
+.summaryLabel {
+  @include mono-label($color-fg-dim);
+  margin: 0;
+}
+
+.range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.1em;
+  margin: 0;
+  font-family: $font-display;
+  font-size: clamp(2.25rem, 1.8rem + 2vw, 3rem);
+  line-height: 1;
+  letter-spacing: $letter-spacing-display;
+  color: $color-signal;
+  @include tabular;
+}
+
+.live {
+  color: $color-signal;
+}
+
+.dash {
+  color: $color-signal-muted;
+}
+
+.tier,
+.monthly {
+  margin: 0;
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: $color-fg-muted;
+}
+
+.liveSmall {
+  color: $color-signal;
+  @include tabular;
+}
+
+.drivers {
+  padding-top: $space-16;
+  border-top: $border-hairline;
+}
+
+.driversLabel {
+  @include mono-label($color-fg-dim);
+  margin: 0 0 $space-8;
+}
+
+// Toggle exists for phones/tablets only; desktop always shows the list.
+.driversToggle {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-12;
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  @include mono-label($color-fg-muted);
+  text-align: left;
+
+  span {
+    font-size: $font-size-md;
+    color: $color-red-bright;
+  }
+}
+
+.driversList {
+  display: grid;
+  gap: $space-4;
+  margin: 0;
+  padding-left: 1rem;
+  list-style: disc;
+
+  li {
+    font-size: $font-size-sm;
+    line-height: $line-height-normal;
+    color: $color-text-body;
+  }
+}
+
+@media (max-width: #{$breakpoint-lg - 1px}) {
+  .drivers {
+    padding-top: $space-4;
+  }
+
+  .driversLabel {
+    display: none;
+  }
+
+  .driversToggle {
+    display: flex;
+  }
+
+  .drivers[data-open='false'] .driversList {
+    display: none;
+  }
+
+  .drivers[data-open='true'] .driversList {
+    padding-bottom: $space-8;
+  }
+}
+
+.actions {
+  display: grid;
+  gap: $space-8;
+  justify-items: start;
+}
+
+.callLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  @include mono-label($color-fg-muted);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-red-bright;
+  }
+}

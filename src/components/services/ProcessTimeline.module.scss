@@ -1,0 +1,212 @@
+@use 'sass:math';
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+$num: 40px;
+$gutter: $space-lg;
+
+.process {
+  border-top: $border-hairline;
+  padding-block: $space-section-sm;
+}
+
+.head {
+  margin-bottom: $space-2xl;
+}
+
+.h2 {
+  @include display-type($font-size-h2, $line-height-tight);
+  color: $color-fg;
+  margin-bottom: $space-md;
+}
+
+.sub {
+  @include lede;
+  font-size: $font-size-md;
+}
+
+// --------------------------------------------
+// Steps + the line. Phones: vertical rule down the left.
+// From 768px: four columns with a horizontal rule through the numbers.
+// --------------------------------------------
+.steps {
+  position: relative;
+  display: grid;
+  gap: $space-xl;
+  margin: 0;
+  padding: 0 0 0 calc(#{$num} + #{$gutter});
+  list-style: none;
+  view-timeline: --process block;
+
+  // hairline track
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: calc(#{$num} / 2 - 1px);
+    top: calc(#{$num} / 2);
+    bottom: calc(#{$num} / 2);
+    width: 2px;
+  }
+
+  &::before {
+    background: $color-hairline;
+  }
+
+  // red progress (static fallback: fully drawn)
+  &::after {
+    background: $color-red;
+    transform-origin: top center;
+  }
+
+  @include md {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: $space-2xl;
+    padding: calc(#{$num} + #{$gutter}) 0 0;
+
+    &::before,
+    &::after {
+      left: calc(#{$num} / 2);
+      right: calc(#{$num} / 2);
+      top: calc(#{$num} / 2 - 1px);
+      bottom: auto;
+      width: auto;
+      height: 2px;
+    }
+
+    &::after {
+      transform-origin: left center;
+    }
+  }
+}
+
+.step {
+  position: relative;
+  min-width: 0;
+}
+
+.num {
+  position: absolute;
+  left: calc(-1 * (#{$num} + #{$gutter}));
+  top: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: $num;
+  height: $num;
+  border-radius: 50%;
+  border: 1px solid $color-hairline-strong;
+  background: $color-ground;
+  font-family: $font-mono;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-fg;
+  @include tabular;
+
+  // red disc that scales in as the line passes (static fallback: filled)
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 50%;
+    background: $color-red;
+    z-index: -1;
+  }
+
+  @include md {
+    left: 0;
+    top: calc(-1 * (#{$num} + #{$gutter}));
+  }
+}
+
+.phase {
+  @include mono-label($color-fg-dim);
+  display: block;
+  margin-bottom: $space-sm;
+}
+
+.title {
+  @include display-type($font-size-h3, 1.1);
+  color: $color-fg;
+  margin-bottom: $space-sm;
+}
+
+.text {
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+  text-wrap: pretty;
+}
+
+// --------------------------------------------
+// Scroll-driven line (interaction: process progress). Zero JS.
+// --------------------------------------------
+@keyframes process-draw-y {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes process-draw-x {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes process-fill {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    // Phones: the section is taller than the viewport, so use a wide slice of `cover`.
+    .steps::after {
+      animation: process-draw-y linear both;
+      animation-timeline: --process;
+      animation-range: cover 15% cover 70%;
+    }
+
+    .num::before {
+      animation: process-fill linear both;
+      animation-timeline: --process;
+    }
+
+    @for $k from 0 through 3 {
+      $center: 15 + 55 * math.div($k + 0.5, 4);
+
+      .step:nth-child(#{$k + 1}) .num::before {
+        animation-range: cover #{$center - 3}#{'%'} cover #{$center + 3}#{'%'};
+      }
+    }
+
+    @include md {
+      // Desktop: the row is short; draw from just after entry until it is centred.
+      .steps::after {
+        animation-name: process-draw-x;
+        animation-range: cover 12% cover 48%;
+      }
+
+      @for $k from 0 through 3 {
+        $center: 12 + 36 * math.div($k + 0.5, 4);
+
+        .step:nth-child(#{$k + 1}) .num::before {
+          animation-range: cover #{$center - 2.5}#{'%'} cover #{$center + 2.5}#{'%'};
+        }
+      }
+    }
+  }
+}

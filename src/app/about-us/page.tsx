@@ -1,24 +1,28 @@
 import type { Metadata } from 'next';
-import {
-  HiUserGroup,
-  HiChatBubbleLeftRight,
-  HiShieldCheck,
-  HiCodeBracket,
-  HiCog6Tooth,
-  HiArrowRight,
-} from 'react-icons/hi2';
-import Image from 'next/image';
-import MagneticButton from '@/components/ui/MagneticButton';
-import SpotlightCard from '@/components/ui/SpotlightCard';
-import SectionHeading from '@/components/ui/SectionHeading';
-import BlurReveal from '@/components/ui/BlurReveal';
-import styles from '@/styles/page-common.module.scss';
+import Link from 'next/link';
+import JsonLd from '@/components/seo/JsonLd';
+import { executives, teamMembers } from '@/config/team';
+import { getService } from '@/config/services';
+import { aboutPage, breadcrumb, howTo, person } from '@/lib/schema';
+import Arrow from '@/components/company/Arrow';
+import Cta from '@/components/company/Cta';
+import ExecutiveCard from '@/components/company/ExecutiveCard';
+import FounderStory from '@/components/company/FounderStory';
+import HeroBlock, { ReviewedOn, type HeroFact } from '@/components/company/HeroBlock';
+import HowWeWork, { HOW_WE_WORK_NAME, HOW_WE_WORK_STEPS } from '@/components/company/HowWeWork';
+import OverlapSection from '@/components/company/OverlapSection';
+import SectionHead from '@/components/company/SectionHead';
+import ValuesEditorial from '@/components/company/ValuesEditorial';
+import { lowestStartingPrice } from '@/components/company/regions';
+import styles from '../company.module.scss';
+
+const DESCRIPTION =
+  'MAPL TECH is the engineering partner agencies call when projects demand real systems, automation, and infrastructure - not another marketing vendor.';
 
 export const metadata: Metadata = {
   title: 'About Us',
   alternates: { canonical: 'https://mapltech.com/about-us' },
-  description:
-    'MAPL TECH is the engineering partner agencies call when projects demand real systems, automation, and infrastructure - not another marketing vendor.',
+  description: DESCRIPTION,
   openGraph: {
     title: 'About Us | MAPL TECH',
     description:
@@ -26,195 +30,109 @@ export const metadata: Metadata = {
   },
 };
 
+const H1 = "We're not another agency. We're the team behind them.";
+
+const LEDE =
+  'When your project outgrows templates and plugins, MAPL TECH steps in. We give agencies the systems, automation and infrastructure that turn ambitious projects into production-ready reality — 25+ years of combined engineering experience across Toronto, Lagos and Kingston, without hiring a full engineering department.';
+
+const OVERLAP = {
+  heading: 'Awake in your timezone.',
+  body:
+    'Toronto, Lagos and Kingston working windows plotted against your local day. Every office keeps 09:00–18:00 local hours, Monday to Friday; the teal band is the part of your day with at least one MAPL TECH office open.',
+  footnote: 'Lagos is 5 hours ahead of Toronto in summer and 6 in winter; Kingston sits within an hour of Toronto all year.',
+};
+
+const CTA_BAND = {
+  heading: 'Ready to stop duct-taping your tech stack?',
+  body: "Let's talk about what your agency actually needs — and build it right.",
+};
+
 export default function AboutPage() {
-  const values = [
+  const webTimeline = getService('web-development').typicalTimeline;
+
+  const facts: HeroFact[] = [
+    { term: 'Offices', detail: 'Toronto (HQ) · Lagos · Kingston' },
     {
-      icon: <HiUserGroup size={22} />,
-      title: 'Embedded Partnership',
-      description:
-        'We join your Slack, attend your standups, and use your tools. Your team should forget we\'re external.',
+      term: 'Team',
+      detail: `${executives.length} co-founders · ${teamMembers.length} named engineers, strategists and operators`,
     },
-    {
-      icon: <HiChatBubbleLeftRight size={22} />,
-      title: 'Radical Transparency',
-      description:
-        'No jargon, no ghosting. Weekly updates, documented decisions, and clean handoffs your team can act on immediately.',
-    },
-    {
-      icon: <HiCodeBracket size={22} />,
-      title: 'Code That Lasts',
-      description:
-        'We write code your developers can read, extend, and maintain - not clever hacks that fall apart when we leave.',
-    },
-    {
-      icon: <HiShieldCheck size={22} />,
-      title: 'Post-Launch Commitment',
-      description:
-        'We don\'t ghost after deployment. Retainer models keep your systems secure, optimized, and evolving alongside your agency.',
-    },
-    {
-      icon: <HiCog6Tooth size={22} />,
-      title: 'Systems-First Thinking',
-      description:
-        'Every component we build considers your existing stack, your team\'s capabilities, and where your agency is headed.',
-    },
-    {
-      icon: <HiCog6Tooth size={22} />,
-      title: 'Built to Scale',
-      description:
-        'Whether you\'re serving 10 clients or 100, our architecture decisions ensure your systems grow without breaking.',
-    },
+    { term: 'Experience', detail: '25+ years combined' },
+    { term: 'Starting price', detail: `From ${lowestStartingPrice()} (USD)` },
+    ...(webTimeline ? [{ term: 'Typical timeline', detail: `${webTimeline} (web builds)` }] : []),
+    { term: 'Last reviewed', detail: <ReviewedOn path="/about-us" /> },
   ];
 
   return (
-    <>
-      {/* Hero */}
-      <section className={styles.hero}>
-        <div className={styles.heroInner}>
-          <BlurReveal>
-            <span className={styles.heroLabel}>About Us</span>
-          </BlurReveal>
-          <BlurReveal delay={0.1}>
-            <h1 className={styles.heroTitle}>
-              We&apos;re Not Another Agency. We&apos;re the Team Behind Them.
-            </h1>
-          </BlurReveal>
-          <BlurReveal delay={0.2}>
-            <p className={styles.heroSubtitle}>
-              When your project outgrows templates and plugins, MAPL TECH steps in.
-              We handle the systems, automation, and infrastructure that turn ambitious
-              agency projects into production-ready reality.
-            </p>
-          </BlurReveal>
-        </div>
-      </section>
+    <div className={styles.page}>
+      <JsonLd
+        data={[
+          aboutPage({ name: 'About Us', description: DESCRIPTION }),
+          breadcrumb([{ name: 'About Us', path: '/about-us' }]),
+          howTo(
+            HOW_WE_WORK_STEPS.map((step) => ({ name: step.name, text: step.text })),
+            { name: HOW_WE_WORK_NAME, path: '/about-us' },
+          ),
+          ...executives.map(person),
+        ]}
+      />
 
-      {/* Who We Are */}
-      <section className={`${styles.section} ${styles.navy}`}>
-        <div className={styles.sectionInner}>
-          <div className={styles.contentGrid}>
-            <BlurReveal>
-              <div className={styles.textContent}>
-                <SectionHeading
-                  label="Who We Are"
-                  title="Your Engineering Team - Without the Overhead"
-                  align="left"
-                />
-                <p>
-                  MAPL TECH exists because agencies shouldn&apos;t need to hire a full
-                  engineering department to take on complex projects. We give you the
-                  technical muscle on demand.
-                </p>
-                <p>
-                  Headquartered in Toronto and Ottawa, Canada, with branches in Nigeria
-                  and Jamaica - we bring 25+ years of combined experience across systems
-                  architecture, automation, web development, and AI to agencies worldwide.
-                </p>
-                <p>
-                  We don&apos;t compete with you. We amplify you. When your clients need
-                  custom development, complex integrations, or intelligent automation,
-                  we&apos;re the team that makes it ship.
-                </p>
-              </div>
-            </BlurReveal>
-            <BlurReveal delay={0.15}>
-              <div className={styles.imageBlock}>
-                <Image
-                  src="/images/homepage-approach.jpg"
-                  alt="Diverse tech professionals collaborating at a laptop"
-                  width={600}
-                  height={400}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-            </BlurReveal>
-          </div>
-        </div>
-      </section>
+      <HeroBlock eyebrow="About MAPL TECH" title={H1} lede={LEDE} facts={facts} placementPrefix="about" />
 
-      {/* Our Approach */}
-      <section className={`${styles.section} ${styles.dark}`}>
-        <div className={styles.sectionInner}>
-          <div className={styles.contentGrid}>
-            <BlurReveal>
-              <div className={styles.imageBlock}>
-                <Image
-                  src="/images/about-partnership.jpg"
-                  alt="Diverse team collaborating around a laptop in an office"
-                  width={600}
-                  height={400}
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }}
-                />
-              </div>
-            </BlurReveal>
-            <BlurReveal delay={0.15}>
-              <div className={styles.textContent}>
-                <SectionHeading
-                  label="Our Approach"
-                  title="Partnership, Not Outsourcing"
-                  align="left"
-                />
-                <p>
-                  We don&apos;t operate like a vendor behind a ticket queue. We integrate
-                  directly into your workflow - using your tools, joining your meetings,
-                  communicating the way your team prefers.
-                </p>
-                <p>
-                  Clear communication. Clean implementation. Maintainable systems. The
-                  best technical solutions are the ones your own team can understand,
-                  extend, and own long after the initial build.
-                </p>
-                <p>
-                  Single project or long-term partnership - every engagement gets the
-                  same engineering rigor and attention.
-                </p>
-              </div>
-            </BlurReveal>
-          </div>
-        </div>
-      </section>
+      <FounderStory />
 
-      {/* Why Agencies Choose Us */}
-      <section className={`${styles.section} ${styles.navy}`}>
+      <HowWeWork />
+
+      {/* PEAK */}
+      <OverlapSection
+        id="overlap"
+        eyebrow="04 · Timezone overlap"
+        heading={OVERLAP.heading}
+        body={OVERLAP.body}
+        footnote={OVERLAP.footnote}
+      />
+
+      <ValuesEditorial />
+
+      {/* Team preview: the two executives from team.ts */}
+      <section id="leadership" className={`${styles.section} reveal`} aria-labelledby="leadership-title">
         <div className={styles.sectionInner}>
-          <SectionHeading
-            label="Our Values"
-            title="What We Stand For"
-            subtitle="The principles behind every line of code we ship."
+          <SectionHead
+            eyebrow="06 · Leadership"
+            title="Led by named people, not a bench"
+            id="leadership-title"
+            action={
+              <Link href="/team" className={styles.inlineLink} data-cta-placement="about_team_link">
+                Meet the whole team <Arrow />
+              </Link>
+            }
           />
-          <div className={styles.cardsGrid}>
-            {values.map((value, i) => (
-              <BlurReveal key={value.title} delay={i * 0.08}>
-                <SpotlightCard className={styles.card}>
-                  <div className={styles.cardIcon}>{value.icon}</div>
-                  <h3 className={styles.cardTitle}>{value.title}</h3>
-                  <p className={styles.cardDescription}>{value.description}</p>
-                </SpotlightCard>
-              </BlurReveal>
+          <div className={styles.execGrid}>
+            {executives.map((exec) => (
+              <ExecutiveCard key={exec.name} exec={exec} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className={styles.cta}>
-        <div className={styles.ctaInner}>
-          <div className={styles.ctaContent}>
-            <BlurReveal>
-              <h2>Ready to Stop Duct-Taping Your Tech Stack?</h2>
-              <p>
-                Let&apos;s talk about what your agency actually needs - and build it right.
-              </p>
-              <div style={{ marginTop: '1.5rem' }}>
-                <MagneticButton href="/contact-us" size="large">
-                  Start the Conversation <HiArrowRight />
-                </MagneticButton>
-              </div>
-            </BlurReveal>
+      {/* CTA band */}
+      <section className={`${styles.ctaBand} reveal`} aria-labelledby="cta-title">
+        <div className={`${styles.sectionInner} ${styles.ctaBandInner}`}>
+          <div>
+            <h2 id="cta-title" className={styles.ctaBandTitle}>
+              {CTA_BAND.heading}
+            </h2>
+            <p className={styles.ctaBandBody}>{CTA_BAND.body}</p>
+          </div>
+          <div className={styles.ctaBandActions}>
+            <Cta placement="about_band_primary" href="/pricing#estimator" size="large">
+              Get a 60-second estimate
+            </Cta>
+            <Cta placement="about_band_secondary" href="/contact-us" variant="secondary" size="large">
+              Book a 20-min scoping call
+            </Cta>
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

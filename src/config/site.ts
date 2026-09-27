@@ -303,6 +303,7 @@ export const testimonials = [
 export const portfolioProjects = [
   {
     title: 'Loop',
+    slug: 'loop',
     category: 'Web Development',
     description: 'A high-performance, custom-coded web platform engineered for speed, scale, and clean maintainability - built without the constraints of page builders or plugin stacks.',
     tags: ['Web Development', 'Custom Development', 'Performance'],
@@ -310,6 +311,7 @@ export const portfolioProjects = [
   },
   {
     title: 'LRO Staffing',
+    slug: 'lro-staffing',
     category: 'Custom Internal Tools',
     description: 'Interactive salary guide tool with dynamic filtering, real-time data visualization, and role-based salary benchmarking for recruiters and hiring managers.',
     tags: ['Interactive Tool', 'Data Visualization', 'Custom Development'],
@@ -318,6 +320,7 @@ export const portfolioProjects = [
   },
   {
     title: 'MAPL Tours',
+    slug: 'mapl-tours',
     category: 'Automation and AI Workflows',
     description: 'Our own product: a travel and tourism company fully managed by AI - from trip planning and booking to customer communication and itinerary generation. Built and operated in-house by MAPL Labs.',
     tags: ['MAPL Labs', 'AI', 'Automation'],
@@ -326,6 +329,7 @@ export const portfolioProjects = [
   },
   {
     title: 'Akuma Patterson Holdings',
+    slug: 'akuma-patterson-holdings',
     category: 'Automation and AI Workflows',
     description: 'Automated the entire client lifecycle - from CRM lead capture to invoicing and project hand-off - eliminating manual data entry.',
     tags: ['Automation', 'CRM', 'AI Workflows'],
@@ -334,6 +338,7 @@ export const portfolioProjects = [
   },
   {
     title: 'FOCAS Canada',
+    slug: 'focas-canada',
     category: 'Web Development',
     description: 'Event-driven web platform with member portal, registration workflows, and community engagement tools.',
     tags: ['WordPress', 'Member Portal', 'Events'],
@@ -342,6 +347,7 @@ export const portfolioProjects = [
   },
   {
     title: 'Crowned Spice',
+    slug: 'crowned-spice',
     category: 'Automation and AI Workflows',
     description: 'End-to-end e-commerce automation - inventory syncing, shipping triggers, and post-purchase communication flows.',
     tags: ['E-commerce', 'Automation', 'Inventory'],
@@ -349,6 +355,7 @@ export const portfolioProjects = [
   },
   {
     title: 'Crowngate Business',
+    slug: 'crowngate-business',
     category: 'Web Development',
     description: 'Corporate business platform with service showcase, client onboarding workflows, and professional brand presence.',
     tags: ['Corporate', 'Custom Development', 'Branding'],
@@ -357,6 +364,7 @@ export const portfolioProjects = [
   },
   {
     title: 'Tricia Walters',
+    slug: 'tricia-walters',
     category: 'Web Development',
     description: 'Personal brand site with CMS-powered content, integrated booking system, and optimized page speed.',
     tags: ['Portfolio', 'CMS', 'Booking'],
@@ -365,6 +373,7 @@ export const portfolioProjects = [
   },
   {
     title: 'UNSVCC',
+    slug: 'unsvcc',
     category: 'Web Development',
     description: 'Internal operations dashboard with real-time organizational metrics, role-based access, and automated reporting.',
     tags: ['Dashboard', 'Analytics', 'Reporting'],
@@ -373,6 +382,7 @@ export const portfolioProjects = [
   },
   {
     title: 'CHHA-NCR',
+    slug: 'chha-ncr',
     category: 'Web Development',
     description: 'Full relaunch for the Canadian Hard of Hearing Association\'s National Capital Region branch - a journey-based information architecture, a searchable hearing-clinic directory, and WCAG accessibility built into every page, all on a CMS volunteers can maintain themselves.',
     tags: ['Non-Profit', 'Accessibility', 'Web Development'],
@@ -386,6 +396,7 @@ export const portfolioProjects = [
 export const labsProjects = [
   {
     name: 'MAPL Tours',
+    slug: 'mapl-tours',
     status: 'Live',
     tagline: 'A travel company run end-to-end by AI',
     description:
@@ -401,6 +412,7 @@ export const labsProjects = [
   },
   {
     name: 'Labsci',
+    slug: 'labsci',
     status: 'Coming Soon',
     tagline: 'An in-house R&D initiative in active development',
     description:
@@ -467,5 +479,47 @@ export const careers = [
     location: 'Kingston / Montego Bay',
     country: 'Jamaica',
     description: 'Own client relationships for our Jamaica branch - onboarding, ongoing support, and ensuring project success across the Caribbean.',
+  },
+];
+
+// Case-study depth for /our-work/[slug]. Only facts MAPL TECH can stand behind:
+// each entry is sourced from delivered work and the August 2026 independent
+// audit of the live site. No metrics are invented; where a number is not
+// verifiable it is described qualitatively. Add entries as write-ups are approved.
+export interface CaseStudy {
+  slug: string;
+  client: string;
+  industry: string;
+  services: string[];
+  stack: string[];
+  delivered: string;
+  challenge: string;
+  solution: string[];
+  results: string[];
+  sourceNote: string;
+}
+
+export const caseStudies: CaseStudy[] = [
+  {
+    slug: 'chha-ncr',
+    client: 'CHHA-NCR (Canadian Hard of Hearing Association, National Capital Region)',
+    industry: 'Non-profit / accessibility',
+    services: ['Web Development', 'Accessibility', 'CMS'],
+    stack: ['WordPress', 'Elementor (Hello theme)', 'Rank Math SEO', 'LiteSpeed Cache', 'CanadaHelps donations'],
+    delivered: 'Relaunched July 2026',
+    challenge:
+      'A volunteer-run charity serving people with hearing loss, most of them 55 and over, needed a site that non-technical volunteers could maintain and that visitors could actually read and navigate, without hiding information behind clicks or motion.',
+    solution: [
+      'A five-stage visitor journey as the information architecture: Noticing, Finding Out, Choosing, Living with it, Giving back, each stage a plain-language page with a forward path.',
+      'Accessibility engineered in, not bolted on: skip links, real landmarks, complete alt text, visible focus states, reduced-motion support, and an in-house accessibility panel for text size, motion and link underlining.',
+      'A directory of local hearing clinics with addresses, tap-to-call numbers and map links, plus an Accessible Ottawa guide to venues with hearing loops.',
+      'Volunteer self-service editing on WordPress with performance caching and structured data (Organization, WebSite, WebPage) so the branch stays independent of an agency.',
+    ],
+    results: [
+      'Every audited colour pair meets WCAG AA; an independent August 2026 audit rated the accessibility engineering above what most agencies ship.',
+      'Governance transparency the audit called rare at this size: full board bios and published AGM reports.',
+      'The journey-stage architecture was noted as ahead of the US national counterpart site.',
+    ],
+    sourceNote: 'Independent four-track audit of the live site, August 2026 (content, design and accessibility, technical/SEO, peer landscape).',
   },
 ];

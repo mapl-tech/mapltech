@@ -3,6 +3,8 @@
 // Keyframes, reveal utilities and view-timeline rules. Emitted once, unlayered,
 // ahead of the rules below.
 @use 'motion';
+// View Transitions: page boundary classes, anchored header, reduced-motion zeroing.
+@use 'transitions';
 
 // Fonts (DM Sans, Instrument Serif, JetBrains Mono) are loaded via next/font in
 // src/app/layout.tsx; their CSS variables live on <html>.

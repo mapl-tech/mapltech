@@ -1,0 +1,455 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+$ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+// ---------------------------------------------------------------------------
+// Base = stacked layout (phones, reduced motion, and the SSR first paint below md).
+// The pinned layout is layered on under md + motion-ok.
+// ---------------------------------------------------------------------------
+
+.root {
+  position: relative;
+  padding: $space-section 0;
+  scroll-margin-top: 96px;
+  --lead: 20rem;
+  --frame-gap: #{$space-40};
+
+  @include lg {
+    --lead: 24rem;
+    --frame-gap: #{$space-64};
+  }
+}
+
+.frame {
+  @include container;
+  padding-left: var(--home-gutter, #{$container-padding});
+  position: relative;
+  display: grid;
+  gap: $space-32;
+}
+
+.lead {
+  min-width: 0;
+}
+
+.eyebrowIndex {
+  color: $color-red-bright;
+}
+
+.heading {
+  margin: $space-12 0 $space-32;
+}
+
+.steps {
+  display: grid;
+  gap: $space-16;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  @include surface(1);
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: $space-8 $space-16;
+  padding: $space-24;
+}
+
+.stepIndex {
+  @include mono-label($color-red-bright);
+  padding-top: 0.45rem;
+}
+
+.stepBody {
+  min-width: 0;
+}
+
+.stepTitle {
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
+  margin-bottom: $space-8;
+  color: $color-fg;
+  transition: color $transition-base;
+}
+
+.stepText {
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-body;
+  max-width: 44ch;
+  transition: color $transition-base;
+}
+
+.panel {
+  grid-column: 1 / -1;
+  margin: $space-16 0 0;
+}
+
+.panelInner {
+  @include surface(2);
+  display: grid;
+  align-content: center;
+  gap: $space-24;
+  padding: $space-24;
+}
+
+.caption {
+  @include mono-label($color-fg-dim);
+  display: flex;
+  gap: $space-8;
+  margin-top: $space-12;
+}
+
+.captionIndex {
+  color: $color-red-bright;
+}
+
+.rail {
+  display: none;
+}
+
+// ---- Diagram vocabulary (mono labels, hairlines, red draws) ----
+
+.draw {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 700ms $ease 150ms;
+}
+
+.nodeKey {
+  @include mono-label($color-red-bright);
+}
+
+.nodeLabel {
+  display: block;
+  font-family: $font-display;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  color: $color-fg;
+}
+
+.nodeSub {
+  display: block;
+  font-family: $font-mono;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: $letter-spacing-wide;
+  color: $color-fg-muted;
+}
+
+// Scope: call -> brief -> fixed range
+.flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: $space-12;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    flex-direction: column;
+  }
+}
+
+.flowNode {
+  display: grid;
+  gap: 4px;
+  flex: 1 1 8rem;
+  min-width: 0;
+  padding: $space-16;
+  border: $border-hairline;
+  border-radius: $radius-md;
+  background: $color-surface-3;
+}
+
+.flowNodeOut {
+  border-color: rgba($color-red, 0.55);
+}
+
+.flowArrow {
+  flex: 0 0 auto;
+  align-self: center;
+  width: 40px;
+  height: 40px;
+  color: $color-red;
+}
+
+.arrowV {
+  display: none;
+}
+
+@media (max-width: #{$breakpoint-sm - 1px}) {
+  .arrowH {
+    display: none;
+  }
+
+  .arrowV {
+    display: block;
+  }
+}
+
+// Build: your PM + our engineers, weekly demo
+.build {
+  display: grid;
+  gap: $space-24;
+}
+
+.buildSides {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: $space-12;
+  align-items: start;
+}
+
+.side {
+  display: grid;
+  gap: $space-8;
+  min-width: 0;
+}
+
+.sideLabel {
+  @include mono-label($color-fg-dim);
+}
+
+.box {
+  padding: $space-12 $space-16;
+  border: $border-hairline;
+  border-radius: $radius-md;
+  background: $color-surface-3;
+  font-family: $font-display;
+  font-size: 1.125rem;
+  line-height: 1.2;
+  color: $color-fg;
+}
+
+.boxAccent {
+  border-color: rgba($color-red, 0.55);
+}
+
+.boxMuted {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+}
+
+.bridge {
+  width: 48px;
+  height: auto;
+  align-self: center;
+  color: $color-red;
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    gap: 4px;
+    padding: $space-8 $space-4;
+    border: $border-hairline;
+    border-radius: $radius-sm;
+    text-align: center;
+    @include mono-label($color-fg-dim);
+    font-size: 0.6875rem;
+
+    &[data-demo='true'] {
+      border-color: $color-red;
+      color: $color-fg;
+
+      span {
+        color: $color-red-bright;
+      }
+    }
+  }
+}
+
+// Hand-off: docs, training, support bar
+.handoff {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    gap: $space-12;
+    align-items: start;
+    padding: $space-16 0;
+    border-top: $border-hairline;
+
+    &:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+  }
+}
+
+.check {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  color: $color-red;
+}
+
+.supportBar {
+  position: relative;
+  height: 6px;
+  margin-top: $space-12;
+  border-radius: 3px;
+  background: rgba($color-fg, 0.08);
+  overflow: hidden;
+}
+
+.supportFill {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: $color-red;
+  transform-origin: left center;
+  scale: 1 1;
+  transition: scale 900ms $ease 200ms;
+}
+
+.supportTick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: $color-ground;
+}
+
+// ---------------------------------------------------------------------------
+// Pinned layout: md and up, motion allowed.
+// ---------------------------------------------------------------------------
+@include md {
+  @include motion-ok {
+    .root {
+      height: 300vh;
+      padding: 0;
+    }
+
+    // No transform on this element: it is the sticky container.
+    .stage {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      display: grid;
+      align-content: center;
+      padding: clamp(88px, 12svh, 128px) 0 $space-64;
+    }
+
+    .frame {
+      grid-template-columns: var(--lead) minmax(0, 1fr);
+      column-gap: var(--frame-gap);
+      align-items: center;
+    }
+
+    .lead {
+      grid-column: 1;
+    }
+
+    .steps {
+      gap: 0;
+    }
+
+    .step {
+      background: none;
+      border: 0;
+      border-left: 2px solid $color-hairline-strong;
+      border-radius: 0;
+      grid-template-columns: 2rem minmax(0, 1fr);
+      gap: $space-12;
+      padding: $space-16 0 $space-16 $space-24;
+      transition: border-color $transition-base;
+
+      &[data-active='true'] {
+        border-left-color: $color-red;
+      }
+
+      &[data-active='false'] {
+        .stepIndex {
+          color: $color-fg-dim;
+        }
+
+        .stepTitle,
+        .stepText {
+          color: $color-fg-muted;
+        }
+      }
+    }
+
+    // Diagrams leave the step and sit in the right column, one visible at a time.
+    .panel {
+      position: absolute;
+      left: calc(var(--home-gutter, #{$container-padding}) + var(--lead) + var(--frame-gap));
+      right: $container-padding;
+      top: 50%;
+      margin: 0;
+      translate: 0 calc(-50% + 16px);
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 480ms $ease,
+        translate 480ms $ease,
+        visibility 0s linear 480ms;
+    }
+
+    .step[data-active='true'] .panel {
+      opacity: 1;
+      visibility: visible;
+      translate: 0 -50%;
+      transition-delay: 0s;
+    }
+
+    .panelInner {
+      min-height: 300px;
+    }
+
+    // Lines and the support bar draw in as their panel becomes active.
+    .step[data-active='false'] .draw {
+      stroke-dashoffset: 1;
+      transition-delay: 0s;
+    }
+
+    .step[data-active='false'] .supportFill {
+      scale: 0 1;
+      transition-delay: 0s;
+    }
+
+    // Progress rail under the panel column.
+    .rail {
+      display: block;
+      position: absolute;
+      left: calc(var(--home-gutter, #{$container-padding}) + var(--lead) + var(--frame-gap));
+      right: $container-padding;
+      bottom: calc(-1 * #{$space-32});
+      height: 2px;
+      background: $color-hairline-strong;
+    }
+
+    .railFill {
+      position: absolute;
+      inset: 0;
+      background: $color-red;
+      transform-origin: left center;
+    }
+
+    .railTick {
+      position: absolute;
+      top: -4px;
+      width: 2px;
+      height: 10px;
+      background: $color-fg-dim;
+    }
+  }
+}

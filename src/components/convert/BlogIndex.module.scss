@@ -1,0 +1,233 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.index {
+  display: grid;
+  gap: $space-24;
+}
+
+.filters {
+  display: grid;
+  gap: $space-12;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: $space-4;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    > li {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+    }
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  min-height: 44px;
+  padding: 0.625rem 1rem;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-pill;
+  color: $color-fg;
+  font-size: $font-size-sm;
+  line-height: 1.2;
+  white-space: nowrap;
+  touch-action: manipulation;
+  transition: border-color $transition-fast, background-color $transition-fast;
+
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-red, 0.6);
+    }
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+
+  &[aria-current='true'] {
+    border-color: $color-red;
+    background: rgba($color-red, 0.1);
+  }
+}
+
+.count {
+  @include mono-label($color-fg-muted);
+  letter-spacing: 0.04em;
+}
+
+.showing {
+  @include mono-label($color-fg-muted);
+  margin: 0;
+}
+
+// ---- Rows ---------------------------------------------------------------------
+.rows {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: $border-hairline-strong;
+}
+
+.row {
+  position: relative;
+  display: grid;
+  gap: $space-8 $space-32;
+  min-height: 64px;
+  padding: $space-24 0;
+  border-bottom: $border-hairline;
+  color: $color-fg;
+  -webkit-tap-highlight-color: transparent;
+
+  @include md {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  // Desktop hover: title underline + a 1px red rule drawing across the top.
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: $color-red;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @include pointer-fine-motion {
+    &:hover::before {
+      transform: scaleX(1);
+    }
+  }
+
+  @include pointer-fine {
+    &:hover .rowTitle {
+      text-decoration-color: currentColor;
+    }
+  }
+
+  &:active .rowTitle {
+    color: $color-red-pressed;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 2px;
+  }
+}
+
+.rowMain {
+  display: grid;
+  gap: $space-8;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+  line-height: $line-height-snug;
+  letter-spacing: $letter-spacing-display;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color $transition-fast, color $transition-fast;
+  text-wrap: balance;
+}
+
+.rowAnswer {
+  color: $color-fg-muted;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  max-width: 70ch;
+}
+
+.rowMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4 $space-12;
+  align-items: baseline;
+
+  @include md {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-8;
+    padding-top: 0.35em;
+  }
+}
+
+.rowCategory {
+  @include mono-label($color-fg);
+}
+
+.rowByline {
+  @include mono-label($color-fg-muted);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.empty {
+  margin: 0;
+  color: $color-fg-muted;
+}
+
+.more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-16;
+  margin: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.empty[hidden],
+.rows > li[hidden] {
+  display: none;
+}
+
+.moreLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 $space-24;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-pill;
+  color: $color-fg;
+  font-weight: $font-weight-semibold;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-red, 0.6);
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+}

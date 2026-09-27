@@ -1,200 +1,159 @@
-'use client';
-
-import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  FaInstagram,
-  FaXTwitter,
-  FaFacebookF,
-  FaLinkedinIn,
-  FaTiktok,
-} from 'react-icons/fa6';
-import { HiEnvelope, HiPhone, HiMapPin } from 'react-icons/hi2';
 import { siteConfig } from '@/config/site';
+import { LiveClocks } from '@/components/ui/TimezoneOverlap';
+import MagneticButton from '@/components/ui/MagneticButton';
+import NewsletterForm from './NewsletterForm';
+import SocialLinks from './SocialLinks';
+import {
+  CALL_HREF,
+  CALL_LABEL,
+  ESTIMATE_HREF,
+  ESTIMATE_LABEL,
+  FOOTER_JOIN,
+  FOOTER_START,
+  OFFICE_LINKS,
+  sentenceCase,
+  telHref,
+} from './chrome';
 import styles from './Footer.module.scss';
 
-const socialIcons: Record<string, React.ComponentType<{ size?: number }>> = {
-  instagram: FaInstagram,
-  x: FaXTwitter,
-  facebook: FaFacebookF,
-  linkedin: FaLinkedinIn,
-  tiktok: FaTiktok,
-};
-
+/**
+ * Destination footer (brief: "Footer CTA / contacts / clocks / Where we work /
+ * legal"). Server Component: the only client islands are the three live
+ * clocks (interaction #10), the newsletter form and the social icons.
+ *
+ * Brand block (tagline, description, clocks) → intent columns "Start a
+ * project" / "Join the team" / "Say hello" → newsletter → bottom bar.
+ * One step darker than the page ground; on phones the bottom padding clears
+ * the sticky action bar.
+ */
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-
-  const handleNewsletterSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setNewsletterStatus('sending');
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const email = formData.get('email') as string;
-
-    try {
-      const res = await fetch('/api/newsletter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to subscribe.');
-      }
-
-      setNewsletterStatus('success');
-      form.reset();
-    } catch {
-      setNewsletterStatus('error');
-    }
-  };
+  const year = new Date().getFullYear();
 
   return (
-    <footer className={styles.footer} role="contentinfo">
+    <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.grid}>
-          {/* Brand column */}
+          {/* Brand */}
           <div className={styles.brand}>
-            <div className={styles.logo}>
-              <Image src="/images/mapl-tech-logo.svg" alt="MAPL TECH" width={160} height={35} sizes="160px" />
-            </div>
-            <p className={styles.description}>
-              The engineering backbone behind agencies that refuse to cut corners
-              on technology. Headquartered in Canada with branches in Nigeria and Jamaica.
-            </p>
-            <div className={styles.socialLinks}>
-              {Object.entries(siteConfig.social).map(([key, url]) => {
-                const Icon = socialIcons[key];
-                return (
-                  <a
-                    key={key}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Follow MAPL TECH on ${key}`}
-                  >
-                    <Icon size={16} />
-                  </a>
-                );
-              })}
+            <Link href="/" className={styles.logo} aria-label="MAPL TECH home">
+              <Image src="/images/mapl-tech-logo.svg" alt="MAPL TECH" width={150} height={33} sizes="150px" />
+            </Link>
+            <p className={styles.tagline}>{sentenceCase(siteConfig.tagline)}.</p>
+            <p className={styles.description}>{siteConfig.description}</p>
+            <div className={styles.clocksBlock}>
+              <p className={styles.clocksLabel}>Office hours 09:00–18:00 local, Monday to Friday. Teal dot = open now.</p>
+              <LiveClocks className={styles.clocks} />
             </div>
           </div>
 
-          {/* Services column */}
-          <div className={styles.column}>
-            <h2>Services</h2>
-            <ul>
-              <li>
-                <Link href="/services/web-development">Web Development</Link>
-              </li>
-              <li>
-                <Link href="/services/automation-ai-workflow-setup">
-                  Automation & AI
-                </Link>
-              </li>
-              <li>
-                <Link href="/services/custom-internal-tools">
-                  Custom Internal Tools
-                </Link>
-              </li>
-              <li>
-                <Link href="/pricing">Pricing</Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company column */}
-          <div className={styles.column}>
-            <h2>Company</h2>
-            <ul>
-              <li><Link href="/about-us">About Us</Link></li>
-              <li><Link href="/team">Team</Link></li>
-              <li><Link href="/our-work">Our Work</Link></li>
-              <li><Link href="/careers">Careers</Link></li>
-              <li><Link href="/contact-us">Contact</Link></li>
-              <li><Link href="/referral">Referral Program</Link></li>
-              <li><Link href="/blog" aria-label="MAPL TECH Blog - weekly tech insights">Blog</Link></li>
-              <li><Link href="/nigeria" aria-label="MAPL TECH Nigeria">Nigeria</Link></li>
-              <li><Link href="/jamaica" aria-label="MAPL TECH Jamaica">Jamaica</Link></li>
-            </ul>
-          </div>
-
-          {/* Contact column */}
-          <div className={styles.column}>
-            <h2>Contact</h2>
-            <div className={styles.contactInfo}>
-              <div className={styles.contactItem}>
-                <HiEnvelope size={16} aria-hidden="true" />
-                <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
-              </div>
-              <div className={styles.contactItem}>
-                <HiPhone size={16} aria-hidden="true" />
-                <a href={`tel:${siteConfig.phone}`}>
-                  {siteConfig.phone}
-                </a>
-              </div>
+          {/* Start a project */}
+          <nav className={styles.column} aria-labelledby="footer-start">
+            <h2 id="footer-start" className={styles.heading}>
+              Start a project
+            </h2>
+            <div className={styles.columnCta} data-cta-placement="footer_estimate">
+              <MagneticButton href={ESTIMATE_HREF} size="small" placement="footer_estimate" className={styles.btn}>
+                {ESTIMATE_LABEL}
+              </MagneticButton>
             </div>
-
-            {/* Where we operate - headquarters + regional branches.
-                Worded as HQ/branch (not "office") to match what siteConfig evidences. */}
-            <div className={styles.offices}>
-              {[
-                { place: 'Canada', role: 'Headquarters', href: '/about-us' },
-                { place: 'Nigeria', role: 'Regional Branch', href: '/nigeria' },
-                { place: 'Jamaica', role: 'Regional Branch', href: '/jamaica' },
-              ].map((loc) => (
-                <Link key={loc.place} href={loc.href} className={styles.office}>
-                  <HiMapPin size={14} aria-hidden="true" />
-                  <span>
-                    <strong>{loc.place}</strong>
-                    <em>{loc.role}</em>
-                  </span>
-                </Link>
+            <ul className={styles.links}>
+              {FOOTER_START.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href}>{link.label}</Link>
+                </li>
               ))}
+            </ul>
+          </nav>
+
+          {/* Join the team */}
+          <nav className={styles.column} aria-labelledby="footer-join">
+            <h2 id="footer-join" className={styles.heading}>
+              Join the team
+            </h2>
+            <ul className={styles.links}>
+              {FOOTER_JOIN.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href}>{link.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Say hello */}
+          <div className={styles.column}>
+            <h2 id="footer-hello" className={styles.heading}>
+              Say hello
+            </h2>
+            <dl className={styles.contact}>
+              <div>
+                <dt>Email</dt>
+                <dd>
+                  <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+                </dd>
+              </div>
+              <div>
+                <dt>Phone</dt>
+                <dd>
+                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>
+                </dd>
+              </div>
+            </dl>
+            <div className={styles.columnCta} data-cta-placement="footer_call">
+              <MagneticButton
+                href={CALL_HREF}
+                variant="secondary"
+                size="small"
+                placement="footer_call"
+                className={styles.btn}
+              >
+                {CALL_LABEL}
+              </MagneticButton>
             </div>
+            <SocialLinks links={siteConfig.social} className={styles.social} />
+            <h3 id="footer-where" className={styles.subheading}>
+              Where we work
+            </h3>
+            <nav aria-labelledby="footer-where">
+              <ul className={styles.links}>
+                {OFFICE_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href}>{link.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
         </div>
 
-        {/* Newsletter */}
-        <div className={styles.newsletter}>
-          <div className={styles.newsletterInner}>
-            <div className={styles.newsletterText}>
-              <h3>Stay in the Loop</h3>
-              <p>Engineering insights, automation tips, and agency infrastructure updates.</p>
-            </div>
-            {newsletterStatus === 'success' ? (
-              <p className={styles.newsletterSuccess}>Thanks for subscribing!</p>
-            ) : (
-              <form
-                className={styles.newsletterForm}
-                onSubmit={handleNewsletterSubmit}
-                aria-label="Newsletter signup"
-              >
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  aria-label="Email address for newsletter"
-                  required
-                />
-                <button type="submit" disabled={newsletterStatus === 'sending'}>
-                  {newsletterStatus === 'sending' ? 'Subscribing...' : newsletterStatus === 'error' ? 'Try Again' : 'Subscribe'}
-                </button>
-              </form>
-            )}
+        {/* Newsletter (existing /api/newsletter) */}
+        <section className={styles.newsletter} aria-labelledby="footer-newsletter">
+          <div className={styles.newsletterText}>
+            <h2 id="footer-newsletter" className={styles.newsletterHeading}>
+              Stay in the loop
+            </h2>
+            <p>Engineering insights, automation tips, and agency infrastructure updates.</p>
           </div>
-        </div>
+          <NewsletterForm />
+        </section>
 
         {/* Bottom bar */}
         <div className={styles.bottom}>
-          <p>&copy; {currentYear} MAPL TECH. All rights reserved.</p>
-          <div className={styles.bottomLinks}>
-            <Link href="/privacy">Privacy Policy</Link>
-            <Link href="/terms">Terms of Use</Link>
-          </div>
+          <p className={styles.copyright}>
+            © {year} MAPL TECH · Toronto · Lagos · Kingston
+          </p>
+          <ul className={styles.bottomLinks} aria-label="Legal">
+            <li>
+              <Link href="/privacy">Privacy</Link>
+            </li>
+            <li>
+              <Link href="/terms">Terms</Link>
+            </li>
+            <li>
+              <Link href="/blog">Blog</Link>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

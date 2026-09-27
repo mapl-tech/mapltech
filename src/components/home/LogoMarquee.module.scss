@@ -1,0 +1,124 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.root {
+  padding: $space-24 0 $space-40;
+  border-bottom: $border-hairline;
+}
+
+.inner {
+  @include container;
+  padding-left: var(--home-gutter, #{$container-padding});
+}
+
+.label {
+  margin-bottom: $space-16;
+  color: $color-fg-dim;
+}
+
+.viewport {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+// Spacing lives on each item (not flex gap) so -50% is exactly one loop.
+.track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include motion-ok {
+    animation: marquee 36s linear infinite;
+  }
+}
+
+.viewport:hover .track,
+.viewport:focus-within .track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.item {
+  flex: 0 0 auto;
+  padding-inline: clamp(1rem, 2.2vw, 1.875rem);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-8;
+  min-height: 44px;
+  padding: 0 $space-4;
+  border-radius: $radius-sm;
+  color: $color-fg-muted;
+
+  &:hover .logo,
+  &:focus-visible .logo {
+    opacity: 1;
+  }
+
+  &:hover .wordmark,
+  &:focus-visible .wordmark {
+    color: $color-fg;
+  }
+}
+
+.logo {
+  display: block;
+  width: auto;
+  opacity: 0.72;
+  transition: opacity $transition-fast;
+}
+
+.wordmark {
+  font-family: $font-mono;
+  font-size: $font-size-sm;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+  color: $color-fg-muted;
+  transition: color $transition-fast;
+}
+
+.note {
+  @include mono-label($color-fg-dim);
+  font-size: 0.625rem;
+  padding: 3px 8px;
+  border: $border-hairline;
+  border-radius: $radius-pill;
+}
+
+// Static wrapped row: reduced motion or save-data. The aria-hidden loop copy disappears.
+@mixin static-row {
+  .viewport {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .track {
+    animation: none;
+    width: auto;
+    flex-wrap: wrap;
+    row-gap: $space-8;
+    margin-inline: calc(-1 * clamp(1rem, 2.2vw, 1.875rem));
+  }
+
+  .item[aria-hidden='true'] {
+    display: none;
+  }
+}
+
+@include reduced-motion {
+  @include static-row;
+}
+
+@include save-data {
+  @include static-row;
+}

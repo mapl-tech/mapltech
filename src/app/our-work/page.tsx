@@ -1,139 +1,161 @@
-'use client';
-
-import { useState } from 'react';
-import Image from 'next/image';
-import { HiArrowRight } from 'react-icons/hi2';
-import MagneticButton from '@/components/ui/MagneticButton';
-import SectionHeading from '@/components/ui/SectionHeading';
-import BlurReveal from '@/components/ui/BlurReveal';
-import SpotlightCard from '@/components/ui/SpotlightCard';
+import JsonLd from '@/components/seo/JsonLd';
+import Cta, { TextCta } from '@/components/work/Cta';
+import WorkIndex from '@/components/work/WorkIndex';
+import {
+  activeServiceLines,
+  estimateLinkFor,
+  startingPriceLabel,
+  workEntries,
+  workFilters,
+} from '@/components/work/work-data';
+import { routeLastModified } from '@/config/routes';
+import { SERVICE_META } from '@/lib/estimate';
+import { creativeWork, itemList, pageGraph } from '@/lib/schema';
 import { portfolioProjects } from '@/config/site';
-import styles from '@/styles/page-common.module.scss';
+import styles from './work.module.scss';
 
-const categories = [
-  'All',
-  'Web Development',
-  'Automation and AI Workflows',
-  'Custom Internal Tools',
-];
+// Title, description and canonical live in ./layout.tsx (unchanged).
+const PAGE_NAME = 'Our Work';
+const PAGE_DESCRIPTION =
+  "Explore MAPL TECH's portfolio of systems, automation, and infrastructure projects. Web development, AI workflows, and custom internal tools delivered for agency clients.";
+
+const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const asWord = (n: number) => NUMBER_WORDS[n] ?? String(n);
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export default function OurWorkPage() {
-  const [activeFilter, setActiveFilter] = useState('All');
+  const entries = workEntries();
+  const filters = workFilters(entries);
+  const lines = activeServiceLines(entries);
+  const lineLabels = lines.map((key) => SERVICE_META[key].label);
 
-  const filtered =
-    activeFilter === 'All'
-      ? portfolioProjects
-      : portfolioProjects.filter((p) => p.category === activeFilter);
+  const webFrom = startingPriceLabel('web');
+  const automationFrom = startingPriceLabel('automation');
+  const lastModified = routeLastModified('/our-work');
+  const reviewed = lastModified ? lastModified.slice(0, 7) : undefined;
+
+  const graph = pageGraph({
+    path: '/our-work',
+    name: PAGE_NAME,
+    description: PAGE_DESCRIPTION,
+    type: 'CollectionPage',
+    breadcrumbs: [{ name: PAGE_NAME, path: '/our-work' }],
+    nodes: [
+      itemList(
+        entries.map((entry) => {
+          const project = portfolioProjects.find((p) => p.slug === entry.slug)!;
+          return {
+            name: entry.title,
+            path: entry.path,
+            description: entry.description,
+            item: creativeWork(project, { path: entry.path }),
+          };
+        }),
+        { path: '/our-work', name: 'Client work by MAPL TECH' },
+      ),
+    ],
+  });
 
   return (
     <>
-      <section className={styles.hero}>
+      <JsonLd data={graph} />
+
+      {/* 01 · Hero: H1 → lede → key facts → CTAs. Nothing here is wrapped in a reveal. */}
+      <section className={styles.hero} aria-labelledby="work-title">
         <div className={styles.heroInner}>
-          <div className={styles.heroGrid}>
+          <div>
+            <p className="eyebrow">Our work · /our-work</p>
+            <h1 id="work-title" className={styles.title}>
+              Real Work. Real Agencies. Real Results.
+            </h1>
+            <p className={styles.lede}>
+              Systems, automation and infrastructure MAPL TECH has shipped for agencies and their clients across
+              staffing, e-commerce and non-profits. {capitalize(asWord(entries.length))} projects are listed below
+              across {asWord(lines.length)} service lines; every row links to the live site or the case study, and
+              the client&apos;s brand stays on every deliverable.
+            </p>
+          </div>
+
+          <dl className={`kv ${styles.facts}`}>
             <div>
-              <BlurReveal>
-                <span className={styles.heroLabel}>Our Work</span>
-              </BlurReveal>
-              <BlurReveal delay={0.1}>
-                <h1 className={styles.heroTitle}>
-                  Real Work. Real Agencies. Real Results.
-                </h1>
-              </BlurReveal>
-              <BlurReveal delay={0.2}>
-                <p className={styles.heroSubtitle}>
-                  Systems, automation, and infrastructure we&apos;ve shipped for agencies
-                  across industries - from staffing to e-commerce to non-profits.
-                </p>
-              </BlurReveal>
+              <dt>Projects listed</dt>
+              <dd>{entries.length}</dd>
             </div>
-            <BlurReveal delay={0.3}>
-              <div className={styles.imageBlock}>
-                <Image
-                  src="/images/hero-our-work.jpg"
-                  alt="Team brainstorming and reviewing project results"
-                  width={600}
-                  height={450}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  priority
-                />
+            <div>
+              <dt>Service lines</dt>
+              <dd>
+                {lines.length} — {lineLabels.join(' · ')}
+              </dd>
+            </div>
+            <div>
+              <dt>Starting price</dt>
+              <dd>
+                {webFrom} (Web Development)
+                {automationFrom ? ` · ${automationFrom.toLowerCase()} (Automation & AI)` : null}
+              </dd>
+            </div>
+            <div>
+              <dt>Offices</dt>
+              <dd>Toronto (HQ) · Lagos · Kingston</dd>
+            </div>
+            {reviewed ? (
+              <div>
+                <dt>Last reviewed</dt>
+                <dd>
+                  <time dateTime={lastModified}>{reviewed}</time>
+                </dd>
               </div>
-            </BlurReveal>
+            ) : null}
+          </dl>
+
+          <div className={styles.ctas}>
+            <Cta href="/pricing#estimator" size="large" placement="work_hero_primary" hero>
+              Get a 60-second estimate
+            </Cta>
+            <Cta href="/contact-us" variant="secondary" size="large" placement="work_hero_secondary">
+              Book a 20-min scoping call
+            </Cta>
           </div>
         </div>
       </section>
 
-      <section className={`${styles.section} ${styles.navy}`}>
-        <div className={styles.sectionInner}>
-          <h2 className="sr-only">Project Portfolio</h2>
-          <div className={styles.filterBar} role="tablist" aria-label="Filter projects by category">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                className={`${styles.filterButton} ${activeFilter === cat ? styles.active : ''}`}
-                onClick={() => setActiveFilter(cat)}
-                role="tab"
-                aria-selected={activeFilter === cat}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+      {/* 02 + 03 · Filter, layout toggle and the work rows (PEAK island). All rows are SSR'd. */}
+      <section className={styles.listSection} aria-labelledby="work-list-heading">
+        <div className={styles.listHead}>
+          <p className="eyebrow">Client work</p>
+          <h2 id="work-list-heading">
+            {capitalize(asWord(entries.length))} projects, {asWord(lines.length)} service lines
+          </h2>
+          <p>Filter by service line. Rows open the case study; “View live site” opens the client&apos;s site.</p>
+        </div>
 
-          <div className={styles.cardsGrid}>
-            {filtered.map((project, i) => {
-              const card = (
-                <SpotlightCard className={styles.portfolioCard}>
-                  <div className={styles.portfolioImage}>
-                    <Image
-                      src={project.image}
-                      alt={`${project.title} project preview`}
-                      width={600}
-                      height={400}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                  </div>
-                  <div className={styles.portfolioContent}>
-                    <h3>{project.title}</h3>
-                    <p>{project.description}</p>
-                    <div className={styles.portfolioTags}>
-                      {project.tags.map((tag) => (
-                        <span key={tag}>{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </SpotlightCard>
-              );
+        <WorkIndex entries={entries} filters={filters} cloudPricingHref={estimateLinkFor('cloud')} />
 
-              return (
-                <BlurReveal key={project.title} delay={i * 0.06}>
-                  {project.url ? (
-                    <a href={project.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
-                      {card}
-                    </a>
-                  ) : (
-                    card
-                  )}
-                </BlurReveal>
-              );
-            })}
-          </div>
+        <div className={styles.listFoot}>
+          <p>Own products, built and operated in-house, live under MAPL Labs.</p>
+          <TextCta href="/labs" placement="work_list_labs" className={styles.textLink} cursor="view">
+            See MAPL Labs
+          </TextCta>
         </div>
       </section>
 
-      <section className={styles.cta}>
-        <div className={styles.ctaInner}>
-          <div className={styles.ctaContent}>
-            <BlurReveal>
-              <h2>Want Results Like These?</h2>
-              <p>
-                Tell us about your project. We&apos;ll tell you exactly how we&apos;d approach it.
-              </p>
-              <div style={{ marginTop: 30 }}>
-                <MagneticButton href="/contact-us" size="large">
-                  Start Your Project <HiArrowRight />
-                </MagneticButton>
-              </div>
-            </BlurReveal>
+      {/* 04 · Inline CTA band: below the fold, revealed on scroll. */}
+      <section className={`${styles.band} reveal`} data-below-fold aria-labelledby="work-band-heading">
+        <div className={styles.bandInner}>
+          <div>
+            <h2 id="work-band-heading">Want results like these?</h2>
+            <p>
+              Tell us about your project. We&apos;ll tell you exactly how we&apos;d approach it — fixed quote after
+              a 20-min scoping call, your brand on every deliverable.
+            </p>
+          </div>
+          <div className={styles.bandActions}>
+            <Cta href="/pricing#estimator" size="large" placement="work_band_primary">
+              Get a 60-second estimate
+            </Cta>
+            <Cta href="/contact-us" variant="secondary" size="large" placement="work_band_secondary">
+              Book a 20-min scoping call
+            </Cta>
           </div>
         </div>
       </section>

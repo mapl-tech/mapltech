@@ -1,0 +1,359 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+// ============================================================================
+// Shared layout for the convert family: /contact-us, /careers, /referral,
+// /blog, /blog/[slug], /privacy, /terms. Engineered Editorial: warm ground,
+// hairlines, Instrument Serif display, JetBrains Mono labels, DM Sans body.
+// Red only on interactive states; teal only on live values.
+// ============================================================================
+
+// ---- Hero anatomy (SSR, never revealed) ------------------------------------
+// The header is fixed (64px); the hero clears it and breathes.
+.hero {
+  padding-top: calc(64px + clamp(3.5rem, 8vw, 6.5rem));
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.heroInner {
+  @include container;
+  display: grid;
+  gap: $space-24;
+}
+
+.heroTitle {
+  max-width: 20ch;
+  margin: 0;
+}
+
+.heroTitleWide {
+  max-width: 28ch;
+  margin: 0;
+}
+
+.heroFacts {
+  margin-top: $space-8;
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-12;
+  margin-top: $space-8;
+}
+
+// ---- Sections ---------------------------------------------------------------
+.section {
+  @include section-padding-sm;
+  border-top: $border-hairline;
+}
+
+.sectionTight {
+  padding-top: $space-40;
+  padding-bottom: $space-40;
+  border-top: $border-hairline;
+}
+
+.inner {
+  @include container;
+}
+
+.innerNarrow {
+  @include container($max-width-narrow);
+}
+
+.innerProse {
+  @include container($max-width-prose);
+}
+
+.sectionHead {
+  display: grid;
+  gap: $space-12;
+  margin-bottom: $space-stack;
+  max-width: 60ch;
+}
+
+.sectionTitle {
+  @include display-type($font-size-h2, $line-height-tight);
+  margin: 0;
+}
+
+.sectionTitleSm {
+  @include display-type($font-size-h3, $line-height-snug);
+  margin: 0;
+}
+
+.sectionSub {
+  color: $color-fg-muted;
+  font-size: $font-size-md;
+  line-height: $line-height-normal;
+  margin: 0;
+}
+
+.twoCol {
+  display: grid;
+  gap: $space-32;
+  align-items: start;
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: $space-48;
+  }
+}
+
+.twoColEven {
+  display: grid;
+  gap: $space-24;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.stack {
+  display: grid;
+  gap: $space-16;
+}
+
+.stackLg {
+  display: grid;
+  gap: $space-32;
+}
+
+// ---- Surfaces ---------------------------------------------------------------
+.card {
+  @include surface(1);
+  padding: $space-24;
+
+  @include md {
+    padding: $space-32;
+  }
+}
+
+.cardTitle {
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: $font-size-xl;
+  line-height: $line-height-snug;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+  margin: 0;
+}
+
+.cardBody {
+  color: $color-fg-muted;
+  margin: 0;
+}
+
+.eyebrowRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-12;
+}
+
+// Hairline list rows (contact details, definitions)
+.rows {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: $space-8 $space-16;
+    padding: $space-12 0;
+    border-top: $border-hairline;
+
+    &:last-child {
+      border-bottom: $border-hairline;
+    }
+  }
+}
+
+.rowLabel {
+  @include mono-label($color-fg-dim);
+}
+
+.rowValue {
+  color: $color-fg;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+
+  &:is(a):hover {
+    color: $color-red-hover;
+  }
+}
+
+// ---- Editorial pieces -------------------------------------------------------
+.quote {
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: clamp(1.375rem, 1.1rem + 1.4vw, 2.25rem);
+  line-height: 1.25;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+  max-width: 40ch;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.cite {
+  @include mono-label($color-fg-muted);
+  display: block;
+  margin-top: $space-16;
+  font-style: normal;
+}
+
+.steps {
+  display: grid;
+  gap: $space-24;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include md {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.step {
+  display: grid;
+  gap: $space-8;
+  padding-top: $space-16;
+  border-top: $border-hairline-strong;
+}
+
+.stepIndex {
+  @include mono-label($color-fg-dim);
+}
+
+.stepTitle {
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: $font-size-xl;
+  line-height: $line-height-snug;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+  margin: 0;
+}
+
+.stepBody {
+  color: $color-fg-muted;
+  margin: 0;
+}
+
+.numbered {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: item;
+  display: grid;
+  gap: $space-8;
+
+  > li {
+    counter-increment: item;
+    display: flex;
+    gap: $space-12;
+    color: $color-fg-muted;
+
+    &::before {
+      content: counter(item, decimal-leading-zero);
+      @include mono-label($color-fg-dim);
+      padding-top: 0.3em;
+      flex: 0 0 auto;
+    }
+  }
+}
+
+.muted {
+  color: $color-fg-muted;
+}
+
+.small {
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+}
+
+.link {
+  color: $color-fg;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+  text-decoration-color: $color-hairline-strong;
+  transition: color $transition-fast, text-decoration-color $transition-fast;
+
+  &:hover {
+    color: $color-red-hover;
+    text-decoration-color: currentColor;
+  }
+}
+
+// Inline note (e.g. "Prefilled from your estimate")
+.note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-8 $space-16;
+  padding: $space-12 $space-16;
+  border: $border-hairline;
+  border-radius: $radius-md;
+  background: $color-surface-1;
+  color: $color-fg-muted;
+  font-size: $font-size-sm;
+}
+
+// ---- Legal pages ----------------------------------------------------------
+.legalIntro {
+  color: $color-fg-muted;
+  margin: 0;
+}
+
+.legalAccordion {
+  max-width: none;
+}
+
+.legalBody {
+  display: grid;
+  gap: $space-12;
+  color: $color-text-body;
+
+  h3 {
+    font-family: $font-body;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-base;
+    letter-spacing: 0;
+    color: $color-fg;
+    margin-top: $space-8;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  ul {
+    display: grid;
+    gap: $space-8;
+    padding-left: 1.2em;
+    list-style: disc;
+  }
+
+  a {
+    color: $color-fg;
+    text-decoration: underline;
+    text-underline-offset: 0.16em;
+
+    &:hover {
+      color: $color-red-hover;
+    }
+  }
+
+  strong {
+    color: $color-fg;
+    font-weight: $font-weight-semibold;
+  }
+}

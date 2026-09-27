@@ -1,0 +1,107 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding: $space-xl;
+  background: $color-surface-1;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+}
+
+.eyebrow {
+  @include mono-label;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.label {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-fg;
+}
+
+.prefill {
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+
+  span {
+    color: $color-fg;
+  }
+}
+
+.input,
+.textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  font-size: 1.0625rem; // never below 16px: no iOS zoom
+  line-height: 1.4;
+  color: $color-fg;
+  background: $color-surface-3;
+  border: $border-hairline-strong;
+  border-radius: $radius-md;
+  transition: border-color $transition-fast;
+
+  &::placeholder {
+    color: $color-fg-dim;
+  }
+
+  &:hover {
+    border-color: rgba($color-fg, 0.24);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-red;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.submit {
+  display: block;
+
+  :global(.magnetic-btn-box),
+  :global(.magnetic-btn) {
+    width: 100%;
+  }
+}
+
+.success {
+  font-size: $font-size-base;
+  line-height: $line-height-relaxed;
+  color: $color-fg;
+}
+
+.error {
+  padding: $space-md;
+  border: 1px solid rgba($color-red, 0.5);
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $color-fg;
+}
+
+.recaptcha {
+  font-size: $font-size-xs;
+  color: $color-fg-dim;
+
+  a {
+    color: $color-fg-muted;
+    text-decoration: underline;
+  }
+}

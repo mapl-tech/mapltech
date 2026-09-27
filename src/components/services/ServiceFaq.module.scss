@@ -1,0 +1,99 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.faq {
+  border-top: $border-hairline;
+  padding-block: $space-section-sm;
+}
+
+.head {
+  margin-bottom: $space-xl;
+}
+
+.intro {
+  @include lede;
+  font-size: $font-size-md;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  border-top: $border-hairline;
+}
+
+.item {
+  position: relative;
+  border-bottom: $border-hairline;
+}
+
+.summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-lg;
+  min-height: 48px;
+  padding: $space-lg $space-xl $space-lg 0;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: -2px;
+    border-radius: $radius-sm;
+  }
+
+  @include md {
+    min-height: 60px;
+  }
+
+  // The red rule from _motion.scss is positioned with left/right: $space-xl;
+  // this list has no horizontal padding, so start it at the left edge.
+  &::after {
+    left: 0 !important;
+    right: 0 !important;
+  }
+}
+
+.question {
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem);
+  line-height: 1.2;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  color: $color-fg-muted;
+  transition: transform $transition-base, color $transition-fast;
+
+  .item[open] & {
+    color: $color-red;
+    transform: rotate(45deg);
+  }
+}
+
+.content {
+  padding: 0 0 $space-xl;
+}
+
+.answer {
+  font-size: $font-size-base;
+  line-height: $line-height-relaxed;
+  color: $color-text-body;
+  max-width: $measure-prose;
+  text-wrap: pretty;
+}

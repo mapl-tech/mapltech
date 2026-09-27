@@ -1,0 +1,405 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../components/work/shared' as work;
+
+// ===========================================================================
+// /our-work (index) + /our-work/[slug] (case study)
+// ===========================================================================
+
+// ---- Hero: eyebrow → H1 → lede → key facts → CTAs (all SSR, no reveal) ----
+.hero {
+  @include work.work-hero;
+}
+
+.heroInner {
+  @include work.work-hero-inner;
+}
+
+.title {
+  @include work.work-title;
+}
+
+.lede {
+  @include work.work-lede;
+}
+
+.facts {
+  margin-top: $space-16;
+}
+
+.ctas {
+  @include work.cta-row;
+  margin-top: $space-8;
+}
+
+.textLink {
+  @include work.text-link;
+}
+
+// ---- Index: list section ----
+.listSection {
+  @include container;
+  padding-top: $space-24;
+  padding-bottom: $space-section-sm;
+}
+
+.listHead {
+  @include work.section-head;
+  margin-bottom: $space-24;
+}
+
+.listFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-16;
+  padding-top: $space-24;
+  color: $color-fg-muted;
+  font-size: $font-size-sm;
+}
+
+// ---- Closing CTA band (shared) ----
+.band {
+  @include work.cta-band;
+}
+
+.bandInner {
+  @include container;
+  display: grid;
+  gap: $space-24;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: end;
+  }
+}
+
+.bandActions {
+  @include work.cta-row;
+
+  @include lg {
+    justify-content: flex-end;
+  }
+}
+
+// ===========================================================================
+// Case study
+// ===========================================================================
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+  @include mono-label($color-fg-muted);
+
+  a:hover {
+    color: $color-red-bright;
+  }
+
+  li + li::before {
+    content: '/';
+    margin-right: $space-8;
+    color: $color-fg-dim;
+  }
+}
+
+.caseHero {
+  @include work.work-hero;
+}
+
+.caseHeroInner {
+  @include container;
+  display: grid;
+  gap: $space-stack;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: start;
+    column-gap: $space-64;
+  }
+}
+
+.caseCopy {
+  display: grid;
+  gap: 0;
+}
+
+.caseEyebrow {
+  margin-top: $space-24;
+}
+
+.caseTitle {
+  @include work.work-title($font-size-h1);
+  max-width: 14ch;
+}
+
+.caseCtas {
+  margin-top: $space-24;
+}
+
+// Hero image = the row thumbnail's View Transition target (same name).
+.caseMedia {
+  position: relative;
+  align-self: start;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+  background: $color-surface-2;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include lg {
+    margin-top: $space-24;
+  }
+}
+
+.caseFacts {
+  margin-top: $space-24;
+
+  a {
+    color: $color-fg;
+    text-decoration: underline;
+    text-decoration-color: rgba($color-red, 0.7);
+    text-underline-offset: 4px;
+
+    &:hover {
+      color: $color-red-bright;
+    }
+  }
+}
+
+// ---- Prose sections (question-shaped H2s, .reveal below the fold) ----
+.section {
+  @include container;
+  padding-top: $space-section-sm;
+  padding-bottom: $space-section-sm;
+  border-top: $border-hairline;
+}
+
+.sectionGrid {
+  display: grid;
+  gap: $space-24;
+
+  @include lg {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+    column-gap: $space-64;
+  }
+}
+
+.sectionTitle {
+  @include display-type($font-size-h2, 1.05);
+  max-width: 18ch;
+}
+
+.prose {
+  display: grid;
+  gap: $space-16;
+  max-width: $measure-prose;
+  color: $color-text-body;
+  font-size: $font-size-md;
+  line-height: $line-height-relaxed;
+
+  h3 {
+    @include display-type($font-size-h3, $line-height-snug);
+    color: $color-fg;
+    margin-top: $space-8;
+  }
+}
+
+// Plain bullet list with a red tick rule (no icons)
+.bullets {
+  display: grid;
+  gap: $space-12;
+
+  li {
+    position: relative;
+    padding-left: $space-24;
+    color: $color-text-body;
+    line-height: $line-height-normal;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.8em;
+      width: 12px;
+      height: 1px;
+      background: $color-red;
+    }
+  }
+}
+
+// Chip list for scope tags
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+
+  li {
+    padding: 6px $space-12;
+    border: $border-hairline-strong;
+    border-radius: $radius-pill;
+    @include mono-label($color-fg-muted);
+  }
+}
+
+.footnote {
+  @include mono-label($color-fg-dim);
+  text-transform: none;
+  letter-spacing: $letter-spacing-wide;
+  line-height: 1.5;
+}
+
+// Two-column backstage block (stack · delivered)
+.backstage {
+  display: grid;
+  gap: $space-32;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  h3 {
+    @include mono-label($color-fg-dim);
+    margin-bottom: $space-12;
+  }
+
+  p {
+    color: $color-text-body;
+  }
+}
+
+// Process steps for the service line (numbered editorial list)
+.steps {
+  @include work.numbered-list;
+  --cols: 4;
+}
+
+.stepNo {
+  @include work.index-label;
+}
+
+// Pull quote (only an approved testimonial)
+.quote {
+  display: grid;
+  gap: $space-16;
+  padding: $space-32 0 0;
+  border-top: $border-hairline;
+
+  blockquote {
+    @include display-type(clamp(1.375rem, 2vw, 1.75rem), 1.3);
+    font-style: italic;
+    color: $color-fg;
+    max-width: 30ch;
+  }
+
+  figcaption {
+    display: flex;
+    align-items: center;
+    gap: $space-12;
+    color: $color-fg-muted;
+    font-size: $font-size-sm;
+
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    strong {
+      display: block;
+      color: $color-fg;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+// Media snap row
+.mediaSection {
+  padding-top: $space-section-sm;
+  padding-bottom: $space-section-sm;
+  border-top: $border-hairline;
+
+  .mediaHead {
+    @include container;
+    @include work.section-head;
+  }
+}
+
+.mediaRow {
+  @include container;
+  --snap-card: min(560px, 60vw);
+}
+
+.mediaCard {
+  display: block;
+  overflow: hidden;
+  border: $border-hairline;
+  border-radius: $radius-lg;
+  background: $color-surface-1;
+
+  img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  figcaption {
+    padding: $space-12 $space-16;
+    @include mono-label($color-fg-muted);
+  }
+
+  @include focus-ring;
+}
+
+.mediaLink {
+  display: block;
+  border-radius: $radius-lg;
+
+  @include focus-ring;
+}
+
+// Prev / next case study
+.pager {
+  @include container;
+  display: flex;
+  justify-content: space-between;
+  gap: $space-16;
+  padding-top: $space-24;
+  padding-bottom: $space-section-sm;
+
+  a {
+    display: inline-flex;
+    flex-direction: column;
+    gap: $space-4;
+    min-height: 44px;
+    max-width: 48%;
+    color: $color-fg;
+
+    span:first-child {
+      @include mono-label($color-fg-dim);
+    }
+
+    span:last-child {
+      @include display-type($font-size-lg, $line-height-snug);
+    }
+
+    &:hover span:last-child {
+      color: $color-red-bright;
+    }
+
+    &:last-child {
+      text-align: right;
+      align-items: flex-end;
+    }
+
+    @include focus-ring;
+  }
+}

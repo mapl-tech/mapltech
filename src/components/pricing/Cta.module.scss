@@ -1,0 +1,24 @@
+@use '../../styles/variables' as *;
+
+// Wrapper that carries data-cta-placement / data-hero-cta around MagneticButton.
+.cta {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+// Full-width variant for rails, sheets and mobile stacks (52px target).
+.block {
+  display: block;
+  width: 100%;
+
+  > :global(.magnetic-btn-box) {
+    display: block;
+    width: 100%;
+  }
+
+  :global(.magnetic-btn) {
+    width: 100%;
+    min-height: 52px;
+  }
+}

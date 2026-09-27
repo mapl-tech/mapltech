@@ -1,0 +1,182 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.scoper {
+  display: grid;
+  gap: $space-xl;
+
+  @include lg {
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: $space-3xl;
+    align-items: start;
+  }
+}
+
+.groups {
+  display: grid;
+  gap: $space-lg;
+}
+
+.group {
+  display: grid;
+  gap: $space-sm;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.groupLabel {
+  @include mono-label($color-fg-muted);
+  margin: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: $radius-md;
+  border: $border-hairline-strong;
+  background: transparent;
+  color: $color-fg;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color $transition-fast, border-color $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-red, 0.6);
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+
+  &[aria-pressed='true'] {
+    background: $color-fg;
+    border-color: $color-fg;
+    color: $color-ground;
+
+    .chipHint {
+      color: rgba($color-ground, 0.7);
+    }
+  }
+}
+
+.chipHint {
+  font-family: $font-mono;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: $color-fg-dim;
+  @include tabular;
+}
+
+// ---- Summary card ----
+
+.summary {
+  @include surface(2);
+  display: grid;
+  gap: $space-md;
+  padding: $space-lg;
+
+  @include lg {
+    position: sticky;
+    top: 96px;
+  }
+}
+
+.summaryLabel {
+  @include mono-label($color-fg-muted);
+  margin: 0;
+}
+
+// Live value: teal is reserved for exactly this.
+.range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 6px;
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  line-height: 1;
+  letter-spacing: $letter-spacing-display;
+  color: $color-signal;
+  @include tabular;
+
+  output {
+    display: inline;
+  }
+}
+
+.rangeSep {
+  color: $color-fg-dim;
+}
+
+.monthly {
+  margin: 0;
+  font-family: $font-mono;
+  font-size: $font-size-sm;
+  color: $color-signal;
+  @include tabular;
+}
+
+.drivers {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: $space-md 0 0;
+  list-style: none;
+  border-top: $border-hairline;
+
+  li {
+    position: relative;
+    padding-left: 14px;
+    font-size: $font-size-sm;
+    line-height: 1.5;
+    color: $color-text-body;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.65em;
+      width: 6px;
+      height: 1px;
+      background: $color-fg-dim;
+    }
+  }
+}
+
+.note {
+  margin: 0;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.fine {
+  margin: 0;
+  font-size: $font-size-xs;
+  line-height: 1.5;
+  color: $color-fg-muted;
+}
+
+.actions {
+  display: grid;
+  gap: $space-sm;
+}
