@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
-import { Overpass, DM_Sans } from 'next/font/google';
+import { DM_Sans, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -9,15 +9,28 @@ import CursorGlow from '@/components/ui/CursorGlow';
 import '@/styles/tailwind.css';
 import '@/styles/globals.scss';
 
-const overpass = Overpass({
-  subsets: ['latin'],
-  variable: '--font-overpass',
-  display: 'swap',
-});
-
+// Body, UI, buttons. Variable font: full weight axis in one file.
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
+  display: 'swap',
+});
+
+// Display serif for headings and pull quotes. Ships a single 400 face (+ italic);
+// globals.scss disables weight synthesis so it never renders as faux bold.
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-instrument-serif',
+  display: 'swap',
+});
+
+// Metadata: eyebrows, key facts, prices, clocks, code.
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-jetbrains-mono',
   display: 'swap',
 });
 
@@ -129,6 +142,18 @@ export const metadata: Metadata = {
   },
 };
 
+// viewportFit: 'cover' lets the mobile action bar and bottom sheets pad with
+// env(safe-area-inset-bottom); themeColor matches the warm ground.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#0a0a0a',
+};
+
+// TODO(schema): replace this inline graph with <JsonLd graph={organizationGraph()} />
+// from src/components/seo/JsonLd.tsx + src/lib/schema.ts once they land (that
+// graph drops SearchAction, adds legalName/contactPoint/founder per the SEO plan).
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -182,7 +207,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${overpass.variable} ${dmSans.variable}`}>
+    <html
+      lang="en"
+      className={`${dmSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}
+    >
       <head>
         {/* Preconnect to third-party origins for faster resource loading */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
@@ -218,20 +246,33 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* Structured Data */}
+        {/* Structured Data. `<` is escaped so the JSON can never close the script tag. */}
+        {/* TODO(schema): swap for <JsonLd graph={...} /> - see the note above `jsonLd`. */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+          }}
         />
       </head>
       <body>
-        <a href="#main-content" className="skip-to-content">
+        <a href="#main" className="skip-to-content">
           Skip to main content
         </a>
+        {/* Lenis substrate: desktop, fine pointer, motion allowed. Renders no HTML. */}
         <SmoothScroll />
+        {/*
+          Cursor pill. CursorGlow is a 'use client' island that renders nothing on
+          the server, so it adds no HTML here. `next/dynamic({ ssr: false })` is not
+          permitted inside a Server Component (this layout), so the ssr:false
+          boundary must live inside src/components/ui/CursorGlow.tsx itself
+          (export default dynamic(() => import('./CursorPill'), { ssr: false })).
+        */}
         <CursorGlow />
         <Header />
-        <main id="main-content">{children}</main>
+        <main id="main" tabIndex={-1}>
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

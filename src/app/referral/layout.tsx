@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Referral Program',
+  alternates: { canonical: 'https://mapltech.com/referral' },
   description:
     'Refer agencies to MAPL TECH and earn rewards. Our referral program thanks you for connecting us with agencies that need systems, automation, and infrastructure support.',
   openGraph: {

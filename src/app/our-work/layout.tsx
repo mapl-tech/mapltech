@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Our Work',
+  alternates: { canonical: 'https://mapltech.com/our-work' },
   description:
     'Explore MAPL TECH\'s portfolio of systems, automation, and infrastructure projects. Web development, AI workflows, and custom internal tools delivered for agency clients.',
   openGraph: {

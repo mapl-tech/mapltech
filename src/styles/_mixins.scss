@@ -1,6 +1,8 @@
 @use 'variables' as *;
 
+// ============================================
 // Responsive breakpoints
+// ============================================
 @mixin sm {
   @media (min-width: $breakpoint-sm) { @content; }
 }
@@ -14,7 +16,43 @@
   @media (min-width: $breakpoint-xl) { @content; }
 }
 
-// Container
+// ============================================
+// Motion + pointer gates
+// Every pointer-driven effect (magnetism, cursor pill, hover preview,
+// spotlight) belongs inside `pointer-fine`; every animation that is not
+// essential belongs inside `motion-ok`. `reduced-motion` is for the
+// designed-degradation branch (static states, instant toggles).
+// ============================================
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) { @content; }
+}
+@mixin motion-ok {
+  @media (prefers-reduced-motion: no-preference) { @content; }
+}
+// Real hover-capable, fine pointer (mouse/trackpad). Touch pays nothing.
+@mixin pointer-fine {
+  @media (hover: hover) and (pointer: fine) { @content; }
+}
+// Touch / stylus / no hover. Use for the always-visible chips, inline thumbnails, 48px targets.
+@mixin pointer-coarse {
+  @media (hover: none), (pointer: coarse) { @content; }
+}
+// Pointer AND motion both allowed - the gate for the cursor pill, magnetism, hover previews.
+@mixin pointer-fine-motion {
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) { @content; }
+}
+// Phone in portrait with a coarse pointer: where pinned sequences stack and sheets replace dropdowns.
+@mixin phone {
+  @media (max-width: #{$breakpoint-md - 1px}) and (pointer: coarse) { @content; }
+}
+// User asked for less data (posters instead of loops, no mesh gradient).
+@mixin save-data {
+  @media (prefers-reduced-data: reduce) { @content; }
+}
+
+// ============================================
+// Layout
+// ============================================
 @mixin container($max: $max-width) {
   width: 100%;
   max-width: $max;
@@ -24,13 +62,89 @@
   padding-right: $container-padding;
 }
 
-// Section spacing
 @mixin section-padding {
   padding-top: $space-section;
   padding-bottom: $space-section;
 }
 
-// Gradient text
+@mixin section-padding-sm {
+  padding-top: $space-section-sm;
+  padding-bottom: $space-section-sm;
+}
+
+// Below-the-fold sections: skip layout/paint until near the viewport.
+// Pair with the [data-below-fold] attribute (styled globally) or include directly.
+@mixin below-fold($estimate: 800px) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto $estimate;
+}
+
+// Bottom padding that clears the iPhone home indicator (viewport-fit=cover is set in layout.tsx).
+@mixin safe-area-bottom($extra: 0px) {
+  padding-bottom: calc(#{$extra} + #{$safe-bottom});
+}
+
+// ============================================
+// Type
+// ============================================
+// Display serif: Instrument Serif 400, tight tracking, balanced wrapping.
+@mixin display-type($size: $font-size-h2, $line-height: $line-height-tight) {
+  font-family: $font-display;
+  font-weight: $font-weight-display;
+  font-size: $size;
+  line-height: $line-height;
+  letter-spacing: $letter-spacing-display;
+  text-wrap: balance;
+}
+
+// Mono label: 12px JetBrains Mono, uppercase, 0.14em tracking (eyebrows, dt, table heads).
+@mixin mono-label($color: $color-fg-muted) {
+  font-family: $font-mono;
+  font-size: $font-size-label;
+  font-weight: $font-weight-medium;
+  line-height: 1.2;
+  letter-spacing: $letter-spacing-label;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: $color;
+}
+
+// Tabular figures for live numbers, prices, clocks.
+@mixin tabular {
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+// Lede paragraph: 18-22px, max 60ch.
+@mixin lede {
+  font-size: $font-size-lede;
+  line-height: 1.5;
+  max-width: $measure-lede;
+  color: $color-text-body;
+  text-wrap: pretty;
+}
+
+// ============================================
+// Surfaces
+// ============================================
+// 1px hairline on one side or all sides.
+@mixin hairline($side: all, $color: $color-hairline) {
+  @if $side == all {
+    border: 1px solid $color;
+  } @else {
+    border-#{$side}: 1px solid $color;
+  }
+}
+
+// Flat editorial surface (replaces gradient cards in redesigned sections).
+@mixin surface($level: 1) {
+  @if $level == 1 { background: $color-surface-1; }
+  @else if $level == 2 { background: $color-surface-2; }
+  @else { background: $color-surface-3; }
+  border: 1px solid $color-hairline;
+  border-radius: $radius-lg;
+}
+
+// Gradient text (legacy pages)
 @mixin gradient-text($gradient: $gradient-text) {
   background: $gradient;
   -webkit-background-clip: text;
@@ -38,7 +152,7 @@
   -webkit-text-fill-color: transparent;
 }
 
-// Gradient border
+// Gradient border (legacy pages)
 @mixin gradient-border($width: 1px, $radius: $radius-lg) {
   position: relative;
   border-radius: $radius;
@@ -58,14 +172,14 @@
   }
 }
 
-// Glass effect
-@mixin glass($bg: rgba($color-black, 0.85)) {
+// Glass effect - nav and sheets only (max two backdrop-filter surfaces in view)
+@mixin glass($bg: rgba($color-ground, 0.85)) {
   background: $bg;
   backdrop-filter: blur(16px) saturate(1.2);
   -webkit-backdrop-filter: blur(16px) saturate(1.2);
 }
 
-// Card style  - refined with depth
+// Card style (legacy) - transform + shadow only, no layout properties animate
 @mixin card {
   background: $gradient-card;
   border: 1px solid rgba($color-dark-border, 0.8);
@@ -74,34 +188,40 @@
   transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
   position: relative;
 
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: $shadow-card-hover;
-    border-color: rgba($color-pink, 0.2);
+  @include pointer-fine-motion {
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: $shadow-card-hover;
+      border-color: rgba($color-pink, 0.2);
+    }
   }
 }
 
-// Button base
+// ============================================
+// Buttons
+// ============================================
 @mixin button-base {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: $space-sm;
-  padding: 0.625rem 1.25rem;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
   border-radius: $radius-full;
   font-family: $font-body;
   font-size: $font-size-md;
   font-weight: $font-weight-semibold;
-  letter-spacing: $letter-spacing-wide;
-  text-transform: capitalize;
+  letter-spacing: $letter-spacing-normal;
+  text-transform: none;
   text-decoration: none;
   border: none;
   cursor: pointer;
-  transition: all $transition-base;
+  touch-action: manipulation;
+  transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast, transform $transition-fast;
   white-space: nowrap;
 
   @include sm {
-    padding: 0.75rem 1.75rem;
+    padding: 0.875rem 1.75rem;
   }
 
   &:disabled {
@@ -110,42 +230,47 @@
   }
 }
 
-// Primary button  - gradient with glow
+// Primary button - flat brand red; hover lifts to #FF3D5A, press drops to #C4213C
 @mixin button-primary {
   @include button-base;
-  background: $gradient-primary;
+  background: $color-red;
   color: $color-white;
-  box-shadow: 0 4px 20px rgba($color-pink, 0.25), inset 0 1px 0 rgba(255,255,255,0.1);
 
   &:hover:not(:disabled) {
-    box-shadow: 0 8px 32px rgba($color-pink, 0.4), inset 0 1px 0 rgba(255,255,255,0.15);
-    transform: translateY(-2px);
+    background: $color-red-hover;
   }
 
   &:active:not(:disabled) {
-    transform: translateY(0);
+    background: $color-red-pressed;
+    transform: scale(0.97);
   }
 }
 
-// Secondary button  - outlined with subtle glow on hover
+// Secondary button - hairline ghost; hover shows the red hairline
 @mixin button-secondary {
   @include button-base;
   background: transparent;
-  color: $color-white;
-  border: 1px solid rgba($color-white, 0.15);
+  color: $color-fg;
+  border: 1px solid $color-hairline-strong;
 
   &:hover:not(:disabled) {
-    border-color: rgba($color-pink, 0.6);
+    border-color: rgba($color-red, 0.6);
     color: $color-white;
-    box-shadow: 0 0 24px rgba($color-pink, 0.1), inset 0 0 12px rgba($color-pink, 0.05);
+  }
+
+  &:active:not(:disabled) {
+    border-color: $color-red-pressed;
+    transform: scale(0.97);
   }
 }
 
-// Focus ring
+// ============================================
+// Accessibility
+// ============================================
 @mixin focus-ring {
   &:focus-visible {
-    outline: 2px solid $color-pink;
-    outline-offset: 3px;
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
   }
 }
 
@@ -170,7 +295,7 @@
   overflow: hidden;
 }
 
-// Section divider  - glowing gradient line
+// Section divider (legacy) - glowing gradient line
 @mixin section-divider {
   position: relative;
 

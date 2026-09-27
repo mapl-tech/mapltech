@@ -9,6 +9,7 @@ import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
   title: 'Careers',
+  alternates: { canonical: 'https://mapltech.com/careers' },
   description:
     'Join MAPL TECH - we\'re hiring across Canada, Nigeria, and Jamaica. Remote and on-site roles in Ottawa, Toronto, Lagos, Abuja, Kingston, and Montego Bay.',
   openGraph: {

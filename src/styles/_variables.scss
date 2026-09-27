@@ -1,35 +1,77 @@
 // ============================================
 // MAPL TECH Design System Variables
-// Palette: Black, White, #F03350 (60-30-10 rule)
-// 60% black backgrounds, 30% white text/surfaces, 10% red accents
+// Direction: Engineered Editorial (Sept 2026 redesign)
+//   Warm near-black ground + film grain, Instrument Serif display over
+//   JetBrains Mono metadata, DM Sans body. Red #F03350 is the ONLY accent
+//   for interactive states (hover #FF3D5A, pressed #C4213C). Teal #33F0D0 is
+//   reserved for live/system signals (clocks, status dots, estimator output).
+//
+// Every token name that existed before the redesign is kept below so nothing
+// breaks; legacy values are warm-shifted where they touch the ground or text.
+// New canonical tokens are marked "canonical".
 // ============================================
 
-// Core Palette  - Black (60%)
-$color-black: #000000;
-$color-dark: #000000;
-$color-dark-surface: #0a0a0a;
-$color-dark-card: #111111;
-$color-dark-elevated: #1a1a1a;
+// --------------------------------------------
+// Ground + surfaces (canonical)
+// --------------------------------------------
+$color-ground: #0a0a0a;          // page background
+$color-surface-1: #111111;       // cards, rails
+$color-surface-2: #161616;       // raised cards, sheets
+$color-surface-3: #1c1c1c;       // hover state of a surface, inputs
+
+// Hairlines (canonical) - use for borders/dividers instead of solid greys
+$color-hairline: rgba(255, 255, 255, 0.08);
+$color-hairline-strong: rgba(255, 255, 255, 0.12);
+$border-hairline: 1px solid $color-hairline;
+$border-hairline-strong: 1px solid $color-hairline-strong;
+
+// --------------------------------------------
+// Core Palette - Black (legacy names, warm-shifted values)
+// --------------------------------------------
+$color-black: #000000;           // true black: overlays, glass, video letterbox only
+$color-dark: $color-ground;      // was #000000 - backgrounds now sit on the warm ground
+$color-dark-surface: $color-ground;
+$color-dark-card: $color-surface-1;
+$color-dark-elevated: $color-surface-3;
 $color-dark-border: #222222;
-$color-navy: #0a0a0a; // kept as alias for backward compat
-$color-navy-light: #111111;
-$color-navy-mid: #1a1a1a;
+$color-navy: $color-ground;      // kept as alias for backward compat
+$color-navy-light: $color-surface-1;
+$color-navy-mid: $color-surface-3;
 
-// White & Text (30%)  - WCAG AA contrast ratios on #000 background
+// --------------------------------------------
+// Text (canonical) - warm white on the warm ground
+//   fg        #F5F2EE                 ~18.6:1 on #0a0a0a
+//   fg-muted  rgba(245,242,238,0.64)  ~7.4:1  (blended #A09F9C)
+//   fg-dim    rgba(245,242,238,0.40)  ~3.6:1  - labels/large text only, never body copy
+// --------------------------------------------
+$color-fg: #F5F2EE;
+$color-fg-muted: rgba(245, 242, 238, 0.64);
+$color-fg-dim: rgba(245, 242, 238, 0.40);
+
+// White & Text (legacy names) - WCAG AA contrast ratios on the ground
 $color-white: #ffffff;                          // 21:1 contrast
-$color-off-white: #f5f5f5;                      // 19.5:1 contrast
-$color-white-muted: rgba(255, 255, 255, 0.80);  // ~13.3:1  - AA pass
-$color-white-dim: rgba(255, 255, 255, 0.56);    // ~7.2:1  - AA pass (muted text)
-$color-text-heading: $color-white;
-$color-text-body: #cccccc;                       // 13.3:1  - readable body text
-$color-text-muted: #999999;                      // 7.4:1  - AA pass (secondary text)
+$color-off-white: $color-fg;                    // was #f5f5f5
+$color-white-muted: rgba(255, 255, 255, 0.80);  // ~13.3:1 - AA pass
+$color-white-dim: rgba(255, 255, 255, 0.56);    // ~7.2:1 - AA pass (muted text)
+$color-text-heading: $color-fg;
+$color-text-body: #C6C4C0;                       // was #cccccc; warm, ~11.3:1
+$color-text-muted: #A09F9C;                      // was #999999; warm, ~7.4:1 (solid twin of fg-muted)
 
-// Primary Accent  - Red (10%)
-$color-red: #F03350;              // 3.66:1 on black  - use for large text/UI only
-$color-red-bright: #ff3d5a;       // 4.6:1 on black  - AA pass for normal text
-$color-red-deep: #c4213c;
+// --------------------------------------------
+// Primary Accent - Red. The only interactive accent.
+// --------------------------------------------
+$color-red: #F03350;              // 3.66:1 on the ground - large text / UI only
+$color-red-bright: #FF3D5A;       // 4.6:1 on the ground - AA pass for normal text
+$color-red-deep: #C4213C;
 $color-red-glow: rgba(240, 51, 80, 0.2);
-$color-red-text: #ff5c73;         // 5.5:1 on black  - accessible for body text links
+$color-red-text: #ff5c73;         // 5.5:1 on the ground - accessible for body text links
+
+// Interactive state names (canonical aliases)
+$color-red-hover: $color-red-bright;
+$color-red-pressed: $color-red-deep;
+$color-accent: $color-red;
+$color-accent-hover: $color-red-hover;
+$color-accent-pressed: $color-red-pressed;
 
 // Backward-compat aliases (used across components)
 $color-pink: $color-red;
@@ -38,16 +80,21 @@ $color-pink-hot: $color-red;
 $color-magenta: $color-red-deep;
 $color-coral: $color-red-bright;
 
-// Complementary Accent  - Teal (for hover states, secondary interactions)
+// --------------------------------------------
+// Teal - live/system signals ONLY (clocks, status dots, estimator output).
+// Never for hover, focus, links or decoration.
+// --------------------------------------------
 $color-teal: #33F0D0;
 $color-teal-muted: rgba(51, 240, 208, 0.15);
+$color-signal: $color-teal;               // canonical name
+$color-signal-muted: $color-teal-muted;
 
-// Subtle depth tones (replaces purple)
+// Subtle depth tones (legacy)
 $color-purple-deep: #1a0a0a;
 $color-purple-dark: #2a0f14;
 $color-purple: $color-red-deep;
 
-// Gradient definitions  - clean, bold
+// Gradient definitions (legacy) - retained for pages not yet redesigned
 $gradient-primary: linear-gradient(135deg, $color-red-deep 0%, $color-red 50%, $color-red-bright 100%);
 $gradient-accent: linear-gradient(135deg, $color-red-deep 0%, $color-red 100%);
 $gradient-subtle: linear-gradient(160deg, rgba($color-red-deep, 0.15) 0%, rgba($color-red, 0.03) 100%);
@@ -61,17 +108,30 @@ $gradient-mesh: radial-gradient(at 0% 0%, rgba($color-red-deep, 0.2) 0%, transpa
                radial-gradient(at 100% 0%, rgba($color-red, 0.04) 0%, transparent 40%),
                radial-gradient(at 50% 100%, rgba($color-red-deep, 0.1) 0%, transparent 50%);
 
-// Typography - Overpass for titles/headings, DM Sans for everything else
-// Both loaded via next/font in layout.tsx
-$font-display: var(--font-overpass), 'Overpass', sans-serif;       // titles only
-$font-body: var(--font-dm-sans), 'DM Sans', sans-serif;            // body, labels, UI
-$font-mono: var(--font-dm-sans), 'DM Sans', sans-serif;
+// --------------------------------------------
+// Typography
+//   Display: Instrument Serif (400 only, normal + italic) - headings, pull quotes
+//   Body:    DM Sans (variable) - paragraphs, UI, buttons
+//   Mono:    JetBrains Mono (400/500/700) - eyebrows, key facts, numbers, code
+// All three loaded via next/font in src/app/layout.tsx; the CSS variables live on <html>.
+// --------------------------------------------
+$font-display: var(--font-instrument-serif), Georgia, 'Times New Roman', serif;
+$font-body: var(--font-dm-sans), 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+$font-mono: var(--font-jetbrains-mono), ui-monospace, 'SFMono-Regular', 'Courier New', monospace;
 
-// Font sizes  - rem-based for user accessibility (respects browser font settings)
+// Fluid type scale (canonical)
+$font-size-display: clamp(2.75rem, 7vw, 6.5rem);    // H1 on hero pages
+$font-size-h1: clamp(2.5rem, 5.5vw, 4.5rem);        // H1 on secondary pages
+$font-size-h2: clamp(2rem, 4vw, 3.5rem);
+$font-size-h3: clamp(1.5rem, 2.4vw, 2rem);
+$font-size-lede: clamp(1.125rem, 1.1rem + 0.4vw, 1.375rem);  // 18px -> 22px
+$font-size-label: 0.75rem;                          // 12px mono label (uppercase, 0.14em)
+
+// Font sizes - rem-based for user accessibility (respects browser font settings)
 // Minimum body text: 1.0625rem (17px). Use xs/sm only for labels, badges, captions.
-$font-size-xs: 0.8125rem;   // 13px  - labels, badges only
-$font-size-sm: 0.9375rem;   // 15px  - secondary text, captions
-$font-size-base: 1.0625rem; // 17px  - body text minimum
+$font-size-xs: 0.8125rem;   // 13px - labels, badges only
+$font-size-sm: 0.9375rem;   // 15px - secondary text, captions
+$font-size-base: 1.0625rem; // 17px - body text minimum
 $font-size-md: 1.125rem;    // 18px
 $font-size-lg: 1.25rem;     // 20px
 $font-size-xl: 1.5rem;      // 24px
@@ -79,7 +139,7 @@ $font-size-2xl: 2rem;       // 32px
 $font-size-3xl: 2.5rem;     // 40px
 $font-size-4xl: 3rem;       // 48px
 $font-size-5xl: 3.5rem;     // 56px
-$font-size-hero: clamp(2.5rem, 5.5vw, 4.5rem);
+$font-size-hero: $font-size-display;
 
 $font-weight-light: 300;
 $font-weight-regular: 400;
@@ -87,45 +147,81 @@ $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
 $font-weight-extrabold: 800;
+// Instrument Serif ships a single 400 face. Headings are 400 by design;
+// weight synthesis is disabled globally so 700/800 never renders as faux bold.
+$font-weight-display: 400;
 
+$line-height-display: 1;      // display serif sits tight
 $line-height-tight: 1.08;
 $line-height-snug: 1.2;
 $line-height-normal: 1.55;
 $line-height-relaxed: 1.7;
 
+$letter-spacing-display: -0.01em;
 $letter-spacing-tight: -0.02em;
 $letter-spacing-normal: 0;
 $letter-spacing-wide: 0.04em;
 $letter-spacing-wider: 0.08em;
 $letter-spacing-widest: 0.14em;
+$letter-spacing-label: 0.14em;  // mono label tracking
 
-// Spacing
-$space-xs: 0.25rem;
-$space-sm: 0.5rem;
-$space-md: 1rem;
-$space-lg: 1.5rem;
-$space-xl: 2rem;
-$space-2xl: 3rem;
-$space-3xl: 4rem;
-$space-4xl: 6rem;
-$space-5xl: 8rem;
-$space-section: clamp(5rem, 10vw, 9rem);
+// Measure
+$measure-lede: 60ch;
+$measure-prose: 68ch;
 
+// --------------------------------------------
+// Spacing - 8px scale. Pixel-named tokens are canonical; t-shirt names are legacy aliases.
+// --------------------------------------------
+$space-4: 0.25rem;
+$space-8: 0.5rem;
+$space-12: 0.75rem;
+$space-16: 1rem;
+$space-24: 1.5rem;
+$space-32: 2rem;
+$space-40: 2.5rem;
+$space-48: 3rem;
+$space-64: 4rem;
+$space-80: 5rem;
+$space-96: 6rem;
+$space-128: 8rem;
+
+$space-xs: $space-4;
+$space-sm: $space-8;
+$space-md: $space-16;
+$space-lg: $space-24;
+$space-xl: $space-32;
+$space-2xl: $space-48;
+$space-3xl: $space-64;
+$space-4xl: $space-96;
+$space-5xl: $space-128;
+$space-section: clamp(4rem, 10vw, 8rem);      // vertical padding of a page section
+$space-section-sm: clamp(3rem, 6vw, 5rem);    // compact sections (proof strips, CTA bands)
+$space-stack: clamp(1.5rem, 3vw, 2.5rem);     // gap between blocks inside a section
+
+// --------------------------------------------
 // Layout
+// --------------------------------------------
 $max-width: 1200px;
 $max-width-narrow: 900px;
 $max-width-wide: 1200px;
-$container-padding: clamp(1.25rem, 5vw, 2rem);
+$max-width-prose: 720px;
+$container-padding: clamp(1.25rem, 5vw, 2.5rem);
+$safe-bottom: env(safe-area-inset-bottom, 0px);  // mobile action bar / bottom sheets
 
+// --------------------------------------------
 // Border Radius
+// --------------------------------------------
 $radius-sm: 4px;
 $radius-md: 8px;
 $radius-lg: 12px;
 $radius-xl: 16px;
 $radius-2xl: 24px;
 $radius-full: 9999px;
+$radius-pill: $radius-full;
 
-// Shadows  - clean, high-contrast
+// --------------------------------------------
+// Shadows - clean, high-contrast
+// --------------------------------------------
 $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
 $shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
 $shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.7);
@@ -133,22 +229,40 @@ $shadow-glow: 0 0 40px rgba($color-red, 0.12), 0 0 80px rgba($color-red-deep, 0.
 $shadow-glow-strong: 0 0 60px rgba($color-red, 0.2), 0 0 120px rgba($color-red-deep, 0.12);
 $shadow-card-hover: 0 8px 32px rgba($color-red, 0.1), 0 0 0 1px rgba($color-red, 0.2);
 
-// Transitions  - smooth, intentional
+// --------------------------------------------
+// Focus ring - 2px red, 2px offset, everywhere
+// --------------------------------------------
+$focus-ring-width: 2px;
+$focus-ring-offset: 2px;
+$focus-ring: $focus-ring-width solid $color-red;
+
+// --------------------------------------------
+// Transitions - smooth, intentional (durations/easings for CSS transitions;
+// keyframes and reveal utilities live in _motion.scss)
+// --------------------------------------------
 $transition-fast: 150ms ease;
 $transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 $transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 $transition-smooth: 600ms cubic-bezier(0.16, 1, 0.3, 1);
 
+// --------------------------------------------
 // Breakpoints
+// --------------------------------------------
 $breakpoint-sm: 640px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;
 $breakpoint-xl: 1280px;
 $breakpoint-2xl: 1536px;
 
+// --------------------------------------------
 // Z-index scale
+// --------------------------------------------
 $z-dropdown: 100;
 $z-sticky: 200;
 $z-overlay: 300;
+$z-action-bar: 350;   // mobile sticky action bar (above content, below sheets/modals)
 $z-modal: 400;
+$z-sheet: $z-modal;   // vaul bottom sheets
 $z-toast: 500;
+$z-grain: 9000;       // film grain overlay (pointer-events: none)
+$z-cursor: 9100;      // cursor pill (pointer-events: none)

@@ -21,6 +21,7 @@ import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
   title: 'MAPL TECH Jamaica | Systems, Automation & Web Development for Jamaican Agencies',
+  alternates: { canonical: 'https://mapltech.com/jamaica' },
   description:
     'MAPL TECH Jamaica delivers systems, automation, AI workflows, web development, and custom internal tools for agencies in Kingston, Montego Bay, and across Jamaica. Canadian engineering, Caribbean connection.',
   keywords: 'MAPL TECH Jamaica, web development Jamaica, automation Jamaica, AI workflows Kingston, agency infrastructure Caribbean, custom tools Jamaica',
@@ -30,6 +31,7 @@ export const metadata: Metadata = {
       'Canadian-headquartered engineering partner with a Jamaica branch. Systems, automation, and infrastructure for Caribbean agencies.',
     url: 'https://mapltech.com/jamaica',
     type: 'website',
+    locale: 'en_JM',
   },
   twitter: {
     card: 'summary_large_image',

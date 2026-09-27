@@ -18,6 +18,7 @@ import styles from './page.module.scss';
 
 export const metadata: Metadata = {
   title: 'Pricing',
+  alternates: { canonical: 'https://mapltech.com/pricing' },
   description:
     'MAPL TECH pricing for web development, automation & AI workflows, custom internal tools, cloud engineering, and agency partnerships. Transparent pricing with retainer options.',
   openGraph: {

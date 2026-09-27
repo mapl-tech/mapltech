@@ -23,6 +23,7 @@ import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
   title: 'MAPL TECH Nigeria | Systems, Automation & Web Development for Nigerian Agencies',
+  alternates: { canonical: 'https://mapltech.com/nigeria' },
   description:
     'MAPL TECH Nigeria delivers systems, automation, AI workflows, web development, and custom internal tools for agencies in Lagos, Abuja, Port Harcourt, and across Nigeria. Canadian engineering standards, local expertise.',
   keywords: 'MAPL TECH Nigeria, web development Nigeria, automation Nigeria, AI workflows Lagos, agency infrastructure Abuja, custom tools Nigeria',
@@ -32,6 +33,7 @@ export const metadata: Metadata = {
       'Canadian-headquartered engineering partner with a Nigeria branch. Systems, automation, and infrastructure for agencies in Lagos, Abuja, and beyond.',
     url: 'https://mapltech.com/nigeria',
     type: 'website',
+    locale: 'en_NG',
   },
   twitter: {
     card: 'summary_large_image',

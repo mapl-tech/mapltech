@@ -16,6 +16,7 @@ import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
   title: 'About Us',
+  alternates: { canonical: 'https://mapltech.com/about-us' },
   description:
     'MAPL TECH is the engineering partner agencies call when projects demand real systems, automation, and infrastructure - not another marketing vendor.',
   openGraph: {

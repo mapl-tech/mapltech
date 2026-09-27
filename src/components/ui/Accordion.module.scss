@@ -1,41 +1,55 @@
 @use '../../styles/variables' as *;
 
+// Static appearance of the native <details> accordion. Open/close motion
+// (height transition, red rule) is in styles/_motion.scss.
+
 .accordion {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: $space-sm;
   max-width: min(720px, 100%);
   margin: 0 auto;
 }
 
 .item {
+  position: relative;
   border: 1px solid rgba($color-dark-border, 0.6);
   border-radius: $radius-lg;
   background: $color-dark-card;
-  overflow: hidden;
-  transition: border-color $transition-fast, background $transition-fast;
+  overflow: clip;
+  transition: border-color $transition-fast;
 
-  & + & {
-    margin-top: $space-sm;
-  }
-
-  &.open {
+  &[open] {
     border-color: rgba($color-red, 0.25);
-    background: linear-gradient(160deg, rgba($color-red-deep, 0.08) 0%, $color-dark-card 100%);
   }
 }
 
 .trigger {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  padding: $space-lg $space-xl;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
   gap: $space-md;
+  min-height: 48px;
+  padding: $space-lg $space-xl;
+  cursor: pointer;
+  list-style: none;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::marker {
+    content: '';
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-red;
+    outline-offset: -2px;
+    border-radius: $radius-lg;
+  }
 }
 
 .question {
@@ -60,20 +74,20 @@
   border-radius: $radius-full;
   background: rgba($color-dark-border, 0.5);
   color: $color-text-muted;
-  transition: background $transition-fast, color $transition-fast;
+  transition: background $transition-fast, color $transition-fast, transform $transition-base;
 
-  .open & {
+  .item[open] & {
     background: rgba($color-red, 0.15);
     color: $color-red;
+    transform: rotate(45deg);
   }
 }
 
 .content {
-  overflow: hidden;
+  padding: 0 $space-xl $space-lg;
 }
 
 .answer {
-  padding: 0 $space-xl $space-lg;
   font-size: $font-size-base;
   color: $color-text-body;
   line-height: $line-height-relaxed;

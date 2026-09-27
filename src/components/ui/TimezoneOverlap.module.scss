@@ -1,0 +1,223 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+$mono: var(--font-jetbrains-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+
+.root {
+  display: grid;
+  gap: $space-lg;
+}
+
+// ---- Clocks (stacked pills on mobile, one row from sm) ----
+
+.clocks {
+  display: grid;
+  gap: $space-sm;
+  min-height: 44px;
+
+  @include sm {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.placeholder {
+  align-self: center;
+  margin: 0;
+  font-family: $mono;
+  font-size: $font-size-sm;
+  letter-spacing: $letter-spacing-wide;
+  color: $color-text-muted;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  min-height: 44px;
+  padding: $space-sm $space-md;
+  border: 1px solid rgba($color-white, 0.1);
+  border-radius: $radius-full;
+  background: $color-dark-card;
+}
+
+.city {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-white;
+}
+
+.time {
+  font-family: $mono;
+  font-size: $font-size-md;
+  font-variant-numeric: tabular-nums;
+  color: $color-white;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-size-xs;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+  color: $color-text-muted;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba($color-white, 0.25);
+
+  [data-open='true'] & {
+    background: $color-teal;
+    box-shadow: 0 0 12px rgba($color-teal, 0.6);
+  }
+}
+
+// ---- 24h strip (hidden on phones; the overlap is given as text instead) ----
+
+.strip {
+  display: none;
+
+  @include sm {
+    display: grid;
+    gap: 6px;
+    min-height: 148px;
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: center;
+  gap: $space-md;
+  min-height: 28px;
+}
+
+.rowLabel {
+  font-family: $mono;
+  font-size: $font-size-xs;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+  color: $color-text-muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar {
+  position: relative;
+  height: 22px;
+  border-radius: 4px;
+  background: rgba($color-white, 0.04);
+  overflow: hidden;
+}
+
+.seg {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 3px;
+  background: rgba($color-white, 0.22);
+
+  .bar[data-kind='visitor'] & {
+    background: transparent;
+    border: 1px dashed rgba($color-white, 0.35);
+  }
+}
+
+.overlap {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 3px;
+  background: rgba($color-teal, 0.55);
+}
+
+.now {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba($color-white, 0.85);
+}
+
+.axis {
+  position: relative;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    font-family: $mono;
+    font-size: 11px;
+    color: $color-text-muted;
+
+    &:first-child {
+      transform: none;
+    }
+
+    &:last-child {
+      transform: translateX(-100%);
+    }
+  }
+}
+
+.overlapText {
+  margin: 0;
+  font-family: $mono;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-teal;
+}
+
+.caption {
+  margin: 0;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-muted;
+}
+
+// ---- Compact LiveClocks ----
+
+.compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.compactPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid rgba($color-white, 0.1);
+  border-radius: $radius-full;
+  font-family: $mono;
+  font-size: $font-size-xs;
+  letter-spacing: $letter-spacing-wide;
+  color: $color-text-body;
+}
+
+.compactCity {
+  text-transform: uppercase;
+  color: $color-text-muted;
+}
+
+.compactTime {
+  min-width: 5ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: $color-white;
+}

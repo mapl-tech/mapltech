@@ -4,6 +4,7 @@ import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
+  alternates: { canonical: 'https://mapltech.com/privacy' },
   description:
     'MAPL TECH Privacy Policy. Learn how we collect, use, and protect your personal information.',
 };

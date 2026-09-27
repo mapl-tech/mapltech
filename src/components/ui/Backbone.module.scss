@@ -1,0 +1,172 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+$mono: var(--font-jetbrains-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+
+// Mobile: 3px rail on the left edge with dots only.
+// Desktop (lg): 2px spine in the left gutter with index + label per node.
+
+.root {
+  position: fixed;
+  left: 0;
+  top: 10vh;
+  z-index: $z-sticky - 50;
+  width: 3px;
+  height: 80vh;
+  pointer-events: none;
+
+  @include lg {
+    left: clamp(20px, 3vw, 48px);
+    top: 16vh;
+    width: 2px;
+    height: 68vh;
+  }
+}
+
+.spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.track {
+  fill: none;
+  stroke: rgba($color-white, 0.12);
+  stroke-width: 3px;
+
+  @include lg {
+    stroke-width: 2px;
+  }
+}
+
+.progress {
+  fill: none;
+  stroke: $color-red;
+  stroke-width: 3px;
+  stroke-linecap: butt;
+
+  @include lg {
+    stroke-width: 2px;
+  }
+}
+
+.nodes {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.node {
+  display: flex;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+  text-decoration: none;
+  color: $color-text-muted;
+}
+
+.dot {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  margin-left: -3.5px; // centre on the 3px rail
+  border-radius: 50%;
+  background: $color-dark-surface;
+  border: 2px solid rgba($color-white, 0.3);
+  transition: background $transition-fast, border-color $transition-fast, transform $transition-base;
+
+  @include lg {
+    margin-left: -4px; // centre on the 2px spine
+  }
+
+  .link[data-active='true'] & {
+    background: $color-red;
+    border-color: $color-red;
+    transform: scale(1.2);
+  }
+}
+
+.label {
+  display: none;
+
+  @include lg {
+    display: inline-flex;
+    gap: 8px;
+    font-family: $mono;
+    font-size: $font-size-xs;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity $transition-base, transform $transition-base, color $transition-fast;
+  }
+
+  .link[data-active='true'] &,
+  .link:hover & {
+    opacity: 1;
+    transform: none;
+    color: $color-white;
+  }
+}
+
+.index {
+  color: $color-red;
+}
+
+// Accessible mirror: hidden until a link inside receives focus.
+.srNav {
+  @include sr-only;
+
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: block;
+    padding: $space-xs $space-sm;
+    font-family: $mono;
+    font-size: $font-size-sm;
+    color: $color-white;
+  }
+
+  &:focus-within {
+    position: fixed;
+    left: $space-md;
+    top: $space-md;
+    z-index: $z-toast;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: $space-sm;
+    clip: auto;
+    overflow: visible;
+    white-space: normal;
+    background: $color-dark-card;
+    border: 1px solid rgba($color-white, 0.15);
+    border-radius: $radius-md;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot,
+  .label {
+    transition: none;
+  }
+}

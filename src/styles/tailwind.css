@@ -1,3 +1,94 @@
 @layer base, theme, utilities;
 @import "tailwindcss/theme" layer(theme);
 @import "tailwindcss/utilities" layer(utilities);
+
+/*
+ * MAPL TECH design tokens for Tailwind utilities.
+ * Mirrors src/styles/_variables.scss so `bg-ground`, `text-fg-muted`,
+ * `font-display`, `rounded-lg` and friends resolve to the same values the
+ * SCSS modules use. Change a value here AND in _variables.scss.
+ * `static` keeps every variable in the output even before a utility uses it,
+ * so components may read them directly (style={{ color: 'var(--color-brand)' }}).
+ */
+@theme static {
+  /* Ground + surfaces */
+  --color-ground: #0a0a0a;
+  --color-surface-1: #111111;
+  --color-surface-2: #161616;
+  --color-surface-3: #1c1c1c;
+
+  /* Hairlines (borders/dividers) */
+  --color-hairline: rgba(255, 255, 255, 0.08);
+  --color-hairline-strong: rgba(255, 255, 255, 0.12);
+
+  /* Text */
+  --color-fg: #f5f2ee;
+  --color-fg-muted: rgba(245, 242, 238, 0.64);
+  --color-fg-dim: rgba(245, 242, 238, 0.4);
+
+  /* Brand red: the only interactive accent */
+  --color-brand: #f03350;
+  --color-brand-hover: #ff3d5a;
+  --color-brand-pressed: #c4213c;
+
+  /* Teal: live/system signals only (clocks, status dots, estimator output) */
+  --color-signal: #33f0d0;
+  --color-signal-muted: rgba(51, 240, 208, 0.15);
+
+  /* Radii - match $radius-* (4/8/12/16/24) */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-pill: 9999px;
+
+  /* Fluid type scale - text-display, text-h2, text-h3, text-lede, text-label */
+  --text-display: clamp(2.75rem, 7vw, 6.5rem);
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.01em;
+  --text-h1: clamp(2.5rem, 5.5vw, 4.5rem);
+  --text-h1--line-height: 1.02;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h2: clamp(2rem, 4vw, 3.5rem);
+  --text-h2--line-height: 1.08;
+  --text-h2--letter-spacing: -0.01em;
+  --text-h3: clamp(1.5rem, 2.4vw, 2rem);
+  --text-h3--line-height: 1.2;
+  --text-lede: clamp(1.125rem, 1.1rem + 0.4vw, 1.375rem);
+  --text-lede--line-height: 1.5;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.14em;
+
+  /* Tracking */
+  --tracking-display: -0.01em;
+  --tracking-label: 0.14em;
+
+  /* Spacing on the 8px scale: py-section, gap-stack */
+  --spacing-section: clamp(4rem, 10vw, 8rem);
+  --spacing-section-sm: clamp(3rem, 6vw, 5rem);
+  --spacing-stack: clamp(1.5rem, 3vw, 2.5rem);
+  --spacing-gutter: clamp(1.25rem, 5vw, 2.5rem);
+
+  /* Containers: max-w-site, max-w-narrow, max-w-prose-col */
+  --container-site: 1200px;
+  --container-narrow: 900px;
+  --container-prose-col: 720px;
+
+  /* Easing used by the shell (template fade, transitions) */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * Fonts reference the next/font variables set on <html> by src/app/layout.tsx,
+ * so they are declared inline (the utility uses the variable directly).
+ */
+@theme inline {
+  --font-sans: var(--font-dm-sans), "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-dm-sans), "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", "Courier New", monospace;
+}

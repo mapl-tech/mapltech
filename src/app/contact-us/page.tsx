@@ -9,6 +9,7 @@ import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
   title: 'Contact',
+  alternates: { canonical: 'https://mapltech.com/contact-us' },
   description:
     'Start a project with MAPL TECH. Phone: +1 (647) 375-6724, Email: contact@mapltech.com. We respond within 24 hours.',
   openGraph: {

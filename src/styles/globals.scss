@@ -1,7 +1,11 @@
 @use 'variables' as *;
 @use 'mixins' as *;
+// Keyframes, reveal utilities and view-timeline rules. Emitted once, unlayered,
+// ahead of the rules below.
+@use 'motion';
 
-// Overpass font loaded via next/font in layout.tsx for optimal performance
+// Fonts (DM Sans, Instrument Serif, JetBrains Mono) are loaded via next/font in
+// src/app/layout.tsx; their CSS variables live on <html>.
 
 @layer base {
 
@@ -14,11 +18,18 @@
 }
 
 html {
-  // scroll-behavior handled by Lenis (SmoothScroll component)
+  // Desktop smooth scroll is Lenis (SmoothScroll). Touch devices use native scroll
+  // with smooth anchor jumps (see the pointer-coarse block below).
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  // Ensure text scales with user's browser font size settings
-  font-size: 100%; // respects user's preferred font size (default 16px)
+  // Respect the user's preferred font size (default 16px)
+  font-size: 100%;
+  // Instrument Serif ships one 400 face: never fake a bold. Style synthesis stays
+  // on so <em> still slants in fonts loaded without an italic.
+  font-synthesis: style;
+  background-color: $color-ground;
+  color-scheme: dark;
+  accent-color: $color-red;
 }
 
 body {
@@ -28,46 +39,76 @@ body {
   line-height: $line-height-normal;
   letter-spacing: $letter-spacing-normal;
   color: $color-text-body;
-  background-color: $color-dark;
+  background-color: $color-ground;
   overflow-x: hidden;
   position: relative;
+  min-height: 100svh;
 
-  // Subtle noise texture overlay for depth
+  // Film grain - a CSS SVG noise tile, not a canvas. Sits above everything but the cursor pill.
   &::before {
     content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 9999;
-    opacity: 0.025;
+    z-index: $z-grain;
+    opacity: 0.035;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-size: 128px 128px;
   }
 }
 
-// Headings use display font (Overpass)
+// Headings: Instrument Serif at 400. Sizes are defaults; modules may override.
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-display;
+  font-weight: $font-weight-display;
   color: $color-text-heading;
-  font-weight: $font-weight-bold;
   line-height: $line-height-tight;
-  letter-spacing: $letter-spacing-tight;
+  letter-spacing: $letter-spacing-display;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: $font-size-h1;
+  line-height: 1.02;
+}
+
+h2 {
+  font-size: $font-size-h2;
+}
+
+h3 {
+  font-size: $font-size-h3;
+  line-height: $line-height-snug;
+}
+
+h4 {
+  font-size: $font-size-xl;
+  line-height: $line-height-snug;
+}
+
+h5 {
+  font-size: $font-size-lg;
+  line-height: $line-height-snug;
+}
+
+h6 {
+  font-size: $font-size-md;
+  line-height: $line-height-snug;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 a {
   color: inherit;
   text-decoration: none;
   transition: color $transition-fast;
-
-  &:focus-visible {
-    outline: 2px solid $color-red;
-    outline-offset: 3px;
-    border-radius: $radius-sm;
-  }
 }
 
-img {
+img,
+video {
   max-width: 100%;
   height: auto;
   display: block;
@@ -75,12 +116,11 @@ img {
 
 button {
   font-family: inherit;
-
-  &:focus-visible {
-    outline: 2px solid $color-red;
-    outline-offset: 3px;
-    border-radius: $radius-sm;
-  }
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 ul, ol {
@@ -90,17 +130,37 @@ ul, ol {
 input, textarea, select {
   font-family: inherit;
   font-size: inherit;
+  color: inherit;
+}
 
-  &:focus-visible {
-    outline: 2px solid $color-red;
-    outline-offset: 2px;
-    border-radius: $radius-sm;
+// Native accordions (interaction #11): answers are always in the HTML.
+details > summary {
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
   }
 }
 
+// Numbers everywhere line up (prices, clocks, counters).
+dd, td, th, time, output {
+  font-variant-numeric: tabular-nums;
+}
+
 ::selection {
-  background: rgba($color-pink-hot, 0.35);
+  background: rgba($color-red, 0.35);
   color: $color-white;
+}
+
+// Focus ring: 2px red, 2px offset, everywhere. Mouse focus shows nothing.
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: $focus-ring;
+  outline-offset: $focus-ring-offset;
 }
 
 // Custom scrollbar
@@ -109,7 +169,7 @@ input, textarea, select {
 }
 
 ::-webkit-scrollbar-track {
-  background: $color-dark;
+  background: $color-ground;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -121,7 +181,7 @@ input, textarea, select {
   }
 }
 
-// Skip to content link
+// Skip to content link (the first tab stop; targets <main id="main">)
 .skip-to-content {
   @include sr-only;
   position: fixed;
@@ -129,9 +189,10 @@ input, textarea, select {
   left: $space-md;
   z-index: $z-toast;
   padding: $space-sm $space-md;
-  background: $color-pink;
+  background: $color-red;
   color: $color-white;
   border-radius: $radius-md;
+  font-family: $font-body;
   font-weight: $font-weight-semibold;
 
   &:focus {
@@ -143,35 +204,146 @@ input, textarea, select {
   }
 }
 
-// Utility classes
+// Main landmark: focusable target for the skip link, no visible ring.
+main:focus {
+  outline: none;
+}
+
+// Below-the-fold sections skip layout and paint until they approach the viewport.
+// Never put this on the hero, the H1, the lede, the key facts or the primary CTA.
+[data-below-fold] {
+  @include below-fold;
+}
+
+// ============================================
+// Utilities
+// ============================================
 .section {
   @include section-padding;
+}
+
+.section--sm {
+  @include section-padding-sm;
 }
 
 .container {
   @include container;
 }
 
+.container--narrow {
+  @include container($max-width-narrow);
+}
+
+.container--prose {
+  @include container($max-width-prose);
+}
+
+// JetBrains Mono with tabular figures - numbers, clocks, code, metadata
+.mono {
+  font-family: $font-mono;
+  @include tabular;
+}
+
+// 12px uppercase mono label above a heading ("01 - Trust wall", "Starting price")
+.eyebrow {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+// The 40-60 word paragraph under every H1; max 60ch
+.lede {
+  @include lede;
+}
+
+// Display H1 for hero pages (Instrument Serif, clamp(2.75rem, 7vw, 6.5rem))
+.display {
+  @include display-type($font-size-display, $line-height-display);
+}
+
+// Key facts <dl>. Markup: <dl class="kv"><div><dt>Starting price</dt><dd>From $5,000</dd></div>...</dl>
+// Each dt/dd pair is wrapped in a <div> (valid HTML) so the grid can place pairs.
+.kv {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: $space-lg $space-xl;
+  padding-top: $space-lg;
+  border-top: $border-hairline;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+    min-width: 0;
+  }
+
+  dt {
+    @include mono-label($color-fg-dim);
+  }
+
+  dd {
+    margin: 0;
+    font-size: $font-size-base;
+    line-height: $line-height-snug;
+    color: $color-fg;
+    @include tabular;
+  }
+
+  // Vertical variant for right-rail cards and bottom sheets: one fact per row, hairline between
+  &--stack {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-top: 0;
+    border-top: 0;
+
+    > div {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: $space-md;
+      padding: $space-sm 0;
+      border-bottom: $border-hairline;
+    }
+
+    dd {
+      text-align: right;
+    }
+  }
+}
+
+// Live/system signal (teal): clocks, status dots, estimator output. Not for interactive states.
+.signal {
+  color: $color-signal;
+}
+
+.visually-hidden {
+  @include sr-only;
+}
+
 .gradient-text {
   @include gradient-text;
 }
 
-// ===== Magnetic Button (Speer-style) =====
+// ===== Magnetic Button (MagneticButton.tsx) =====
+// Flat brand red; the transform lives on the inner element in the component.
 .magnetic-btn {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: $space-sm;
+  min-height: 48px;
   border-radius: $radius-full;
   font-family: $font-body;
   font-weight: $font-weight-semibold;
-  letter-spacing: $letter-spacing-wide;
-  text-transform: capitalize;
+  letter-spacing: $letter-spacing-normal;
+  text-transform: none;
   text-decoration: none;
   cursor: pointer;
   overflow: hidden;
-  transition: box-shadow $transition-base;
+  touch-action: manipulation;
+  transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast;
 
   &__text {
     position: relative;
@@ -187,60 +359,65 @@ input, textarea, select {
     border-radius: inherit;
     opacity: 0;
     transition: opacity $transition-base;
+    pointer-events: none;
   }
 
-  &:hover &__glow {
-    opacity: 1;
+  @include pointer-fine-motion {
+    &:hover &__glow {
+      opacity: 1;
+    }
   }
 
-  &:focus-visible {
-    outline: 2px solid $color-white;
-    outline-offset: 3px;
-  }
-
-  // Primary
+  // Primary: #F03350 -> hover #FF3D5A -> pressed #C4213C
   &--primary {
-    background: $gradient-primary;
+    background: $color-red;
     color: $color-white;
-    box-shadow: 0 4px 20px rgba($color-pink, 0.2);
 
     .magnetic-btn__glow {
-      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+      background: radial-gradient(
+        120px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(255, 255, 255, 0.18) 0%,
+        transparent 70%
+      );
     }
 
     &:hover {
-      box-shadow: 0 8px 40px rgba($color-pink, 0.35), 0 0 80px rgba($color-pink, 0.1);
+      background: $color-red-hover;
+    }
+
+    &:active {
+      background: $color-red-pressed;
     }
   }
 
-  // Secondary
+  // Secondary: hairline ghost, red hairline on hover
   &--secondary {
     background: transparent;
-    color: $color-white;
-    border: 1px solid rgba($color-white, 0.15);
+    color: $color-fg;
+    border: 1px solid $color-hairline-strong;
 
     .magnetic-btn__glow {
-      background: rgba($color-pink, 0.05);
+      background: rgba($color-red, 0.06);
     }
 
     &:hover {
-      border-color: rgba($color-pink, 0.4);
-      box-shadow: 0 0 30px rgba($color-pink, 0.08);
+      border-color: rgba($color-red, 0.6);
+      color: $color-white;
+    }
+
+    &:active {
+      border-color: $color-red-pressed;
     }
   }
 
   // Sizes
   &.btn-sm {
-    padding: 8px 16px;
-    font-size: $font-size-md;
-
-    @media (min-width: $breakpoint-sm) {
-      padding: 10px 20px;
-    }
+    padding: 10px 18px;
+    font-size: $font-size-base;
   }
 
   &.btn-md {
-    padding: 10px 22px;
+    padding: 12px 24px;
     font-size: $font-size-md;
 
     @media (min-width: $breakpoint-sm) {
@@ -258,7 +435,7 @@ input, textarea, select {
   }
 }
 
-// ===== Spotlight cards  - cursor-follow highlight (premium micro-interaction) =====
+// ===== Spotlight cards - cursor-follow highlight (SpotlightCard.tsx) =====
 .spotlight-card {
   position: relative;
 
@@ -278,8 +455,8 @@ input, textarea, select {
     );
   }
 
-  // Reveal only on real hover-capable, fine pointers  - touch pays nothing
-  @media (hover: hover) and (pointer: fine) {
+  // Reveal only on real hover-capable, fine pointers - touch pays nothing
+  @include pointer-fine-motion {
     &:hover .spotlight-card__glow {
       opacity: 1;
     }
@@ -299,7 +476,7 @@ input, textarea, select {
   }
 }
 
-// Lenis smooth scroll integration
+// Lenis smooth scroll integration (desktop only; never instantiated on touch)
 html.lenis, html.lenis body {
   height: auto;
 }
@@ -312,37 +489,54 @@ html.lenis, html.lenis body {
   overscroll-behavior: contain;
 }
 
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 } // end @layer base
 
-// Mobile body text minimum  - 17px floor for readability on small screens
+// Touch devices: native scroll with smooth anchor jumps (Lenis is not created here).
+@media (hover: none), (pointer: coarse) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+// Mobile body text minimum - 17px floor for readability on small screens
 @media (max-width: $breakpoint-sm) {
   p, li, blockquote, td, th, dd {
     font-size: 1.0625rem;
   }
 }
 
-// Reduced motion  - respect user's OS accessibility setting
+// Reduced motion - respect the user's OS accessibility setting.
+// Durations go to (effectively) zero everywhere; scroll-driven timelines and
+// Framer springs are gated separately in _motion.scss and the components.
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto;
   }
 }
 
 // High contrast mode adjustments
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
   body {
     color: $color-white;
   }
 
-  a, button {
-    &:focus-visible {
-      outline-width: 3px;
-    }
+  :focus-visible {
+    outline-width: 3px;
   }
 }
 

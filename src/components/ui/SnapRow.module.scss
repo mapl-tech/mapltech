@@ -1,0 +1,138 @@
+@use '../../styles/variables' as *;
+
+// data-mode="drag"  : fine pointer, Framer drag on the translated track
+// data-mode="scroll": coarse pointer + SSR, native overflow-x + scroll-snap
+
+.region {
+  position: relative;
+  --snap-gap: #{$space-md};
+  --snap-card: 360px;
+}
+
+.viewport {
+  overflow: hidden;
+
+  .region[data-mode='scroll'] & {
+    overflow: visible;
+  }
+}
+
+.track {
+  display: flex;
+  gap: var(--snap-gap);
+  width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  .region[data-mode='drag'] & {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .region[data-mode='scroll'] & {
+    width: auto;
+    padding-inline: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.item {
+  flex: 0 0 auto;
+
+  .region[data-mode='drag'] & {
+    width: var(--snap-card);
+  }
+
+  .region[data-mode='scroll'] & {
+    flex-basis: 85vw;
+    max-width: 420px;
+    scroll-snap-align: start;
+  }
+
+  // Dragged cards must not start a native image drag.
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+}
+
+// Dots without JS where ::scroll-marker exists (coarse mode only).
+@supports selector(::scroll-marker) {
+  .region[data-mode='scroll'] .track {
+    scroll-marker-group: after;
+
+    &::scroll-marker-group {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding-top: 12px;
+    }
+  }
+
+  .region[data-mode='scroll'] .item::scroll-marker {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba($color-white, 0.25);
+  }
+
+  .region[data-mode='scroll'] .item::scroll-marker:target-current {
+    background: $color-red;
+  }
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: $space-md;
+}
+
+.control {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba($color-white, 0.15);
+  background: transparent;
+  color: $color-white;
+  cursor: pointer;
+  transition: border-color $transition-fast, color $transition-fast, opacity $transition-fast;
+
+  &:hover {
+    border-color: $color-red;
+    color: $color-red-bright;
+  }
+
+  &:active {
+    color: $color-red-deep;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-red;
+    outline-offset: 3px;
+  }
+
+  .region[data-edge='start'] &:first-child,
+  .region[data-edge='end'] &:last-child,
+  .region[data-edge='both'] & {
+    opacity: 0.35;
+  }
+}

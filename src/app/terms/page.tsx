@@ -4,6 +4,7 @@ import styles from '@/styles/page-common.module.scss';
 
 export const metadata: Metadata = {
   title: 'Terms of Use',
+  alternates: { canonical: 'https://mapltech.com/terms' },
   description:
     'MAPL TECH Terms of Use. Review the terms and conditions governing your use of our website and services.',
 };

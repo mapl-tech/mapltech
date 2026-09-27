@@ -9,6 +9,7 @@ import styles from './page.module.scss';
 
 export const metadata: Metadata = {
   title: 'Leadership & Global Team',
+  alternates: { canonical: 'https://mapltech.com/team' },
   description:
     'Meet the executive leadership and global team behind MAPL TECH. Operating across Canada, Nigeria, and Jamaica, we build scalable web infrastructure and AI-powered digital systems.',
   openGraph: {

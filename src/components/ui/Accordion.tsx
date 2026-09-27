@@ -1,56 +1,77 @@
-'use client';
-
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { HiPlus, HiMinus } from 'react-icons/hi2';
+import { useId, type ReactNode } from 'react';
 import styles from './Accordion.module.scss';
 
-interface AccordionItem {
-  question: string;
-  answer: string;
+/**
+ * Interaction #11: native accordion on <details name><summary>.
+ *
+ * No client JS: works as a Server Component. Every answer is in the SSR HTML
+ * (crawlable, no mount-on-click). Open/close motion lives in styles/_motion.scss
+ * (interpolate-size + ::details-content transition, red rule drawing in).
+ */
+
+export interface AccordionItem {
+  /** Question text (FAQ style). `title` is accepted as an alias. */
+  question?: string;
+  title?: string;
+  /** Answer body. `content` is accepted as an alias. Strings render as a <p>. */
+  answer?: ReactNode;
+  content?: ReactNode;
+  /** Optional anchor id for deep links (#faq-pricing). */
+  id?: string;
 }
 
-interface AccordionProps {
+export interface AccordionProps {
   items: AccordionItem[];
+  /**
+   * Shared <details name> so only one item is open at a time.
+   * Defaults to a unique name per instance; pass `multiple` to allow several.
+   */
+  name?: string;
+  multiple?: boolean;
+  /** Index of the item rendered open on first paint. */
+  defaultOpen?: number;
+  className?: string;
 }
 
-export default function Accordion({ items }: AccordionProps) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+function PlusIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false">
+      <path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    </svg>
+  );
+}
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+export default function Accordion({ items, name, multiple = false, defaultOpen, className = '' }: AccordionProps) {
+  const autoName = useId();
+  const groupName = multiple ? undefined : (name ?? `accordion-${autoName}`);
 
   return (
-    <div className={styles.accordion}>
+    <div className={`${styles.accordion} ${className}`.trim()}>
       {items.map((item, i) => {
-        const isOpen = openIndex === i;
+        const question = item.question ?? item.title ?? '';
+        const answer = item.answer ?? item.content;
         return (
-          <div key={i} className={`${styles.item} ${isOpen ? styles.open : ''}`}>
-            <button
-              className={styles.trigger}
-              onClick={() => toggle(i)}
-              aria-expanded={isOpen}
-            >
-              <span className={styles.question}>{item.question}</span>
-              <span className={styles.icon}>
-                {isOpen ? <HiMinus size={18} /> : <HiPlus size={18} />}
+          <details
+            key={item.id ?? `${i}-${question}`}
+            id={item.id}
+            name={groupName}
+            className={`${styles.item} accordion-item`}
+            open={defaultOpen === i || undefined}
+          >
+            <summary className={`${styles.trigger} accordion-summary`}>
+              <span className={styles.question}>{question}</span>
+              <span className={styles.icon} aria-hidden="true">
+                <PlusIcon />
               </span>
-            </button>
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div
-                  className={styles.content}
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-                >
-                  <p className={styles.answer}>{item.answer}</p>
-                </motion.div>
+            </summary>
+            <div className={`${styles.content} accordion-content`}>
+              {typeof answer === 'string' ? (
+                <p className={styles.answer}>{answer}</p>
+              ) : (
+                <div className={styles.answer}>{answer}</div>
               )}
-            </AnimatePresence>
-          </div>
+            </div>
+          </details>
         );
       })}
     </div>

@@ -1,0 +1,218 @@
+// ============================================
+// MAPL TECH motion layer  - the interaction vocabulary (brief §1)
+//
+// Wire-up: globals.scss adds `@use 'motion';` next to its other @use lines
+// (owned by the layout engineer; this file does not edit globals.scss).
+//
+// Rules: animate transform / opacity / clip-path only; pointer effects are
+// gated by (hover: hover) and (pointer: fine); everything respects
+// prefers-reduced-motion. Emitted outside @layer base, so these rules win
+// over the layered base styles without specificity games.
+// ============================================
+@use 'variables' as *;
+
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+// ---------------------------------------------------------------------------
+// #2 Section reveal  - CSS scroll timeline, zero JS.
+// Never put .reveal on the H1, lede, key-facts <dl>, primary CTA or anything
+// in the first viewport. Where view() is unsupported the rule is simply absent.
+// ---------------------------------------------------------------------------
+@keyframes reveal {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+
+    @media (max-width: #{$breakpoint-md - 1px}) {
+      .reveal {
+        animation-range: entry 0% entry 30%;
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// #5 Tactile CTA (MagneticButton)
+// ---------------------------------------------------------------------------
+.magnetic-btn-box {
+  display: inline-block;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.magnetic-btn {
+  touch-action: manipulation;
+}
+
+// Radial highlight that follows the pointer (--mx/--my set from JS).
+.magnetic-btn .magnetic-btn__glow {
+  background: radial-gradient(
+    140px circle at var(--mx, 50%) var(--my, 50%),
+    rgba($color-white, 0.22) 0%,
+    transparent 60%
+  );
+}
+
+.magnetic-btn--secondary .magnetic-btn__glow {
+  background: radial-gradient(
+    160px circle at var(--mx, 50%) var(--my, 50%),
+    rgba($color-red, 0.22) 0%,
+    transparent 60%
+  );
+}
+
+// Brand states: hover #FF3D5A, pressed #C4213C.
+.magnetic-btn-box:hover .magnetic-btn--primary {
+  background: linear-gradient(135deg, $color-red 0%, $color-red-bright 100%);
+}
+
+.magnetic-btn-box:active .magnetic-btn--primary {
+  background: $color-red-deep;
+  box-shadow: none;
+}
+
+.magnetic-btn-box:active .magnetic-btn--secondary {
+  border-color: $color-red-deep;
+}
+
+@media (pointer: coarse) {
+  .magnetic-btn {
+    min-height: 48px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// #6 Cursor pill (CursorGlow). Geometry is inline; this is the typography and
+// the hard guarantee that it never shows on touch or under reduced motion.
+// ---------------------------------------------------------------------------
+.cursor-pill {
+  will-change: transform;
+}
+
+.cursor-pill__label {
+  font-family: var(--font-jetbrains-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.75rem;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wider;
+  text-transform: uppercase;
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-pill {
+    display: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// #11 Native accordion (<details name><summary>)
+// ---------------------------------------------------------------------------
+.accordion-item {
+  interpolate-size: allow-keywords;
+
+  &::details-content {
+    height: 0;
+    overflow: clip;
+    transition:
+      height 320ms $ease-out,
+      content-visibility 320ms allow-discrete;
+  }
+
+  &[open]::details-content {
+    height: auto;
+  }
+
+  // Red 1px rule that draws in under the question when the item opens.
+  > .accordion-summary::after {
+    content: '';
+    position: absolute;
+    left: $space-xl;
+    right: $space-xl;
+    bottom: 0;
+    height: 1px;
+    background: $color-red;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 320ms $ease-out;
+  }
+
+  &[open] > .accordion-summary::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-item::details-content,
+  .accordion-item > .accordion-summary::after {
+    transition: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// #9 Bottom sheet (vaul) + mobile action bar
+// ---------------------------------------------------------------------------
+.mobile-action-bar__primary:hover {
+  --bar-primary-bg: #{$color-red-bright};
+}
+
+.mobile-action-bar__primary:active {
+  --bar-primary-bg: #{$color-red-deep};
+}
+
+.mobile-action-bar__call:active {
+  border-color: $color-red-deep;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-vaul-drawer],
+  [data-vaul-overlay] {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// #10 Live clocks  - 120ms clip-path digit flip (TimezoneOverlap / LiveClocks)
+// ---------------------------------------------------------------------------
+@keyframes clock-flip {
+  from {
+    clip-path: inset(0 0 100% 0);
+    translate: 0 -25%;
+  }
+
+  to {
+    clip-path: inset(0);
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .clock-digit {
+    display: inline-block;
+    animation: clock-flip 120ms $ease-out both;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// #12 Weighted scroll: while Lenis is active, in-page anchors are smoothed by
+// Lenis itself; everywhere else the browser handles them.
+// ---------------------------------------------------------------------------
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.lenis) {
+    scroll-behavior: smooth;
+  }
+}
