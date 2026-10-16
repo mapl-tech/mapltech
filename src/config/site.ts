@@ -303,6 +303,7 @@ export const testimonials = [
 export const portfolioProjects = [
   {
     title: 'Loop',
+    hidden: true, // not listed on /our-work (owner request, 2026-10-16)
     category: 'Web Development',
     description: 'A high-performance, custom-coded web platform engineered for speed, scale, and clean maintainability - built without the constraints of page builders or plugin stacks.',
     tags: ['Web Development', 'Custom Development', 'Performance'],
@@ -326,6 +327,7 @@ export const portfolioProjects = [
   },
   {
     title: 'Akuma Patterson Holdings',
+    hidden: true, // not listed on /our-work (owner request, 2026-10-16)
     category: 'Automation and AI Workflows',
     description: 'Automated the entire client lifecycle - from CRM lead capture to invoicing and project hand-off - eliminating manual data entry.',
     tags: ['Automation', 'CRM', 'AI Workflows'],
@@ -349,6 +351,7 @@ export const portfolioProjects = [
   },
   {
     title: 'Crowngate Business',
+    hidden: true, // not listed on /our-work (owner request, 2026-10-16)
     category: 'Web Development',
     description: 'Corporate business platform with service showcase, client onboarding workflows, and professional brand presence.',
     tags: ['Corporate', 'Custom Development', 'Branding'],
@@ -357,6 +360,7 @@ export const portfolioProjects = [
   },
   {
     title: 'Tricia Walters',
+    hidden: true, // not listed on /our-work (owner request, 2026-10-16)
     category: 'Web Development',
     description: 'Personal brand site with CMS-powered content, integrated booking system, and optimized page speed.',
     tags: ['Portfolio', 'CMS', 'Booking'],

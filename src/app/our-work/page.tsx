@@ -20,10 +20,13 @@ const categories = [
 export default function OurWorkPage() {
   const [activeFilter, setActiveFilter] = useState('All');
 
+  // Entries flagged `hidden` in site.ts stay in the data (logo wall, references)
+  // but are not listed on this page.
+  const visibleProjects = portfolioProjects.filter((p) => !p.hidden);
   const filtered =
     activeFilter === 'All'
-      ? portfolioProjects
-      : portfolioProjects.filter((p) => p.category === activeFilter);
+      ? visibleProjects
+      : visibleProjects.filter((p) => p.category === activeFilter);
 
   return (
     <>
