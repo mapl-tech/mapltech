@@ -287,15 +287,15 @@ export const testimonials = [
     role: 'Operations Director',
     image: '/images/headshot-alita.jpg',
   },
-  // NOTE: drafted in-house at the owner's request, grounded in the delivered
-  // UNSVCC work (website + operations dashboard). Get Kenneth's sign-off on
-  // this wording - it is attributed to him.
+  // Not a client quote: this is the verdict of the August 2026 post-launch
+  // accessibility audit of chhancr.ca (see caseStudies on the redesign branch).
+  // Swap in a signed-off quote from the CHHA-NCR board when one is available.
   {
     quote:
-      'MAPL TECH built our website and gave our coalition a real operational backbone. They took the time to understand how a non-profit actually runs, and what they delivered is something our team relies on every day.',
-    name: 'Kenneth Coghiel',
-    company: 'United Senior Citizen Voice for Change Coalition',
-    role: 'UNSVCC',
+      'Skip links, real landmarks, complete alt text, visible focus states and reduced-motion support: accessibility engineering above what most agencies ship, with every audited colour pair meeting WCAG AA.',
+    name: 'Post-launch accessibility audit',
+    company: 'CHHA-NCR relaunch',
+    role: 'August 2026',
     image: '',
   },
 ];

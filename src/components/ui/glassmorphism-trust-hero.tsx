@@ -22,8 +22,7 @@ const PARTNERS: { name: string; logo: string; h: number; filter: string }[] = [
   { name: 'Loop', logo: '/images/clients/loop.webp', h: 32, filter: 'grayscale(1)' },
   // black type + red "Canada" -> light mono (wide wordmark, so shortest)
   { name: 'FOCAS Canada', logo: '/images/clients/focas-canada.png', h: 22, filter: 'grayscale(1) invert(1)' },
-  // teal portrait crest -> light mono, brightened (narrow, so tallest)
-  { name: 'UNSVCC', logo: '/images/clients/unsvcc.svg', h: 38, filter: 'grayscale(1) invert(1) brightness(1.1)' },
+  // teal crest -> light mono, brightened
   { name: 'CHHA-NCR', logo: '/images/clients/chha-ncr.svg', h: 32, filter: 'grayscale(1) invert(1) brightness(1.1)' },
   // black disc melts into the background, leaving the crown ring + text floating
   { name: 'Crowned Spice', logo: '/images/clients/crowned-spice.png', h: 34, filter: 'grayscale(1)' },
