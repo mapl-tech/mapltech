@@ -22,7 +22,11 @@ export default function OurWorkPage() {
 
   // Entries flagged `hidden` in site.ts stay in the data (logo wall, references)
   // but are not listed on this page.
-  const visibleProjects = portfolioProjects.filter((p) => !p.hidden);
+  // Optional `order` pins entries to the front (lower first); the rest keep
+  // source order. filter() returns a copy, so sort() never mutates the config.
+  const visibleProjects = portfolioProjects
+    .filter((p) => !p.hidden)
+    .sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER));
   const filtered =
     activeFilter === 'All'
       ? visibleProjects

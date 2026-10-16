@@ -377,6 +377,7 @@ export const portfolioProjects = [
   },
   {
     title: 'CHHA-NCR',
+    order: 1, // listed first on /our-work (lower = earlier; unset = source order)
     category: 'Web Development',
     description: 'Full relaunch for the Canadian Hard of Hearing Association\'s National Capital Region branch - a journey-based information architecture, a searchable hearing-clinic directory, and WCAG accessibility built into every page, all on a CMS volunteers can maintain themselves.',
     tags: ['Non-Profit', 'Accessibility', 'Web Development'],
