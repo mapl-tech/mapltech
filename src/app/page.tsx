@@ -89,7 +89,7 @@ export default function HomePage() {
   ];
 
   const featuredProjects = portfolioProjects.filter((project) =>
-    ['LRO Staffing', 'MAPL Tours', 'UNSVCC'].includes(project.title)
+    ['LRO Staffing', 'MAPL Tours', 'CHHA-NCR'].includes(project.title)
   );
 
   return (
