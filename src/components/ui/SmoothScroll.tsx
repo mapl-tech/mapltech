@@ -85,7 +85,10 @@ function LenisSingleton() {
         offset: -margin,
         onComplete: () => {
           if (window.location.hash !== url.hash) window.history.pushState(null, '', url.hash);
-          if (!target.matches(FOCUSABLE)) target.setAttribute('tabindex', '-1');
+          if (!target.matches(FOCUSABLE)) {
+            target.setAttribute('tabindex', '-1');
+            target.dataset.anchorTarget = ''; // focusable for the jump only: no ring (globals.scss)
+          }
           target.focus({ preventScroll: true });
         },
       });

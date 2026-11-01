@@ -45,18 +45,10 @@ export const keepHyphens = (text: string): string => text.replace(/-/g, '‑');
 export const cleanDash = (text: string): string => text.replace(/\s+-\s+/g, ': ');
 
 /**
- * site.ts strings that name a service line by a short form, shown with the
- * canonical names (SERVICE_META labels), per the site-wide copy rule. Remove
- * an entry once site.ts carries the canonical wording; any other string
- * passes through cleanDash unchanged.
+ * site.ts copy as shown on the page. site.ts carries the canonical service
+ * names itself now, so only the dash rule applies.
  */
-const CANONICAL_COPY: Record<string, string> = {
-  'Internal tools development': `${SERVICE_META.tools.label} development`,
-  'Web development support': `${SERVICE_META.web.label} support`,
-  'Your dedicated engineering department - automation, tools, web, and infrastructure all handled': `Your dedicated engineering department: ${SERVICE_META.automation.label}, ${SERVICE_META.tools.label}, ${SERVICE_META.web.label} and infrastructure, all handled`,
-};
-
-export const canonicalCopy = (text: string): string => CANONICAL_COPY[text] ?? cleanDash(text);
+export const canonicalCopy = (text: string): string => cleanDash(text);
 
 /** Lowest number published across a list of price labels (custom labels are skipped). */
 function lowest(labels: readonly string[]): number {

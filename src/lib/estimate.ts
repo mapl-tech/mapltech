@@ -597,7 +597,11 @@ export function bundleFor(services: readonly EstimateService[]): EstimateBundle 
   };
 }
 
-/** Midpoint of the middle ("most popular") tier — the typical project value used by the referral estimator. */
+/**
+ * Midpoint of a service's second tier: the project value the referral
+ * estimator assumes per introduction. (A convention, not sales data: no tier
+ * popularity is published.)
+ */
 export function typicalProjectValue(service: EstimateService): number {
   const tiers = tiersFor(service);
   const tier = tiers[Math.min(1, tiers.length - 1)];

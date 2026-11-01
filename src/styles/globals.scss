@@ -214,8 +214,12 @@ dd, td, th, time, output {
   }
 }
 
-// Main landmark: focusable target for the skip link, no visible ring.
-main:focus {
+// Main landmark: focusable target for the skip link, no visible ring. The
+// same for in-page anchor targets that SmoothScroll makes focusable (a whole
+// section or heading): focus moves there so the next Tab starts inside it,
+// but a ring around the entire section would only add noise.
+main:focus,
+[data-anchor-target]:focus {
   outline: none;
 }
 

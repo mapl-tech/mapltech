@@ -268,12 +268,12 @@ export const pricing = {
     },
     {
       name: 'Full Systems Partner',
-      description: 'Your dedicated engineering department - automation, tools, web, and infrastructure all handled',
+      description: 'Your dedicated engineering department: Automation & AI, Custom Internal Tools, Web Development and infrastructure, all handled',
       price: '$7,500-$12,000/month',
       features: [
         'Automation & AI workflows',
-        'Internal tools development',
-        'Web development support',
+        'Custom Internal Tools development',
+        'Web Development support',
         'Infrastructure oversight',
         'Dedicated team liaison',
         'Quarterly roadmap planning',
