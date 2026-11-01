@@ -72,6 +72,9 @@ export default function XRay() {
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
       if (frame) cancelAnimationFrame(frame);
+      // The first render runs before the reduced-motion query resolves; drop the
+      // inline values so the static stylesheet state (all planes open) applies.
+      for (const prop of ['--tilt', '--sep', '--legend', '--verdict', '--intro']) stage.style.removeProperty(prop);
     };
   }, [reduceMotion]);
 
@@ -147,9 +150,15 @@ function buildReadouts(t: Telemetry): Record<string, string | null> {
   };
 }
 
+/** Google's "good" threshold for Largest Contentful Paint. */
+const GOOD_LCP_MS = 2500;
+
 function verdictLine(t: Telemetry): string {
   const lcp = formatSeconds(t.lcp);
-  if (lcp) return `This page reached you in ${lcp}. We build every site like this.`;
+  // Only claim it as the standard when the visitor's own number clears the bar;
+  // on a slow connection the line states the measurement and nothing more.
+  if (lcp && t.lcp != null && t.lcp <= GOOD_LCP_MS) return `This page reached you in ${lcp}. We build every site like this.`;
+  if (lcp) return `This page reached you in ${lcp} on your connection. Everything it is made of is listed above.`;
   const fcp = formatSeconds(t.fcp);
   if (fcp) return `This page started painting for you in ${fcp}. We build every site like this.`;
   return 'Every number above was measured on your device. We build every site like this.';
