@@ -58,7 +58,7 @@ export default function WorkStack() {
 
         <p className={styles.all}>
           <Link href="/our-work" className={styles.allLink}>
-            See all our work<span aria-hidden="true"> →</span>
+            See the work<span aria-hidden="true"> →</span>
           </Link>
         </p>
       </div>

@@ -9,6 +9,7 @@ import XRay from '@/components/flagship/XRay';
 import WorkStack from '@/components/flagship/WorkStack';
 import { Close, Estimator, Faq, Founders, Silence, Spotlight } from '@/components/flagship/Acts';
 import { LAYERS, WORK } from '@/components/flagship/content';
+import { siteGraph } from '@/lib/schema';
 import towerFinished from '@/assets/flagship/tower-finished.jpg';
 
 /*
@@ -39,6 +40,24 @@ const homeGraph = pageGraph({
   ],
 });
 
+/** Every schema.org type in the site + page graphs, most frequent first (server-side, for the X-ray). */
+function schemaTypesOf(...graphs: unknown[]): string[] {
+  const counts = new Map<string, number>();
+  const visit = (node: unknown) => {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) return node.forEach(visit);
+    const type = (node as Record<string, unknown>)['@type'];
+    for (const t of Array.isArray(type) ? type : type ? [type] : []) {
+      if (typeof t === 'string') counts.set(t, (counts.get(t) ?? 0) + 1);
+    }
+    Object.values(node).forEach(visit);
+  };
+  graphs.forEach(visit);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
+}
+
+const XRAY_STATIC = { schemaTypes: schemaTypesOf(siteGraph(), homeGraph), faqCount: FAQ_ITEMS.length };
+
 export default function HomePage() {
   return (
     <>
@@ -48,7 +67,7 @@ export default function HomePage() {
       <Problem />
       <Layers />
       <Silence />
-      <XRay />
+      <XRay initial={XRAY_STATIC} />
       <WorkStack />
       <Spotlight />
       <Estimator />

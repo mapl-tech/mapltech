@@ -30,6 +30,12 @@
   margin: 0;
   font-size: $font-size-h2;
   max-width: 12ch;
+
+  // Desktop: the rail is the anchor, the panel screenshots are the entry point,
+  // so the sticky heading steps down a size and its lede goes quieter.
+  @include lg {
+    font-size: clamp(2rem, 1.4rem + 1.4vw, 2.75rem);
+  }
 }
 
 .lede {
@@ -38,6 +44,11 @@
   line-height: 1.55;
   color: rgba($color-fg, 0.76);
   max-width: 40ch;
+
+  @include lg {
+    font-size: $font-size-md;
+    color: rgba($color-fg, 0.66);
+  }
 }
 
 .index {

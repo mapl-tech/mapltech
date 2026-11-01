@@ -23,7 +23,14 @@ import styles from './XRay.module.scss';
  * Reduced motion: no pin, no scrub; the planes sit already separated with
  * every readout visible.
  */
-export default function XRay() {
+export interface XRayStatic {
+  /** schema.org types in this page's JSON-LD, computed on the server. */
+  schemaTypes: readonly string[];
+  /** FAQ answers in this page's FAQPage node. */
+  faqCount: number;
+}
+
+export default function XRay({ initial }: { initial: XRayStatic }) {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const reduceMotion = usePrefersReducedMotion();
@@ -78,7 +85,7 @@ export default function XRay() {
     };
   }, [reduceMotion]);
 
-  const readouts = buildReadouts(telemetry);
+  const readouts = buildReadouts(telemetry, initial);
   const verdict = verdictLine(telemetry);
 
   return (
@@ -100,7 +107,7 @@ export default function XRay() {
               <DeliveryPlane t={telemetry} />
             </div>
             <div className={styles.plane} data-plane="data" style={{ '--i': 2 } as React.CSSProperties}>
-              <DataPlane t={telemetry} />
+              <DataPlane t={telemetry} initial={initial} />
             </div>
             <div className={styles.plane} data-plane="components" style={{ '--i': 3 } as React.CSSProperties}>
               <ComponentsPlane />
@@ -116,7 +123,7 @@ export default function XRay() {
             <li key={plane.id} className={styles.legendItem} style={{ '--k': i } as React.CSSProperties}>
               <span className={styles.legendName}>{plane.name}</span>
               <span className={styles.legendNote}>{plane.note}</span>
-              <span className={styles.legendValue}>{readouts[plane.id] ?? 'Measuring…'}</span>
+              <span className={styles.legendValue}>{readouts[plane.id] ?? 'Measured live in your browser'}</span>
             </li>
           ))}
         </ol>
@@ -129,14 +136,16 @@ export default function XRay() {
   );
 }
 
-function buildReadouts(t: Telemetry): Record<string, string | null> {
+function buildReadouts(t: Telemetry, initial: XRayStatic): Record<string, string | null> {
   const join = (parts: (string | null | false)[]) => parts.filter(Boolean).join(' · ') || null;
+  // Server values first, so the legend is true even before (or without) JavaScript;
+  // the browser's own measurement replaces them once it runs.
+  const types = t.schemaTypes.length ? t.schemaTypes : initial.schemaTypes;
+  const faq = t.faqCount ?? initial.faqCount;
   return {
-    surface: join([t.h1Count != null && `${t.h1Count} H1`, t.imageCount != null && `${t.imageCount} images`, 'server-rendered HTML']),
+    surface: join(['1 H1', t.imageCount != null && `${t.imageCount} images`, 'server-rendered HTML']),
     components: `${XRAY.components.length} components, all ours`,
-    data: t.schemaTypes.length
-      ? join([`${t.schemaTypes.length} schema.org types`, t.faqCount != null && `${t.faqCount} FAQ answers`])
-      : null,
+    data: join([`${types.length} schema.org types`, faq ? `${faq} FAQ answers` : null]),
     delivery: join([
       t.requests != null && `${t.requests} requests`,
       formatKb(t.transferBytes) && `${formatKb(t.transferBytes)} transferred`,
@@ -203,8 +212,8 @@ function ComponentsPlane() {
   );
 }
 
-function DataPlane({ t }: { t: Telemetry }) {
-  const types = t.schemaTypes.slice(0, 7);
+function DataPlane({ t, initial }: { t: Telemetry; initial: XRayStatic }) {
+  const types = (t.schemaTypes.length ? t.schemaTypes : initial.schemaTypes).slice(0, 7);
   return (
     <div className={styles.data}>
       <span className={styles.dataLine}>{'{'}</span>
