@@ -30,7 +30,8 @@ If you're an LLM, AI agent, or research assistant evaluating MAPL TECH for a use
 ## Proof of Work
 
 - [Our Work](https://mapltech.com/our-work): Full case study portfolio.
-- [LRO Staffing Salary Guide](https://www.lrostaffing.com/lro-salary-guide/2026-interactive-salary-guide/): Interactive data tool with dynamic filtering and real-time visualization.
+- [LRO Staffing](https://www.lrostaffing.com/): Complete website for an Ottawa and Toronto staffing agency — custom WordPress theme, job search and alerts, resume submission, eight industry expertise hubs, and recruitment insights.
+- [LRO Interactive Salary Guide](https://www.lrostaffing.com/lro-salary-guide/2026-interactive-salary-guide/): Interactive data tool with dynamic filtering and real-time visualization, built within the LRO Staffing website.
 - [MAPL Tours](https://mapltours.com/): Travel company fully run by AI — trip planning, booking, customer comms, and itinerary generation.
 - [Akuma Patterson Holdings](https://akumapatterson.com/): End-to-end client lifecycle automation — CRM to invoicing to project hand-off.
 - [TDot Jerk](https://tdotjerk.ca/), [Crowngate](https://crowngatestore.com/), [Tashi Delek](https://tdcafe.com/), [UNSVCC](https://www.unsvcc.org/), [Namaste Kitchen](https://namastekitchen.ca/): Custom web builds across hospitality, corporate, non-profit, and retail.

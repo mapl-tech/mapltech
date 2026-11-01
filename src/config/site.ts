@@ -311,6 +311,14 @@ export const portfolioProjects = [
   },
   {
     title: 'LRO Staffing',
+    category: 'Web Development',
+    description: 'Complete website for an Ottawa and Toronto staffing agency - a custom WordPress theme built around job seekers and employers, with job search and alerts, resume submission, eight industry expertise hubs and recruitment insights.',
+    tags: ['WordPress', 'Custom Theme', 'Job Search'],
+    image: '/images/case-lro-website.jpg',
+    url: 'https://www.lrostaffing.com/',
+  },
+  {
+    title: 'LRO Interactive Salary Guide',
     category: 'Custom Internal Tools',
     description: 'Interactive salary guide tool with dynamic filtering, real-time data visualization, and role-based salary benchmarking for recruiters and hiring managers.',
     tags: ['Interactive Tool', 'Data Visualization', 'Custom Development'],
