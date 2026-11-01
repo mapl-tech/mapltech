@@ -287,15 +287,15 @@ export const testimonials = [
     role: 'Operations Director',
     image: '/images/headshot-alita.jpg',
   },
-  // NOTE: drafted in-house at the owner's request, grounded in the delivered
-  // UNSVCC work (website + operations dashboard). Get Kenneth's sign-off on
-  // this wording - it is attributed to him.
+  // Not a client quote: this is the verdict of the August 2026 post-launch
+  // accessibility audit of chhancr.ca (see caseStudies on the redesign branch).
+  // Swap in a signed-off quote from the CHHA-NCR board when one is available.
   {
     quote:
-      'MAPL TECH built our website and gave our coalition a real operational backbone. They took the time to understand how a non-profit actually runs, and what they delivered is something our team relies on every day.',
-    name: 'Kenneth Coghiel',
-    company: 'United Senior Citizen Voice for Change Coalition',
-    role: 'UNSVCC',
+      'Skip links, real landmarks, complete alt text, visible focus states and reduced-motion support: accessibility engineering above what most agencies ship, with every audited colour pair meeting WCAG AA.',
+    name: 'Post-launch accessibility audit',
+    company: 'CHHA-NCR relaunch',
+    role: 'August 2026',
     image: '',
   },
 ];
@@ -304,6 +304,7 @@ export const portfolioProjects = [
   {
     title: 'Loop',
     slug: 'loop',
+    hidden: true, // not listed on /our-work (owner request, 2026-10-16)
     category: 'Web Development',
     description: 'A high-performance, custom-coded web platform engineered for speed, scale, and clean maintainability - built without the constraints of page builders or plugin stacks.',
     tags: ['Web Development', 'Custom Development', 'Performance'],
@@ -312,6 +313,16 @@ export const portfolioProjects = [
   {
     title: 'LRO Staffing',
     slug: 'lro-staffing',
+    order: 1, // listed first on /our-work (lower = earlier; unset = source order)
+    category: 'Web Development',
+    description: 'Complete website for an Ottawa and Toronto staffing agency - a custom WordPress theme built around job seekers and employers, with job search and alerts, resume submission, eight industry expertise hubs and recruitment insights.',
+    tags: ['WordPress', 'Custom Theme', 'Job Search'],
+    image: '/images/case-lro-website.jpg',
+    url: 'https://www.lrostaffing.com/',
+  },
+  {
+    title: 'LRO Interactive Salary Guide',
+    slug: 'lro-salary-guide',
     category: 'Custom Internal Tools',
     description: 'Interactive salary guide tool with dynamic filtering, real-time data visualization, and role-based salary benchmarking for recruiters and hiring managers.',
     tags: ['Interactive Tool', 'Data Visualization', 'Custom Development'],
@@ -330,6 +341,7 @@ export const portfolioProjects = [
   {
     title: 'Akuma Patterson Holdings',
     slug: 'akuma-patterson-holdings',
+    hidden: true, // not listed on /our-work (owner request, 2026-10-16)
     category: 'Automation and AI Workflows',
     description: 'Automated the entire client lifecycle - from CRM lead capture to invoicing and project hand-off - eliminating manual data entry.',
     tags: ['Automation', 'CRM', 'AI Workflows'],
@@ -356,6 +368,7 @@ export const portfolioProjects = [
   {
     title: 'Crowngate Business',
     slug: 'crowngate-business',
+    hidden: true, // not listed on /our-work (owner request, 2026-10-16)
     category: 'Web Development',
     description: 'Corporate business platform with service showcase, client onboarding workflows, and professional brand presence.',
     tags: ['Corporate', 'Custom Development', 'Branding'],
@@ -365,6 +378,7 @@ export const portfolioProjects = [
   {
     title: 'Tricia Walters',
     slug: 'tricia-walters',
+    hidden: true, // not listed on /our-work (owner request, 2026-10-16)
     category: 'Web Development',
     description: 'Personal brand site with CMS-powered content, integrated booking system, and optimized page speed.',
     tags: ['Portfolio', 'CMS', 'Booking'],
@@ -383,6 +397,7 @@ export const portfolioProjects = [
   {
     title: 'CHHA-NCR',
     slug: 'chha-ncr',
+    order: 2, // second on /our-work, after LRO Staffing
     category: 'Web Development',
     description: 'Full relaunch for the Canadian Hard of Hearing Association\'s National Capital Region branch - a journey-based information architecture, a searchable hearing-clinic directory, and WCAG accessibility built into every page, all on a CMS volunteers can maintain themselves.',
     tags: ['Non-Profit', 'Accessibility', 'Web Development'],
@@ -390,6 +405,19 @@ export const portfolioProjects = [
     url: 'https://www.chhancr.ca/',
   },
 ];
+
+/**
+ * Projects shown publicly, in display order: `hidden` entries are dropped and
+ * `order` pins come first (lower = earlier); the rest keep config order. Use
+ * this, not `portfolioProjects`, anywhere a visitor or crawler can see the list.
+ */
+export function listedProjects() {
+  return portfolioProjects
+    .filter((p) => !('hidden' in p && p.hidden))
+    .map((p, i) => ({ p, i, rank: 'order' in p && typeof p.order === 'number' ? p.order : Infinity }))
+    .sort((a, b) => a.rank - b.rank || a.i - b.i)
+    .map(({ p }) => p);
+}
 
 // MAPL Labs - proprietary products MAPL TECH builds and operates in-house.
 // Proof that the team ships and runs real production systems, not just client work.

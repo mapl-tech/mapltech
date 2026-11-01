@@ -8,7 +8,7 @@
  * are cited inline; nothing is estimated. Fields we do not have are simply
  * absent and the page omits the section.
  */
-import { caseStudies, labsProjects, portfolioProjects, testimonials } from '@/config/site';
+import { caseStudies, labsProjects, listedProjects, portfolioProjects, testimonials } from '@/config/site';
 import { getServiceByEstimateKey, type ServiceRecord } from '@/config/services';
 import {
   SERVICE_META,
@@ -41,11 +41,6 @@ export const CATEGORY_TO_SERVICE: Record<string, EstimateService> = {
   'Cloud Engineering': 'cloud',
 };
 
-/**
- * Display order for the index: the five projects the homepage's Selected Work
- * leads with (synthesis §2.1), then the rest in config order.
- */
-const FEATURED_ORDER = ['lro-staffing', 'mapl-tours', 'chha-ncr', 'unsvcc', 'akuma-patterson-holdings'];
 
 /**
  * Years we can actually cite. LRO Staffing: the live URL is
@@ -72,11 +67,7 @@ function serviceFor(project: PortfolioProject): EstimateService {
 }
 
 function orderedProjects(): PortfolioProject[] {
-  const featured = FEATURED_ORDER.map((slug) => portfolioProjects.find((p) => p.slug === slug)).filter(
-    (p): p is PortfolioProject => Boolean(p),
-  );
-  const rest = portfolioProjects.filter((p) => !FEATURED_ORDER.includes(p.slug));
-  return [...featured, ...rest];
+  return listedProjects();
 }
 
 export function workPath(slug: string): string {

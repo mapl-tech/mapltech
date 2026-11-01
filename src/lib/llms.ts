@@ -7,7 +7,7 @@
  * when the path is not in the sitemap, so the index can never point at a URL
  * that does not exist. External client sites are named, not linked.
  */
-import { siteConfig, pricing, portfolioProjects, labsProjects, careers, testimonials } from '@/config/site';
+import { siteConfig, pricing, listedProjects, labsProjects, careers, testimonials } from '@/config/site';
 import { executives, teamMembers, countries } from '@/config/team';
 import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
 import { absoluteUrl, isSitemapPath, toISODate } from '@/config/routes';
@@ -182,7 +182,7 @@ function pricingShort(): string {
 
 function workShort(): string {
   const byCategory = new Map<string, string[]>();
-  for (const project of portfolioProjects) {
+  for (const project of listedProjects()) {
     const list = byCategory.get(project.category) ?? [];
     list.push(project.title);
     byCategory.set(project.category, list);
@@ -193,7 +193,7 @@ function workShort(): string {
   return [
     '## Work',
     '',
-    `- ${link('Our Work', '/our-work')}: ${portfolioProjects.length} client projects. ${grouped}.`,
+    `- ${link('Our Work', '/our-work')}: ${listedProjects().length} client projects. ${grouped}.`,
     `- ${link('MAPL Labs', '/labs')}: products ${ORG_NAME} builds and operates in-house. ${labs}.`,
     ...quotes,
   ].join('\n');
@@ -324,7 +324,7 @@ function pricingFull(): string {
 }
 
 function workFull(): string {
-  const projects = portfolioProjects.map(
+  const projects = listedProjects().map(
     (p) => `- **${p.title}** (${p.category}): ${p.description} Tags: ${p.tags.join(', ')}.`,
   );
   const labs = labsProjects.flatMap((p) => [
@@ -335,7 +335,7 @@ function workFull(): string {
   return [
     '## Work',
     '',
-    `${link('Our Work', '/our-work')}: ${portfolioProjects.length} client projects.`,
+    `${link('Our Work', '/our-work')}: ${listedProjects().length} client projects.`,
     '',
     ...projects,
     '',
