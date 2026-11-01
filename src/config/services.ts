@@ -138,7 +138,8 @@ function deliverablesFrom(key: ServicePricingKey): string[] {
 
 /** Lower-cases a leading capital mid-sentence, but leaves acronyms alone ("CRM setup", "AI-powered", "SSL"). */
 function midSentence(text: string): string {
-  return /^[A-Z][a-z]/.test(text) ? text.charAt(0).toLowerCase() + text.slice(1) : text;
+  // "Custom design" and "E-commerce" lower their first letter; "CRM setup" does not.
+  return /^[A-Z](?:[a-z]|-[a-z])/.test(text) ? text.charAt(0).toLowerCase() + text.slice(1) : text;
 }
 
 function listWords(items: readonly string[]): string {
@@ -158,7 +159,7 @@ function costAnswer(key: ServicePricingKey): string {
     const verb = index === 0 ? 'covers' : 'adds';
     return `${tier.name} (${tier.price}) ${verb} ${listWords(ownFeatures(tier))}.`;
   });
-  return `${sentences.join(' ')} You get a fixed quote after a 20-min scoping call.`;
+  return `${sentences.join(' ')} You get a fixed quote after a 20-minute scoping call.`;
 }
 
 /** "What ongoing support is available?" answer composed from the recurring lines. */
@@ -214,12 +215,14 @@ export const services: readonly ServiceRecord[] = [
     },
     buyerSituations: situationsFrom('webDevelopment'),
     deliverables: deliverablesFrom('webDevelopment'),
-    stack: ['React', 'Next.js', 'WordPress (custom themes, not page builders)', 'Node.js', 'Python'],
+    stack: ['React', 'Next.js', 'WordPress', 'Node.js', 'Python'],
     capabilities: [
       {
-        title: 'Custom-Coded, Not Cobbled Together',
+        // Not "no page builders": CHHA-NCR, shown as proof, runs on Elementor so
+        // its volunteers can edit it. The build is chosen for who runs the site.
+        title: 'Built for Whoever Runs It',
         description:
-          'No templates, no page builders, no plugin Frankensteins. Every site is engineered from scratch - custom WordPress themes, headless CMS builds, or full-stack React.',
+          'No off-the-shelf theme bent into shape. Each site is built for the team that will run it: a custom WordPress theme, a headless CMS build or full-stack React.',
       },
       {
         title: 'Speed That Ranks',
@@ -276,12 +279,12 @@ export const services: readonly ServiceRecord[] = [
     faqs: [
       {
         question: 'How much does a headless WordPress build cost for an agency?',
-        answer: `CMS integration (headless or WordPress) is included from the ${web[1].name} tier at ${web[1].price}. That tier covers ${listWords(ownFeatures(web[1]).filter((f) => !/^cms integration/i.test(f)))}. ${ownFeatures(web[2])[0]}s start at ${web[2].price} (${web[2].name}). You get a fixed quote after a 20-min scoping call.`,
+        answer: `CMS integration (headless or WordPress) is included from the ${web[1].name} tier at ${web[1].price}. That tier covers ${listWords(ownFeatures(web[1]).filter((f) => !/^cms integration/i.test(f)))}. ${ownFeatures(web[2])[0]}s start at ${web[2].price} (${web[2].name}). You get a fixed quote after a 20-minute scoping call.`,
       },
       {
         question: 'How long does a typical web development project take?',
         answer:
-          'Starter sites typically ship in 3-4 weeks. Growth/E-Commerce projects run 5-8 weeks. Advanced and Enterprise builds are scoped individually, but most launch within 8-14 weeks. We give you a clear timeline during discovery and stick to it.',
+          'Starter sites typically ship in 3–4 weeks. Growth / E-Commerce projects run 5–8 weeks. Advanced and Enterprise builds are scoped individually, but most launch within 8–14 weeks. We give you a clear timeline during discovery and stick to it.',
       },
       {
         question: 'Do you work with our existing designs, or do you handle design too?',
@@ -291,7 +294,7 @@ export const services: readonly ServiceRecord[] = [
       {
         question: 'What technologies do you build with?',
         answer:
-          'We use the right tool for each project - React, Next.js, WordPress (custom themes, not page builders), Node.js, Python, and more. Every decision is based on your project requirements, not our preferences.',
+          'We use the right tool for each project: React, Next.js, WordPress, Node.js, Python and more. Every decision is based on your project requirements, not our preferences.',
       },
       {
         question: 'What happens after the site launches?',
@@ -324,7 +327,7 @@ export const services: readonly ServiceRecord[] = [
     estimateKey: 'automation',
     heroTitle: 'Stop Doing Manually What Should Happen Automatically',
     oneLiner:
-      'We connect your CRM, project tools, invoicing, and client intake into one seamless pipeline. From simple automations to custom AI agents.',
+      'We connect your CRM, project tools, invoicing, and client intake into one pipeline. From simple automations to custom AI agents.',
     sections: {
       capabilities: {
         label: 'Capabilities',
@@ -388,7 +391,7 @@ export const services: readonly ServiceRecord[] = [
         phase: 'Phase 02',
         title: 'Design',
         description:
-          'We architect your automation blueprint: triggers, logic paths, data flows, and fallback scenarios. You approve the system design before we build anything.',
+          'We architect your automation plan: triggers, logic paths, data flows, and fallback scenarios. You approve the system design before we build anything.',
       },
       {
         phase: 'Phase 03',
@@ -477,7 +480,7 @@ export const services: readonly ServiceRecord[] = [
       },
       {
         title: 'Grows With You',
-        description: 'Modern architecture that scales. Add features, users, and integrations without rewriting the foundation.',
+        description: 'Modern architecture that scales. Add features, users, and integrations without a rewrite.',
       },
       {
         title: 'Plugs Into Your Stack',
@@ -603,7 +606,7 @@ export const services: readonly ServiceRecord[] = [
         phase: 'Phase 02',
         title: 'Architecture',
         description:
-          'We design your cloud architecture blueprint - provider selection, networking, security boundaries, and scaling strategy. You approve the plan before we provision a single resource.',
+          'We design your cloud architecture plan: provider selection, networking, security boundaries, and scaling strategy. You approve the plan before we provision a single resource.',
       },
       {
         phase: 'Phase 03',

@@ -59,7 +59,7 @@ export const pricing = {
       },
       {
         name: 'Advanced Automation',
-        description: 'For agencies ready to connect every tool into one seamless pipeline',
+        description: 'For agencies ready to connect every tool into one pipeline',
         price: '$6,000-$10,000',
         features: [
           'Multi-system workflow automation',
@@ -186,7 +186,7 @@ export const pricing = {
     tiers: [
       {
         name: 'Starter',
-        description: 'For agencies that need a sharp, fast site without the bloat of page builders',
+        description: 'For agencies that need a sharp, fast site with no template bloat',
         price: '$5,000',
         features: [
           'Custom-coded responsive website (up to 7 pages)',
