@@ -1,11 +1,11 @@
 // ============================================
 // MAPL TECH Design System Variables
 // Direction: Surface -> Structure (Nov 2026 flagship redesign)
-//   Warm near-black ground, blue-hour photography, Overpass display over DM Sans
-//   (the live site's own families). Red #F03350 is the ONLY accent for
-//   interactive states (hover #FF3D5A, pressed #C4213C) and the steel in the
-//   photography. Teal #33F0D0 is reserved for live readouts (telemetry, clocks,
-//   estimator output).
+//   Warm near-black ground, a crimson light field and real product UI,
+//   Overpass display over DM Sans (the live site's own families). Red #F03350
+//   is the ONLY accent for interactive states and the light; filled buttons use
+//   the deeper fill tokens below. Teal #33F0D0 is reserved for live readouts
+//   (telemetry, clocks, estimator output).
 //
 // Every token name that existed before the redesign is kept below so nothing
 // breaks; legacy values are warm-shifted where they touch the ground or text.
@@ -69,7 +69,7 @@ $color-red-text: #ff5c73;         // 5.5:1 on the ground - accessible for body t
 
 // Filled buttons. White on #F03350 is 3.97:1, which fails AA for a 17-18px
 // label, so filled buttons sit one step deeper in the same hue (the crimson of
-// the steel in the photography). Measured with white text:
+// the light field). Measured with white text:
 //   fill #D91C3F 5.01:1 · hover #C4213C 5.79:1 · pressed #A81B33 7.2:1
 $color-red-fill: #D91C3F;
 $color-red-fill-hover: #C4213C;
