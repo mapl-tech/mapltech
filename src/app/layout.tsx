@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { DM_Sans, Overpass } from 'next/font/google';
 import { siteConfig } from '@/config/site';
+import { HOME_PAGE_DESCRIPTION, HOME_PAGE_NAME } from '@/components/home/data';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import SmoothScroll from '@/components/ui/SmoothScroll';
@@ -27,12 +28,12 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  // One source with the homepage's WebPage JSON-LD (components/home/data.ts).
   title: {
-    default: `${siteConfig.name} | White-Label Web, Automation & Cloud for Agencies`,
+    default: HOME_PAGE_NAME,
     template: `%s | ${siteConfig.name}`,
   },
-  description:
-    'Senior engineers for agencies: websites, AI automation, internal tools and cloud, shipped under your brand. Public prices from $3,500. Toronto, Lagos and Kingston.',
+  description: HOME_PAGE_DESCRIPTION,
   metadataBase: new URL(siteConfig.url),
   keywords: [
     'MAPL TECH',
@@ -99,8 +100,7 @@ export const metadata: Metadata = {
     url: siteConfig.url,
     siteName: siteConfig.name,
     title: `${siteConfig.name} | White-Label Engineering for Agencies`,
-    description:
-      'Senior engineers for agencies: websites, AI automation, internal tools and cloud, shipped under your brand. Public prices from $3,500. Toronto, Lagos and Kingston.',
+    description: HOME_PAGE_DESCRIPTION,
     images: [
       {
         url: '/images/og-flagship.jpg',
@@ -115,8 +115,7 @@ export const metadata: Metadata = {
     site: '@mapltech',
     creator: '@mapltech',
     title: `${siteConfig.name} | White-Label Engineering for Agencies`,
-    description:
-      'Senior engineers for agencies: websites, AI automation, internal tools and cloud, shipped under your brand. Public prices from $3,500.',
+    description: HOME_PAGE_DESCRIPTION,
     images: ['/images/og-flagship.jpg'],
   },
   robots: {

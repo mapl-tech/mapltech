@@ -98,28 +98,6 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 // ---------------------------------------------------------------------------
-// #6 Cursor pill (CursorGlow). Geometry is inline; this is the typography and
-// the hard guarantee that it never shows on touch or under reduced motion.
-// ---------------------------------------------------------------------------
-.cursor-pill {
-  will-change: transform;
-}
-
-.cursor-pill__label {
-  font-family: var(--font-dm-sans, ui-sans-serif, system-ui, sans-serif);
-  font-size: 0.75rem;
-  font-weight: $font-weight-semibold;
-  letter-spacing: $letter-spacing-wider;
-  text-transform: uppercase;
-}
-
-@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
-  .cursor-pill {
-    display: none;
-  }
-}
-
-// ---------------------------------------------------------------------------
 // #11 Native accordion (<details name><summary>)
 // ---------------------------------------------------------------------------
 .accordion-item {
