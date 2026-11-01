@@ -129,7 +129,7 @@ export const SERVICE_LINES: readonly ServiceLine[] = [
     path: '/services/automation-ai-workflow-setup',
     shortName: 'Automation & AI',
     name: 'Automation & AI Workflow Setup for Agencies',
-    serviceType: 'Automation and AI Workflows',
+    serviceType: 'Automation & AI',
     description:
       'Intelligent automation and AI workflows that connect your CRM, project tools, invoicing, and client intake into seamless pipelines.',
     pricingKey: 'automation',

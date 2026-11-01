@@ -224,7 +224,7 @@ export const services: readonly ServiceRecord[] = [
       {
         title: 'Speed That Ranks',
         description:
-          'Sub-second load times through code splitting, image optimization, lazy loading, and SSR. Fast sites convert better and rank higher.',
+          'Fast load times through code splitting, image optimization, lazy loading, and SSR. Fast sites convert better and rank higher.',
       },
       {
         title: 'Works Everywhere',
@@ -394,7 +394,7 @@ export const services: readonly ServiceRecord[] = [
         phase: 'Phase 03',
         title: 'Development',
         description:
-          'We wire your tools together with custom integrations, configure AI agents, and build the pipelines that turn hours of manual work into seconds of automation.',
+          'We wire your tools together with custom integrations, configure AI agents, and build the pipelines that do the manual work automatically.',
       },
       {
         phase: 'Phase 04',
@@ -405,7 +405,7 @@ export const services: readonly ServiceRecord[] = [
     ],
     faqs: [
       {
-        question: 'How much does automation and AI workflow setup cost for an agency?',
+        question: 'How much does automation and AI cost for an agency?',
         answer: costAnswer('automation'),
       },
       {
@@ -574,7 +574,7 @@ export const services: readonly ServiceRecord[] = [
       {
         title: 'CI/CD Pipeline Engineering',
         description:
-          'Automated build, test, and deploy pipelines that ship your code to production in minutes. No more manual deployments or broken releases.',
+          'Automated build, test, and deploy pipelines that ship your code to production. No more manual deployments or broken releases.',
       },
       {
         title: 'Monitoring & Observability',

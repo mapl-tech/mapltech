@@ -47,7 +47,7 @@ export const pricing = {
     tiers: [
       {
         name: 'Foundation Automation',
-        description: 'Perfect for agencies drowning in manual CRM work and follow-ups',
+        description: 'For agencies doing CRM work and follow-ups by hand',
         price: '$3,500-$5,000',
         features: [
           'CRM setup & configuration',
@@ -94,7 +94,7 @@ export const pricing = {
     tiers: [
       {
         name: 'Internal Dashboards',
-        description: 'Give your team instant visibility into the numbers that matter most',
+        description: 'Give your team real-time visibility into the numbers that matter most',
         price: '$5,000-$8,000',
         features: [
           'Custom data visualization',

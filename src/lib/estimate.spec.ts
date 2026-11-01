@@ -467,11 +467,22 @@ describe('typicalProjectValue', () => {
 /* Shared config                                                        */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Slugs that deliberately outlive a retitle: the URL is live and indexed, so
+ * the slug stays when the display title changes. Title at the time it changed.
+ */
+const KEPT_SLUGS: Record<string, string> = {
+  'lro-salary-guide': 'LRO Interactive Salary Guide',
+};
+
 describe('site.ts slugs', () => {
-  it('every project slug is the kebab-case of its title and unique within its list', () => {
+  it('every project slug is the kebab-case of its title (or a kept live slug) and unique within its list', () => {
     const portfolioSlugs = portfolioProjects.map((project) => project.slug);
     expect(new Set(portfolioSlugs).size).toBe(portfolioSlugs.length);
-    for (const project of portfolioProjects) expect(project.slug).toBe(slugify(project.title));
+    for (const project of portfolioProjects) {
+      if (KEPT_SLUGS[project.slug]) expect(project.title).toBe(KEPT_SLUGS[project.slug]);
+      else expect(project.slug).toBe(slugify(project.title));
+    }
 
     const labSlugs = labsProjects.map((project) => project.slug);
     expect(new Set(labSlugs).size).toBe(labSlugs.length);
