@@ -15,6 +15,12 @@ import { useFinePointer, usePrefersReducedMotion } from './useMediaQuery';
  */
 export { useLenis } from 'lenis/react';
 
+/** Clearance under the fixed header for targets that set no scroll-margin-top. */
+const DEFAULT_ANCHOR_CLEARANCE = 88;
+
+/** Can receive focus without help (otherwise it gets tabindex="-1"). */
+const FOCUSABLE = 'a[href], button, input, select, textarea, summary, [tabindex]';
+
 /**
  * The live site's scroll feel, kept exactly: a 1.2s glide on an exponential
  * ease-out (Leshan: "I like how smooth the current version of the website is").
@@ -26,8 +32,9 @@ const LENIS_OPTIONS: LenisOptions = {
   smoothWheel: true,
   syncTouch: false,
   autoRaf: false,
-  // <a href="#section"> clicks scroll through Lenis.
-  anchors: true,
+  // In-page anchors are handled in LenisSingleton, not by Lenis's `anchors`
+  // option: that scrolls with offset 0 and ignores scroll-margin-top, which
+  // parked headings under the fixed header.
   // data-lenis-prevent, data-lenis-prevent-wheel and data-lenis-prevent-touch are
   // honoured by Lenis on every node in the event path; no custom `prevent` needed.
 };
@@ -54,6 +61,37 @@ function LenisSingleton() {
     };
     frame.update(tick, true);
     return () => cancelFrame(tick);
+  }, []);
+
+  // In-page anchors glide through Lenis but land where the browser would put
+  // them: below the target's own scroll-margin-top, with the URL hash updated
+  // and keyboard focus moved to the target (so the next Tab starts there).
+  // Cross-page hash links are left to the router.
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = (event.target as Element | null)?.closest('a[href*="#"]');
+      if (!(link instanceof HTMLAnchorElement) || link.target === '_blank') return;
+      const url = new URL(link.href);
+      if (url.origin !== window.location.origin || url.pathname !== window.location.pathname || url.hash.length < 2) return;
+      const target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+      const lenis = ref.current?.lenis;
+      if (!target || !lenis) return;
+
+      event.preventDefault();
+      const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || DEFAULT_ANCHOR_CLEARANCE;
+      lenis.scrollTo(target, {
+        offset: -margin,
+        onComplete: () => {
+          if (window.location.hash !== url.hash) window.history.pushState(null, '', url.hash);
+          if (!target.matches(FOCUSABLE)) target.setAttribute('tabindex', '-1');
+          target.focus({ preventScroll: true });
+        },
+      });
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
   }, []);
 
   // Route change: jump to the top instead of destroying and recreating the

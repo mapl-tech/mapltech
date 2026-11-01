@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import styles from './Layers.module.scss';
 
 interface Item {
@@ -36,10 +35,12 @@ export default function LayerIndex({ items }: { items: readonly Item[] }) {
     <ol className={styles.index} role="list">
       {items.map((item) => (
         <li key={item.id}>
-          <Link href={`#${item.id}`} className={styles.indexLink} aria-current={active === item.id ? 'step' : undefined}>
+          {/* A plain anchor: same-page fragments need no router, and the shared
+              anchor handler then glides, keeps the scroll margin and moves focus. */}
+          <a href={`#${item.id}`} className={styles.indexLink} aria-current={active === item.id ? 'step' : undefined}>
             <span className={styles.indexName}>{item.name}</span>
             <span className={styles.indexPrice}>{item.fromPrice}</span>
-          </Link>
+          </a>
         </li>
       ))}
     </ol>
