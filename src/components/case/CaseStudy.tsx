@@ -67,6 +67,11 @@ export default function CaseStudy({
               </div>
             ))}
           </dl>
+          <p className={styles.heroAction}>
+            <Link href={estimateHref} data-cta-placement={`case_${entry.slug}_hero`}>
+              Price a build like this<span aria-hidden="true"> →</span>
+            </Link>
+          </p>
         </div>
       </header>
 
