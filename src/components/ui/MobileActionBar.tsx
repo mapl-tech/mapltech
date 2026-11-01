@@ -10,6 +10,8 @@ import { MOBILE_BAR_CONTEXT } from '@/components/flagship/content';
 /**
  * Interaction #9: sticky mobile action bar (md:hidden).
  *
+ * Its link repeats the page's own estimate action when the hero CTA points at
+ * /pricing (a service page preselects its service), else the generic estimator.
  * Appears once the element marked `data-hero-cta` (fallback: the page H1) has
  * left the viewport; hides while any <form> is in view or the keyboard is up.
  * Clicks dispatch `cta_click` on window with { placement: 'sticky_bar', action }.
@@ -56,11 +58,17 @@ export default function MobileActionBar({
   const [heroGone, setHeroGone] = useState(false);
   const [formInView, setFormInView] = useState(false);
   const [keyboardUp, setKeyboardUp] = useState(false);
+  // The page's own estimate link, when its hero CTA has one (a service page
+  // preselects its service). Keyed by path so a previous page's link never shows.
+  const [pageEstimate, setPageEstimate] = useState<{ path: string; href: string | null } | null>(null);
 
   // Hero CTA and form visibility, re-observed on every route.
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
     let raf = 0;
+
+    const pageHref = document.querySelector('[data-hero-cta] a[href^="/pricing"]')?.getAttribute('href') ?? null;
+    const hrefFrame = requestAnimationFrame(() => setPageEstimate({ path: pathname, href: pageHref }));
 
     const hero =
       document.querySelector('[data-hero-cta]') ??
@@ -99,6 +107,7 @@ export default function MobileActionBar({
     return () => {
       observers.forEach((io) => io.disconnect());
       if (raf) cancelAnimationFrame(raf);
+      cancelAnimationFrame(hrefFrame);
     };
   }, [pathname]);
 
@@ -113,6 +122,7 @@ export default function MobileActionBar({
   }, []);
 
   const visible = heroGone && !formInView && !keyboardUp;
+  const href = (pageEstimate?.path === pathname && pageEstimate.href) || estimateHref;
 
   const transition = reduceMotion
     ? 'none'
@@ -137,10 +147,10 @@ export default function MobileActionBar({
           {context}
         </p>
         <Link
-          href={estimateHref}
+          href={href}
           className="mobile-action-bar__primary flex shrink-0 items-center justify-center rounded-full px-5 text-center"
           style={PRIMARY_STYLE}
-          onClick={() => emit('estimate', estimateHref)}
+          onClick={() => emit('estimate', href)}
         >
           {estimateLabel}
         </Link>

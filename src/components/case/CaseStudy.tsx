@@ -120,9 +120,11 @@ export default function CaseStudy({
             </h2>
             <dl className={styles.resultGrid} data-count={story.results.length}>
               {story.results.map((result) => (
+                // Value first, in the DOM as on screen: "~50%, of customers now
+                // arrive through ChatGPT" reads right aloud as well.
                 <div key={result.label} className={styles.result}>
-                  <dt className={styles.resultLabel}>{result.label}</dt>
-                  <dd className={styles.resultValue}>{result.value}</dd>
+                  <dt className={styles.resultValue}>{result.value}</dt>
+                  <dd className={styles.resultLabel}>{result.label}</dd>
                 </div>
               ))}
             </dl>

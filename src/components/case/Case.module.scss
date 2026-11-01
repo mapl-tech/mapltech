@@ -307,8 +307,7 @@
 
 .result {
   display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
+  flex-direction: column;
   gap: 12px;
 }
 
@@ -324,6 +323,7 @@
 }
 
 .resultLabel {
+  margin: 0; // a <dd> now: drop the user-agent indent
   font-size: $font-size-base;
   line-height: 1.45;
   color: rgba($color-fg, 0.72);
