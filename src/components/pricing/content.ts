@@ -8,7 +8,6 @@
  * verbs, "Price your project" and "Book a call" are the only CTA labels.
  */
 import { pricing, testimonials } from '@/config/site';
-import { REDESIGN_DATE, routeLastModified } from '@/config/routes';
 import {
   FIXED_QUOTE_NOTE,
   SERVICE_META,
@@ -180,9 +179,6 @@ export const HERO = {
   lede: `${FROM_PRICES}. Answer five questions for the range that fits your project. No email needed.`,
   trust: `Ranges come straight from the price list below. ${FIXED_QUOTE_NOTE.replace('20-min', '20-minute')}.`,
 } as const;
-
-/** ISO date the page last changed (the route's lastModified, also the JSON-LD dateModified). */
-export const LAST_REVIEWED = routeLastModified(PRICING_PATH) ?? REDESIGN_DATE;
 
 /** "22 September 2026", formatted without Intl so server and client agree byte for byte. */
 export function longDate(iso: string): string {

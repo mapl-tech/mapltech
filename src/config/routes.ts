@@ -11,6 +11,7 @@
  * post data and are never guessed. Do not use `new Date()` here: a sitemap
  * whose every entry is "modified today" tells crawlers nothing.
  */
+import 'server-only'; // reads the whole blog for the sitemap: never ship it to a browser
 import { listedProjects, siteConfig } from '@/config/site';
 import { blogPosts } from '@/data/blog-posts';
 

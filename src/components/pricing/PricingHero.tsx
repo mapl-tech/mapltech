@@ -1,5 +1,13 @@
 import Link from 'next/link';
-import { BUNDLES_FROM, HERO, HOURLY_FROM, LAST_REVIEWED, SERVICES, longDate } from './content';
+import { REDESIGN_DATE, routeLastModified } from '@/config/routes';
+import { BUNDLES_FROM, HERO, HOURLY_FROM, PRICING_PATH, SERVICES, longDate } from './content';
+
+/**
+ * ISO date the page last changed (the route's lastModified, also the JSON-LD
+ * dateModified). Read here, on the server: content.ts is shared with client
+ * islands, and routes.ts pulls in the whole blog to build the sitemap.
+ */
+const LAST_REVIEWED = routeLastModified(PRICING_PATH) ?? REDESIGN_DATE;
 import styles from './PricingHero.module.scss';
 
 /**
