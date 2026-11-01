@@ -311,6 +311,7 @@ export const portfolioProjects = [
   },
   {
     title: 'LRO Staffing',
+    order: 1, // listed first on /our-work (lower = earlier; unset = source order)
     category: 'Web Development',
     description: 'Complete website for an Ottawa and Toronto staffing agency - a custom WordPress theme built around job seekers and employers, with job search and alerts, resume submission, eight industry expertise hubs and recruitment insights.',
     tags: ['WordPress', 'Custom Theme', 'Job Search'],
@@ -385,7 +386,7 @@ export const portfolioProjects = [
   },
   {
     title: 'CHHA-NCR',
-    order: 1, // listed first on /our-work (lower = earlier; unset = source order)
+    order: 2, // second on /our-work, after LRO Staffing
     category: 'Web Development',
     description: 'Full relaunch for the Canadian Hard of Hearing Association\'s National Capital Region branch - a journey-based information architecture, a searchable hearing-clinic directory, and WCAG accessibility built into every page, all on a CMS volunteers can maintain themselves.',
     tags: ['Non-Profit', 'Accessibility', 'Web Development'],
