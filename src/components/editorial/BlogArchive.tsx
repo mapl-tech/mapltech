@@ -38,8 +38,6 @@ export interface ArchiveRow {
   /** "September 2026" */
   monthLabel: string;
   readTime: number;
-  /** searchable(title + answer + category), computed on the server. */
-  search: string;
 }
 
 export interface ArchiveTopic {
@@ -69,10 +67,13 @@ export default function BlogArchive({ rows, topics, pageSize = 24 }: BlogArchive
   const query = draft ?? urlQuery;
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
+  // The search text is derived here, not shipped: ~100 short strings normalise in
+  // well under a millisecond, and the page payload stays a third lighter.
+  const index = useMemo(() => new Map(rows.map((row) => [row, searchable(`${row.title} ${row.answer} ${row.category}`)])), [rows]);
   const terms = useMemo(() => searchable(query).split(/\s+/).filter(Boolean), [query]);
   const searched = useMemo(
-    () => (terms.length ? rows.filter((row) => terms.every((term) => row.search.includes(term))) : rows),
-    [rows, terms],
+    () => (terms.length ? rows.filter((row) => terms.every((term) => index.get(row)?.includes(term))) : rows),
+    [rows, terms, index],
   );
   const matches = useMemo(
     () => (topic === ALL ? searched : searched.filter((row) => row.topic === topic)),
@@ -110,7 +111,7 @@ export default function BlogArchive({ rows, topics, pageSize = 24 }: BlogArchive
   /** The result line: shown as you type, announced once typing pauses. */
   const describe = (text: string): string => {
     const words = searchable(text).split(/\s+/).filter(Boolean);
-    const pool = words.length ? rows.filter((row) => words.every((word) => row.search.includes(word))) : rows;
+    const pool = words.length ? rows.filter((row) => words.every((word) => index.get(row)?.includes(word))) : rows;
     const found = topic === ALL ? pool : pool.filter((row) => row.topic === topic);
     if (topic === ALL && !words.length) return `Showing ${Math.min(limit, found.length)} of ${rows.length} articles, newest first`;
     if (!found.length) return `No articles match${words.length ? ` “${text.trim()}”` : ''}${topicLabel ? ` in ${topicLabel}` : ''}`;

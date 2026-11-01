@@ -9,7 +9,7 @@ import { absoluteUrl, toISODate } from '@/config/routes';
 import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
 import { ESTIMATE_HREF, ESTIMATE_LABEL } from '@/components/layout/chrome';
 import BlogArchive, { type ArchiveRow, type ArchiveTopic } from '@/components/editorial/BlogArchive';
-import { firstSentence, searchable, topicSlug } from '@/components/convert/blog-utils';
+import { firstSentence, topicSlug } from '@/components/convert/blog-utils';
 import { SERVICE_KEYS, SERVICE_LIST } from '@/components/editorial/services';
 import styles from './blog-index.module.scss';
 
@@ -85,7 +85,6 @@ export default function BlogPage() {
       monthKey: date.monthKey,
       monthLabel: date.monthLabel,
       readTime: post.readTime,
-      search: searchable(`${post.title} ${answer} ${post.category}`),
     };
   });
   const topics: ArchiveTopic[] = categories.map((category) => ({ slug: topicSlug(category), label: category }));
