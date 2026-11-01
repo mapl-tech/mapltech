@@ -1,93 +1,499 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-// Featured post card: one image (lazy, static poster), text beside it.
-.featured {
+// Blog index: a publication front page. Masthead → featured + latest → the
+// archive (BlogArchive island). Stock covers are graded to monochrome so they
+// sit in the site's dark palette, and carry the offset red hairline motif.
+
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+$link: $color-red-text;
+
+.inner {
+  @include container(1280px);
+}
+
+// ---------------------------------------------------------------- masthead
+.masthead {
+  padding: calc(56px + 40px) 0 clamp(32px, 4vw, 48px);
+  background:
+    radial-gradient(55% 60% at 88% 0%, rgba($color-red, 0.08) 0%, transparent 60%),
+    radial-gradient(45% 50% at 70% 10%, rgba(92, 13, 23, 0.28) 0%, transparent 70%),
+    $color-ground;
+
+  @include lg {
+    padding-top: calc(72px + clamp(40px, 4.4vw, 72px));
+  }
+}
+
+.mastGrid {
   display: grid;
-  gap: $space-24;
-  @include surface(1);
-  overflow: clip;
+  gap: 32px;
+  padding-bottom: clamp(32px, 4vw, 48px);
+  border-bottom: 1px solid $color-hairline-strong;
+
+  @include lg {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    gap: 72px;
+    align-items: end;
+  }
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px;
+  @include mono-label(rgba($color-fg, 0.7));
+
+  &::before {
+    content: '';
+    width: 28px;
+    height: 2px;
+    background: $color-red;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(3rem, 1.75rem + 4.4vw, 5.5rem);
+  font-weight: $font-weight-extrabold;
+  line-height: 0.94;
+  letter-spacing: -0.045em;
   color: $color-fg;
-  transition: border-color $transition-fast;
-
-  @include lg {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 0;
-  }
-
-  @include pointer-fine {
-    &:hover {
-      border-color: rgba($color-red, 0.5);
-    }
-
-    &:hover .featuredTitle {
-      text-decoration-color: currentColor;
-    }
-  }
-
-  &:active {
-    border-color: $color-red-pressed;
-  }
+  max-width: 12ch;
 }
 
-.featuredMedia {
-  position: relative;
-  display: block;
-  aspect-ratio: 16 / 9;
-  background: $color-surface-2;
-
-  @include lg {
-    aspect-ratio: auto;
-    min-height: 100%;
-  }
+.lede {
+  margin: 24px 0 0;
+  max-width: 40rem;
+  font-size: $font-size-lede;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.8);
+  text-wrap: pretty;
 }
 
-.featuredImage {
-  object-fit: cover;
-}
-
-.featuredBody {
+.stats {
   display: grid;
-  gap: $space-16;
-  padding: 0 $space-24 $space-24;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+  margin: 0;
 
-  @include lg {
-    padding: $space-40;
-    align-content: center;
+  > div {
+    min-width: 0;
+    padding-top: 14px;
+    border-top: 1px solid $color-hairline;
+  }
+
+  dt {
+    @include mono-label(rgba($color-fg, 0.64));
+  }
+
+  dd {
+    margin: 8px 0 0;
+    font-family: $font-display;
+    font-weight: $font-weight-bold;
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: $color-fg;
+    @include tabular;
   }
 }
 
-.featuredMeta {
+// ---------------------------------------------------------------- front
+.front {
+  padding: clamp(40px, 5vw, 64px) 0 clamp(64px, 9vw, 112px);
+}
+
+.frontGrid {
+  display: grid;
+  grid-template-areas:
+    'featured'
+    'latest'
+    'ask';
+  gap: 40px;
+
+  // Wide screens: Latest and the ask share the right column; phones keep the
+  // DOM order (featured, latest, ask) so focus order always matches what you see.
+  @include lg {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'featured latest'
+      'featured ask';
+    column-gap: 72px;
+    row-gap: 28px;
+    align-items: start;
+  }
+}
+
+.featured {
+  grid-area: featured;
+  position: relative;
+  min-width: 0;
+}
+
+.media {
+  position: relative;
+  margin: 0 12px 12px 0;
+}
+
+.mediaFrame {
+  position: relative;
+  z-index: 1;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  background: $color-surface-1;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 30px 70px -30px rgba(0, 0, 0, 0.85);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba($color-ground, 0) 45%, rgba($color-ground, 0.55) 100%);
+    pointer-events: none;
+  }
+}
+
+.image {
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.06) brightness(0.86);
+  transition: transform 900ms $ease;
+
+  @include pointer-fine-motion {
+    .featured:hover & {
+      transform: scale(1.03);
+    }
+  }
+}
+
+.structure {
+  position: absolute;
+  inset: 12px -12px -12px 12px;
+  z-index: 0;
+  border: 1px solid rgba($color-red, 0.6);
+  border-radius: 16px;
+  pointer-events: none;
+
+  @supports (animation-timeline: view()) {
+    @include motion-ok {
+      animation: register linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+
+@keyframes register {
+  from {
+    transform: translate(18px, 22px);
+    opacity: 0.2;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.kicker {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: $space-8 $space-12;
-  @include mono-label($color-fg-muted);
-  text-transform: none;
-  letter-spacing: 0.04em;
+  gap: 4px 12px;
+  margin: 10px 0 0;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.72);
+  @include tabular;
+
+  > span + span::before {
+    content: '·';
+    margin-right: 12px;
+    color: rgba($color-fg, 0.4);
+  }
 }
 
-.featuredBadge {
-  @include mono-label($color-fg);
-  padding: $space-4 $space-8;
-  border: 1px solid $color-hairline-strong;
-  border-radius: $radius-sm;
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 24px 0 0;
+  @include mono-label($link);
+
+  &::before {
+    content: '';
+    width: 20px;
+    height: 2px;
+    background: $color-red;
+  }
 }
 
 .featuredTitle {
-  @include display-type($font-size-h3, $line-height-snug);
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 0.12em;
-  text-decoration-thickness: 1px;
-  transition: text-decoration-color $transition-fast;
+  margin: 12px 0 0;
+  font-size: clamp(1.75rem, 1.2rem + 2.1vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.028em;
+  color: $color-fg;
+  max-width: 24ch;
+  text-wrap: balance;
+  transition: color 160ms $ease;
 }
 
-.featuredExcerpt {
-  color: $color-fg-muted;
-  line-height: $line-height-normal;
+// Stretched link: the title is the link's name; its ::after makes the card the target.
+.stretch {
+  color: inherit;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: 16px;
+  }
+
+  // The ring sits on the link itself (the title), where focus really is.
+  @include focus-ring;
 }
 
-.featuredRead {
-  @include mono-label($color-fg);
+.featuredDek {
+  margin: 16px 0 0;
+  max-width: 58ch;
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  line-height: 1.6;
+  color: rgba($color-fg, 0.78);
+}
+
+.readMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-weight: $font-weight-semibold;
+  color: $link;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 160ms $ease;
+
+  .featured:hover & {
+    transform: translateX(4px);
+  }
+}
+
+.featured:hover .featuredTitle {
+  color: $link;
+}
+
+// ---------------------------------------------------------------- latest
+.latest {
+  grid-area: latest;
+  min-width: 0;
+}
+
+.latestTitle {
+  margin: 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid $color-hairline-strong;
+  font-size: 1.25rem;
+  letter-spacing: -0.012em;
+}
+
+.latestList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.latestRow {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 18px 0;
+  border-bottom: 1px solid $color-hairline;
+}
+
+.latestMeta {
+  margin: 0;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.7);
+  @include tabular;
+}
+
+.latestName {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.1875rem;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: $color-fg;
+  text-wrap: pretty;
+  transition: color 160ms $ease;
+}
+
+.latestRow:hover .latestName {
+  color: $link;
+}
+
+.rowLink {
+  color: inherit;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+  }
+
+  // The ring sits on the link itself (the title), where focus really is.
+  @include focus-ring;
+}
+
+.ask {
+  grid-area: ask;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid $color-hairline-strong;
+  background:
+    radial-gradient(90% 120% at 100% 0%, rgba($color-red, 0.14) 0%, transparent 60%),
+    $color-surface-1;
+}
+
+.askTitle {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  color: $color-fg;
+}
+
+.askText {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.78);
+}
+
+.askButton {
+  @include button-primary;
+  margin-top: 18px;
+  @include focus-ring;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------- archive
+.archive {
+  padding: clamp(64px, 9vw, 112px) 0 clamp(80px, 10vw, 128px);
+  border-top: 1px solid $color-hairline;
+  scroll-margin-top: 64px;
+}
+
+.archiveHead {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 40px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 72px;
+    align-items: end;
+  }
+}
+
+.archiveTitle {
+  margin: 0;
+  font-size: $font-size-h2;
+}
+
+.archiveLede {
+  margin: 0;
+  max-width: 44ch;
+  font-size: $font-size-md;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.74);
+}
+
+// The ask's numbers and its one line of proof (mirrors the post's closing ask).
+.askPrices {
+  display: grid;
+  margin: 16px 0 0;
+
+  > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid $color-hairline;
+  }
+
+  > div:first-child {
+    border-top: 1px solid $color-hairline;
+  }
+
+  // Wide screens: a 2 x 2 grid, label over price, so the right column stays
+  // about as tall as the featured article beside it.
+  @include lg {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+
+    > div {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    > div:nth-child(2) {
+      border-top: 1px solid $color-hairline;
+    }
+  }
+
+  dt {
+    font-size: $font-size-sm;
+    line-height: 1.4;
+    color: rgba($color-fg, 0.78);
+  }
+
+  dd {
+    margin: 0;
+    font-family: $font-display;
+    font-weight: $font-weight-bold;
+    font-size: 1rem;
+    color: $color-fg;
+    white-space: nowrap;
+    @include tabular;
+  }
+}
+
+.askProof {
+  margin: 20px 0 0;
+  padding-left: 14px;
+  border-left: 2px solid $color-red;
+
+  blockquote {
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: $font-weight-medium;
+    color: $color-fg;
+  }
+
+  figcaption {
+    margin-top: 6px;
+    font-size: $font-size-sm;
+    line-height: 1.45;
+    color: rgba($color-fg, 0.72);
+  }
 }

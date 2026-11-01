@@ -1,0 +1,240 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Contents for long-form pages. Wide screens: a sticky rail with a structure
+// line that fills as you read. Phones and tablets: a native disclosure in the
+// flow plus a 2px reading bar pinned to the top edge of the viewport.
+
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+
+// ---------------------------------------------------------------- phone bar
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-sticky + 10; // over the header's top edge, under sheets and the skip link
+  height: 2px;
+  background: $color-red;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+
+  @include lg {
+    display: none;
+  }
+
+  @include reduced-motion {
+    display: none;
+  }
+}
+
+// ---------------------------------------------------------------- rail
+.rail {
+  display: none;
+
+  @include lg {
+    display: block;
+    position: sticky;
+    top: 112px;
+    max-height: calc(100svh - 140px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.railLabel {
+  margin: 0 0 16px;
+  @include mono-label(rgba($color-fg, 0.62));
+}
+
+.railTrack {
+  position: relative;
+  padding-left: 20px;
+}
+
+.railLine {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: rgba($color-fg, 0.14);
+  overflow: hidden;
+
+  @include reduced-motion {
+    display: none;
+  }
+}
+
+.railFill {
+  position: absolute;
+  inset: 0;
+  background: $color-red;
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+}
+
+.railList {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.railLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 0;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: rgba($color-fg, 0.64);
+  text-wrap: pretty;
+  transition: color 160ms $ease;
+
+  // The current section: a node on the structure line.
+  &::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: $color-ground;
+    border: 2px solid $color-red;
+    transform: translateY(-50%) scale(0.4);
+    opacity: 0;
+    transition:
+      opacity 160ms ease-out,
+      transform 200ms $ease;
+  }
+
+  &:hover {
+    color: $color-fg;
+  }
+
+  &[aria-current='location'] {
+    color: $color-fg;
+
+    &::before {
+      opacity: 1;
+      transform: translateY(-50%) scale(1);
+    }
+  }
+
+  @include focus-ring;
+}
+
+.railIndex {
+  flex: none;
+  min-width: 1.75rem;
+  color: rgba($color-fg, 0.62);
+  @include tabular;
+
+  [aria-current='location'] > & {
+    color: $color-red-text;
+  }
+}
+
+// ---------------------------------------------------------------- disclosure
+.disclosure {
+  margin: 0 0 40px;
+  border-top: 1px solid $color-hairline-strong;
+  border-bottom: 1px solid $color-hairline-strong;
+
+  @include lg {
+    display: none;
+  }
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 8px 0;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  @include focus-ring;
+}
+
+.summaryLabel {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  color: $color-fg;
+}
+
+.summaryCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.68);
+  @include tabular;
+}
+
+.chevron {
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 200ms $ease;
+
+  .disclosure[open] & {
+    margin-top: 4px;
+    transform: rotate(-135deg);
+  }
+}
+
+.disclosureList {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 8px 0 12px; // 8px clear of the summary target above
+  list-style: none;
+}
+
+.disclosureLink {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-height: 44px;
+  padding: 11px 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: rgba($color-fg, 0.82);
+  border-top: 1px solid $color-hairline;
+
+  &:hover {
+    color: $color-fg;
+  }
+
+  @include focus-ring;
+}
+
+.disclosureIndex {
+  flex: none;
+  min-width: 1.25rem;
+  font-size: $font-size-sm;
+  color: $color-red-text; // #ff5c73, 5.5:1 on the ground (brand red is 3.66:1, too low at 15px)
+  @include tabular;
+}

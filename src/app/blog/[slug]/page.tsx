@@ -2,17 +2,33 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/seo/JsonLd';
 import { blogPosting, pageGraph } from '@/lib/schema';
+import { absoluteUrl, toISODate } from '@/config/routes';
 import { getPostBySlug, getRelatedPosts, blogPosts } from '@/data/blog-posts';
-import ReadingProgress from '@/components/ui/ReadingProgress';
-import BlogPostLayout from '@/components/convert/BlogPostLayout';
+import PostArticle from '@/components/editorial/PostArticle';
 import { topicSlug } from '@/components/convert/blog-utils';
+
+/**
+ * /blog/[slug]: one page per post in src/data/blog-posts.ts, prerendered.
+ * Template: src/components/editorial/PostArticle.tsx. Structured data: the
+ * WebPage, a Blog > topic > post BreadcrumbList and the BlogPosting, all from
+ * the same post object the page renders.
+ */
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
+export const dynamicParams = false;
+
+export function generateStaticParams() {
   return blogPosts.map((post) => ({ slug: post.slug }));
+}
+
+/** Search and AI snippets: the excerpt, cut on a word boundary under 160 characters. */
+function snippet(text: string, max = 158): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[,:;.\s-]+$/, '')}…`;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -20,26 +36,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(slug);
   if (!post) return {};
 
+  const url = absoluteUrl(`/blog/${post.slug}`);
+  const description = snippet(post.excerpt);
+  const published = toISODate(post.date);
+
   return {
-    title: `${post.title} | MAPL TECH Blog`,
-    description: post.excerpt,
-    keywords: `${post.category}, MAPL TECH, ${post.author.name}, agency technology`,
-    alternates: { canonical: `https://mapltech.com/blog/${post.slug}` },
+    // The root template appends " | MAPL TECH".
+    title: post.title,
+    description,
+    alternates: { canonical: url },
+    authors: [{ name: post.author.name }],
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      url: `https://mapltech.com/blog/${post.slug}`,
       type: 'article',
-      publishedTime: post.date,
+      title: post.title,
+      description,
+      url,
+      siteName: 'MAPL TECH',
+      publishedTime: published,
+      modifiedTime: published,
       authors: [post.author.name],
       section: post.category,
-      siteName: 'MAPL TECH',
-      images: [{ url: post.coverImage, width: 1200, height: 630, alt: post.coverImageAlt }],
+      images: [{ url: post.coverImage, width: 1200, alt: post.coverImageAlt }],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
-      description: post.excerpt,
+      description,
       images: [post.coverImage],
     },
   };
@@ -50,9 +72,11 @@ export default async function BlogPostPage({ params }: Props) {
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
-  const index = blogPosts.findIndex((entry) => entry.slug === slug);
-  const newer = index > 0 ? blogPosts[index - 1] : undefined;
-  const older = index >= 0 ? blogPosts[index + 1] : undefined;
+  // Older / newer by publication date (the data file is not strictly ordered).
+  const byDate = [...blogPosts].sort((a, b) => toISODate(b.date).localeCompare(toISODate(a.date)));
+  const index = byDate.findIndex((entry) => entry.slug === slug);
+  const newer = index > 0 ? byDate[index - 1] : undefined;
+  const older = index >= 0 ? byDate[index + 1] : undefined;
   const related = getRelatedPosts(slug, 3);
   const path = `/blog/${post.slug}`;
 
@@ -74,11 +98,7 @@ export default async function BlogPostPage({ params }: Props) {
           nodes: [blogPosting(post)],
         })}
       />
-
-      {/* The only chrome motion on posts (existing component) */}
-      <ReadingProgress />
-
-      <BlogPostLayout post={post} newer={newer} older={older} related={related} />
+      <PostArticle post={post} related={related} newer={newer} older={older} />
     </>
   );
 }

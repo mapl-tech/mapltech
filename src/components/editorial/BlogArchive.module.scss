@@ -1,0 +1,462 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The archive: search + topic facets, then months of rows. Elements toggled
+// with the `hidden` attribute (groups, rows, empty state, "show more") never get
+// an unconditional `display`, so the attribute always wins.
+
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+$link: $color-red-text;
+
+.archive {
+  position: relative;
+}
+
+// ---------------------------------------------------------------- controls
+.controls {
+  display: grid;
+  gap: 24px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: 48px;
+    align-items: end;
+  }
+}
+
+.label {
+  margin: 0 0 10px;
+  @include mono-label(rgba($color-fg, 0.66));
+}
+
+.search {
+  min-width: 0;
+}
+
+.field {
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: rgba($color-fg, 0.62);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  height: 52px;
+  padding: 0 52px 0 46px;
+  border-radius: 14px;
+  border: 1px solid rgba($color-fg, 0.2);
+  background: $color-surface-1;
+  font-size: 1.0625rem; // 17px: never under 16px (no iOS zoom)
+  color: $color-fg;
+  transition: border-color 160ms $ease;
+  -webkit-appearance: none;
+  appearance: none;
+
+  &::placeholder {
+    color: rgba($color-fg, 0.62);
+    opacity: 1;
+  }
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  &:hover {
+    border-color: rgba($color-fg, 0.34);
+  }
+
+  &:focus-visible {
+    border-color: $color-red;
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
+.clear {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  color: rgba($color-fg, 0.78);
+
+  &:hover {
+    color: $color-fg;
+    background: rgba($color-fg, 0.06);
+  }
+
+  @include focus-ring;
+}
+
+.clearIcon {
+  position: relative;
+  width: 14px;
+  height: 14px;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 2px;
+    height: 14px;
+    margin-left: -1px;
+    border-radius: 1px;
+    background: currentColor;
+    transform: rotate(45deg);
+  }
+
+  &::after {
+    transform: rotate(-45deg);
+  }
+}
+
+.topics {
+  min-width: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-fg, 0.18);
+  font-size: 0.9375rem;
+  font-weight: $font-weight-medium;
+  color: rgba($color-fg, 0.86);
+  white-space: nowrap;
+  transition:
+    border-color 160ms $ease,
+    background-color 160ms $ease,
+    color 160ms $ease;
+
+  &:hover {
+    border-color: rgba($color-fg, 0.4);
+    color: $color-fg;
+  }
+
+  &[aria-pressed='true'] {
+    border-color: $color-red;
+    background: rgba($color-red-fill, 0.18);
+    color: $color-fg;
+
+    .count {
+      color: rgba($color-fg, 0.86);
+    }
+  }
+
+  @include motion-ok {
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  @include focus-ring;
+}
+
+.count {
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.66);
+  @include tabular;
+}
+
+.status {
+  min-height: 1.5em;
+  margin: 28px 0 0;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.7);
+  @include tabular;
+}
+
+// ---------------------------------------------------------------- groups
+.groups {
+  margin-top: 4px;
+  scroll-margin-top: 96px;
+}
+
+.month {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 44px 0 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid $color-hairline-strong;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  color: $color-fg;
+}
+
+.group:first-child .month {
+  margin-top: 20px;
+}
+
+.monthCount {
+  font-family: $font-body;
+  font-weight: $font-weight-regular;
+  font-size: $font-size-sm;
+  letter-spacing: 0;
+  color: rgba($color-fg, 0.66);
+  @include tabular;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// One row: a stretched title link makes the whole row the target while the
+// link's accessible name stays the title.
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'date meta'
+    'main main';
+  gap: 6px 14px;
+  padding: 20px 0 22px;
+  border-bottom: 1px solid $color-hairline;
+
+  @include md {
+    grid-template-columns: 76px minmax(0, 1fr) 190px;
+    grid-template-areas: 'date main meta';
+    gap: 8px 32px;
+    align-items: baseline;
+    padding: 24px 0;
+  }
+
+  // The structure line, on real hover only.
+  &::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 24px;
+    bottom: 24px;
+    width: 2px;
+    background: $color-red;
+    transform: scaleY(0);
+    transform-origin: 50% 0;
+    opacity: 0;
+  }
+
+  @include pointer-fine-motion {
+    &::before {
+      transition:
+        transform 240ms $ease,
+        opacity 160ms ease-out;
+    }
+
+    &:hover::before {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+}
+
+.date {
+  grid-area: date;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: rgba($color-fg, 0.76);
+  white-space: nowrap;
+  @include tabular;
+}
+
+.main {
+  grid-area: main;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.1875rem, 1.1rem + 0.4vw, 1.375rem);
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  color: $color-fg;
+  text-wrap: pretty;
+  transition: color 160ms $ease;
+}
+
+.link {
+  color: inherit;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+  }
+
+  // The ring sits on the link itself (the title), where focus really is.
+  @include focus-ring;
+}
+
+.answer {
+  margin: 6px 0 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.72);
+  @include line-clamp(2);
+}
+
+.meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 12px;
+  margin: 0;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.68);
+  @include tabular;
+
+  > span + span::before {
+    content: '·';
+    margin-right: 12px;
+    color: rgba($color-fg, 0.4);
+  }
+
+  @include md {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    text-align: right;
+
+    > span + span::before {
+      content: none;
+    }
+  }
+}
+
+.row:hover .title {
+  color: $link;
+}
+
+// Rows that appear (after a filter, a search or 'Show more') rise 6px and fade
+// in; rows that stay visible do not replay. The first eight in a group step in
+// 24ms apart. Skipped entirely under reduced motion.
+@include motion-ok {
+  .item:not([hidden]) .row {
+    animation: row-in 220ms cubic-bezier(0.23, 1, 0.32, 1) backwards;
+  }
+
+  @for $i from 2 through 8 {
+    .item:nth-child(#{$i}):not([hidden]) .row {
+      animation-delay: #{($i - 1) * 24}ms;
+    }
+  }
+}
+
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// ---------------------------------------------------------------- empty, more
+.empty {
+  margin-top: 32px;
+  padding: clamp(24px, 4vw, 40px);
+  border-radius: 16px;
+  border: 1px dashed rgba($color-red, 0.55);
+  background: rgba($color-red, 0.03);
+}
+
+.emptyTitle {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.375rem;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: $color-fg;
+}
+
+.emptyText {
+  margin: 10px 0 0;
+  max-width: 56ch;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba($color-fg, 0.78);
+
+  a {
+    font-weight: $font-weight-semibold;
+    color: $link;
+    text-decoration: underline;
+    text-decoration-color: rgba($link, 0.45);
+    text-underline-offset: 4px;
+
+    @include focus-ring;
+  }
+}
+
+.emptyButton {
+  @include button-secondary;
+  margin-top: 20px;
+  @include focus-ring;
+}
+
+.more:not([hidden]) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: 32px;
+}
+
+.moreButton {
+  @include button-secondary;
+  @include focus-ring;
+}
+
+.moreCount {
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.68);
+  @include tabular;
+}
+
+// Without JavaScript, "Show more" links to #archive-all and this reveals every row.
+.archive:not([data-hydrated]) .groups:target {
+  .group[hidden],
+  .item[hidden] {
+    display: block;
+  }
+}

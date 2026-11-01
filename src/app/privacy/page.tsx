@@ -1,41 +1,84 @@
 import type { Metadata } from 'next';
 import JsonLd from '@/components/seo/JsonLd';
-import Accordion, { type AccordionItem } from '@/components/ui/Accordion';
 import { pageGraph } from '@/lib/schema';
-import Breadcrumbs from '@/components/convert/Breadcrumbs';
-import shared from '@/app/convert.module.scss';
+import { absoluteUrl } from '@/config/routes';
+import LegalDocument, { type LegalFact, type LegalSection } from '@/components/editorial/LegalDocument';
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  alternates: { canonical: 'https://mapltech.com/privacy' },
-  description:
-    'MAPL TECH Privacy Policy. Learn how we collect, use, and protect your personal information.',
-};
+/**
+ * /privacy. The policy text is unchanged from the current policy (headings set
+ * in sentence case); "The short version" only restates what the sections say,
+ * each fact linked to its section. Layout: src/components/editorial/LegalDocument.
+ */
 
 const PATH = '/privacy';
 const LAST_UPDATED = { iso: '2026-03-01', label: 'March 1, 2026' };
+const DESCRIPTION =
+  'How MAPL TECH collects, uses, shares and protects personal information from mapltech.com and our services, with a plain summary of your rights up front.';
 
-// Section text is the current policy, unchanged; each section is a native <details>.
-const sections: AccordionItem[] = [
+export const metadata: Metadata = {
+  title: 'Privacy policy',
+  description: DESCRIPTION,
+  alternates: { canonical: absoluteUrl(PATH) },
+  openGraph: {
+    type: 'website',
+    title: 'Privacy policy | MAPL TECH',
+    description: DESCRIPTION,
+    url: absoluteUrl(PATH),
+    siteName: 'MAPL TECH',
+  },
+};
+
+const FACTS: LegalFact[] = [
+  {
+    label: 'What we collect',
+    text: 'What you give us through forms, email or phone (such as your name, email, phone number and company), plus usage data like your IP address, browser and the pages you view.',
+    section: 'information-we-collect',
+  },
+  {
+    label: 'How we use it',
+    text: 'To answer your inquiries and provide services, send newsletters if you consent, improve the site, process job applications and meet legal obligations.',
+    section: 'how-we-use-your-information',
+  },
+  {
+    label: 'Selling and sharing',
+    text: 'We do not sell, trade or rent your personal information. We may share it with service providers who help run our business, when the law requires it, or in a merger, acquisition or sale of assets.',
+    section: 'information-sharing',
+  },
+  {
+    label: 'Your rights',
+    text: 'Depending on where you live, you can ask to access, correct or delete your information, opt out of marketing and withdraw consent, by emailing contact@mapltech.com.',
+    section: 'your-rights',
+  },
+  {
+    label: 'Where it is processed',
+    text: 'We operate across Canada, Nigeria and Jamaica, so your information may be processed outside your country of residence.',
+    section: 'international-transfers',
+  },
+  {
+    label: 'Cookies',
+    text: 'The site uses cookies and similar tracking technologies. You control cookie preferences in your browser settings.',
+    section: 'cookies',
+  },
+];
+
+const SECTIONS: LegalSection[] = [
   {
     id: 'introduction',
-    title: '1. Introduction',
+    title: 'Introduction',
     content: (
-      <div className={shared.legalBody}>
-        <p>
-          MAPL TECH (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This
-          Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our
-          website at mapltech.com or engage with our services.
-        </p>
-      </div>
+      <p>
+        MAPL TECH (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This
+        Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website
+        at mapltech.com or engage with our services.
+      </p>
     ),
   },
   {
     id: 'information-we-collect',
-    title: '2. Information We Collect',
+    title: 'Information we collect',
     content: (
-      <div className={shared.legalBody}>
-        <h3>Personal Information</h3>
+      <>
+        <h3>Personal information</h3>
         <p>We may collect personal information that you voluntarily provide when you:</p>
         <ul>
           <li>Fill out a contact form or request a consultation</li>
@@ -44,23 +87,23 @@ const sections: AccordionItem[] = [
           <li>Communicate with us via email or phone</li>
         </ul>
         <p>
-          This may include your name, email address, phone number, company name, job title, and any other
-          information you choose to provide.
+          This may include your name, email address, phone number, company name, job title, and any other information
+          you choose to provide.
         </p>
-        <h3>Automatically Collected Information</h3>
+        <h3>Automatically collected information</h3>
         <p>
           When you visit our website, we may automatically collect certain information, including your IP address,
-          browser type, operating system, referring URLs, pages viewed, and the dates and times of your visits. We
-          use analytics tools such as Google Analytics and Hotjar to understand how visitors interact with our site.
+          browser type, operating system, referring URLs, pages viewed, and the dates and times of your visits. We use
+          analytics tools such as Google Analytics and Hotjar to understand how visitors interact with our site.
         </p>
-      </div>
+      </>
     ),
   },
   {
     id: 'how-we-use-your-information',
-    title: '3. How We Use Your Information',
+    title: 'How we use your information',
     content: (
-      <div className={shared.legalBody}>
+      <>
         <p>We use the information we collect to:</p>
         <ul>
           <li>Respond to your inquiries and provide requested services</li>
@@ -70,14 +113,14 @@ const sections: AccordionItem[] = [
           <li>Comply with legal obligations</li>
           <li>Protect against fraudulent or unauthorized activity</li>
         </ul>
-      </div>
+      </>
     ),
   },
   {
     id: 'information-sharing',
-    title: '4. Information Sharing',
+    title: 'Information sharing',
     content: (
-      <div className={shared.legalBody}>
+      <>
         <p>We do not sell, trade, or rent your personal information to third parties. We may share your information with:</p>
         <ul>
           <li>
@@ -91,52 +134,46 @@ const sections: AccordionItem[] = [
             <strong>Business transfers:</strong> In connection with a merger, acquisition, or sale of assets
           </li>
         </ul>
-      </div>
+      </>
     ),
   },
   {
     id: 'cookies',
-    title: '5. Cookies and Tracking Technologies',
+    title: 'Cookies and tracking technologies',
     content: (
-      <div className={shared.legalBody}>
-        <p>
-          Our website uses cookies and similar tracking technologies to enhance your experience. Cookies are small
-          data files stored on your device. You can control cookie preferences through your browser settings.
-          Disabling cookies may affect certain website functionality.
-        </p>
-      </div>
+      <p>
+        Our website uses cookies and similar tracking technologies to enhance your experience. Cookies are small data
+        files stored on your device. You can control cookie preferences through your browser settings. Disabling cookies
+        may affect certain website functionality.
+      </p>
     ),
   },
   {
     id: 'data-security',
-    title: '6. Data Security',
+    title: 'Data security',
     content: (
-      <div className={shared.legalBody}>
-        <p>
-          We implement reasonable technical and organizational measures to protect your personal information from
-          unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the
-          internet or electronic storage is 100% secure.
-        </p>
-      </div>
+      <p>
+        We implement reasonable technical and organizational measures to protect your personal information from
+        unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet
+        or electronic storage is 100% secure.
+      </p>
     ),
   },
   {
     id: 'data-retention',
-    title: '7. Data Retention',
+    title: 'Data retention',
     content: (
-      <div className={shared.legalBody}>
-        <p>
-          We retain your personal information only for as long as necessary to fulfill the purposes for which it was
-          collected, comply with legal obligations, resolve disputes, and enforce our agreements.
-        </p>
-      </div>
+      <p>
+        We retain your personal information only for as long as necessary to fulfill the purposes for which it was
+        collected, comply with legal obligations, resolve disputes, and enforce our agreements.
+      </p>
     ),
   },
   {
     id: 'your-rights',
-    title: '8. Your Rights',
+    title: 'Your rights',
     content: (
-      <div className={shared.legalBody}>
+      <>
         <p>Depending on your jurisdiction, you may have the right to:</p>
         <ul>
           <li>Access the personal information we hold about you</li>
@@ -148,64 +185,56 @@ const sections: AccordionItem[] = [
         <p>
           To exercise any of these rights, please contact us at <a href="mailto:contact@mapltech.com">contact@mapltech.com</a>.
         </p>
-      </div>
+      </>
     ),
   },
   {
     id: 'third-party-links',
-    title: '9. Third-Party Links',
+    title: 'Third-party links',
     content: (
-      <div className={shared.legalBody}>
-        <p>
-          Our website may contain links to third-party websites. We are not responsible for the privacy practices or
-          content of those sites. We encourage you to review the privacy policies of any third-party sites you visit.
-        </p>
-      </div>
+      <p>
+        Our website may contain links to third-party websites. We are not responsible for the privacy practices or
+        content of those sites. We encourage you to review the privacy policies of any third-party sites you visit.
+      </p>
     ),
   },
   {
     id: 'childrens-privacy',
-    title: "10. Children's Privacy",
+    title: 'Children’s privacy',
     content: (
-      <div className={shared.legalBody}>
-        <p>
-          Our services are not directed to individuals under 16 years of age. We do not knowingly collect personal
-          information from children. If we become aware that we have collected information from a child, we will
-          take steps to delete it promptly.
-        </p>
-      </div>
+      <p>
+        Our services are not directed to individuals under 16 years of age. We do not knowingly collect personal
+        information from children. If we become aware that we have collected information from a child, we will take
+        steps to delete it promptly.
+      </p>
     ),
   },
   {
     id: 'international-transfers',
-    title: '11. International Data Transfers',
+    title: 'International data transfers',
     content: (
-      <div className={shared.legalBody}>
-        <p>
-          MAPL TECH operates across Canada, Nigeria, and Jamaica. Your information may be transferred to and processed
-          in countries other than your country of residence. We take appropriate measures to ensure your data is
-          protected in accordance with this Privacy Policy.
-        </p>
-      </div>
+      <p>
+        MAPL TECH operates across Canada, Nigeria, and Jamaica. Your information may be transferred to and processed in
+        countries other than your country of residence. We take appropriate measures to ensure your data is protected in
+        accordance with this Privacy Policy.
+      </p>
     ),
   },
   {
     id: 'changes',
-    title: '12. Changes to This Policy',
+    title: 'Changes to this policy',
     content: (
-      <div className={shared.legalBody}>
-        <p>
-          We may update this Privacy Policy from time to time. Any changes will be posted on this page with an
-          updated &quot;Last updated&quot; date. We encourage you to review this policy periodically.
-        </p>
-      </div>
+      <p>
+        We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated
+        &quot;Last updated&quot; date. We encourage you to review this policy periodically.
+      </p>
     ),
   },
   {
     id: 'contact',
-    title: '13. Contact Us',
+    title: 'Contact us',
     content: (
-      <div className={shared.legalBody}>
+      <>
         <p>If you have any questions about this Privacy Policy, please contact us at:</p>
         <p>
           <strong>MAPL TECH</strong>
@@ -214,7 +243,7 @@ const sections: AccordionItem[] = [
           <br />
           Phone: <a href="tel:+16473756724">+1 (647) 375-6724</a>
         </p>
-      </div>
+      </>
     ),
   },
 ];
@@ -222,24 +251,30 @@ const sections: AccordionItem[] = [
 export default function PrivacyPage() {
   return (
     <>
-      <JsonLd data={pageGraph({ path: PATH, name: 'Privacy Policy', description: metadata.description ?? undefined })} />
-
-      <header className={shared.hero}>
-        <div className={shared.heroInner}>
-          <Breadcrumbs items={[{ name: 'Privacy Policy' }]} />
-          <p className="eyebrow">Privacy Policy</p>
-          <h1 className={shared.heroTitle}>Privacy Policy</h1>
-          <p className={shared.legalIntro}>
-            Last updated: <time dateTime={LAST_UPDATED.iso}>{LAST_UPDATED.label}</time>
-          </p>
-        </div>
-      </header>
-
-      <section className={shared.sectionTight} aria-label="Privacy policy sections">
-        <div className={shared.innerProse}>
-          <Accordion items={sections} multiple defaultOpen={0} />
-        </div>
-      </section>
+      <JsonLd
+        data={pageGraph({
+          path: PATH,
+          name: 'Privacy policy',
+          description: DESCRIPTION,
+          dateModified: LAST_UPDATED.iso,
+        })}
+      />
+      <LegalDocument
+        title="Privacy policy"
+        intro="How MAPL TECH collects, uses and protects personal information when you visit mapltech.com or work with us."
+        lastUpdated={LAST_UPDATED}
+        facts={FACTS}
+        sections={SECTIONS}
+        questions="Questions about your data?"
+        mailSubject="Privacy question"
+        action={{
+          label: 'Email a privacy request',
+          subject: 'Privacy request',
+          section: 'your-rights',
+          rights: 'access, correction, deletion, opting out of marketing or withdrawing consent',
+        }}
+        sibling={{ label: 'Read the terms of use', href: '/terms' }}
+      />
     </>
   );
 }

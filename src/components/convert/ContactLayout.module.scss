@@ -1,0 +1,467 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// /contact-us. Wide screens: the heading and the plain alternatives on the
+// left, the brief on the right as a finished surface with its structure (the
+// offset red hairline) behind it. Phones: heading, brief, then alternatives,
+// in that order (the DOM order), so the form is the first thing after the lede.
+
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+$link: $color-red-text;
+
+// ---------------------------------------------------------------- hero + brief
+.contact {
+  padding: calc(56px + 32px) 0 clamp(56px, 9vw, 128px);
+  background:
+    radial-gradient(50% 45% at 92% 6%, rgba($color-red, 0.08) 0%, transparent 62%),
+    radial-gradient(40% 40% at 70% 0%, rgba(92, 13, 23, 0.24) 0%, transparent 70%),
+    $color-ground;
+
+  @include lg {
+    padding-top: calc(72px + clamp(48px, 6vw, 88px));
+  }
+}
+
+.grid {
+  @include container(1280px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'intro'
+    'panel'
+    'proof'
+    'alt';
+  gap: 40px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      'intro panel'
+      'proof panel'
+      'alt panel';
+    column-gap: clamp(48px, 6vw, 96px);
+    row-gap: 40px;
+    align-items: start;
+  }
+}
+
+.intro {
+  grid-area: intro;
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px;
+  @include mono-label(rgba($color-fg, 0.72));
+
+  &::before {
+    content: '';
+    width: 28px;
+    height: 2px;
+    background: $color-red;
+  }
+}
+
+.title {
+  margin: 0;
+  max-width: 11ch;
+  font-size: clamp(2.375rem, 1.6rem + 2.8vw, 3.5rem);
+  font-weight: $font-weight-extrabold;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: $color-fg;
+  text-wrap: balance;
+}
+
+.lede {
+  margin: 20px 0 0;
+  max-width: 34ch;
+  font-size: $font-size-lede;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.82);
+  text-wrap: pretty;
+}
+
+// The brief: surface over structure.
+.panelWrap {
+  grid-area: panel;
+  position: relative;
+  min-width: 0;
+  margin: 0 12px 12px 0;
+
+  @include lg {
+    margin: 0 16px 16px 0;
+  }
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  padding: clamp(20px, 3.5vw, 40px);
+  border-radius: 22px;
+  border: 1px solid $color-hairline-strong;
+  background:
+    radial-gradient(70% 50% at 100% 0%, rgba($color-red, 0.07) 0%, transparent 60%),
+    $color-surface-1;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 40px 90px -40px rgba(0, 0, 0, 0.9);
+}
+
+.structure {
+  position: absolute;
+  inset: 12px -12px -12px 12px;
+  z-index: 0;
+  border: 1px solid rgba($color-red, 0.6);
+  border-radius: 22px;
+  pointer-events: none;
+
+  @include lg {
+    inset: 16px -16px -16px 16px;
+  }
+
+  @include motion-ok {
+    animation: register 1100ms cubic-bezier(0.16, 1, 0.3, 1) 250ms both;
+  }
+}
+
+@keyframes register {
+  from {
+    transform: translate(18px, 20px);
+    opacity: 0.15;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.noscript {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba($link, 0.5);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $color-fg;
+
+  a {
+    color: $link;
+    text-decoration: underline;
+  }
+}
+
+// ---------------------------------------------------------------- alternatives
+.alt {
+  grid-area: alt;
+  min-width: 0;
+}
+
+.altTitle {
+  margin: 0;
+  @include mono-label(rgba($color-fg, 0.72));
+  font-family: $font-body;
+}
+
+.channels {
+  margin: 14px 0 0;
+  border-top: 1px solid $color-hairline-strong;
+
+  > div {
+    padding: 14px 0;
+    border-bottom: 1px solid $color-hairline;
+
+    @include sm {
+      display: grid;
+      grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr);
+      gap: 16px;
+      align-items: baseline;
+    }
+  }
+
+  dt {
+    @include mono-label(rgba($color-fg, 0.66));
+    font-size: 0.875rem; // matches the form's labels
+    letter-spacing: 0.06em;
+  }
+
+  dd {
+    min-width: 0;
+    margin: 6px 0 0;
+
+    @include sm {
+      margin-top: 0;
+    }
+  }
+}
+
+.channel {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: $font-weight-semibold;
+  font-size: 1.0625rem;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-fg, 0.25);
+  text-underline-offset: 6px;
+  overflow-wrap: anywhere;
+  @include tabular;
+  transition: text-decoration-color 160ms $ease;
+
+  &:hover {
+    text-decoration-color: $color-red;
+  }
+
+  @include focus-ring;
+}
+
+.hours {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba($color-fg, 0.84);
+}
+
+.clocks {
+  margin-top: 12px;
+}
+
+.priceFirst {
+  margin-top: 28px;
+}
+
+.priceFirstText {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: $color-fg;
+}
+
+.priceFirstNote {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba($color-fg, 0.72);
+}
+
+.secondary {
+  @include button-secondary;
+  margin-top: 16px;
+  @include focus-ring;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------- what happens next
+.next {
+  padding: clamp(56px, 9vw, 128px) 0;
+  border-top: 1px solid $color-hairline;
+}
+
+.nextGrid {
+  @include container(1280px);
+  display: grid;
+  gap: 36px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: clamp(48px, 6vw, 96px);
+    align-items: start;
+  }
+}
+
+.nextHead {
+  @include lg {
+    position: sticky;
+    top: 112px;
+  }
+}
+
+.h2 {
+  margin: 0;
+  max-width: 14ch;
+  font-size: $font-size-h2;
+}
+
+.nextLede {
+  margin: 20px 0 0;
+  max-width: 36ch;
+  font-size: $font-size-lede;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.78);
+}
+
+// Stages hang off a vertical structure line that draws as you read.
+.stages {
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 0 0 0 30px;
+  list-style: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+  }
+
+  &::before {
+    background: rgba($color-fg, 0.12);
+  }
+
+  &::after {
+    background: $color-red;
+    transform-origin: 50% 0;
+
+    @supports (animation-timeline: view()) {
+      @include motion-ok {
+        animation: draw-down linear both;
+        animation-timeline: view();
+        animation-range: entry 20% cover 70%;
+      }
+    }
+  }
+}
+
+@keyframes draw-down {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.stage {
+  position: relative;
+  padding: 0 0 40px;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -35px;
+    top: 0.42em;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid $color-red;
+    background: $color-ground;
+  }
+}
+
+.stageName {
+  margin: 0;
+  font-size: $font-size-h3;
+}
+
+.stageText {
+  margin: 8px 0 0;
+  max-width: 52ch;
+  font-size: $font-size-md;
+  line-height: 1.6;
+  color: rgba($color-fg, 0.8);
+
+  a {
+    color: $link;
+    text-decoration: underline;
+    text-decoration-color: rgba($link, 0.45);
+    text-underline-offset: 4px;
+
+    @include focus-ring;
+  }
+}
+
+// ---------------------------------------------------------------- proof
+// One client, in her words, beside the decision (not a section away).
+.proof {
+  grid-area: proof;
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  padding-left: 20px;
+  border-left: 2px solid $color-red;
+}
+
+.proofQuote {
+  margin: 0;
+
+  // Body face, not display: the first viewport keeps one display path (H1, then the question).
+  p {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: $font-weight-medium;
+    line-height: 1.6;
+    color: rgba($color-fg, 0.9);
+    text-wrap: pretty;
+
+    &::before {
+      content: '\201C';
+    }
+
+    &::after {
+      content: '\201D';
+    }
+  }
+}
+
+.proofBy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.avatar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.person {
+  display: block;
+  font-weight: $font-weight-semibold;
+  font-size: 1rem;
+  color: $color-fg;
+}
+
+.role {
+  display: block;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.72);
+}
+
+.proofLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 8px;
+  font-weight: $font-weight-semibold;
+  color: $link;
+  text-decoration: underline;
+  text-decoration-color: rgba($link, 0.45);
+  text-underline-offset: 5px;
+
+  &:hover {
+    text-decoration-color: $link;
+  }
+
+  @include focus-ring;
+}

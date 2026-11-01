@@ -1,181 +1,186 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
-import { breadcrumb, contactPage, contactPoint, getServiceLine, graph, startingPrice } from '@/lib/schema';
+import { breadcrumb, contactPage, contactPoint, graph } from '@/lib/schema';
+import { absoluteUrl } from '@/config/routes';
 import { siteConfig, testimonials } from '@/config/site';
-import { FIXED_QUOTE_NOTE } from '@/lib/estimate';
+import { ESTIMATE_HREF, ESTIMATE_LABEL, telHref } from '@/components/layout/chrome';
 import { LiveClocks } from '@/components/ui/TimezoneOverlap';
-import ConvertHero, { LastReviewed } from '@/components/convert/ConvertHero';
-import Cta from '@/components/convert/Cta';
-import ScopingWizard from '@/components/convert/ScopingWizard';
-import shared from '@/app/convert.module.scss';
+import ProjectBrief from '@/components/convert/ProjectBrief';
+import styles from '@/components/convert/ContactLayout.module.scss';
+
+/**
+ * /contact-us (flagship redesign). The brief is the page: four questions, one
+ * at a time, in a single-column form (ProjectBrief), with the plain routes
+ * beside it for people who would rather not fill in a form: email, phone, the
+ * three offices' hours with their live local time, and "Price your project"
+ * for anyone who wants a number first, and one client in her own words right
+ * beside the decision. No response times are promised. Below: what happens
+ * after you send it. Structured data: ContactPage + BreadcrumbList + ContactPoint.
+ */
+
+const PATH = '/contact-us';
+const DESCRIPTION =
+  'Send MAPL TECH a short project brief, or call +1 (647) 375-6724 or email contact@mapltech.com. White-label engineering for agencies, with public prices.';
 
 export const metadata: Metadata = {
-  title: 'Contact',
-  alternates: { canonical: 'https://mapltech.com/contact-us' },
-  description:
-    'Start a project with MAPL TECH. Phone: +1 (647) 375-6724, Email: contact@mapltech.com. We respond within 24 hours.',
+  title: { absolute: 'Contact MAPL TECH: send a project brief' },
+  description: DESCRIPTION,
+  alternates: { canonical: absoluteUrl(PATH) },
   openGraph: {
-    title: 'Contact Us | MAPL TECH',
-    description:
-      'Start a conversation about your next project. We respond within 24 hours.',
+    type: 'website',
+    title: 'Contact MAPL TECH: send a project brief',
+    description: DESCRIPTION,
+    url: absoluteUrl(PATH),
+    siteName: 'MAPL TECH',
   },
 };
 
-const PATH = '/contact-us';
-const PHONE_E164 = '+16473756724';
-
-const BRIEF_ITEMS = ['The goal', 'Current state', 'Constraints', 'Timeline', 'Budget band'];
+const STAGES = [
+  {
+    name: 'We read your brief',
+    text: `It lands in our inbox at ${siteConfig.email}, laid out the way you saw it before you sent it.`,
+  },
+  {
+    name: 'We reply',
+    text: 'By email or with a call, whichever you chose, with questions or a time to talk.',
+  },
+  {
+    name: 'A 20-minute scoping call',
+    text: 'We agree what is in scope and what is not, so the quote describes the real job.',
+  },
+  {
+    name: 'A fixed quote',
+    text: 'Final pricing is set through scoping and written into a proposal, so you know the number before work starts.',
+  },
+] as const;
 
 export default function ContactPage() {
-  const webFrom = startingPrice(getServiceLine('web-development'));
-  const automationFrom = startingPrice(getServiceLine('automation-ai-workflow-setup'));
-  // Only approved quotes ship: the first testimonial (LRO Staffing). The UNSVCC draft stays out until signed off.
-  const proof = testimonials[0];
+  // The one approved client quote (LRO Staffing).
+  const proof = testimonials.find((entry) => entry.company === 'LRO Staffing');
 
   return (
     <>
       <JsonLd
         data={graph([
-          contactPage({ description: metadata.description ?? undefined }),
+          contactPage({ name: 'Contact MAPL TECH', description: DESCRIPTION }),
           breadcrumb([{ name: 'Contact', path: PATH }]),
           contactPoint(),
         ])}
       />
 
-      <ConvertHero
-        eyebrow="Contact"
-        title="Tell Us What You're Building"
-        lede={`Whether it's a complex web build, an automation pipeline, a custom tool or cloud infrastructure, describe the project and MAPL TECH will respond within 24 hours. Agencies get a fixed quote after one 20-minute scoping call, with web builds starting at ${webFrom} and automation from ${automationFrom}.`}
-        facts={[
-          { label: 'Reply time', value: 'Within 24 hours' },
-          { label: 'Scoping call', value: '20 minutes, then a fixed quote' },
-          { label: 'Starting price', value: `Web ${webFrom} · Automation ${automationFrom}` },
-          { label: 'Offices', value: 'Toronto (HQ) · Lagos · Kingston' },
-          { label: 'Last reviewed', value: <LastReviewed path={PATH} /> },
-        ]}
-        actions={
-          <>
-            {/* Highest-intent route: the call CTA takes the red slot here (wireframe 01). */}
-            <Cta placement="contact_hero_primary" hero href="#book" size="large">
-              Book a 20-min scoping call
-            </Cta>
-            <Cta placement="contact_hero_secondary" href="/pricing#estimator" variant="secondary" size="large" cursor="estimate">
-              Get a 60-second estimate
-            </Cta>
-          </>
-        }
-      />
-
-      {/* 02 — Two paths: (A) the scoping wizard, (B) talk first */}
-      <section className={shared.section} aria-labelledby="paths-title">
-        <div className={shared.inner}>
-          <div className={shared.sectionHead}>
-            <p className="eyebrow">02 · Two ways in</p>
-            <h2 id="paths-title" className={shared.sectionTitle}>
-              Scope it in three steps, or talk first
-            </h2>
-            <p className={shared.sectionSub}>
-              Both routes end the same way: a 20-minute scoping call and a fixed quote. Pick the one that fits how
-              you work.
+      {/* ---------------------------------------------------------- brief */}
+      <section className={styles.contact} aria-labelledby="contact-title">
+        <div className={styles.grid}>
+          <div className={styles.intro}>
+            <p className={styles.eyebrow}>
+              <span>Contact · White-label engineering for agencies</span>
             </p>
+            <h1 id="contact-title" className={styles.title}>
+              Brief us like your own team.
+            </h1>
+            <p className={styles.lede}>Four short questions, one at a time. Or call, email or see a price first.</p>
           </div>
 
-          <div className={shared.twoCol}>
-            {/* Path A — PEAK */}
-            <article className={shared.card} id="wizard" aria-labelledby="wizard-title">
-              <div className={shared.stack}>
-                <div className={shared.eyebrowRow}>
-                  <p className="eyebrow">Path A · Scoping brief</p>
-                </div>
-                <h3 id="wizard-title" className={shared.cardTitle}>
-                  Three steps, one form
-                </h3>
-                <p className={shared.cardBody}>
-                  What you&apos;re building, the size and budget band, and where to reply. Arrive from the estimator
-                  and step two is already filled in.
+          <div className={styles.panelWrap}>
+            <div className={styles.panel}>
+              <noscript>
+                <p className={styles.noscript}>
+                  This form needs JavaScript. Email <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a> or call{' '}
+                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a> instead.
                 </p>
-              </div>
-              <div style={{ marginTop: '1.5rem' }}>
-                <ScopingWizard />
-              </div>
-            </article>
-
-            {/* Path B — talk first + direct contact */}
-            <aside className={shared.stackLg} id="book" aria-labelledby="book-title">
-              <div className={shared.card}>
-                <div className={shared.stack}>
-                  <p className="eyebrow">Path B · Talk first</p>
-                  <h3 id="book-title" className={shared.cardTitle}>
-                    Book a 20-min scoping call
-                  </h3>
-                  <p className={shared.cardBody}>
-                    Prefer to talk before you write anything down? Call or email and we set up the scoping call. {FIXED_QUOTE_NOTE}.
-                  </p>
-                  <ul className={shared.rows}>
-                    <li>
-                      <span className={shared.rowLabel}>Phone</span>
-                      <a className={shared.rowValue} href={`tel:${PHONE_E164}`} data-cta-placement="contact_direct_phone">
-                        {siteConfig.phone}
-                      </a>
-                    </li>
-                    <li>
-                      <span className={shared.rowLabel}>General</span>
-                      <a className={shared.rowValue} href={`mailto:${siteConfig.email}`} data-cta-placement="contact_direct_email">
-                        {siteConfig.email}
-                      </a>
-                    </li>
-                    <li>
-                      <span className={shared.rowLabel}>Offices</span>
-                      <span className={shared.rowValue}>Toronto (HQ) · Lagos · Kingston</span>
-                    </li>
-                  </ul>
-                  {/* Interaction #10: live office clocks (SSR placeholder, minute ticks) */}
-                  <LiveClocks />
-                  <div className={shared.ctaRow}>
-                    <Cta placement="contact_book_call" href={`tel:${PHONE_E164}`} external size="medium">
-                      Call to book the call
-                    </Cta>
-                    <Cta placement="contact_book_email" href={`mailto:${siteConfig.email}?subject=Scoping call`} external variant="secondary" size="medium">
-                      Email us
-                    </Cta>
-                  </div>
-                </div>
-              </div>
-
-              <div className={shared.card}>
-                <div className={shared.stack}>
-                  <p className="eyebrow">What to include in your brief</p>
-                  <ol className={shared.numbered}>
-                    {BRIEF_ITEMS.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                  <p className={shared.small}>
-                    Want a call back instead of an email? Choose &ldquo;Phone&rdquo; as your preferred contact method
-                    in step three.
-                  </p>
-                </div>
-              </div>
-            </aside>
+              </noscript>
+              <ProjectBrief />
+            </div>
+            <span className={styles.structure} aria-hidden="true" />
           </div>
+
+          {proof ? (
+            <figure className={styles.proof}>
+              <blockquote className={styles.proofQuote}>
+                <p>{proof.quote}</p>
+              </blockquote>
+              <figcaption className={styles.proofBy}>
+                {proof.image ? (
+                  <Image src={proof.image} alt="" width={44} height={44} className={styles.avatar} />
+                ) : null}
+                <span>
+                  <span className={styles.person}>{proof.name}</span>
+                  <span className={styles.role}>
+                    {proof.role}, {proof.company}
+                  </span>
+                </span>
+              </figcaption>
+              <Link href="/our-work/lro-staffing" className={styles.proofLink}>
+                Read the LRO Staffing case study<span aria-hidden="true">→</span>
+              </Link>
+            </figure>
+          ) : null}
+
+          <aside className={styles.alt} aria-labelledby="alt-title">
+            <h2 id="alt-title" className={styles.altTitle}>
+              Or reach us directly
+            </h2>
+            <dl className={styles.channels}>
+              <div>
+                <dt>Email</dt>
+                <dd>
+                  <a href={`mailto:${siteConfig.email}`} className={styles.channel} data-cta-placement="contact_email">
+                    {siteConfig.email}
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt>Phone</dt>
+                <dd>
+                  <a href={telHref(siteConfig.phone)} className={styles.channel} data-cta-placement="contact_phone">
+                    {siteConfig.phone}
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt>Office hours</dt>
+                <dd>
+                  <p className={styles.hours}>
+                    09:00 to 18:00 local time, Monday to Friday, in Toronto, Lagos and Kingston.
+                  </p>
+                  <LiveClocks className={styles.clocks} />
+                </dd>
+              </div>
+            </dl>
+
+            <div className={styles.priceFirst}>
+              <p className={styles.priceFirstText}>Want a number before you write anything?</p>
+              <p className={styles.priceFirstNote}>Our prices are public. You see the range before we ask for anything.</p>
+              <Link href={ESTIMATE_HREF} className={styles.secondary} data-cta-placement="contact_price_first">
+                {ESTIMATE_LABEL}
+              </Link>
+            </div>
+          </aside>
         </div>
       </section>
 
-      {/* 03 — Proof (real, approved quote only) */}
-      <section className={`${shared.section} reveal`} data-below-fold aria-labelledby="proof-title">
-        <div className={shared.innerNarrow}>
-          <p className="eyebrow">03 · From a client</p>
-          <h2 id="proof-title" className="visually-hidden">
-            What clients say
-          </h2>
-          <figure style={{ margin: '1.5rem 0 0' }}>
-            <blockquote className={shared.quote}>&ldquo;{proof.quote}&rdquo;</blockquote>
-            <figcaption className={shared.cite}>
-              {proof.name} — {proof.role}, {proof.company}
-            </figcaption>
-          </figure>
+      {/* ---------------------------------------------------------- next */}
+      <section className={styles.next} aria-labelledby="next-title">
+        <div className={styles.nextGrid}>
+          <div className={styles.nextHead}>
+            <h2 id="next-title" className={styles.h2}>
+              What happens after you send it.
+            </h2>
+            <p className={styles.nextLede}>Four steps, from your brief to a fixed price.</p>
+          </div>
+          <ol className={styles.stages} role="list">
+            {STAGES.map((stage) => (
+              <li key={stage.name} className={styles.stage}>
+                <h3 className={styles.stageName}>{stage.name}</h3>
+                <p className={styles.stageText}>{stage.text}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
+
     </>
   );
 }
