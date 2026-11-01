@@ -1,19 +1,19 @@
 /**
  * Shared chrome constants for Header / MobileNav / Footer.
  *
- * CTA vocabulary (brief §2 + WIRE-KIT rulings): primary "Get a 60-second
- * estimate" → /pricing#estimator, secondary "Book a 20-min scoping call" →
- * /contact-us. Every link label below is an existing route label from
+ * CTA vocabulary (flagship redesign): primary "Price your project" →
+ * /pricing#estimator, secondary "Book a call" → /contact-us. Every link label below is an existing route label from
  * siteConfig.nav or the current footer; nothing is invented.
  */
 
 export const ESTIMATE_HREF = '/pricing#estimator';
-export const ESTIMATE_LABEL = 'Get a 60-second estimate';
-/** Compact label for the 56px mobile bar (WIRE-KIT "Shared chrome"). */
-export const ESTIMATE_LABEL_COMPACT = 'Estimate';
+/** The one primary action, the same words everywhere (Sentinel copy pass, Nov 2026). */
+export const ESTIMATE_LABEL = 'Price your project';
+/** Compact label for the 56px mobile bar; the accessible name stays the full label. */
+export const ESTIMATE_LABEL_COMPACT = 'Price it';
 
 export const CALL_HREF = '/contact-us';
-export const CALL_LABEL = 'Book a 20-min scoping call';
+export const CALL_LABEL = 'Book a call';
 
 /** `tel:` href from a display number such as "+1 (647) 375-6724". */
 export const telHref = (phone: string): string => `tel:${phone.replace(/[^\d+]/g, '')}`;

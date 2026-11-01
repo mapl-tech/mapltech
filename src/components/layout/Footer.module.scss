@@ -1,194 +1,124 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-// One step below the page ground (#0a0a0a).
-$footer-ground: #050505;
-
 .footer {
-  background: $footer-ground;
+  position: relative;
+  overflow: hidden;
+  background: #070708;
   border-top: 1px solid $color-hairline;
-  padding-top: $space-section-sm;
-  color: $color-text-body;
+  padding-top: clamp(64px, 8vw, 104px);
+  // Phones: clear the sticky action bar.
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+
+  @include md {
+    padding-bottom: 0;
+  }
 }
 
 .inner {
-  @include container;
+  @include container(1280px);
 }
 
-// ===== Grid =====
-.grid {
+// ---------------------------------------------------------------- the ask
+.ask {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-2xl;
-  padding-bottom: $space-2xl;
-
-  @include md {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: $space-2xl $space-xl;
-  }
+  gap: 24px;
+  padding-bottom: clamp(48px, 6vw, 72px);
+  border-bottom: 1px solid $color-hairline;
 
   @include lg {
-    grid-template-columns: 1.5fr 1fr 0.9fr 1.2fr;
-    gap: $space-3xl $space-xl;
-  }
-
-  > * {
-    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
   }
 }
 
-// ===== Brand block =====
-.brand {
+.askLine {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(2rem, 1.3rem + 2.8vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: $color-fg;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+
+.askActions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: $space-md;
-
-  @include md {
-    grid-column: 1 / -1;
-  }
-
-  @include lg {
-    grid-column: auto;
-  }
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
 }
 
-.logo {
+.askLink {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 48px;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-fg, 0.35);
+  text-underline-offset: 6px;
 
-  img {
-    width: 150px;
-    height: auto;
+  &:hover {
+    text-decoration-color: $color-red;
+  }
+
+  @include focus-ring;
+}
+
+// ---------------------------------------------------------------- columns
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px 24px;
+  padding: clamp(48px, 6vw, 72px) 0;
+
+  @include lg {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px;
   }
 }
 
-.tagline {
-  @include display-type($font-size-h3, $line-height-snug);
-  margin: 0;
-  max-width: 18ch;
-  color: $color-fg;
-}
-
-.description {
-  margin: 0;
-  max-width: 40ch;
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-fg-muted;
-}
-
-.clocksBlock {
-  display: grid;
-  gap: $space-8;
-  margin-top: $space-8;
-}
-
-.clocksLabel {
-  @include mono-label($color-fg-dim);
-  margin: 0;
-  text-transform: none;
-  letter-spacing: 0.02em;
-}
-
-.clocks {
-  gap: $space-8;
-}
-
-// ===== Intent columns =====
 .column {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: $space-md;
-}
+  min-width: 0;
 
-.heading {
-  @include mono-label($color-fg-muted);
-  margin: 0;
-  padding-top: 6px;
-}
+  > ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
-.subheading {
-  @include mono-label($color-fg-muted);
-  margin: $space-8 0 0;
-}
-
-.columnCta {
-  display: inline-block;
-  max-width: 100%;
-}
-
-.btn {
-  min-height: 44px;
-  padding: 0 18px;
-  font-size: $font-size-sm;
-  white-space: normal;
-  text-align: left;
-}
-
-.links {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  a {
+  > ul a {
     display: inline-flex;
     align-items: center;
     min-height: 40px;
-    font-size: $font-size-sm;
-    color: $color-text-body;
-    transition: color $transition-fast;
+    font-size: $font-size-base;
+    color: rgba($color-fg, 0.74);
+    overflow-wrap: anywhere;
+    transition: color 140ms cubic-bezier(0.23, 1, 0.32, 1);
 
     &:hover {
       color: $color-fg;
     }
+
+    @include focus-ring;
   }
 }
 
-.contact {
-  display: grid;
-  gap: $space-8;
-  margin: 0;
-
-  > div {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  dt {
-    @include mono-label($color-fg-dim);
-  }
-
-  dd {
-    margin: 0;
-    font-size: $font-size-sm;
-
-    a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 40px;
-      color: $color-fg;
-      overflow-wrap: anywhere;
-      transition: color $transition-fast;
-
-      &:hover {
-        color: $color-fg-muted;
-      }
-    }
-  }
+.heading {
+  margin: 0 0 12px;
+  @include mono-label(rgba($color-fg, 0.55));
+  font-family: $font-body;
 }
 
 .social {
   display: flex;
   flex-wrap: wrap;
-  gap: $space-8;
-  margin: 0;
+  gap: 4px;
+  margin: 12px 0 0;
   padding: 0;
   list-style: none;
 
@@ -198,165 +128,154 @@ $footer-ground: #050505;
     justify-content: center;
     width: 44px;
     height: 44px;
-    border: 1px solid $color-hairline-strong;
-    border-radius: $radius-full;
-    color: $color-fg-muted;
-    transition:
-      color $transition-fast,
-      border-color $transition-fast;
+    border-radius: 50%;
+    color: rgba($color-fg, 0.74);
+    transition: color 140ms ease-out, background-color 140ms ease-out;
 
     &:hover {
       color: $color-fg;
-      border-color: rgba($color-red, 0.6);
+      background: rgba($color-fg, 0.06);
     }
+
+    @include focus-ring;
   }
 }
 
-// ===== Newsletter =====
+// ---------------------------------------------------------------- newsletter
 .newsletter {
   display: grid;
-  gap: $space-lg;
-  padding: $space-xl 0;
+  gap: 20px;
+  padding: 32px 0;
   border-top: 1px solid $color-hairline;
-  border-bottom: 1px solid $color-hairline;
 
-  @include md {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+  @include lg {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
     align-items: center;
-    gap: $space-2xl;
+    gap: 48px;
   }
 }
 
-.newsletterText {
-  display: grid;
-  gap: $space-4;
-
-  p {
-    margin: 0;
-    font-size: $font-size-sm;
-    color: $color-fg-muted;
-  }
-}
-
-.newsletterHeading {
-  @include display-type($font-size-xl, $line-height-snug);
+.newsTitle {
   margin: 0;
-  color: $color-fg;
+  font-size: 1.25rem;
 }
 
+.newsText {
+  margin: 6px 0 0;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.68);
+}
+
+// Newsletter form (NewsletterForm.tsx imports these classes).
 .form {
-  display: grid;
-  gap: $space-8;
   width: 100%;
 }
 
 .formRow {
   display: flex;
-  flex-wrap: wrap;
-  gap: $space-8;
-  align-items: stretch;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid $color-hairline-strong;
+  background: rgba($color-fg, 0.03);
+
+  &:focus-within {
+    border-color: rgba($color-red, 0.7);
+  }
 }
 
 .input {
-  flex: 1 1 200px;
+  flex: 1 1 auto;
   min-width: 0;
-  min-height: 48px;
-  padding: 0 $space-md;
-  background: $color-surface-1;
-  border: 1px solid $color-hairline-strong;
-  border-radius: $radius-full;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  background: transparent;
   color: $color-fg;
-  font-family: $font-body;
-  font-size: $font-size-base; // 17px: never below 16px on phones
-  transition: border-color $transition-fast;
+  font: inherit;
+  font-size: 1rem; // 16px: no iOS zoom on focus
 
   &::placeholder {
-    color: $color-fg-dim;
+    color: rgba($color-fg, 0.5);
   }
 
   &:focus {
-    border-color: rgba($color-red, 0.7);
-  }
-
-  &:disabled {
-    opacity: 0.6;
+    outline: none;
   }
 }
 
 .formBtn {
-  min-height: 48px;
-  padding: 0 22px;
-  font-size: $font-size-sm;
-  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .formMessage {
-  margin: 0;
-  min-height: 1.4em;
-  font-family: $font-mono;
-  font-size: $font-size-xs;
-  letter-spacing: 0.02em;
-  color: $color-fg-muted;
+  margin: 8px 0 0;
+  min-height: 1.25em;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.72);
 
   &[data-state='error'] {
-    color: $color-red-text;
+    color: #ff5c73;
   }
 
   &[data-state='success'] {
-    color: $color-signal;
+    color: $color-teal;
   }
 }
 
-// ===== Bottom bar =====
-.bottom {
-  display: flex;
-  flex-direction: column;
-  gap: $space-md;
-  padding: $space-lg 0 $space-xl;
-
-  @include md {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.copyright {
-  margin: 0;
-  font-family: $font-mono;
-  font-size: $font-size-xs;
-  letter-spacing: 0.02em;
-  color: $color-fg-dim;
-}
-
-.bottomLinks {
+// ---------------------------------------------------------------- legal
+.legal {
   display: flex;
   flex-wrap: wrap;
-  gap: $space-md $space-lg;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 20px 0 24px;
+  border-top: 1px solid $color-hairline;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.6);
+
+  p {
+    margin: 0;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
   a {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
-    font-family: $font-mono;
-    font-size: $font-size-xs;
-    letter-spacing: 0.02em;
-    color: $color-fg-muted;
-    transition: color $transition-fast;
+    min-height: 40px;
+    color: rgba($color-fg, 0.68);
 
     &:hover {
       color: $color-fg;
     }
+
+    @include focus-ring;
   }
 }
 
-// Clear the mobile sticky action bar (MobileActionBar, md:hidden) so the last
-// footer links are never covered; the bar is 52px + safe-area inset.
-.footer {
-  @media (max-width: 767px) {
-    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
-  }
+// ---------------------------------------------------------------- wordmark
+// The brand name at composition scale, cropped by the page's last edge.
+.wordmark {
+  margin: clamp(8px, 2vw, 24px) 0 0;
+  padding: 0;
+  text-align: center;
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 19.2vw;
+  line-height: 0.74;
+  letter-spacing: -0.055em;
+  white-space: nowrap;
+  color: rgba($color-fg, 0.07);
+  transform: translateY(8%);
+  user-select: none;
+  pointer-events: none;
 }

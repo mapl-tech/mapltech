@@ -1,0 +1,70 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.problem {
+  padding: clamp(96px, 14vw, 200px) 0;
+}
+
+.inner {
+  @include container(1280px);
+}
+
+.label {
+  margin: 0 0 clamp(32px, 5vw, 56px);
+  @include mono-label(rgba($color-fg, 0.62));
+  font-family: $font-body;
+}
+
+.lines {
+  display: grid;
+  gap: clamp(28px, 4vw, 48px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: 22ch * 2.6;
+}
+
+.line {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.625rem, 1.1rem + 2.4vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: $color-fg;
+  text-wrap: balance;
+  max-width: 26ch;
+
+  &:nth-child(2) {
+    color: rgba($color-fg, 0.74);
+    font-weight: $font-weight-semibold;
+    max-width: 34ch;
+  }
+
+  &[data-turn] {
+    color: $color-red;
+    font-weight: $font-weight-extrabold;
+  }
+}
+
+// Each line lifts into place as it enters. Opacity never starts at 0 for the
+// first line's comprehension: it starts faint, so a still frame is readable.
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .line {
+      animation: arrive linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 34%;
+    }
+  }
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0.12;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

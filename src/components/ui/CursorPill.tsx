@@ -54,7 +54,7 @@ const PILL: CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  fontFamily: 'var(--font-jetbrains-mono, ui-monospace, SFMono-Regular, Menlo, monospace)',
+  fontFamily: 'var(--font-dm-sans, ui-sans-serif, system-ui, sans-serif)',
 };
 
 export default function CursorPill() {

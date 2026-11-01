@@ -6,7 +6,7 @@
 // View Transitions: page boundary classes, anchored header, reduced-motion zeroing.
 @use 'transitions';
 
-// Fonts (DM Sans, Instrument Serif, JetBrains Mono) are loaded via next/font in
+// Fonts (Overpass, DM Sans) are loaded via next/font in
 // src/app/layout.tsx; their CSS variables live on <html>.
 
 @layer base {
@@ -26,8 +26,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   // Respect the user's preferred font size (default 16px)
   font-size: 100%;
-  // Instrument Serif ships one 400 face: never fake a bold. Style synthesis stays
-  // on so <em> still slants in fonts loaded without an italic.
+  // Both families are variable fonts with real weights; never synthesise a bold.
   font-synthesis: style;
   background-color: $color-ground;
   color-scheme: dark;
@@ -60,28 +59,34 @@ body {
   }
 }
 
-// Headings: Instrument Serif at 400. Sizes are defaults; modules may override.
+// Headings: Overpass. H1 at 800, the rest at 700; tracking tightens as size
+// grows. Sizes are defaults; modules may override.
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-display;
   font-weight: $font-weight-display;
   color: $color-text-heading;
   line-height: $line-height-tight;
-  letter-spacing: $letter-spacing-display;
+  letter-spacing: $letter-spacing-tight;
   text-wrap: balance;
 }
 
 h1 {
   font-size: $font-size-h1;
-  line-height: 1.02;
+  font-weight: $font-weight-extrabold;
+  line-height: 1;
+  letter-spacing: $letter-spacing-display;
 }
 
 h2 {
   font-size: $font-size-h2;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
 }
 
 h3 {
   font-size: $font-size-h3;
   line-height: $line-height-snug;
+  letter-spacing: -0.015em;
 }
 
 h4 {
@@ -240,7 +245,7 @@ main:focus {
   @include container($max-width-prose);
 }
 
-// JetBrains Mono with tabular figures - numbers, clocks, code, metadata
+// Tabular figures for numbers, clocks, prices and metadata (body face)
 .mono {
   font-family: $font-mono;
   @include tabular;
@@ -259,9 +264,10 @@ main:focus {
   @include lede;
 }
 
-// Display H1 for hero pages (Instrument Serif, clamp(2.75rem, 7vw, 6.5rem))
+// Display H1 for hero pages (Overpass 800, 40px -> 76px)
 .display {
   @include display-type($font-size-display, $line-height-display);
+  font-weight: $font-weight-extrabold;
 }
 
 // Key facts <dl>. Markup: <dl class="kv"><div><dt>Starting price</dt><dd>From $5,000</dd></div>...</dl>
@@ -370,9 +376,9 @@ main:focus {
     }
   }
 
-  // Primary: #F03350 -> hover #FF3D5A -> pressed #C4213C
+  // Primary: crimson fill #D91C3F -> hover #C4213C -> pressed #A81B33 (white label passes AA)
   &--primary {
-    background: $color-red;
+    background: $color-red-fill;
     color: $color-white;
 
     .magnetic-btn__glow {
@@ -384,11 +390,11 @@ main:focus {
     }
 
     &:hover {
-      background: $color-red-hover;
+      background: $color-red-fill-hover;
     }
 
     &:active {
-      background: $color-red-pressed;
+      background: $color-red-fill-pressed;
     }
   }
 

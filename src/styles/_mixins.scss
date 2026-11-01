@@ -87,7 +87,7 @@
 // ============================================
 // Type
 // ============================================
-// Display serif: Instrument Serif 400, tight tracking, balanced wrapping.
+// Display type: Overpass 700, tight tracking, balanced wrapping.
 @mixin display-type($size: $font-size-h2, $line-height: $line-height-tight) {
   font-family: $font-display;
   font-weight: $font-weight-display;
@@ -97,7 +97,7 @@
   text-wrap: balance;
 }
 
-// Mono label: 12px JetBrains Mono, uppercase, 0.14em tracking (eyebrows, dt, table heads).
+// Label: 13px DM Sans 500, uppercase, 0.08em tracking, tabular figures (eyebrows, dt, table heads).
 @mixin mono-label($color: $color-fg-muted) {
   font-family: $font-mono;
   font-size: $font-size-label;
@@ -230,18 +230,18 @@
   }
 }
 
-// Primary button - flat brand red; hover lifts to #FF3D5A, press drops to #C4213C
+// Primary button - crimson fill (white label 5.01:1), deepening on hover/press
 @mixin button-primary {
   @include button-base;
-  background: $color-red;
+  background: $color-red-fill;
   color: $color-white;
 
   &:hover:not(:disabled) {
-    background: $color-red-hover;
+    background: $color-red-fill-hover;
   }
 
   &:active:not(:disabled) {
-    background: $color-red-pressed;
+    background: $color-red-fill-pressed;
     transform: scale(0.97);
   }
 }

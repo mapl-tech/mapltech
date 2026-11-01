@@ -1,7 +1,7 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-$mono: var(--font-jetbrains-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+$mono: var(--font-dm-sans, ui-sans-serif, system-ui, sans-serif);
 
 // Mobile: 3px rail on the left edge with dots only.
 // Desktop (lg): 2px spine in the left gutter with index + label per node.

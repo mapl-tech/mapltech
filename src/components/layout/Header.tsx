@@ -24,16 +24,17 @@ import styles from './Header.module.scss';
 /**
  * Site header (Engineered Editorial).
  *
- * - One 64px bar on the brand ground with a hairline and the only permitted
- *   backdrop-blur; it compresses to 56px once the page has scrolled 24px.
- * - Mono nav labels (12px / 0.12em). The IA is siteConfig.nav unchanged:
- *   Services / Our Work / About Us open inline dropdowns on desktop. Each
+ * - A 72px bar that sits on the hero photograph at the top of the page and
+ *   gains the brand ground, blur and hairline (compressing to 60px) once the
+ *   page has scrolled 24px.
+ * - Five nav items in DM Sans 15px (siteConfig.nav): Services / Work / About
+ *   open inline dropdowns on desktop. Each
  *   dropdown is a disclosure: hover opens it for a mouse, a chevron button with
  *   aria-expanded / aria-controls opens it for keyboards, Arrow keys move
  *   through it, Escape closes it and returns focus, focus or a click leaving
  *   the item closes it. Closed menus are visibility:hidden, so they are never
  *   in the tab order.
- * - Mobile (< 1024px): 56px bar, compact "Estimate" CTA, 44px hamburger that
+ * - Mobile (< 1024px): 56px bar, compact "Price it" CTA, 44px hamburger that
  *   opens the vaul bottom sheet in MobileNav (interaction #9).
  * - An inline `view-transition-name: site-header` anchors it during page
  *   transitions; styles/_transitions.scss disables its group animation.
@@ -296,10 +297,6 @@ export default function Header() {
         <DesktopNav pathname={pathname} />
 
         <div className={styles.utility}>
-          <a href={`mailto:${siteConfig.email}`} className={styles.email}>
-            {siteConfig.email}
-          </a>
-
           <span className={styles.cta} data-cta-placement="header_estimate">
             <MagneticButton href={ESTIMATE_HREF} size="small" placement="header_estimate" className={styles.headerBtn}>
               {ESTIMATE_LABEL}

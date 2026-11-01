@@ -1,39 +1,28 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
-import { DM_Sans, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
+import { DM_Sans, Overpass } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import SmoothScroll from '@/components/ui/SmoothScroll';
-import CursorGlow from '@/components/ui/CursorGlow';
 import MobileActionBar from '@/components/ui/MobileActionBar';
 import JsonLd from '@/components/seo/JsonLd';
 import { siteGraph } from '@/lib/schema';
 import '@/styles/tailwind.css';
 import '@/styles/globals.scss';
 
-// Body, UI, buttons. Variable font: full weight axis in one file.
+// The two families the live site already uses. Overpass: display only (H1-H3,
+// big numbers). DM Sans: body, labels, UI, buttons. Both are variable fonts, so
+// every weight ships in one file each.
+const overpass = Overpass({
+  subsets: ['latin'],
+  variable: '--font-overpass',
+  display: 'swap',
+});
+
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
-  display: 'swap',
-});
-
-// Display serif for headings and pull quotes. Ships a single 400 face (+ italic);
-// globals.scss disables weight synthesis so it never renders as faux bold.
-const instrumentSerif = Instrument_Serif({
-  subsets: ['latin'],
-  weight: '400',
-  style: ['normal', 'italic'],
-  variable: '--font-instrument-serif',
-  display: 'swap',
-});
-
-// Metadata: eyebrows, key facts, prices, clocks, code.
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-jetbrains-mono',
   display: 'swap',
 });
 
@@ -163,7 +152,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}
+      className={`${overpass.variable} ${dmSans.variable}`}
     >
       <head>
         {/* Preconnect to third-party origins for faster resource loading */}
@@ -208,14 +197,6 @@ export default function RootLayout({
         </a>
         {/* Lenis substrate: desktop, fine pointer, motion allowed. Renders no HTML. */}
         <SmoothScroll />
-        {/*
-          Cursor pill. CursorGlow is a 'use client' island that renders nothing on
-          the server, so it adds no HTML here. `next/dynamic({ ssr: false })` is not
-          permitted inside a Server Component (this layout), so the ssr:false
-          boundary must live inside src/components/ui/CursorGlow.tsx itself
-          (export default dynamic(() => import('./CursorPill'), { ssr: false })).
-        */}
-        <CursorGlow />
         <Header />
         <main id="main" tabIndex={-1}>
           {children}

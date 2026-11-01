@@ -14,25 +14,29 @@ export const siteConfig = {
     linkedin: 'https://linkedin.com/company/mapltech',
     tiktok: 'https://tiktok.com/@mapltech',
   },
+  // Five top-level items (Hick's law); the logo is the home link. Contact,
+  // Team, Careers and the regional pages live under About and in the footer.
   nav: [
-    { label: 'Home', href: '/' },
-    { label: 'Services', href: '/services/web-development', children: [
+    { label: 'Services', href: '/services', children: [
       { label: 'Web Development', href: '/services/web-development' },
       { label: 'Automation & AI', href: '/services/automation-ai-workflow-setup' },
       { label: 'Custom Internal Tools', href: '/services/custom-internal-tools' },
       { label: 'Cloud Engineering', href: '/services/cloud-engineering' },
+      { label: 'All services', href: '/services' },
     ]},
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'Our Work', href: '/our-work', children: [
+    { label: 'Work', href: '/our-work', children: [
       { label: 'Client Work', href: '/our-work' },
       { label: 'MAPL Labs', href: '/labs' },
     ]},
-    { label: 'About Us', href: '/about-us', children: [
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'About', href: '/about-us', children: [
       { label: 'About MAPL TECH', href: '/about-us' },
+      { label: 'Team', href: '/team' },
       { label: 'MAPL TECH Nigeria', href: '/nigeria' },
       { label: 'MAPL TECH Jamaica', href: '/jamaica' },
       { label: 'Careers', href: '/careers' },
       { label: 'Referral Program', href: '/referral' },
+      { label: 'Contact', href: '/contact-us' },
     ]},
     { label: 'Blog', href: '/blog' },
   ],

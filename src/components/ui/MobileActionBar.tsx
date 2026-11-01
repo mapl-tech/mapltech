@@ -4,6 +4,8 @@ import { useEffect, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { usePrefersReducedMotion } from './useMediaQuery';
+import { ESTIMATE_HREF, ESTIMATE_LABEL } from '@/components/layout/chrome';
+import { MOBILE_BAR_CONTEXT } from '@/components/flagship/content';
 
 /**
  * Interaction #9: sticky mobile action bar (md:hidden).
@@ -16,9 +18,8 @@ import { usePrefersReducedMotion } from './useMediaQuery';
 export interface MobileActionBarProps {
   estimateHref?: string;
   estimateLabel?: string;
-  /** E.164 number for the tel: link. */
-  phone?: string;
-  callLabel?: string;
+  /** One line of context beside the button (price floor, reassurance). */
+  context?: string;
 }
 
 const KEYBOARD_RATIO = 0.75;
@@ -32,33 +33,23 @@ const BAR_STYLE: CSSProperties = {
 };
 
 const PRIMARY_STYLE: CSSProperties = {
-  minHeight: 52,
-  background: 'var(--bar-primary-bg, #F03350)',
+  minHeight: 48,
+  background: 'var(--bar-primary-bg, #D91C3F)', // crimson fill: white label 5.01:1
   color: '#ffffff',
   fontSize: 17,
   fontWeight: 600,
 };
 
-const SECONDARY_STYLE: CSSProperties = {
-  minHeight: 52,
-  minWidth: 88,
-  border: '1px solid rgba(255, 255, 255, 0.18)',
-  color: '#ffffff',
-  fontSize: 17,
-  fontWeight: 600,
-};
-
-function emit(action: 'estimate' | 'call', href: string) {
+function emit(action: 'estimate', href: string) {
   window.dispatchEvent(
     new CustomEvent('cta_click', { detail: { placement: 'sticky_bar', action, href } }),
   );
 }
 
 export default function MobileActionBar({
-  estimateHref = '/pricing#estimator',
-  estimateLabel = 'Get a 60-second estimate',
-  phone = '+16473756724',
-  callLabel = 'Call',
+  estimateHref = ESTIMATE_HREF,
+  estimateLabel = ESTIMATE_LABEL,
+  context = MOBILE_BAR_CONTEXT,
 }: MobileActionBarProps) {
   const pathname = usePathname();
   const reduceMotion = usePrefersReducedMotion();
@@ -140,23 +131,19 @@ export default function MobileActionBar({
         transition,
       }}
     >
-      <div className="flex items-stretch gap-2 px-4 py-2">
+      {/* One action only (Sentinel sticky-mobile-cta-bar): context left, the CTA right. */}
+      <div className="flex items-center gap-3 px-4 py-2">
+        <p className="m-0 flex-1 text-[14px] leading-tight" style={{ color: 'rgba(246, 243, 239, 0.78)' }}>
+          {context}
+        </p>
         <Link
           href={estimateHref}
-          className="mobile-action-bar__primary flex flex-1 items-center justify-center rounded-full text-center"
+          className="mobile-action-bar__primary flex shrink-0 items-center justify-center rounded-full px-5 text-center"
           style={PRIMARY_STYLE}
           onClick={() => emit('estimate', estimateHref)}
         >
           {estimateLabel}
         </Link>
-        <a
-          href={`tel:${phone}`}
-          className="mobile-action-bar__call flex items-center justify-center rounded-full"
-          style={SECONDARY_STYLE}
-          onClick={() => emit('call', `tel:${phone}`)}
-        >
-          {callLabel}
-        </a>
       </div>
     </div>
   );

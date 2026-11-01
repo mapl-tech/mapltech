@@ -1,0 +1,301 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Act 1. Planes, back to front: scene (plate + trace, locked together) ->
+// haze -> scrim (only under the copy) -> copy at 1x. `--p`, `--mx`, `--my` come
+// from DepthScene; at rest (and under reduced motion) they are 0.
+
+.hero {
+  --p: 0;
+  --mx: 0;
+  --my: 0;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  min-height: max(100svh, 640px);
+  overflow: hidden;
+
+  // Portrait: taller than the screen, so the copy owns the sky and the red
+  // steel rises underneath it, finishing as you begin to scroll.
+  @media not (min-aspect-ratio: 1/1) {
+    min-height: max(116svh, 760px);
+  }
+  background: #070b13; // the plate's own sky, so the first paint is never a white or black flash
+
+  // Fade the bottom edge into the page ground so the plate never ends on a hard line.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 22vh;
+    z-index: 3;
+    background: linear-gradient(to bottom, rgba($color-ground, 0) 0%, $color-ground 100%);
+    pointer-events: none;
+  }
+}
+
+// ---------------------------------------------------------------- scene
+.scene {
+  position: absolute;
+  inset: -4vh -2vw 0;
+  z-index: 0;
+  transform-origin: 62% 70%;
+  // Slower than the page (drifts down as you scroll), settles from 1.06, leans with the pointer.
+  transform:
+    translate3d(calc(var(--mx) * -12px), calc(var(--p) * 18vh + var(--my) * -8px), 0)
+    scale(calc(1.06 - var(--p) * 0.04));
+  will-change: transform;
+
+  @include motion-ok {
+    animation: settle 2.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @media not (min-aspect-ratio: 1/1) {
+    inset: 38svh -2vw 0;
+    transform-origin: 50% 0%;
+
+    // Melt the plate's top edge into the section's sky colour.
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto;
+      height: 22%;
+      z-index: 1;
+      background: linear-gradient(to bottom, #070b13 0%, rgba(7, 11, 19, 0) 100%);
+    }
+  }
+}
+
+@keyframes settle {
+  from {
+    scale: 1.05;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+.plate {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 50% 0%; // portrait plate: lead with the crane and the red steel
+  user-select: none;
+
+  @media (min-aspect-ratio: 1/1) {
+    object-position: 50% 50%; // must match the trace's xMidYMid slice
+  }
+}
+
+// ---------------------------------------------------------------- trace
+.trace {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  pointer-events: none;
+  overflow: visible;
+
+  @media (min-aspect-ratio: 1/1) {
+    display: block;
+  }
+
+  path {
+    fill: none;
+    stroke: $color-red;
+    stroke-width: 2.25;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1 1;
+  }
+
+  circle {
+    fill: $color-ground;
+    stroke: $color-red;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+}
+
+// Scroll draws the frame: columns over the first quarter of the hero's travel,
+// then the floor plates, then the two load-path nodes appear.
+.columns path {
+  stroke-dashoffset: clamp(0, calc(1 - var(--p) * 4.5), 1);
+  opacity: 0.9;
+}
+
+.floors path {
+  stroke-dashoffset: clamp(0, calc(1.35 - var(--p) * 4.5), 1);
+  opacity: 0.55;
+  stroke-width: 1.5;
+}
+
+.nodes circle {
+  opacity: clamp(0, calc(var(--p) * 6 - 1.4), 1);
+}
+
+@include reduced-motion {
+  // No drawing: the structure is simply there, quieter.
+  .columns path,
+  .floors path {
+    stroke-dashoffset: 0;
+    opacity: 0.35;
+  }
+
+  .nodes circle {
+    opacity: 0.6;
+  }
+}
+
+// ---------------------------------------------------------------- atmosphere
+.haze {
+  position: absolute;
+  inset: -10%;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 40% at 70% 85%, rgba(255, 180, 120, 0.08) 0%, transparent 70%),
+    radial-gradient(50% 35% at 20% 30%, rgba(90, 140, 220, 0.07) 0%, transparent 70%);
+  transform: translate3d(calc(var(--mx) * 18px), calc(var(--my) * 10px - var(--p) * 6vh), 0);
+}
+
+// Density only where the copy sits: a corner on landscape, a top band on portrait.
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(5, 8, 14, 0.6) 0%, rgba(5, 8, 14, 0.5) 40%, rgba(5, 8, 14, 0) 60%);
+
+  @media (min-aspect-ratio: 1/1) {
+    background: radial-gradient(85% 95% at 0% 100%, rgba(5, 8, 14, 0.8) 0%, rgba(5, 8, 14, 0.5) 40%, rgba(5, 8, 14, 0) 72%);
+  }
+}
+
+// ---------------------------------------------------------------- copy
+.copy {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  padding-top: calc(72px + 32px);
+  padding-bottom: max(14vh, 96px);
+  align-self: flex-start;
+
+  @media (min-aspect-ratio: 1/1) {
+    align-self: flex-end;
+    padding-left: clamp(24px, 5vw, 80px);
+    padding-right: clamp(24px, 5vw, 80px);
+  }
+
+  > * {
+    max-width: 40rem;
+  }
+}
+
+.eyebrow {
+  @include mono-label($color-fg-muted);
+  margin: 0 0 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  &::before {
+    content: '';
+    width: 28px;
+    height: 2px;
+    background: $color-red;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: $font-size-display;
+  font-weight: $font-weight-extrabold;
+  line-height: $line-height-display;
+  letter-spacing: $letter-spacing-display;
+  color: $color-fg;
+  max-width: 16ch;
+  text-wrap: balance;
+
+  @media (min-aspect-ratio: 1/1) {
+    max-width: 15.5ch;
+  }
+}
+
+.titleLine {
+  display: block;
+
+  &:last-child {
+    // The structure line in brand red: large text, 5:1 on the plate's sky (AA needs 3:1).
+    color: $color-red;
+  }
+}
+
+.lede {
+  margin: 24px 0 0;
+  font-size: $font-size-lede;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.86);
+  max-width: 34rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+  margin-top: 32px;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    > :first-child {
+      width: 100%;
+
+      :global(.magnetic-btn) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-fg, 0.35);
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 160ms cubic-bezier(0.23, 1, 0.32, 1);
+
+  &:hover {
+    text-decoration-color: $color-red;
+  }
+
+  @include focus-ring;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+
+  .secondary:hover & {
+    transform: translateX(4px);
+  }
+}
+
+.trust {
+  margin: 20px 0 0;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.72);
+}

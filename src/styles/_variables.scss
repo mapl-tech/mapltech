@@ -1,10 +1,11 @@
 // ============================================
 // MAPL TECH Design System Variables
-// Direction: Engineered Editorial (Sept 2026 redesign)
-//   Warm near-black ground + film grain, Instrument Serif display over
-//   JetBrains Mono metadata, DM Sans body. Red #F03350 is the ONLY accent
-//   for interactive states (hover #FF3D5A, pressed #C4213C). Teal #33F0D0 is
-//   reserved for live/system signals (clocks, status dots, estimator output).
+// Direction: Surface -> Structure (Nov 2026 flagship redesign)
+//   Warm near-black ground, blue-hour photography, Overpass display over DM Sans
+//   (the live site's own families). Red #F03350 is the ONLY accent for
+//   interactive states (hover #FF3D5A, pressed #C4213C) and the steel in the
+//   photography. Teal #33F0D0 is reserved for live readouts (telemetry, clocks,
+//   estimator output).
 //
 // Every token name that existed before the redesign is kept below so nothing
 // breaks; legacy values are warm-shifted where they touch the ground or text.
@@ -66,6 +67,14 @@ $color-red-deep: #C4213C;
 $color-red-glow: rgba(240, 51, 80, 0.2);
 $color-red-text: #ff5c73;         // 5.5:1 on the ground - accessible for body text links
 
+// Filled buttons. White on #F03350 is 3.97:1, which fails AA for a 17-18px
+// label, so filled buttons sit one step deeper in the same hue (the crimson of
+// the steel in the photography). Measured with white text:
+//   fill #D91C3F 5.01:1 · hover #C4213C 5.79:1 · pressed #A81B33 7.2:1
+$color-red-fill: #D91C3F;
+$color-red-fill-hover: #C4213C;
+$color-red-fill-pressed: #A81B33;
+
 // Interactive state names (canonical aliases)
 $color-red-hover: $color-red-bright;
 $color-red-pressed: $color-red-deep;
@@ -109,23 +118,24 @@ $gradient-mesh: radial-gradient(at 0% 0%, rgba($color-red-deep, 0.2) 0%, transpa
                radial-gradient(at 50% 100%, rgba($color-red-deep, 0.1) 0%, transparent 50%);
 
 // --------------------------------------------
-// Typography
-//   Display: Instrument Serif (400 only, normal + italic) - headings, pull quotes
-//   Body:    DM Sans (variable) - paragraphs, UI, buttons
-//   Mono:    JetBrains Mono (400/500/700) - eyebrows, key facts, numbers, code
-// All three loaded via next/font in src/app/layout.tsx; the CSS variables live on <html>.
+// Typography (flagship redesign, Nov 2026): the live site's two families.
+//   Display: Overpass (variable 100-900): H1-H3, big numbers. 800 for H1, 700 below.
+//   Body:    DM Sans (variable): paragraphs, labels, UI, buttons.
+// There is no monospace face. `$font-mono` survives as an alias of the body face
+// so older modules keep compiling; numbers get `tabular-nums` instead.
+// Both load via next/font in src/app/layout.tsx; the CSS variables live on <html>.
 // --------------------------------------------
-$font-display: var(--font-instrument-serif), Georgia, 'Times New Roman', serif;
+$font-display: var(--font-overpass), 'Overpass', ui-sans-serif, system-ui, sans-serif;
 $font-body: var(--font-dm-sans), 'DM Sans', ui-sans-serif, system-ui, sans-serif;
-$font-mono: var(--font-jetbrains-mono), ui-monospace, 'SFMono-Regular', 'Courier New', monospace;
+$font-mono: $font-body;
 
-// Fluid type scale (canonical)
-$font-size-display: clamp(2.75rem, 7vw, 6.5rem);    // H1 on hero pages
-$font-size-h1: clamp(2.5rem, 5.5vw, 4.5rem);        // H1 on secondary pages
-$font-size-h2: clamp(2rem, 4vw, 3.5rem);
-$font-size-h3: clamp(1.5rem, 2.4vw, 2rem);
-$font-size-lede: clamp(1.125rem, 1.1rem + 0.4vw, 1.375rem);  // 18px -> 22px
-$font-size-label: 0.75rem;                          // 12px mono label (uppercase, 0.14em)
+// Fluid type scale (canonical). Desktop maxima / 360px minima.
+$font-size-display: clamp(2.5rem, 1.6rem + 4.2vw, 4.75rem);   // 40px -> 76px, homepage H1
+$font-size-h1: clamp(2.375rem, 1.7rem + 3.2vw, 4rem);         // 38px -> 64px, page H1
+$font-size-h2: clamp(2rem, 1.45rem + 2.3vw, 3.25rem);         // 32px -> 52px
+$font-size-h3: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);      // 22px -> 28px
+$font-size-lede: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem); // 18px -> 21px
+$font-size-label: 0.8125rem;                                  // 13px uppercase label
 
 // Font sizes - rem-based for user accessibility (respects browser font settings)
 // Minimum body text: 1.0625rem (17px). Use xs/sm only for labels, badges, captions.
@@ -147,27 +157,25 @@ $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
 $font-weight-extrabold: 800;
-// Instrument Serif ships a single 400 face. Headings are 400 by design;
-// weight synthesis is disabled globally so 700/800 never renders as faux bold.
-$font-weight-display: 400;
+$font-weight-display: 700;      // H2/H3; H1 and display numbers use 800
 
-$line-height-display: 1;      // display serif sits tight
-$line-height-tight: 1.08;
+$line-height-display: 0.98;     // Overpass caps sit high; tight on display sizes
+$line-height-tight: 1.05;
 $line-height-snug: 1.2;
 $line-height-normal: 1.55;
 $line-height-relaxed: 1.7;
 
-$letter-spacing-display: -0.01em;
-$letter-spacing-tight: -0.02em;
+$letter-spacing-display: -0.035em;
+$letter-spacing-tight: -0.025em;
 $letter-spacing-normal: 0;
 $letter-spacing-wide: 0.04em;
 $letter-spacing-wider: 0.08em;
-$letter-spacing-widest: 0.14em;
-$letter-spacing-label: 0.14em;  // mono label tracking
+$letter-spacing-widest: 0.12em;
+$letter-spacing-label: 0.08em;  // DM Sans caps need less than a mono face did
 
 // Measure
-$measure-lede: 60ch;
-$measure-prose: 68ch;
+$measure-lede: 56ch;
+$measure-prose: 62ch;
 
 // --------------------------------------------
 // Spacing - 8px scale. Pixel-named tokens are canonical; t-shirt names are legacy aliases.

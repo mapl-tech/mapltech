@@ -15,13 +15,18 @@ import { useFinePointer, usePrefersReducedMotion } from './useMediaQuery';
  */
 export { useLenis } from 'lenis/react';
 
-/** Interaction #12: weighted scroll, desktop only. */
+/**
+ * The live site's scroll feel, kept exactly: a 1.2s glide on an exponential
+ * ease-out (Leshan: "I like how smooth the current version of the website is").
+ * Desktop fine pointers only; touch keeps native momentum scrolling.
+ */
 const LENIS_OPTIONS: LenisOptions = {
-  lerp: 0.1,
+  duration: 1.2,
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   smoothWheel: true,
   syncTouch: false,
   autoRaf: false,
-  // <a href="#section"> clicks (Backbone nodes, in-page links) scroll through Lenis.
+  // <a href="#section"> clicks scroll through Lenis.
   anchors: true,
   // data-lenis-prevent, data-lenis-prevent-wheel and data-lenis-prevent-touch are
   // honoured by Lenis on every node in the event path; no custom `prevent` needed.

@@ -105,7 +105,7 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cursor-pill__label {
-  font-family: var(--font-jetbrains-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-family: var(--font-dm-sans, ui-sans-serif, system-ui, sans-serif);
   font-size: 0.75rem;
   font-weight: $font-weight-semibold;
   letter-spacing: $letter-spacing-wider;
