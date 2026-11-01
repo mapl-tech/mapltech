@@ -1,333 +1,325 @@
 'use client';
 
-import { useCallback, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent as ReactFocusEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+} from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { LayoutGroup, motion, useMotionValue, useSpring } from 'framer-motion';
-import { useFinePointer, usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
-import { isWorkFilterKey, type WorkEntry, type WorkFilter, type WorkFilterKey } from './work-types';
+import { useFinePointer, useMediaQuery, usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
+import type { PreviewItem } from './work-types';
 import styles from './WorkIndex.module.scss';
 
 /**
- * /our-work PEAK (interaction #4): editorial rows + one shared hover preview
- * that trails the pointer + View Transition names on every thumbnail.
+ * /our-work signature interaction: the catalog's real screenshots, carried
+ * beside the pointer.
  *
- * - All ten rows are in the SSR HTML; filtering toggles the `hidden`
- *   attribute, nothing mounts or unmounts. Counts come from the props.
- * - Filter state lives in the URL (`?type=web`), read through
- *   useSyncExternalStore and written with history.replaceState (shallow).
- * - Layout (rows / 2-col grid) persists in localStorage, read after hydration;
- *   the server always renders rows.
- * - The preview is a fixed 360px card moved by two springs (260/28) from
- *   pointer coordinates. It mounts only on fine-pointer devices without
- *   reduced motion, on first pointer entry, so it adds no server HTML.
- *   Under reduced motion or on touch, CSS shows the inline thumbnail instead.
+ * The rows are server-rendered children (every label, link and phone
+ * thumbnail is in the HTML); this island only adds one decorative card. It
+ * mounts on wide screens with a fine pointer and motion allowed, on the first
+ * pointer or keyboard visit to the list, so it costs nothing on phones, under
+ * reduced motion or for crawlers. Where it never mounts, the CSS keeps each
+ * row's inline thumbnail instead.
+ *
+ * - Pointer: the card trails the cursor (a per-frame ease written straight to
+ *   `transform`, no React state per frame), leans with horizontal speed, and
+ *   flips to the cursor's left near the viewport edge. Moving between rows
+ *   cross-fades the screenshots.
+ * - Keyboard: focusing a row places the card beside that row, above or below
+ *   it, never over the label being read.
+ * - Escape dismisses it (WCAG 1.4.13); it is aria-hidden and never takes
+ *   pointer events.
  */
 
-export interface WorkIndexProps {
-  entries: WorkEntry[];
-  filters: WorkFilter[];
-  /** Estimator link for the empty state ("No cloud project yet"). */
-  cloudPricingHref: string;
-}
+const CARD_W = 456;
+const CARD_H = 285; // 16:10, the screenshots' own ratio
+const GAP = 36; // pointer to card
+const EDGE = 16;
+const TOP_CLEAR = 88; // the fixed header
+const EASE = 0.2; // share of the remaining distance covered per frame
+const ROW = '[data-slug]';
 
-type Layout = 'rows' | 'grid';
-
-const PREVIEW_W = 360;
-const PREVIEW_H = 240;
-const PREVIEW_SPRING = { stiffness: 260, damping: 28 };
-const LAYOUT_KEY = 'mapl:work-layout';
-
-/* --------------------------- URL-synced filter --------------------------- */
-
-const urlListeners = new Set<() => void>();
-
-function subscribeUrl(onChange: () => void) {
-  urlListeners.add(onChange);
-  window.addEventListener('popstate', onChange);
-  return () => {
-    urlListeners.delete(onChange);
-    window.removeEventListener('popstate', onChange);
-  };
-}
-
-function readTypeParam(): WorkFilterKey {
-  const type = new URLSearchParams(window.location.search).get('type');
-  return isWorkFilterKey(type) ? type : 'all';
-}
-
-function writeTypeParam(key: WorkFilterKey) {
-  const url = new URL(window.location.href);
-  if (key === 'all') url.searchParams.delete('type');
-  else url.searchParams.set('type', key);
-  // Shallow: Next's router syncs its own state from native replaceState.
-  window.history.replaceState(null, '', url);
-  urlListeners.forEach((listener) => listener());
-}
-
-/* -------------------------- persisted layout mode ------------------------ */
-
-const layoutListeners = new Set<() => void>();
-let layoutMemory: Layout | null = null;
-
-function subscribeLayout(onChange: () => void) {
-  layoutListeners.add(onChange);
-  window.addEventListener('storage', onChange);
-  return () => {
-    layoutListeners.delete(onChange);
-    window.removeEventListener('storage', onChange);
-  };
-}
-
-function readLayout(): Layout {
-  if (layoutMemory) return layoutMemory;
-  try {
-    return window.localStorage.getItem(LAYOUT_KEY) === 'grid' ? 'grid' : 'rows';
-  } catch {
-    return 'rows';
-  }
-}
-
-function writeLayout(layout: Layout) {
-  layoutMemory = layout;
-  try {
-    window.localStorage.setItem(LAYOUT_KEY, layout);
-  } catch {
-    // Private mode / blocked storage: the in-memory value still drives the UI.
-  }
-  layoutListeners.forEach((listener) => listener());
-}
-
-const pad = (n: number) => String(n).padStart(2, '0');
 const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
 
-export default function WorkIndex({ entries, filters, cloudPricingHref }: WorkIndexProps) {
-  const active = useSyncExternalStore(subscribeUrl, readTypeParam, () => 'all' as WorkFilterKey);
-  const layout = useSyncExternalStore(subscribeLayout, readLayout, () => 'rows' as Layout);
+/** The slug of the catalog row under `target`, if that row belongs to `root`. */
+function rowSlugIn(root: HTMLElement | null, target: EventTarget | null): string | null {
+  if (!(target instanceof Element)) return null;
+  const row = target.closest<HTMLElement>(ROW);
+  return row && root?.contains(row) ? (row.dataset.slug ?? null) : null;
+}
 
-  const finePointer = useFinePointer();
-  const reduceMotion = usePrefersReducedMotion();
-  // Rows only: in grid mode the card already shows the image.
-  const showPreview = finePointer && !reduceMotion && layout === 'rows';
+/**
+ * One animation frame: ease the card a share of the way to its target and lean
+ * it with horizontal speed; stop when it arrives. Plain DOM writes, no React.
+ */
+function frame(s: Motion, el: HTMLElement | null) {
+  if (!el) {
+    s.raf = 0;
+    return;
+  }
+  const dx = s.tx - s.x;
+  const dy = s.ty - s.y;
+  if (Math.abs(dx) < 0.25 && Math.abs(dy) < 0.25) {
+    s.x = s.tx;
+    s.y = s.ty;
+    el.style.transform = `translate3d(${s.x}px, ${s.y}px, 0)`;
+    s.raf = 0;
+    return;
+  }
+  s.x += dx * EASE;
+  s.y += dy * EASE;
+  const lean = clamp(dx * 0.05, -4, 4);
+  el.style.transform = `translate3d(${s.x.toFixed(1)}px, ${s.y.toFixed(1)}px, 0) rotate(${lean.toFixed(2)}deg)`;
+  s.raf = requestAnimationFrame(() => frame(s, el));
+}
 
-  // The preview stack mounts on the first pointer entry (desktop only).
+interface Motion {
+  x: number;
+  y: number;
+  tx: number;
+  ty: number;
+  px: number;
+  py: number;
+  raf: number;
+  scrollRaf: number;
+  slug: string | null;
+  placed: boolean;
+  inside: boolean;
+  /** The row holding keyboard focus, while the card follows it. */
+  focusRow: HTMLElement | null;
+}
+
+export default function WorkIndex({ items, children }: { items: readonly PreviewItem[]; children: ReactNode }) {
+  const fine = useFinePointer();
+  const wide = useMediaQuery('(min-width: 1024px)');
+  const reduce = usePrefersReducedMotion();
+  const enabled = fine && wide && !reduce;
+
+  // The card mounts on the first visit to the list; each screenshot (with its
+  // neighbours, so the next move is instant) loads the first time its row is visited.
   const [armed, setArmed] = useState(false);
+  const [wanted, setWanted] = useState<ReadonlySet<string>>(() => new Set());
+  const requested = useRef(new Set<string>());
 
-  const previewRef = useRef<HTMLDivElement>(null);
-  const activeSlug = useRef<string | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const floatRef = useRef<HTMLDivElement | null>(null);
+  const m = useRef<Motion>({ x: 0, y: 0, tx: 0, ty: 0, px: 0, py: 0, raf: 0, scrollRaf: 0, slug: null, placed: false, inside: false, focusRow: null });
 
-  // Position trails the pointer through two springs (260/28). Visibility is a
-  // data attribute + CSS transition (opacity/scale), written straight to the DOM.
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, PREVIEW_SPRING);
-  const springY = useSpring(y, PREVIEW_SPRING);
-
-  const applyActive = (stack: HTMLElement | null, slug: string | null) => {
-    if (!stack) return;
-    stack.dataset.visible = slug ? 'true' : 'false';
-    stack.querySelectorAll<HTMLElement>('[data-thumb]').forEach((thumb) => {
-      thumb.dataset.active = thumb.dataset.thumb === slug ? 'true' : 'false';
+  /** Show one row's screenshot (or hide with null). The last layer stays active so it fades out in place. */
+  const show = useCallback((slug: string | null) => {
+    const s = m.current;
+    if (slug === s.slug) return;
+    s.slug = slug;
+    const el = floatRef.current;
+    if (!el) return;
+    el.dataset.visible = slug ? 'true' : 'false';
+    if (!slug) {
+      s.placed = false;
+      return;
+    }
+    el.querySelectorAll<HTMLElement>('[data-layer]').forEach((layer) => {
+      layer.dataset.active = layer.dataset.layer === slug ? 'true' : 'false';
     });
-  };
-
-  const setActive = useCallback((slug: string | null) => {
-    if (slug === activeSlug.current) return;
-    activeSlug.current = slug;
-    applyActive(previewRef.current, slug);
   }, []);
 
-  // The stack mounts one render after the first pointerover, so it picks up
-  // the row already under the pointer when it attaches.
-  const attachPreview = useCallback((node: HTMLDivElement | null) => {
-    previewRef.current = node;
-    if (node) applyActive(node, activeSlug.current);
-  }, []);
+  const request = useCallback(
+    (slug: string | null) => {
+      if (!slug || requested.current.has(slug)) return;
+      const i = items.findIndex((item) => item.slug === slug);
+      const batch = [items[i - 1], items[i], items[i + 1]].filter(Boolean).map((item) => item.slug);
+      batch.forEach((s) => requested.current.add(s));
+      setWanted((prev) => new Set([...prev, ...batch]));
+    },
+    [items],
+  );
 
-  const onPointerEnter = () => {
-    if (showPreview && !armed) setArmed(true);
+  /** Move the target; snap (rather than fly) when the card is appearing. */
+  const aimAt = useCallback(
+    (x: number, y: number) => {
+      const s = m.current;
+      s.tx = clamp(x, EDGE, window.innerWidth - CARD_W - EDGE);
+      s.ty = clamp(y, TOP_CLEAR, window.innerHeight - CARD_H - EDGE);
+      if (!s.placed) {
+        s.x = s.tx;
+        s.y = s.ty;
+        s.placed = true;
+      }
+      if (!s.raf) {
+        const el = floatRef.current;
+        s.raf = requestAnimationFrame(() => frame(s, el));
+      }
+    },
+    [],
+  );
+
+  const aimAtPointer = useCallback(
+    (clientX: number, clientY: number) => {
+      const right = clientX + GAP;
+      const x = right + CARD_W > window.innerWidth - EDGE ? clientX - GAP - CARD_W : right;
+      aimAt(x, clientY - CARD_H / 2);
+    },
+    [aimAt],
+  );
+
+  // The card mounts one render after the first visit: give it the current row and position.
+  const attachFloat = useCallback(
+    (node: HTMLDivElement | null) => {
+      floatRef.current = node;
+      if (!node) return;
+      const s = m.current;
+      node.style.transform = `translate3d(${s.x}px, ${s.y}px, 0)`;
+      const slug = s.slug;
+      s.slug = null;
+      show(slug);
+    },
+    [show],
+  );
+
+  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!enabled || e.pointerType === 'touch') return;
+    const s = m.current;
+    s.inside = true;
+    s.px = e.clientX;
+    s.py = e.clientY;
+    if (!armed) setArmed(true);
+    const slug = rowSlugIn(rootRef.current, e.target);
+    request(slug);
+    if (slug) aimAtPointer(e.clientX, e.clientY);
+    show(slug);
   };
 
-  const onPointerMove = useCallback(
-    (e: ReactPointerEvent<HTMLUListElement>) => {
-      if (!showPreview) return;
-      x.set(clamp(e.clientX + 28, 16, window.innerWidth - PREVIEW_W - 16));
-      y.set(clamp(e.clientY - PREVIEW_H / 2, 16, window.innerHeight - PREVIEW_H - 16));
+  const onPointerLeave = () => {
+    m.current.inside = false;
+    show(null);
+  };
+
+  /** Keyboard: right-aligned with the focused row, below it if the card fits there, else above. */
+  const placeBeside = useCallback(
+    (row: HTMLElement) => {
+      const r = row.getBoundingClientRect();
+      const fitsBelow = r.bottom + 16 + CARD_H <= window.innerHeight - EDGE;
+      const fitsAbove = r.top - 16 - CARD_H >= TOP_CLEAR;
+      const y = fitsBelow || !fitsAbove ? r.bottom + 16 : r.top - CARD_H - 16;
+      aimAt(r.right - CARD_W, y);
     },
-    [showPreview, x, y],
+    [aimAt],
   );
 
-  const onPointerOver = useCallback(
-    (e: ReactPointerEvent<HTMLUListElement>) => {
-      if (!showPreview) return;
-      const row = e.target instanceof Element ? e.target.closest<HTMLElement>('[data-slug]') : null;
-      setActive(row?.dataset.slug ?? null);
-    },
-    [showPreview, setActive],
-  );
+  const onFocus = (e: ReactFocusEvent<HTMLDivElement>) => {
+    if (!enabled) return;
+    const target = e.target;
+    if (!(target instanceof HTMLElement) || !target.matches(':focus-visible')) return;
+    const row = target.closest<HTMLElement>(ROW);
+    if (!row) return;
+    if (!armed) setArmed(true);
+    m.current.focusRow = row;
+    // After the browser has scrolled the focused row into view.
+    requestAnimationFrame(() => placeBeside(row));
+    request(row.dataset.slug ?? null);
+    show(row.dataset.slug ?? null);
+  };
 
-  const onPointerLeave = useCallback(() => {
-    setActive(null);
-  }, [setActive]);
+  const onBlur = (e: ReactFocusEvent<HTMLDivElement>) => {
+    if (rootRef.current?.contains(e.relatedTarget as Node | null)) return;
+    m.current.focusRow = null;
+    show(null);
+  };
 
-  const matches = (entry: WorkEntry) => active === 'all' || entry.service === active;
-  const visibleCount = entries.filter(matches).length;
-  const animateLayout = !reduceMotion;
+  const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Escape') return;
+    m.current.focusRow = null;
+    show(null);
+  };
+
+  // Scrolling moves rows under a still pointer: re-read the row beneath it once per frame.
+  useEffect(() => {
+    if (!enabled || !armed) return;
+    const s = m.current;
+    const onScroll = () => {
+      if ((!s.inside && !s.focusRow) || s.scrollRaf) return;
+      s.scrollRaf = requestAnimationFrame(() => {
+        s.scrollRaf = 0;
+        if (!s.inside && s.focusRow) {
+          placeBeside(s.focusRow);
+          return;
+        }
+        const hit = document.elementFromPoint(s.px, s.py);
+        const slug = rowSlugIn(rootRef.current, hit);
+        request(slug);
+        if (slug) aimAtPointer(s.px, s.py);
+        show(slug);
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(s.scrollRaf);
+      s.scrollRaf = 0;
+    };
+  }, [enabled, armed, aimAtPointer, placeBeside, request, show]);
+
+  useEffect(() => {
+    const s = m.current;
+    return () => cancelAnimationFrame(s.raf);
+  }, []);
 
   return (
-    <div className={styles.index} data-layout={layout}>
-      <div className={styles.toolbar}>
-        <div className={styles.chips} role="group" aria-label="Filter projects by service line">
-          {filters.map((filter) => (
-            <button
-              key={filter.key}
-              type="button"
-              className={styles.chip}
-              aria-pressed={active === filter.key}
-              disabled={filter.count === 0}
-              onClick={() => writeTypeParam(filter.key)}
-            >
-              <span>{filter.label}</span>
-              <span className={styles.count}>{filter.count}</span>
-            </button>
-          ))}
-        </div>
+    <div
+      ref={rootRef}
+      className={styles.index}
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onKeyDown={onKeyDown}
+    >
+      {children}
 
-        <div className={styles.layoutToggle} role="group" aria-label="Layout">
-          <button type="button" aria-pressed={layout === 'rows'} onClick={() => writeLayout('rows')}>
-            Rows
-          </button>
-          <button type="button" aria-pressed={layout === 'grid'} onClick={() => writeLayout('grid')}>
-            Grid
-          </button>
-        </div>
-      </div>
-
-      <p className={styles.showing} role="status">
-        Showing {visibleCount} of {entries.length}
-      </p>
-
-      <div className={styles.head} aria-hidden="true">
-        <span>No.</span>
-        <span>Client</span>
-        <span>Service</span>
-        <span>Year</span>
-        <span>Outcome</span>
-        <span className={styles.headOpen}>Open</span>
-      </div>
-
-      <LayoutGroup>
-        <ul
-          className={styles.list}
-          onPointerEnter={onPointerEnter}
-          onPointerMove={onPointerMove}
-          onPointerOver={onPointerOver}
-          onPointerLeave={onPointerLeave}
-        >
-          {entries.map((entry) => (
-            <motion.li
-              key={entry.slug}
-              layout={animateLayout ? 'position' : false}
-              transition={{ type: 'spring', stiffness: 260, damping: 30 }}
-              className={styles.row}
-              data-slug={entry.slug}
-              hidden={!matches(entry)}
-            >
-              <Link
-                href={entry.path}
-                className={styles.rowLink}
-                data-cursor="view"
-                data-cta-placement="work_row"
-              >
-                <span className={styles.meta}>
-                  <span className={styles.no} aria-hidden="true">
-                    {pad(entry.index)}
-                  </span>
-                  <span className={styles.service}>{entry.serviceLabel}</span>
-                  <span className={styles.year}>
-                    {entry.year ?? (
-                      <span aria-hidden="true" className={styles.dash}>
-                        —
-                      </span>
-                    )}
-                  </span>
-                </span>
-
-                <div className={styles.client}>
-                  <h3 className={styles.title}>{entry.title}</h3>
-                  {entry.isLab ? <span className={styles.lab}>MAPL Labs</span> : null}
-                </div>
-
-                <p className={styles.outcome}>{entry.description}</p>
-
-                <span className={styles.thumb} style={{ viewTransitionName: `work-${entry.slug}` }}>
+      {enabled && armed ? (
+        <div ref={attachFloat} className={styles.float} data-visible="false" aria-hidden="true">
+          <span className={styles.frame} />
+          <div className={styles.card}>
+            {items.map((item) => (
+              <div key={item.slug} className={styles.layer} data-layer={item.slug} data-active="false">
+                {item.src && wanted.has(item.slug) ? (
                   <Image
-                    src={entry.image}
+                    src={item.src}
                     alt=""
-                    width={480}
-                    height={320}
-                    sizes="(max-width: 767px) 40vw, 480px"
+                    width={1800}
+                    height={1125}
+                    sizes={`${CARD_W}px`}
+                    loading="eager"
+                    fetchPriority="low"
+                    className={styles.shot}
                   />
-                </span>
-
-                <span className={styles.chip} aria-hidden="true">
-                  View
-                </span>
-              </Link>
-
-              {entry.url ? (
-                <a
-                  href={entry.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.live}
-                  data-cursor="external"
-                  data-cta-placement="work_row_live"
-                >
-                  View live site
-                  <span className="visually-hidden">, {entry.host} (opens in a new tab)</span>
-                </a>
-              ) : (
-                <span className={`${styles.live} ${styles.liveMuted}`} aria-hidden="true">
-                  Case study
-                </span>
-              )}
-            </motion.li>
-          ))}
-        </ul>
-      </LayoutGroup>
-
-      <p className={styles.empty} hidden={visibleCount > 0}>
-        No published cloud project yet.{' '}
-        <Link href={cloudPricingHref} data-cta-placement="work_empty_cloud">
-          See Cloud Engineering pricing
-        </Link>
-        .
-      </p>
-
-      {showPreview && armed ? (
-        <motion.div
-          ref={attachPreview}
-          className={styles.preview}
-          aria-hidden="true"
-          data-visible="false"
-          style={{ x: springX, y: springY, width: PREVIEW_W }}
-        >
-          <div className={styles.previewStack} style={{ height: PREVIEW_H }}>
-            {entries.map((entry) => (
-              <div key={entry.slug} className={styles.previewThumb} data-thumb={entry.slug} data-active="false">
-                <Image src={entry.image} alt="" width={PREVIEW_W} height={PREVIEW_H} sizes={`${PREVIEW_W}px`} loading="eager" />
-                <span className={styles.previewCaption}>
-                  <span>
-                    {pad(entry.index)} · {entry.title}
-                  </span>
-                  <span>{entry.serviceLabel}</span>
-                </span>
+                ) : item.flow ? (
+                  <FlowCard steps={item.flow} />
+                ) : null}
+                {item.caption ? <span className={styles.caption}>{item.caption}</span> : null}
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       ) : null}
+    </div>
+  );
+}
+
+/** For work with no public screen: its stages as a labelled flow, plainly marked as a diagram. */
+function FlowCard({ steps }: { steps: readonly string[] }) {
+  return (
+    <div className={styles.flow}>
+      <span className={styles.flowLabel}>Diagram, not a screenshot</span>
+      <ol className={styles.flowSteps}>
+        {steps.map((step) => (
+          <li key={step}>{step}</li>
+        ))}
+      </ol>
     </div>
   );
 }

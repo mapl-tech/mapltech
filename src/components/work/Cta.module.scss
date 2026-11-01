@@ -1,0 +1,51 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+// Filled: crimson #D91C3F, hover #C4213C, pressed #A81B33 (white label passes AA in every state).
+.primary {
+  @include button-primary;
+  @include focus-ring;
+  min-height: 52px;
+  padding-inline: 28px;
+
+  // Phones: full width, the biggest target in reach (Fitts's law).
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    width: 100%;
+  }
+}
+
+// Underlined text action, the brand's accessible link red (#ff5c73, 5.5:1 on the ground).
+.text {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+  color: $color-red-text;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red-text, 0.4);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+  transition: text-decoration-color 160ms $ease-out;
+
+  &:hover {
+    text-decoration-color: $color-red-text;
+  }
+
+  @include focus-ring;
+}
+
+.arrow {
+  flex: none;
+
+  @include pointer-fine-motion {
+    transition: transform 200ms $ease-out;
+
+    .text:hover & {
+      transform: translateX(3px);
+    }
+  }
+}

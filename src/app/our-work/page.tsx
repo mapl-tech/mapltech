@@ -1,57 +1,67 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
-import Cta, { TextCta } from '@/components/work/Cta';
+import { Arrow, PrimaryCta, TextCta } from '@/components/work/Cta';
 import WorkIndex from '@/components/work/WorkIndex';
 import {
-  activeServiceLines,
-  estimateLinkFor,
-  startingPriceLabel,
-  workEntries,
-  workFilters,
-} from '@/components/work/work-data';
-import { routeLastModified } from '@/config/routes';
-import { SERVICE_META } from '@/lib/estimate';
-import { creativeWork, itemList, pageGraph } from '@/lib/schema';
-import { portfolioProjects } from '@/config/site';
+  WORK_PAGE,
+  catalogItems,
+  catalogVoice,
+  countWord,
+  lowestFromPrice,
+  serviceLinks,
+  servicesOnView,
+  type CatalogItem,
+} from '@/components/work/catalog';
+import { findProject } from '@/components/work/work-data';
+import { CALL_HREF, CALL_LABEL, ESTIMATE_HREF, ESTIMATE_LABEL } from '@/components/layout/chrome';
+import { FIXED_QUOTE_NOTE } from '@/lib/estimate';
+import { creativeWork, imageObject, itemList, pageGraph } from '@/lib/schema';
 import styles from './work.module.scss';
 
-// Title, description and canonical live in ./layout.tsx (unchanged).
-const PAGE_NAME = 'Our Work';
-const PAGE_DESCRIPTION =
-  "Explore MAPL TECH's portfolio of systems, automation, and infrastructure projects. Web development, AI workflows, and custom internal tools delivered for agency clients.";
-
-const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-const asWord = (n: number) => NUMBER_WORDS[n] ?? String(n);
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
+/*
+ * /our-work, flagship redesign (Nov 2026). A catalog, not a card grid: one
+ * museum label per listed project, in the owner's display order, each row a
+ * link to its case study. It opens with the honest line (most of our work
+ * ships under partners' names) and closes on the reader's project, set as the
+ * next label in the catalog.
+ *
+ * Metadata lives in ./layout.tsx and shares WORK_PAGE with the JSON-LD below.
+ * Structured data: CollectionPage + BreadcrumbList + an ItemList of the same
+ * projects, in the same order, as the rows render them.
+ */
 export default function OurWorkPage() {
-  const entries = workEntries();
-  const filters = workFilters(entries);
-  const lines = activeServiceLines(entries);
-  const lineLabels = lines.map((key) => SERVICE_META[key].label);
-
-  const webFrom = startingPriceLabel('web');
-  const automationFrom = startingPriceLabel('automation');
-  const lastModified = routeLastModified('/our-work');
-  const reviewed = lastModified ? lastModified.slice(0, 7) : undefined;
+  const items = catalogItems();
+  const voice = catalogVoice();
+  const count = countWord(items.length);
+  const from = lowestFromPrice();
 
   const graph = pageGraph({
-    path: '/our-work',
-    name: PAGE_NAME,
-    description: PAGE_DESCRIPTION,
+    path: WORK_PAGE.path,
+    name: WORK_PAGE.name,
+    description: WORK_PAGE.description,
     type: 'CollectionPage',
-    breadcrumbs: [{ name: PAGE_NAME, path: '/our-work' }],
+    breadcrumbs: [{ name: 'Work', path: WORK_PAGE.path }],
     nodes: [
       itemList(
-        entries.map((entry) => {
-          const project = portfolioProjects.find((p) => p.slug === entry.slug)!;
+        items.map((item) => {
+          const project = findProject(item.slug);
           return {
-            name: entry.title,
-            path: entry.path,
-            description: entry.description,
-            item: creativeWork(project, { path: entry.path }),
+            name: item.client,
+            path: item.path,
+            description: [item.built, item.sector, item.result ? `${item.result.value} ${item.result.label}` : null]
+              .filter(Boolean)
+              .join('. '),
+            item: project
+              ? {
+                  ...creativeWork(project, { path: item.path }),
+                  // The real capture, never a mockup; no capture, no image.
+                  image: item.preview.src ? imageObject(item.preview.src, item.note ?? item.client) : undefined,
+                }
+              : undefined,
           };
         }),
-        { path: '/our-work', name: 'Client work by MAPL TECH' },
+        { path: WORK_PAGE.path, name: 'Projects on view' },
       ),
     ],
   });
@@ -60,105 +70,220 @@ export default function OurWorkPage() {
     <>
       <JsonLd data={graph} />
 
-      {/* 01 · Hero: H1 → lede → key facts → CTAs. Nothing here is wrapped in a reveal. */}
+      {/* ------------------------------------------------------------ hero: the wall text */}
       <section className={styles.hero} aria-labelledby="work-title">
         <div className={styles.heroInner}>
-          <div>
-            <p className="eyebrow">Our work · /our-work</p>
+          <div className={styles.heroHead}>
+            <p className={styles.eyebrow}>Case studies</p>
             <h1 id="work-title" className={styles.title}>
-              Real Work. Real Agencies. Real Results.
+              Work we can show.
             </h1>
+          </div>
+          <div className={styles.heroCopy}>
             <p className={styles.lede}>
-              Systems, automation and infrastructure MAPL TECH has shipped for agencies and their clients across
-              staffing, e-commerce and non-profits. {capitalize(asWord(entries.length))} projects are listed below
-              across {asWord(lines.length)} service lines; every row links to the live site or the case study, and
-              the client&apos;s brand stays on every deliverable.
+              Most of what we build ships under our partners’ names, and stays there. These {count} projects carry
+              ours, and each one opens into the full story.
             </p>
+            {/* An early path for readers who already know; the filled button waits in the slot below. */}
+            <TextCta href={ESTIMATE_HREF} placement="work_hero_estimate" hero>
+              {ESTIMATE_LABEL}
+            </TextCta>
+          </div>
+          <dl className={styles.facts}>
+            <div className={styles.fact}>
+              <dt>On view</dt>
+              <dd>{items.length} projects</dd>
+            </div>
+            <div className={styles.fact}>
+              <dt>Public prices</dt>
+              <dd>From {from}</dd>
+            </div>
+            <div className={`${styles.fact} ${styles.factWide}`}>
+              <dt>Work shown</dt>
+              <dd>{sentenceList(servicesOnView())}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------ the catalog */}
+      <section className={styles.catalog} aria-labelledby="catalog-title">
+        <div className={styles.inner}>
+          <div className={styles.catalogHead}>
+            <h2 id="catalog-title" className={styles.kicker}>
+              Projects on view
+            </h2>
+            <span className={styles.colName} aria-hidden="true">
+              What we built
+            </span>
+            <span className={styles.colName} aria-hidden="true">
+              Sector
+            </span>
           </div>
 
-          <dl className={`kv ${styles.facts}`}>
-            <div>
-              <dt>Projects listed</dt>
-              <dd>{entries.length}</dd>
-            </div>
-            <div>
-              <dt>Service lines</dt>
-              <dd>
-                {lines.length} — {lineLabels.join(' · ')}
-              </dd>
-            </div>
-            <div>
-              <dt>Starting price</dt>
-              <dd>
-                {webFrom} (Web Development)
-                {automationFrom ? ` · ${automationFrom.toLowerCase()} (Automation & AI)` : null}
-              </dd>
-            </div>
-            <div>
-              <dt>Offices</dt>
-              <dd>Toronto (HQ) · Lagos · Kingston</dd>
-            </div>
-            {reviewed ? (
-              <div>
-                <dt>Last reviewed</dt>
+          <WorkIndex items={items.map((item) => item.preview)}>
+            <ol className={styles.list} role="list">
+              {items.map((item) => (
+                <CatalogRow key={item.slug} item={item} />
+              ))}
+            </ol>
+          </WorkIndex>
+
+          <p className={styles.labsNote}>
+            <span>Products we build and run ourselves live under MAPL Labs.</span>
+            <TextCta href="/labs" placement="work_labs">
+              See MAPL Labs
+            </TextCta>
+          </p>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------ the client voice, beside the decision */}
+      {voice ? (
+        <section className={styles.voice} aria-labelledby="voice-title">
+          <div className={styles.voiceInner}>
+            <h2 id="voice-title" className={styles.voiceKicker}>
+              In her words
+            </h2>
+            <figure className={styles.quote}>
+              <blockquote cite={voice.path}>
+                <p>{voice.quote}</p>
+              </blockquote>
+              <figcaption className={styles.quoteBy}>
+                <Image src={voice.image} alt="" width={56} height={56} className={styles.avatar} />
+                <span>
+                  <span className={styles.quoteName}>{voice.name}</span>
+                  <span className={styles.quoteRole}>{voice.role}</span>
+                </span>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ------------------------------------------------------------ the empty slot */}
+      {/* data-page-close: the shared footer hides its own ask when a page ends on one. */}
+      <section className={styles.next} aria-labelledby="next-title" data-page-close>
+        <div className={styles.inner}>
+          <div className={styles.slot}>
+            <h2 id="next-title" className={styles.slotTitle}>
+              Your project, next.
+            </h2>
+            <dl className={styles.slotLabel}>
+              <div className={styles.slotField} data-field="built">
+                <dt>What we build</dt>
                 <dd>
-                  <time dateTime={lastModified}>{reviewed}</time>
+                  <ul className={styles.services} role="list">
+                    {serviceLinks().map((service) => (
+                      <li key={service.key}>
+                        <Link href={service.href}>{service.name}</Link>
+                      </li>
+                    ))}
+                  </ul>
                 </dd>
               </div>
-            ) : null}
-          </dl>
-
-          <div className={styles.ctas}>
-            <Cta href="/pricing#estimator" size="large" placement="work_hero_primary" hero>
-              Get a 60-second estimate
-            </Cta>
-            <Cta href="/contact-us" variant="secondary" size="large" placement="work_hero_secondary">
-              Book a 20-min scoping call
-            </Cta>
-          </div>
-        </div>
-      </section>
-
-      {/* 02 + 03 · Filter, layout toggle and the work rows (PEAK island). All rows are SSR'd. */}
-      <section className={styles.listSection} aria-labelledby="work-list-heading">
-        <div className={styles.listHead}>
-          <p className="eyebrow">Client work</p>
-          <h2 id="work-list-heading">
-            {capitalize(asWord(entries.length))} projects, {asWord(lines.length)} service lines
-          </h2>
-          <p>Filter by service line. Rows open the case study; “View live site” opens the client&apos;s site.</p>
-        </div>
-
-        <WorkIndex entries={entries} filters={filters} cloudPricingHref={estimateLinkFor('cloud')} />
-
-        <div className={styles.listFoot}>
-          <p>Own products, built and operated in-house, live under MAPL Labs.</p>
-          <TextCta href="/labs" placement="work_list_labs" className={styles.textLink} cursor="view">
-            See MAPL Labs
-          </TextCta>
-        </div>
-      </section>
-
-      {/* 04 · Inline CTA band: below the fold, revealed on scroll. */}
-      <section className={`${styles.band} reveal`} data-below-fold aria-labelledby="work-band-heading">
-        <div className={styles.bandInner}>
-          <div>
-            <h2 id="work-band-heading">Want results like these?</h2>
-            <p>
-              Tell us about your project. We&apos;ll tell you exactly how we&apos;d approach it — fixed quote after
-              a 20-min scoping call, your brand on every deliverable.
-            </p>
-          </div>
-          <div className={styles.bandActions}>
-            <Cta href="/pricing#estimator" size="large" placement="work_band_primary">
-              Get a 60-second estimate
-            </Cta>
-            <Cta href="/contact-us" variant="secondary" size="large" placement="work_band_secondary">
-              Book a 20-min scoping call
-            </Cta>
+              <div className={styles.slotField} data-field="sector">
+                <dt>Sector</dt>
+                <dd>Yours</dd>
+              </div>
+              <div className={styles.slotField} data-field="result">
+                <dt>Result</dt>
+                <dd className={styles.result}>A price range in 60 seconds, before we ask for anything.</dd>
+              </div>
+            </dl>
+            <div className={styles.slotActions}>
+              <PrimaryCta href={ESTIMATE_HREF} placement="work_next_estimate">
+                {ESTIMATE_LABEL}
+              </PrimaryCta>
+              <TextCta href={CALL_HREF} placement="work_next_call">
+                {CALL_LABEL}
+              </TextCta>
+              <p className={styles.slotNote}>
+                Public prices, from {from}. {FIXED_QUOTE_NOTE}.
+              </p>
+            </div>
           </div>
         </div>
       </section>
     </>
+  );
+}
+
+/** "Websites, automation and AI, internal tools": names joined in sentence case (acronyms kept). */
+function sentenceList(names: readonly string[]): string {
+  return names.map((name, i) => (i === 0 ? name : name.charAt(0).toLowerCase() + name.slice(1))).join(', ');
+}
+
+/** One museum label. The client name is the link; it stretches over the whole row. */
+function CatalogRow({ item }: { item: CatalogItem }) {
+  return (
+    <li className={styles.row} data-slug={item.slug}>
+      <div className={styles.lead}>
+        <span className={styles.thumb} aria-hidden="true">
+          {item.thumb ? (
+            <Image
+              src={item.thumb}
+              alt=""
+              width={780}
+              height={1688}
+              sizes="(min-width: 1024px) 88px, (min-width: 768px) 136px, 104px"
+              className={styles.thumbImg}
+            />
+          ) : item.flow ? (
+            <span className={styles.flowTile}>
+              <span className={styles.flowTag}>Diagram</span>
+              <span className={styles.flowSteps}>
+                {item.flow.map((step) => (
+                  <span key={step} className={styles.flowStep}>
+                    {step}
+                  </span>
+                ))}
+              </span>
+            </span>
+          ) : null}
+        </span>
+        <h3 className={styles.client}>
+          <Link href={item.path} className={styles.rowLink} data-cta-placement={`work_row_${item.slug}`}>
+            <span className={styles.clientName}>{item.client}</span>
+            <span className="visually-hidden">: read the case study</span>
+          </Link>
+        </h3>
+      </div>
+
+      <dl className={styles.label} data-dated={item.year ? '' : undefined}>
+        <div className={styles.field} data-field="built">
+          <dt>What we built</dt>
+          <dd>{item.built}</dd>
+        </div>
+        <div className={styles.field} data-field="sector">
+          <dt>Sector</dt>
+          <dd>{item.sector}</dd>
+        </div>
+        {item.year ? (
+          <div className={styles.field} data-field="year">
+            <dt>Year</dt>
+            <dd>
+              <time dateTime={item.year}>{item.year}</time>
+            </dd>
+          </div>
+        ) : null}
+        {item.result ? (
+          <div className={styles.field} data-field="result">
+            <dt>Result</dt>
+            <dd className={styles.result}>
+              <span className={styles.value}>{item.result.value}</span>{' '}
+              <span className={styles.resultLabel}>{item.result.label}</span>
+            </dd>
+          </div>
+        ) : null}
+      </dl>
+
+      {item.note ? <p className={styles.note}>{item.note}</p> : null}
+
+      <span className={styles.go} aria-hidden="true">
+        <span className={styles.goText}>Case study</span>
+        <Arrow />
+      </span>
+    </li>
   );
 }

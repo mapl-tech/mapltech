@@ -2,404 +2,847 @@
 @use '../../styles/mixins' as *;
 @use '../../components/work/shared' as work;
 
-// ===========================================================================
-// /our-work (index) + /our-work/[slug] (case study)
-// ===========================================================================
+// /our-work, flagship redesign: a catalog, not a card grid. Every project gets
+// the same museum label (client, what we built, sector, year, result), set as
+// editorial rows. Phones: a real phone screenshot beside each label. Wide
+// screens with a mouse: the rows go text-only and the real desktop screenshot
+// rides beside the pointer (WorkIndex.tsx). Spacing: 8px steps, 4px half-steps
+// only between a term and its value.
 
-// ---- Hero: eyebrow → H1 → lede → key facts → CTAs (all SSR, no reveal) ----
+$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+// Columns shared by the header strip, every row, the client voice and the empty
+// slot (≥1024px): client · what we built (and its result) · sector and year · arrow.
+$cols: minmax(0, 4fr) minmax(0, 5.4fr) minmax(0, 2.4fr) 40px;
+$col-gap: 32px;
+
+// ---------------------------------------------------------------- hero
 .hero {
-  @include work.work-hero;
+  @include work.page-hero;
+  background:
+    radial-gradient(60% 70% at 88% 0%, rgba($color-red, 0.09) 0%, transparent 62%),
+    $color-ground;
 }
 
 .heroInner {
-  @include work.work-hero-inner;
-}
-
-.title {
-  @include work.work-title;
-}
-
-.lede {
-  @include work.work-lede;
-}
-
-.facts {
-  margin-top: $space-16;
-}
-
-.ctas {
-  @include work.cta-row;
-  margin-top: $space-8;
-}
-
-.textLink {
-  @include work.text-link;
-}
-
-// ---- Index: list section ----
-.listSection {
-  @include container;
-  padding-top: $space-24;
-  padding-bottom: $space-section-sm;
-}
-
-.listHead {
-  @include work.section-head;
-  margin-bottom: $space-24;
-}
-
-.listFoot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: $space-16;
-  padding-top: $space-24;
-  color: $color-fg-muted;
-  font-size: $font-size-sm;
-}
-
-// ---- Closing CTA band (shared) ----
-.band {
-  @include work.cta-band;
-}
-
-.bandInner {
-  @include container;
+  @include work.inner;
   display: grid;
-  gap: $space-24;
+  gap: 32px;
 
   @include lg {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: 72px;
+    row-gap: 40px;
     align-items: end;
   }
 }
 
-.bandActions {
-  @include work.cta-row;
-
+// Eyebrow + H1 span the full width: the title is the one big statement on the page.
+.heroHead {
   @include lg {
-    justify-content: flex-end;
+    grid-column: 1 / -1;
   }
 }
 
-// ===========================================================================
-// Case study
-// ===========================================================================
-.crumbs {
+.eyebrow {
+  @include work.eyebrow-dash;
+}
+
+.title {
+  @include work.page-title;
+  margin-top: 24px;
+  font-size: clamp(2.75rem, 0.9rem + 7.6vw, 7.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+
+.heroCopy {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+}
+
+.lede {
+  @include work.page-lede;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  margin: 0;
+  padding-top: 24px;
+  border-top: 1px solid $color-hairline;
+}
+
+.fact {
+  min-width: 0;
+
+  dt {
+    @include work.label-term;
+  }
+
+  dd {
+    @include work.label-detail;
+    @include tabular;
+  }
+}
+
+.factWide {
+  grid-column: 1 / -1;
+}
+
+.factLink {
+  @include work.inline-link;
+}
+
+// ---------------------------------------------------------------- catalog
+.catalog {
+  padding: clamp(32px, 5vw, 56px) 0 clamp(16px, 3vw, 32px);
+}
+
+.inner {
+  @include work.inner;
+}
+
+.catalogHead {
   display: flex;
-  flex-wrap: wrap;
-  gap: $space-8;
-  @include mono-label($color-fg-muted);
-
-  a:hover {
-    color: $color-red-bright;
-  }
-
-  li + li::before {
-    content: '/';
-    margin-right: $space-8;
-    color: $color-fg-dim;
-  }
-}
-
-.caseHero {
-  @include work.work-hero;
-}
-
-.caseHeroInner {
-  @include container;
-  display: grid;
-  gap: $space-stack;
+  align-items: baseline;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $color-hairline-strong;
 
   @include lg {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-    align-items: start;
-    column-gap: $space-64;
+    display: grid;
+    grid-template-columns: $cols;
+    column-gap: $col-gap;
   }
 }
 
-.caseCopy {
-  display: grid;
-  gap: 0;
+.kicker {
+  @include work.kicker;
 }
 
-.caseEyebrow {
-  margin-top: $space-24;
+// Column names for sighted readers on wide screens; each row's own <dt>s carry them for assistive tech.
+.colName {
+  display: none;
+
+  @include lg {
+    display: block;
+    @include mono-label(rgba($color-fg, 0.64));
+  }
 }
 
-.caseTitle {
-  @include work.work-title($font-size-h1);
-  max-width: 14ch;
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.caseCtas {
-  margin-top: $space-24;
-}
-
-// Hero image = the row thumbnail's View Transition target (same name).
-.caseMedia {
+// One label. Phones/tablets: thumbnail column + text column. Wide: table row.
+.row {
   position: relative;
-  align-self: start;
-  aspect-ratio: 3 / 2;
-  overflow: hidden;
-  border: $border-hairline;
-  border-radius: $radius-lg;
-  background: $color-surface-2;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  @include lg {
-    margin-top: $space-24;
-  }
-}
-
-.caseFacts {
-  margin-top: $space-24;
-
-  a {
-    color: $color-fg;
-    text-decoration: underline;
-    text-decoration-color: rgba($color-red, 0.7);
-    text-underline-offset: 4px;
-
-    &:hover {
-      color: $color-red-bright;
-    }
-  }
-}
-
-// ---- Prose sections (question-shaped H2s, .reveal below the fold) ----
-.section {
-  @include container;
-  padding-top: $space-section-sm;
-  padding-bottom: $space-section-sm;
-  border-top: $border-hairline;
-}
-
-.sectionGrid {
   display: grid;
-  gap: $space-24;
-
-  @include lg {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
-    column-gap: $space-64;
-  }
-}
-
-.sectionTitle {
-  @include display-type($font-size-h2, 1.05);
-  max-width: 18ch;
-}
-
-.prose {
-  display: grid;
-  gap: $space-16;
-  max-width: $measure-prose;
-  color: $color-text-body;
-  font-size: $font-size-md;
-  line-height: $line-height-relaxed;
-
-  h3 {
-    @include display-type($font-size-h3, $line-height-snug);
-    color: $color-fg;
-    margin-top: $space-8;
-  }
-}
-
-// Plain bullet list with a red tick rule (no icons)
-.bullets {
-  display: grid;
-  gap: $space-12;
-
-  li {
-    position: relative;
-    padding-left: $space-24;
-    color: $color-text-body;
-    line-height: $line-height-normal;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.8em;
-      width: 12px;
-      height: 1px;
-      background: $color-red;
-    }
-  }
-}
-
-// Chip list for scope tags
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-8;
-
-  li {
-    padding: 6px $space-12;
-    border: $border-hairline-strong;
-    border-radius: $radius-pill;
-    @include mono-label($color-fg-muted);
-  }
-}
-
-.footnote {
-  @include mono-label($color-fg-dim);
-  text-transform: none;
-  letter-spacing: $letter-spacing-wide;
-  line-height: 1.5;
-}
-
-// Two-column backstage block (stack · delivered)
-.backstage {
-  display: grid;
-  gap: $space-32;
+  grid-template-columns: 104px minmax(0, 1fr);
+  grid-template-areas:
+    'thumb client'
+    'thumb label'
+    'thumb note'
+    'thumb go';
+  grid-template-rows: auto auto auto 1fr;
+  column-gap: 16px;
+  padding: 24px 0;
 
   @include md {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 136px minmax(0, 1fr);
+    column-gap: 24px;
+    padding: 32px 0;
   }
 
-  h3 {
-    @include mono-label($color-fg-dim);
-    margin-bottom: $space-12;
+  @include lg {
+    grid-template-columns: $cols;
+    grid-template-areas: none;
+    grid-template-rows: auto auto;
+    column-gap: $col-gap;
+    align-items: start;
+    padding: 40px 0;
+  }
+
+  // The row's hairline, drawn in as the row arrives (static fallback: just there).
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: $color-hairline;
+    transform-origin: left center;
+  }
+
+  // The red rule, drawn across the top of the row in focus.
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    top: -1px;
+    height: 1px;
+    background: $color-red;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 520ms $ease-out;
+    pointer-events: none;
+  }
+
+  &:focus-within::before {
+    transform: scaleX(1);
+  }
+
+  @include pointer-fine-motion {
+    &:hover::before {
+      transform: scaleX(1);
+    }
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .row::after {
+      animation: draw-rule linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+
+    // Never on .client or .rowLink: a transform there would become the stretched
+    // link's containing block and shrink the row's click target to the name.
+    .thumb,
+    .clientName,
+    .label {
+      animation: settle-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}
+
+@keyframes draw-rule {
+  from {
+    transform: scaleX(0.04);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes settle-in {
+  from {
+    opacity: 0.4;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// Thumbnail + client name. Phones/tablets let both join the row grid directly.
+.lead {
+  display: contents;
+
+  @include lg {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    min-width: 0;
+  }
+}
+
+.thumb {
+  grid-area: thumb;
+  position: relative;
+  align-self: start;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 10px;
+  background: $color-surface-2;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+  // Desktop keeps the phone view at rest; with a mouse, the hover adds the
+  // desktop view beside the pointer (WorkIndex.tsx), so the two complement.
+  @include lg {
+    flex: 0 0 72px;
+  }
+}
+
+.thumbImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+// No screenshot exists (automation-only work): the story's stages as a tiny flow.
+.flowTile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  padding: 12px 8px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 16px 16px,
+    #0f1116;
+}
+
+.flowTag {
+  @include mono-label(rgba($color-fg, 0.72));
+}
+
+.flowSteps {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  padding-left: 12px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: $color-red;
+  }
+}
+
+.flowStep {
+  position: relative;
+  display: block;
+  font-size: $font-size-label;
+  font-weight: $font-weight-semibold;
+  line-height: 1.2;
+  color: $color-fg;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -13px;
+    top: 0.3em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $color-ground;
+    border: 2px solid $color-red;
+  }
+}
+
+// Beside a 72px thumbnail on desktop the name steps to 30px, so the longest
+// ("LRO Interactive Salary Guide") holds two lines.
+.client {
+  grid-area: client;
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(1.5rem, 1.05rem + 1.3vw, 1.875rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: $color-fg;
+  text-wrap: balance;
+}
+
+.clientName {
+  display: inline-block;
+
+  @include pointer-fine-motion {
+    transition: translate 380ms $ease-out;
+
+    .row:hover & {
+      translate: 8px 0;
+    }
+  }
+}
+
+// The whole row is the target (Fitts's law): the client link stretches over it.
+.rowLink {
+  color: inherit;
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 6px;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:focus-visible::after {
+    outline: $focus-ring;
+    outline-offset: 4px;
+  }
+}
+
+// Set like a museum label: a fixed order and no printed field names (each <dt>
+// stays for assistive tech; the desktop header strip names the columns).
+// Phones/tablets: the description, then "sector · year" on one muted line,
+// then the result on its red rule.
+.label {
+  grid-area: label;
+  display: block;
+  margin: 8px 0 0;
+
+  @include lg {
+    display: grid;
+    grid-area: auto;
+    grid-column: 2 / 4;
+    grid-row: 1;
+    grid-template-columns: subgrid;
+    grid-template-rows: auto auto;
+    column-gap: $col-gap;
+    row-gap: 4px;
+    margin: 0;
+  }
+}
+
+.field {
+  min-width: 0;
+
+  dt {
+    @include sr-only;
+  }
+
+  dd {
+    margin: 0;
+    font-size: $font-size-base;
+    line-height: 1.45;
+    color: rgba($color-fg, 0.88);
+  }
+
+  &[data-field='built'] {
+    margin-bottom: 8px;
+  }
+
+  // Sector and year run as one line of text; the dot is glued to both sides
+  // with no-break spaces, so a narrow line breaks inside the sector instead.
+  &[data-field='sector'],
+  &[data-field='year'],
+  &[data-field='sector'] dd,
+  &[data-field='year'] dd {
+    display: inline;
+  }
+
+  &[data-field='sector'] dd,
+  &[data-field='year'] dd {
+    font-size: 1rem;
+    color: rgba($color-fg, 0.72);
+    @include tabular;
+  }
+
+  &[data-field='year'] dd::before {
+    content: '\00A0\00B7\00A0';
+    color: rgba($color-fg, 0.5);
+  }
+
+  &[data-field='result'] {
+    margin-top: 16px;
+  }
+
+  @include lg {
+    &[data-field='built'] {
+      grid-column: 1;
+      grid-row: 1;
+      margin-bottom: 0;
+    }
+
+    &[data-field='sector'] {
+      grid-column: 2;
+      grid-row: 1;
+
+      dd {
+        font-size: $font-size-base;
+        color: rgba($color-fg, 0.88);
+      }
+    }
+
+    &[data-field='year'] {
+      grid-column: 2;
+      grid-row: 2;
+
+      dd::before {
+        content: none;
+      }
+    }
+
+    // The proof sits under what we built, on the red rule.
+    &[data-field='result'] {
+      grid-column: 1;
+      grid-row: 2;
+      margin-top: 16px;
+    }
+  }
+}
+
+// Result: the value and its meaning on one baseline, hung on a red rule that
+// draws itself as the row arrives (static fallback: drawn).
+.result {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding-left: 16px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $color-red;
+    transform-origin: top center;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .result::before {
+      animation: draw-rule-y linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 45%;
+    }
+  }
+}
+
+@keyframes draw-rule-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.value {
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: $color-fg;
+  @include tabular;
+
+  @include lg {
+    font-size: 1.75rem;
+  }
+}
+
+.resultLabel {
+  font-size: 1rem;
+  line-height: 1.45;
+  color: rgba($color-fg, 0.8);
+}
+
+.note {
+  grid-area: note;
+  margin: 12px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba($color-fg, 0.68);
+
+  @include lg {
+    grid-area: auto;
+    grid-column: 2 / 4;
+    grid-row: 2;
+    margin-top: 16px;
+  }
+}
+
+// "Case study →" on touch; just the arrow on wide screens.
+.go {
+  grid-area: go;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-base;
+  color: $color-red-text;
+
+  @include lg {
+    grid-area: auto;
+    grid-column: 4;
+    grid-row: 1;
+    justify-content: flex-end;
+    margin-top: 4px;
+    color: rgba($color-fg, 0.64);
+  }
+
+  @include pointer-fine-motion {
+    transition:
+      color 200ms ease-out,
+      translate 300ms $ease-out;
+
+    .row:hover & {
+      color: $color-red;
+      translate: 4px 0;
+    }
+  }
+}
+
+.goText {
+  @include lg {
+    @include sr-only;
+  }
+}
+
+.labsNote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 16px;
+  margin: 24px 0 0;
+  font-size: $font-size-base;
+  color: rgba($color-fg, 0.76);
+}
+
+// ---------------------------------------------------------------- the client voice
+// Proof beside the decision: the one approved client quote, just before the slot.
+// Container queries: the voice and the slot lay out from their own section's
+// width, not the viewport's (the catalog rows stay on viewport queries because
+// the preview island enables itself with the same viewport query).
+.voice {
+  container: voice / inline-size;
+  padding: clamp(48px, 7vw, 96px) 0 clamp(32px, 5vw, 64px);
+}
+
+.voiceInner {
+  @include work.inner;
+  display: grid;
+  gap: 24px;
+
+  @container voice (min-width: 1024px) {
+    grid-template-columns: $cols;
+    column-gap: $col-gap;
+  }
+}
+
+.voiceKicker {
+  @include work.kicker;
+  padding-top: 12px;
+}
+
+.quote {
+  position: relative;
+  margin: 0;
+
+  @container voice (min-width: 1024px) {
+    grid-column: 2 / 4;
+  }
+
+  blockquote {
+    margin: 0;
   }
 
   p {
-    color: $color-text-body;
-  }
-}
-
-// Process steps for the service line (numbered editorial list)
-.steps {
-  @include work.numbered-list;
-  --cols: 4;
-}
-
-.stepNo {
-  @include work.index-label;
-}
-
-// Pull quote (only an approved testimonial)
-.quote {
-  display: grid;
-  gap: $space-16;
-  padding: $space-32 0 0;
-  border-top: $border-hairline;
-
-  blockquote {
-    @include display-type(clamp(1.375rem, 2vw, 1.75rem), 1.3);
-    font-style: italic;
+    margin: 0;
+    font-family: $font-display;
+    font-weight: $font-weight-semibold;
+    font-size: clamp(1.375rem, 1rem + 1.5vw, 2.25rem);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
     color: $color-fg;
-    max-width: 30ch;
-  }
+    text-wrap: pretty;
 
-  figcaption {
-    display: flex;
-    align-items: center;
-    gap: $space-12;
-    color: $color-fg-muted;
-    font-size: $font-size-sm;
-
-    img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
+    &::before {
+      content: '\201C';
+      color: $color-red;
     }
 
-    strong {
-      display: block;
-      color: $color-fg;
-      font-weight: $font-weight-medium;
+    &::after {
+      content: '\201D';
+      color: $color-red;
     }
   }
 }
 
-// Media snap row
-.mediaSection {
-  padding-top: $space-section-sm;
-  padding-bottom: $space-section-sm;
-  border-top: $border-hairline;
-
-  .mediaHead {
-    @include container;
-    @include work.section-head;
-  }
-}
-
-.mediaRow {
-  @include container;
-  --snap-card: min(560px, 60vw);
-}
-
-.mediaCard {
-  display: block;
-  overflow: hidden;
-  border: $border-hairline;
-  border-radius: $radius-lg;
-  background: $color-surface-1;
-
-  img {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    object-position: top;
-  }
-
-  figcaption {
-    padding: $space-12 $space-16;
-    @include mono-label($color-fg-muted);
-  }
-
-  @include focus-ring;
-}
-
-.mediaLink {
-  display: block;
-  border-radius: $radius-lg;
-
-  @include focus-ring;
-}
-
-// Prev / next case study
-.pager {
-  @include container;
+.quoteBy {
   display: flex;
-  justify-content: space-between;
-  gap: $space-16;
-  padding-top: $space-24;
-  padding-bottom: $space-section-sm;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.avatar {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.quoteName {
+  display: block;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+  color: $color-fg;
+}
+
+.quoteRole {
+  display: block;
+  font-size: 1rem;
+  color: rgba($color-fg, 0.72);
+}
+
+// ---------------------------------------------------------------- the empty slot
+// The reader's project, set as the catalog's next label: dashed, in red.
+.next {
+  container: slot / inline-size;
+  padding: clamp(24px, 4vw, 40px) 0 clamp(80px, 11vw, 144px);
+}
+
+.slot {
+  display: grid;
+  gap: 24px;
+  padding: 32px 20px;
+  border: 1px dashed rgba($color-red, 0.6);
+  border-radius: 20px;
+  background: rgba($color-red, 0.035);
+
+  @container slot (min-width: 768px) {
+    padding: 40px 32px;
+  }
+
+  @container slot (min-width: 1024px) {
+    grid-template-columns: $cols;
+    column-gap: $col-gap;
+    row-gap: 32px;
+    margin-inline: -32px;
+    padding: 48px 32px 40px;
+  }
+}
+
+.slotTitle {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: $color-fg;
+  text-wrap: balance;
+
+  @container slot (min-width: 1024px) {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+}
+
+.slotLabel {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+
+  @container slot (min-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+
+  @container slot (min-width: 1024px) {
+    grid-column: 2 / 4;
+    grid-template-columns: subgrid;
+    column-gap: $col-gap;
+  }
+}
+
+// Unlike the rows, the slot has no header strip above it, so its terms stay visible.
+.slotField {
+  min-width: 0;
+
+  dt {
+    @include work.label-term;
+  }
+
+  dd {
+    @include work.label-detail;
+  }
+
+  // Tablet and up: the four chips take the whole label width, then result and sector share a line.
+  @container slot (min-width: 768px) {
+    &[data-field='built'] {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+
+    &[data-field='result'] {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    &[data-field='sector'] {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+}
+
+// The four service pages as 44px chips (8px apart), one tap each.
+.services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
 
   a {
     display: inline-flex;
-    flex-direction: column;
-    gap: $space-4;
+    align-items: center;
     min-height: 44px;
-    max-width: 48%;
+    padding: 0 16px;
+    border-radius: $radius-pill;
+    border: 1px solid rgba($color-fg, 0.24);
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
     color: $color-fg;
+    text-decoration: none;
+    transition:
+      border-color 160ms $ease-out,
+      background-color 160ms $ease-out;
 
-    span:first-child {
-      @include mono-label($color-fg-dim);
-    }
-
-    span:last-child {
-      @include display-type($font-size-lg, $line-height-snug);
-    }
-
-    &:hover span:last-child {
-      color: $color-red-bright;
-    }
-
-    &:last-child {
-      text-align: right;
-      align-items: flex-end;
+    &:hover {
+      border-color: rgba($color-red, 0.7);
+      background: rgba($color-red, 0.08);
     }
 
     @include focus-ring;
   }
+}
+
+.slotActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+
+  @container slot (min-width: 1024px) {
+    grid-column: 2 / -1;
+  }
+}
+
+.slotNote {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 1rem;
+  color: rgba($color-fg, 0.72);
+  @include tabular;
 }

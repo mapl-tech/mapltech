@@ -1,148 +1,131 @@
-// Shared mixins for the work family (/our-work, /our-work/[slug], /labs).
+// Shared mixins for the work family (/our-work, /labs).
 // Page modules @use this file; it emits nothing on its own.
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-// Top-of-page anatomy: eyebrow → H1 → lede → key facts → CTAs. All SSR, no reveal.
-@mixin work-hero {
-  position: relative;
-  // Clears the fixed header (64px bar + 40px top strip) on every viewport.
-  padding: clamp(7.5rem, 14vw, 11rem) 0 clamp(2.5rem, 5vw, 4rem);
-  background: $color-ground;
-}
+// ============================================================================
+// Flagship (Nov 2026): the grammar both pages share with the case template.
+// ============================================================================
 
-@mixin work-hero-inner {
-  @include container;
-  display: grid;
-  gap: $space-stack;
-}
+$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 
-@mixin work-title($size: $font-size-h1) {
-  @include display-type($size, 1.02);
-  color: $color-fg;
-  max-width: 18ch;
-  margin-top: $space-16;
-}
+// Top of page: clears the fixed header (56px phones, 72px desktop), then a
+// generous lead-in. Same rhythm as the case-study hero.
+@mixin page-hero {
+  padding: calc(56px + 40px) 0 clamp(48px, 6vw, 80px);
 
-@mixin work-lede {
-  @include lede;
-  margin-top: $space-16;
-}
-
-// Row of MagneticButtons; full-width stack on phones.
-@mixin cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: $space-12 $space-16;
-
-  @media (max-width: #{$breakpoint-sm - 1px}) {
-    flex-direction: column;
-    align-items: stretch;
-
-    :global(.magnetic-btn-box),
-    :global(.magnetic-btn) {
-      width: 100%;
-    }
+  @include lg {
+    padding-top: calc(72px + clamp(56px, 6vw, 96px));
   }
 }
 
-// Text link used for tertiary actions ("See the work").
-@mixin text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-8;
-  min-height: 44px;
-  padding: 0 $space-4;
-  font-family: $font-mono;
-  font-size: $font-size-label;
-  font-weight: $font-weight-medium;
-  letter-spacing: $letter-spacing-label;
-  text-transform: uppercase;
-  color: $color-fg-muted;
-  transition: color $transition-fast;
+// One content width for every section: the 1280px container (20px gutters on phones).
+@mixin inner {
+  @include container(1280px);
+}
+
+// Section rhythm: more space above a heading than below it.
+@mixin section-y($top: clamp(64px, 9vw, 112px), $bottom: clamp(64px, 9vw, 112px)) {
+  padding-top: $top;
+  padding-bottom: $bottom;
+}
+
+// The one eyebrow per page: label caps with a short red dash. The dash
+// hangs outside the text box, so the text's own ground stays plain.
+@mixin eyebrow-dash {
+  @include mono-label($color-fg-muted);
+  position: relative;
+  display: inline-block;
+  margin: 0 0 0 40px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 50%;
+    width: 28px;
+    height: 2px;
+    background: $color-red;
+    transform: translateY(-50%);
+  }
+}
+
+// A status mark (dot) hung just left of a label, outside its text box.
+@mixin status-dot($size: 8px, $gap: 8px) {
+  position: relative;
+  margin-left: $size + $gap;
+
+  &::before {
+    content: '';
+    position: absolute;
+    right: calc(100% + #{$gap});
+    top: 50%;
+    width: $size;
+    height: $size;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+// Small caps heading for quiet section labels ("Projects on view", "In her words").
+@mixin kicker {
+  margin: 0;
+  @include mono-label(rgba($color-fg, 0.68));
+}
+
+// Page H1 at gallery scale: 44px on a 360px phone, 88px at 1440.
+@mixin page-title {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(2.75rem, 1.5rem + 5vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: $color-fg;
+  text-wrap: balance;
+}
+
+@mixin page-lede {
+  margin: 0;
+  font-size: $font-size-lede;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.8);
+  max-width: 34rem;
+  text-wrap: pretty;
+}
+
+// Museum-label field: caps term over a plain value.
+@mixin label-term {
+  @include mono-label(rgba($color-fg, 0.64));
+}
+
+@mixin label-detail {
+  margin: 4px 0 0;
+  font-size: $font-size-base;
+  line-height: 1.45;
+  color: rgba($color-fg, 0.88);
+}
+
+// The site-wide offset red hairline behind a framed surface (a screenshot, a
+// card). Put it on an absolutely positioned, aria-hidden sibling behind it.
+@mixin offset-frame($offset: 12px, $radius: 14px) {
+  position: absolute;
+  inset: $offset (-$offset) (-$offset) $offset;
+  border: 1px solid rgba($color-red, 0.7);
+  border-radius: $radius;
+  pointer-events: none;
+}
+
+// Underlined inline link in the accessible link red.
+@mixin inline-link {
+  color: $color-red-text;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red-text, 0.4);
+  text-underline-offset: 4px;
 
   &:hover {
-    color: $color-red-bright;
+    text-decoration-color: $color-red-text;
   }
 
   @include focus-ring;
-}
-
-// Closing CTA band: hairline above, serif heading, one paragraph, CTA row.
-@mixin cta-band {
-  @include section-padding-sm;
-  border-top: $border-hairline;
-
-  h2 {
-    @include display-type($font-size-h2, 1.05);
-    max-width: 20ch;
-  }
-
-  p {
-    @include lede;
-    margin-top: $space-16;
-  }
-}
-
-@mixin section-head {
-  display: grid;
-  gap: $space-12;
-  margin-bottom: $space-stack;
-
-  h2 {
-    @include display-type($font-size-h2, 1.05);
-    max-width: 22ch;
-  }
-
-  p {
-    color: $color-fg-muted;
-    max-width: $measure-lede;
-  }
-}
-
-// Numbered editorial list: mono index, serif title, body copy. Replaces icon cards.
-@mixin numbered-list {
-  display: grid;
-  gap: $space-24;
-  border-top: $border-hairline;
-
-  > li {
-    display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr);
-    gap: $space-16;
-    padding-top: $space-24;
-    border-bottom: $border-hairline;
-    padding-bottom: $space-24;
-
-    &:last-child {
-      border-bottom: 0;
-    }
-  }
-
-  h3 {
-    @include display-type($font-size-h3, $line-height-snug);
-  }
-
-  p {
-    margin-top: $space-8;
-    color: $color-text-body;
-    max-width: $measure-prose;
-  }
-
-  @include md {
-    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
-    gap: $space-32;
-
-    > li {
-      grid-template-columns: 1fr;
-      border-bottom: 0;
-      padding-bottom: 0;
-    }
-  }
-}
-
-@mixin index-label {
-  @include mono-label($color-red-bright);
-  padding-top: 0.45rem;
 }

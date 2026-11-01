@@ -1,179 +1,247 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
+$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+$beat: 640ms; // a little under the 900ms step, so each move settles before the next
+
+// Two columns on wide screens: the sticky explanation and control on the left,
+// the pipeline on the right. Phones: one column, control above the stages.
 .stepper {
   display: grid;
-  gap: $space-24;
+  gap: 40px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: 72px;
+    align-items: start;
+  }
+}
+
+.side {
+  @include lg {
+    position: sticky;
+    top: 112px;
+  }
 }
 
 .controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: $space-16;
+  gap: 12px 20px;
+  margin-top: 28px;
 }
 
-// Demo control, not a conversion CTA: hairline ghost with a play glyph.
+// Secondary control: hairline pill with the red play mark, never a second filled button.
 .run {
-  @include button-secondary;
-  gap: $space-12;
-  font-family: $font-mono;
-  font-size: $font-size-sm;
-  letter-spacing: $letter-spacing-wide;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 22px 0 16px;
+  border: 1px solid rgba($color-fg, 0.28);
+  border-radius: $radius-pill;
+  background: transparent;
+  font-family: $font-body;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  cursor: pointer;
+  transition:
+    border-color 160ms $ease-out,
+    background-color 160ms $ease-out;
+
+  &:hover {
+    border-color: rgba($color-red, 0.7);
+    background: rgba($color-red, 0.08);
+  }
+
+  &:active {
+    @include motion-ok {
+      scale: 0.98;
+    }
+  }
 
   @include focus-ring;
 }
 
-// Live system signal while the sequence runs (teal is reserved for this).
-.status {
-  @include mono-label($color-signal);
-  min-height: 1.2em;
-  text-transform: none;
-  letter-spacing: $letter-spacing-wide;
-}
-
-// Phones: one node + takeaway per slide, native snap row bleeding to the gutters.
-.steps {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 85vw;
-  gap: $space-16;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: $container-padding;
-  overscroll-behavior-x: contain;
-  margin-inline: calc(-1 * #{$container-padding});
-  padding: 4px $container-padding $space-16;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  @include md {
-    --step-gap: #{$space-32};
-    grid-auto-flow: row;
-    grid-auto-columns: auto;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--step-gap);
-    overflow: visible;
-    margin-inline: 0;
-    padding: 0;
-  }
-}
-
-.step {
-  scroll-snap-align: start;
-  display: grid;
-  align-content: start;
-  gap: $space-8;
-  padding: $space-24;
-  border: $border-hairline;
-  border-radius: $radius-lg;
-  background: $color-surface-1;
-
-  @include md {
-    padding: $space-24 0 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-  }
-}
-
-// Node + connector strip above each step
-.rail {
-  display: flex;
-  align-items: center;
-  height: 28px;
-  margin-bottom: $space-8;
-}
-
-.node {
+.play {
   display: grid;
   place-items: center;
-  flex: 0 0 auto;
-  width: 22px;
-  height: 22px;
-  border: 1px solid $color-hairline-strong;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
+  background: $color-red-fill;
+  color: $color-white;
 }
 
-// Filled by useAnimate (desktop), IntersectionObserver (mobile) or CSS (reduced motion).
-.fill {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: $color-red;
-  opacity: 0;
-  scale: 0.6;
+.status {
+  flex-basis: 100%;
+  min-height: 1.5em;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba($color-fg, 0.78);
+  @include tabular;
 }
 
-// Connector to the next node: a hairline track with a red fill that scales in
-// from the left. The negative margin bridges the grid gap so the line meets
-// the next node.
-.connector {
-  display: none;
+.footnote {
+  margin: 28px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid $color-hairline;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.72);
+  max-width: 40ch;
+}
+
+// ---------------------------------------------------------------- the pipeline
+.track {
+  --rail-top: 14px;
+  --rail-height: calc(100% - 120px);
+  --fill: 0;
+  --token-y: 0px;
   position: relative;
-  flex: 1;
-  height: 1px;
-  margin-left: $space-8;
-  margin-right: calc(-1 * var(--step-gap, #{$space-32}) + 2px);
-  background: $color-hairline-strong;
-
-  @include md {
-    display: block;
-  }
 }
 
-.connectorFill {
+.stages {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// The progress line: hairline at rest, drawn in red as the booking travels.
+.rail {
+  position: absolute;
+  left: 7px;
+  top: var(--rail-top);
+  height: var(--rail-height);
+  width: 2px;
+  background: rgba($color-fg, 0.14);
+  pointer-events: none;
+}
+
+.railFill {
   position: absolute;
   inset: 0;
   background: $color-red;
-  transform: scaleX(0);
-  transform-origin: left center;
+  transform: scaleY(var(--fill));
+  transform-origin: top center;
+  transition: transform $beat $ease-out;
 }
 
-// Mobile: the slide in view lights its node
-@media (max-width: #{$breakpoint-md - 1px}) {
-  .step[data-active='true'] .fill {
+.token {
+  position: absolute;
+  z-index: 1;
+  left: -6px;
+  top: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: $color-red;
+  box-shadow: 0 0 0 4px $color-ground;
+  opacity: 0;
+  transform: translateY(var(--token-y));
+  transition:
+    transform $beat $ease-out,
+    opacity 200ms ease-out;
+
+  .stepper[data-phase='running'] &,
+  .stepper[data-phase='done'] & {
     opacity: 1;
-    scale: 1;
-    transition: opacity 200ms ease, scale 200ms ease;
   }
 }
 
-// Reduced motion: everything drawn, nothing animates
-.stepper[data-reduced='true'] {
-  .fill {
-    opacity: 1;
-    scale: 1;
-  }
-
-  .connectorFill {
-    transform: scaleX(1);
-  }
-}
-
-.no {
-  @include mono-label($color-red-bright);
-}
-
-.stepTitle {
-  @include display-type($font-size-h3, $line-height-snug);
-  color: $color-fg;
-}
-
-.stepText {
-  color: $color-text-body;
-  font-size: $font-size-base;
-  line-height: $line-height-normal;
-}
-
-.slideMeta {
-  margin-top: $space-8;
-  @include mono-label($color-fg-dim);
+.stage {
+  position: relative;
+  padding: 0 0 32px 40px;
 
   @include md {
-    display: none;
+    padding: 0 0 40px 44px;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.node {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba($color-fg, 0.4);
+  background: $color-ground;
+  transition:
+    border-color 200ms ease-out,
+    background-color 200ms ease-out;
+
+  .stage[data-state='active'] &,
+  .stage[data-state='done'] & {
+    border-color: $color-red;
+    background: $color-red;
+  }
+}
+
+.name {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-h3;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: $color-fg;
+  transition: color 200ms ease-out;
+
+  // Large text: #F03350 is 3.66:1 on the ground (AA large needs 3:1).
+  .stage[data-state='active'] & {
+    color: $color-red;
+  }
+}
+
+// What the traveller sees, beside what runs under the hood.
+.pair {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 0;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+
+  dt {
+    @include mono-label(rgba($color-fg, 0.64));
+  }
+
+  dd {
+    margin: 4px 0 0;
+    font-size: $font-size-base;
+    line-height: 1.55;
+    color: rgba($color-fg, 0.86);
+  }
+}
+
+.under {
+  padding-left: 16px;
+  border-left: 1px solid rgba($color-red, 0.45);
+  transition: border-color 200ms ease-out;
+
+  .stage[data-state='active'] &,
+  .stage[data-state='done'] & {
+    border-left-color: $color-red;
+  }
+}
+
+// The action at the end of the run, aligned with the stage text.
+.after {
+  margin: 32px 0 0;
+  padding: 24px 0 0 40px;
+  border-top: 1px solid $color-hairline;
+
+  @include md {
+    padding-left: 44px;
   }
 }

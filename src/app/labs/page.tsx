@@ -1,303 +1,299 @@
 import type { Metadata } from 'next';
-import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import JsonLd from '@/components/seo/JsonLd';
-import SnapRow from '@/components/ui/SnapRow';
-import Cta, { TextCta } from '@/components/work/Cta';
+import { PrimaryCta, TextCta } from '@/components/work/Cta';
 import LabsStepper from '@/components/work/LabsStepper';
-import {
-  LABS_ETHOS,
-  LABS_PIPELINE,
-  MAPL_TOURS_WORKFLOW,
-  estimateLinkFor,
-  hostOf,
-  scopingCallLinkFor,
-  startingPriceLabel,
-} from '@/components/work/work-data';
-import { routeLastModified } from '@/config/routes';
-import { labsProjects, portfolioProjects } from '@/config/site';
-import { creativeWork, pageGraph } from '@/lib/schema';
+import { BOOKING_PIPELINE, LABS_PAGE, NEXT_PRODUCTS, PIPELINE_FOOTNOTE, TOURS, TOURS_STORY } from '@/components/work/labs';
+import { estimateLinkFor, hostOf, scopingCallLinkFor, startingPriceLabel } from '@/components/work/work-data';
+import { CALL_LABEL, ESTIMATE_LABEL } from '@/components/layout/chrome';
+import { labsProjects } from '@/config/site';
+import { FIXED_QUOTE_NOTE } from '@/lib/estimate';
+import { creativeWork, imageObject, itemList, pageGraph } from '@/lib/schema';
 import styles from './labs.module.scss';
 
+const url = 'https://mapltech.com/labs';
+const toursMedia = TOURS_STORY?.media;
+// A real capture of MAPL Tours (never the placeholder art in site.ts).
+const ogImage = { url: toursMedia?.desktop ?? '/images/og-image.png', width: 1800, height: 1125, alt: toursMedia?.alt ?? 'MAPL Tours' };
+
 export const metadata: Metadata = {
-  title: 'Labs',
-  description:
-    'MAPL Labs is where MAPL TECH builds and operates its own products - starting with MAPL Tours, a travel company run end-to-end by AI. Proof we ship and run real production systems, not just client work.',
+  title: LABS_PAGE.title,
+  description: LABS_PAGE.description,
+  alternates: { canonical: url },
   openGraph: {
-    title: 'MAPL Labs | MAPL TECH',
-    description:
-      'Proprietary products MAPL TECH builds and operates in-house. The proving ground for the systems, automation, and infrastructure we bring to every client.',
+    type: 'website',
+    url,
+    siteName: 'MAPL TECH',
+    title: `${LABS_PAGE.title} | MAPL TECH`,
+    description: LABS_PAGE.description,
+    images: [ogImage],
   },
-  alternates: { canonical: 'https://mapltech.com/labs' },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${LABS_PAGE.title} | MAPL TECH`,
+    description: LABS_PAGE.description,
+    images: [ogImage.url],
+  },
 };
 
-const PAGE_DESCRIPTION = metadata.description as string;
-
-const pad = (n: number) => String(n).padStart(2, '0');
-
+/*
+ * /labs, flagship redesign (Nov 2026). MAPL Labs as proof that MAPL TECH
+ * ships and operates real products. Facts: site.ts `labsProjects` and the
+ * 'mapl-tours' case story only (see components/work/labs.ts). The one
+ * interaction is the booking pipeline, presented as an illustration.
+ *
+ * Structured data: CollectionPage + BreadcrumbList + an ItemList of both
+ * products (CreativeWork, with their real status), anchored at #mapl-tours
+ * and #labsci on this page.
+ */
 export default function LabsPage() {
-  const tours = labsProjects.find((p) => p.slug === 'mapl-tours') ?? labsProjects[0];
-  const toursHost = hostOf(tours.url ?? undefined);
-  // The portfolio entry's screenshot (1200×800) is the hero poster; the card keeps the Labs image,
-  // so the two above-the-fold uses of MAPL Tours do not share one src.
-  const toursPoster = portfolioProjects.find((p) => p.slug === tours.slug)?.image ?? tours.image;
-  const liveCount = labsProjects.filter((p) => p.status === 'Live').length;
-  const buildingCount = labsProjects.length - liveCount;
-
-  const automationFrom = startingPriceLabel('automation');
-  const toolsFrom = startingPriceLabel('tools');
   const estimateHref = estimateLinkFor('automation');
   const callHref = scopingCallLinkFor('automation');
-
-  const lastModified = routeLastModified('/labs');
-  const reviewed = lastModified ? lastModified.slice(0, 7) : undefined;
+  const automationFrom = startingPriceLabel('automation');
+  const toursHost = hostOf(TOURS.url ?? undefined);
+  const results = TOURS_STORY?.results ?? [];
+  const proves = TOURS_STORY?.impact?.[0];
 
   const graph = pageGraph({
-    path: '/labs',
-    name: 'Labs',
-    description: PAGE_DESCRIPTION,
+    path: LABS_PAGE.path,
+    name: LABS_PAGE.name,
+    description: LABS_PAGE.description,
     type: 'CollectionPage',
+    image: toursMedia?.desktop,
     breadcrumbs: [
-      { name: 'Our Work', path: '/our-work' },
-      { name: 'MAPL Labs', path: '/labs' },
+      { name: 'Work', path: '/our-work' },
+      { name: 'MAPL Labs', path: LABS_PAGE.path },
     ],
-    nodes: labsProjects.map((project) => creativeWork(project)),
+    nodes: [
+      itemList(
+        labsProjects.map((project) => {
+          const real = project.slug === TOURS.slug ? toursMedia?.desktop : undefined;
+          return {
+            name: project.name,
+            path: `${LABS_PAGE.path}#${project.slug}`,
+            description: project.tagline,
+            item: { ...creativeWork(project), image: real ? imageObject(real, project.name) : undefined },
+          };
+        }),
+        { path: LABS_PAGE.path, name: 'MAPL Labs products' },
+      ),
+    ],
   });
 
   return (
     <>
       <JsonLd data={graph} />
 
-      {/* 01 · Hero: H1 (LCP) → lede → key facts → CTAs; poster only in v1, never the LCP on phones. */}
+      {/* ------------------------------------------------------------ hero */}
       <section className={styles.hero} aria-labelledby="labs-title">
         <div className={styles.heroInner}>
-          <div className={styles.heroCopy}>
-            <p className="eyebrow">MAPL Labs · /labs</p>
+          <div className={styles.heroHead}>
+            <p className={styles.eyebrow}>MAPL Labs</p>
             <h1 id="labs-title" className={styles.title}>
-              We don&apos;t just build for clients. We build for ourselves.
+              <span className={styles.question}>Is AI-built software ready for production?</span>{' '}
+              <span className={styles.answer}>
+                We answer with <em className={styles.accent}>a business.</em>
+              </span>
             </h1>
+          </div>
+
+          <div className={styles.heroCopy}>
             <p className={styles.lede}>
-              MAPL Labs is where MAPL TECH runs its own products, starting with MAPL Tours, an AI-operated travel
-              company. It is the proving ground for the systems, automation and infrastructure we bring to every
-              agency engagement: {liveCount === 1 ? 'one product' : `${liveCount} products`} live today,{' '}
-              {buildingCount === 1 ? 'one' : buildingCount} in development, {labsProjects.length === 2 ? 'both' : 'all'} built and operated in-house.
+              MAPL Labs is where we build and run our own products. {TOURS.name}, a travel company run by AI, is live and
+              taking real payments. {NEXT_PRODUCTS.map((p) => p.name).join(' and ')} is in development.
             </p>
-
-            <dl className={`kv ${styles.facts}`}>
-              <div>
-                <dt>Products</dt>
-                <dd>
-                  {labsProjects.length} —{' '}
-                  {labsProjects.map((p) => `${p.name} (${p.status.toLowerCase()})`).join(' · ')}
-                </dd>
+            <div className={styles.decide}>
+              <div className={styles.actions}>
+                <PrimaryCta href={estimateHref} placement="labs_hero_estimate" hero>
+                  {ESTIMATE_LABEL}
+                </PrimaryCta>
+                <TextCta href="/our-work/mapl-tours" placement="labs_hero_case">
+                  Read the {TOURS.name} case study
+                </TextCta>
               </div>
-              <div>
-                <dt>Operated from</dt>
-                <dd>Toronto (HQ) · Lagos · Kingston</dd>
-              </div>
-              <div>
-                <dt>Stack</dt>
-                <dd>The same AI agents, automations and cloud systems we sell to clients</dd>
-              </div>
-              <div>
-                <dt>Want it for your agency</dt>
-                <dd>
-                  Automation &amp; AI {automationFrom?.toLowerCase()} · Custom Internal Tools {toolsFrom?.toLowerCase()}
-                </dd>
-              </div>
-              {reviewed ? (
-                <div>
-                  <dt>Last reviewed</dt>
-                  <dd>
-                    <time dateTime={lastModified}>{reviewed}</time>
-                  </dd>
-                </div>
+              {automationFrom ? (
+                <p className={styles.trust}>Automation and AI: {automationFrom.toLowerCase()}. Our prices are public.</p>
               ) : null}
-            </dl>
-
-            <div className={styles.ctas}>
-              <Cta href={estimateHref} size="large" placement="labs_hero_primary" hero>
-                Get a 60-second estimate
-              </Cta>
-              <Cta href={callHref} variant="secondary" size="large" placement="labs_hero_secondary">
-                Book a 20-min scoping call
-              </Cta>
-              <TextCta href="/our-work" placement="labs_hero_tertiary" className={styles.textLink} cursor="view">
-                See the work
-              </TextCta>
             </div>
           </div>
 
-          <div className={styles.poster}>
-            <Image
-              src={toursPoster}
-              alt={`${tours.name} — ${tours.tagline}`}
-              width={1200}
-              height={750}
-              sizes="(max-width: 1023px) 100vw, 42vw"
-              loading="eager"
-            />
-            <span className={styles.posterCaption}>
-              <span className={styles.dot} aria-hidden="true" />
-              {tours.name} · {tours.status.toLowerCase()}
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* 02 · Ethos strip: real copy, static, revealed on scroll */}
-      <section className={`${styles.section} reveal`} data-below-fold aria-labelledby="labs-ethos">
-        <div className={styles.sectionHead}>
-          <p className="eyebrow">Why we run our own products</p>
-          <h2 id="labs-ethos">Ship it. Run it. Prove it.</h2>
-        </div>
-        <ol className={styles.numbered}>
-          {LABS_ETHOS.map((item, i) => (
-            <li key={item.title}>
-              <span className={styles.indexLabel}>{pad(i + 1)}</span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
+          {toursMedia ? (
+            <figure className={styles.devices}>
+              <div className={styles.stage}>
+                <div className={styles.laptop}>
+                  <div className={styles.screen}>
+                    <Image
+                      src={toursMedia.desktop}
+                      alt={toursMedia.alt}
+                      width={1800}
+                      height={1125}
+                      sizes="(min-width: 1280px) 640px, (min-width: 1024px) 50vw, 88vw"
+                      preload
+                      className={styles.shot}
+                    />
+                  </div>
+                  <span className={styles.base} aria-hidden="true" />
+                </div>
+                {toursMedia.mobile ? (
+                  <div className={styles.phone}>
+                    <Image
+                      src={toursMedia.mobile}
+                      alt=""
+                      width={780}
+                      height={1688}
+                      sizes="(min-width: 1024px) 200px, 24vw"
+                      className={styles.shot}
+                    />
+                  </div>
+                ) : null}
+                <span className={styles.frame} aria-hidden="true" />
               </div>
-            </li>
-          ))}
-        </ol>
+              <figcaption className={styles.caption}>
+                <span className={styles.live}>{TOURS.status}</span>
+                <span>
+                  {TOURS.name}, {TOURS.tagline.charAt(0).toLowerCase() + TOURS.tagline.slice(1)}.
+                </span>
+              </figcaption>
+            </figure>
+          ) : null}
+        </div>
       </section>
 
-      {/* 03 · Experiment track: snap / drag row generated from labsProjects */}
-      <section className={styles.trackSection} aria-labelledby="labs-track">
-        <div className={styles.sectionHead}>
-          <p className="eyebrow">Inside the lab</p>
-          <h2 id="labs-track">Products we build and operate</h2>
-          <p>
-            Owned, engineered, and run by MAPL TECH. {labsProjects.length === 2 ? 'Two entries today' : `${labsProjects.length} entries today`};
-            the track is generated from the config.
+      {/* ------------------------------------------------------------ MAPL Tours, by the numbers */}
+      <section id={TOURS.slug} className={styles.tours} aria-labelledby="tours-title">
+        <div className={styles.inner}>
+          <div className={styles.toursHead}>
+            <div>
+              <p className={styles.statusRow}>
+                <span className={styles.live}>{TOURS.status}</span>
+                {TOURS.url && toursHost ? (
+                  <a href={TOURS.url} target="_blank" rel="noopener noreferrer" className={styles.inlineLink}>
+                    {toursHost}
+                    <span className="visually-hidden"> (opens in a new tab)</span>
+                  </a>
+                ) : null}
+              </p>
+              <h2 id="tours-title" className={styles.h2}>
+                {TOURS_STORY?.headline.split(',')[0] ?? TOURS.tagline}.
+              </h2>
+            </div>
+            {TOURS_STORY?.situation?.[1] ? <p>{TOURS_STORY.situation[1]}</p> : <p>{TOURS.description}</p>}
+          </div>
+
+          {results.length ? (
+            <dl className={styles.results}>
+              {results.map((result) => (
+                <div key={result.label} className={styles.result}>
+                  <dt className={styles.resultLabel}>{result.label}</dt>
+                  <dd className={styles.resultValue}>{result.value}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
+
+          <ul className={styles.caps} role="list" aria-label={`What runs on its own at ${TOURS.name}`}>
+            {TOURS.capabilities.map((capability) => (
+              <li key={capability}>{capability}</li>
+            ))}
+          </ul>
+
+          {TOURS_STORY?.sources ? <p className={styles.sources}>Sources: {TOURS_STORY.sources}</p> : null}
+          <p className={styles.toursMore}>
+            <TextCta href="/our-work/mapl-tours" placement="labs_tours_case">
+              Read the {TOURS.name} case study
+            </TextCta>
           </p>
         </div>
-        <SnapRow label="Products we build and operate" className={styles.track}>
-          {labsProjects.map((project) => {
-            const isLive = project.status === 'Live';
-            return (
-              <article
-                key={project.slug}
-                id={project.slug === 'mapl-tours' ? undefined : project.slug}
-                className={styles.card}
-                aria-labelledby={`labs-card-${project.slug}`}
-              >
-                <div className={`${styles.cardMedia} ${isLive ? '' : styles.cardMediaSoon}`}>
-                  <Image
-                    src={project.image}
-                    alt={`${project.name} — ${project.tagline}`}
-                    width={720}
-                    height={450}
-                    sizes="(max-width: 767px) 85vw, 560px"
-                  />
-                  {!isLive ? <span className={styles.stamp}>In development</span> : null}
-                  <span className={styles.swipe} aria-hidden="true">
-                    Swipe
-                  </span>
-                </div>
-                <div className={styles.cardBody}>
-                  <p className={`${styles.status} ${isLive ? styles.live : ''}`}>
-                    <span className={styles.dot} aria-hidden="true" />
-                    {project.status}
-                  </p>
-                  <h3 id={`labs-card-${project.slug}`}>{project.name}</h3>
-                  <p className={styles.tagline}>{project.tagline}</p>
-                  <p className={styles.desc}>{project.description}</p>
-                  <ul className={styles.caps} aria-label={`${project.name} capabilities`}>
-                    {project.capabilities.map((cap) => (
-                      <li key={cap}>{cap}</li>
-                    ))}
-                  </ul>
-                  {project.url ? (
-                    <TextCta href={project.url} external placement="labs_card_visit" className={styles.textLink}>
-                      Visit {project.name}
-                    </TextCta>
-                  ) : (
-                    <span className={styles.soonNote}>Announcing soon</span>
-                  )}
-                </div>
-              </article>
-            );
-          })}
-        </SnapRow>
       </section>
 
-      {/* 04 · MAPL Tours deep-dive: "Run this workflow" stepper (PEAK). Step text is real <h3>/<p>. */}
-      <section id="mapl-tours" className={styles.deepDive} aria-labelledby="labs-tours">
-        <div className={styles.deepDiveHead}>
-          <p className={styles.eyebrowRow}>
-            <span className={styles.dot} aria-hidden="true" />
-            {tours.name} · {tours.status.toLowerCase()}
-            {tours.url && toursHost ? (
+      {/* ------------------------------------------------------------ one booking, start to finish */}
+      <section className={styles.pipeline} aria-labelledby="pipeline-title">
+        <div className={styles.inner}>
+          <LabsStepper
+            stages={BOOKING_PIPELINE}
+            intro={
               <>
-                {' · '}
-                <a href={tours.url} target="_blank" rel="noopener noreferrer" data-cursor="external">
-                  {toursHost}
-                  <span className="visually-hidden"> (opens in a new tab)</span>
-                </a>
+                <p className={styles.pipelineTag}>Illustration</p>
+                <h2 id="pipeline-title" className={styles.h2}>
+                  One booking, start to finish.
+                </h2>
+                <p className={styles.pipelineIntro}>
+                  The five stages every {TOURS.name} booking passes through, and the engineering under each one. This is
+                  an illustration, not a live feed: nothing here touches a real booking.
+                </p>
               </>
-            ) : null}
-          </p>
-          <h2 id="labs-tours">{tours.tagline}</h2>
-          <p>
-            AI handles the entire journey — trip planning, booking, itinerary generation, and customer communication —
-            on the same agents, pipelines and infrastructure we build for clients, running a live company 24/7.
-          </p>
+            }
+            footnote={PIPELINE_FOOTNOTE}
+            after={
+              <p className={styles.pipelineCta}>
+                <span>Want a pipeline like this for a client?</span>
+                <TextCta href={estimateHref} placement="labs_pipeline_estimate">
+                  {ESTIMATE_LABEL}
+                </TextCta>
+              </p>
+            }
+          />
         </div>
-
-        <LabsStepper steps={MAPL_TOURS_WORKFLOW} productName={tours.name} />
-
-        {tours.url ? (
-          <p>
-            <TextCta href={tours.url} external placement="labs_tours_visit" className={styles.textLink}>
-              Visit {tours.name}
-            </TextCta>
-          </p>
-        ) : null}
       </section>
 
-      {/* 05 · How it ships: static <ol>, real copy */}
-      <section className={`${styles.section} reveal`} data-below-fold aria-labelledby="labs-ships">
-        <div className={styles.sectionHead}>
-          <p className="eyebrow">How it ships</p>
-          <h2 id="labs-ships">From prototype to operating business</h2>
-          <p>The four stages every MAPL Labs product moves through.</p>
-        </div>
-        <ol className={styles.numbered} style={{ '--cols': 4 } as CSSProperties}>
-          {LABS_PIPELINE.map((step, i) => (
-            <li key={step.stage}>
-              <span className={styles.indexLabel}>{pad(i + 1)}</span>
-              <div>
-                <h3>{step.stage}</h3>
-                <p>{step.desc}</p>
+      {/* ------------------------------------------------------------ next in the lab */}
+      {NEXT_PRODUCTS.map((product) => (
+        <section key={product.slug} id={product.slug} className={styles.next} aria-labelledby={`${product.slug}-title`}>
+          <div className={styles.inner}>
+            {/* Not public yet, so no picture of it: only what site.ts says, in a dashed "in development" frame. */}
+            <div className={styles.soonCard}>
+              <div className={styles.soonHead}>
+                <p className={styles.soon}>{product.status}</p>
+                <h2 id={`${product.slug}-title`} className={styles.h2}>
+                  {product.name}
+                </h2>
+                <p className={styles.tagline}>{product.tagline}.</p>
               </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* 06 · CTA band */}
-      <section className={`${styles.band} reveal`} data-below-fold aria-labelledby="labs-band">
-        <div className={styles.bandInner}>
-          <div>
-            <h2 id="labs-band">Want this for your agency?</h2>
-            <p>
-              The engineering that runs our own companies is the same engineering we bring to yours. Tell us what
-              you&apos;re building.
-            </p>
+              <div className={styles.soonBody}>
+                <p className={styles.nextText}>{product.description}</p>
+                <ul className={styles.caps} role="list" aria-label={`${product.name} status`}>
+                  {product.capabilities.map((capability) => (
+                    <li key={capability}>{capability}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
-          <div className={styles.bandActions}>
-            <Cta href={estimateHref} size="large" placement="labs_band_primary">
-              Get a 60-second estimate
-            </Cta>
-            <Cta href={callHref} variant="secondary" size="large" placement="labs_band_secondary">
-              Book a 20-min scoping call
-            </Cta>
-            <TextCta href="/our-work" placement="labs_band_tertiary" className={styles.textLink} cursor="view">
-              See the work
-            </TextCta>
+        </section>
+      ))}
+
+      {/* ------------------------------------------------------------ why it matters */}
+      {/* data-page-close: the shared footer hides its own ask when a page ends on one. */}
+      <section className={styles.close} aria-labelledby="close-title" data-page-close>
+        <div className={styles.closeInner}>
+          <div className={styles.closeCard}>
+            <div>
+              <h2 id="close-title" className={styles.closeTitle}>
+                {TOURS_STORY?.matters?.heading ?? 'Why this matters to your clients'}
+              </h2>
+              {TOURS_STORY?.matters ? <p className={styles.closeText}>{TOURS_STORY.matters.text}</p> : null}
+            </div>
+            {proves ? (
+              <div className={styles.proves}>
+                <h3 className={styles.kicker}>{proves.heading}</h3>
+                <ul role="list">
+                  {proves.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            <div className={styles.closeActions}>
+              <PrimaryCta href={estimateHref} placement="labs_close_estimate">
+                {ESTIMATE_LABEL}
+              </PrimaryCta>
+              <TextCta href={callHref} placement="labs_close_call">
+                {CALL_LABEL}
+              </TextCta>
+              <p className={styles.closeNote}>
+                Automation and AI {automationFrom ? automationFrom.toLowerCase() : null}. {FIXED_QUOTE_NOTE}.
+              </p>
+            </div>
           </div>
         </div>
       </section>

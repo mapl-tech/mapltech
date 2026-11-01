@@ -1,155 +1,148 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useAnimate } from 'framer-motion';
-import { usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
-import type { WorkflowStep } from './work-types';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import type { PipelineStage } from './work-types';
 import styles from './LabsStepper.module.scss';
 
 /**
- * /labs PEAK: "Run this workflow" stepper for MAPL Tours.
+ * /labs signature interaction: "Run this workflow". One button sends a
+ * booking down the real MAPL Tours pipeline, stage by stage, drawing the red
+ * line as it goes. It is an illustration and says so: nothing here talks to
+ * the live system, and the finished state says no booking was made.
  *
- * Desktop: one click sequences intake → plan → book → confirm. Each node fills
- * red (scale 0.6 → 1, 240ms) and the connector to the next node draws in
- * (scaleX 0 → 1 from the left, 360ms); ~2.4s in total, replayable, each step
- * announced through a polite live region. Transform and opacity only; no
- * per-frame React state (useAnimate drives the DOM directly).
- *
- * Mobile: the same <ol> is a native snap row, one node + takeaway per slide;
- * an IntersectionObserver fills the node of the slide in view and the button
- * scrolls to the first slide.
- *
- * Reduced motion: every node renders filled and every connector drawn; the
- * button becomes a "Read the workflow" anchor to the steps.
- *
- * The step titles and takeaways are real <h3>/<p> in the SSR HTML.
+ * - Every stage (name, what the traveller sees, what runs under the hood) is in the
+ *   server HTML and readable at rest; running only moves the highlight.
+ * - One React update per stage (900ms beat), never per frame. The token and
+ *   the rail fill move with CSS transforms from measured node centres.
+ * - Progress is announced in a polite live region. Under reduced motion the
+ *   global stylesheet zeroes the transitions: highlights change in place.
  */
 
+const BEAT_MS = 900;
+const TRACK_ID = 'booking-pipeline';
+
+type Phase = 'idle' | 'running' | 'done';
+
 export interface LabsStepperProps {
-  steps: readonly WorkflowStep[];
-  productName: string;
+  stages?: readonly PipelineStage[];
+  /** Heading and explanation, server-rendered, shown beside the pipeline. */
+  intro?: ReactNode;
+  footnote?: ReactNode;
+  /** Shown after the last stage: the action at the end of the run. */
+  after?: ReactNode;
 }
 
-const NODE_SECONDS = 0.24;
-const LINK_SECONDS = 0.36;
-const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const LIST_ID = 'labs-workflow-steps';
+export default function LabsStepper({ stages = [], intro, footnote, after }: LabsStepperProps) {
+  const [step, setStep] = useState(-1);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const stepRef = useRef(-1);
+  const n = stages.length;
+  const phase: Phase = step < 0 ? 'idle' : step < n ? 'running' : 'done';
 
-const pad = (n: number) => String(n).padStart(2, '0');
+  /** Measure node centres and place the rail, its fill and the token for the current step. */
+  const sync = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const nodes = Array.from(track.querySelectorAll<HTMLElement>('[data-node]'));
+    if (nodes.length < 2) return;
+    const top = track.getBoundingClientRect().top;
+    const centres = nodes.map((node) => {
+      const r = node.getBoundingClientRect();
+      return r.top + r.height / 2 - top;
+    });
+    const span = centres[centres.length - 1] - centres[0] || 1;
+    const s = stepRef.current;
+    const at = centres[Math.min(Math.max(s, 0), centres.length - 1)] - centres[0];
+    track.style.setProperty('--rail-top', `${centres[0]}px`);
+    track.style.setProperty('--rail-height', `${span}px`);
+    track.style.setProperty('--fill', s < 0 ? '0' : String(at / span));
+    track.style.setProperty('--token-y', `${at}px`);
+  }, []);
 
-export default function LabsStepper({ steps, productName }: LabsStepperProps) {
-  const [scope, animate] = useAnimate<HTMLDivElement>();
-  const reduceMotion = usePrefersReducedMotion();
-  const [phase, setPhase] = useState<'idle' | 'running' | 'done'>('idle');
-  const [status, setStatus] = useState('');
-  const runId = useRef(0);
-
-  // Mobile: the slide in view lights its node. Written straight to a data
-  // attribute; the desktop CSS never reads it.
+  // One stage per beat while running.
   useEffect(() => {
-    const root = scope.current;
-    const list = root?.querySelector<HTMLElement>('[data-steps]');
-    if (!list || typeof IntersectionObserver === 'undefined') return;
-    const items = Array.from(list.querySelectorAll<HTMLElement>('[data-step]'));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          (entry.target as HTMLElement).dataset.active = entry.intersectionRatio >= 0.6 ? 'true' : 'false';
-        }
-      },
-      { root: list, threshold: [0.6] },
-    );
-    items.forEach((item) => observer.observe(item));
+    if (phase !== 'running') return;
+    const timer = window.setTimeout(() => setStep((s) => s + 1), BEAT_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase, step]);
+
+  useEffect(() => {
+    stepRef.current = step;
+    sync();
+  }, [step, sync]);
+
+  // Text reflows on resize; keep the rail on the node centres.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => sync());
+    observer.observe(track);
     return () => observer.disconnect();
-  }, [scope]);
+  }, [sync]);
 
-  const run = async () => {
-    const list = scope.current?.querySelector<HTMLElement>('[data-steps]');
-    const desktop = window.matchMedia('(min-width: 768px)').matches;
+  const status =
+    phase === 'idle'
+      ? ''
+      : phase === 'running'
+        ? `Stage ${step + 1} of ${n}: ${stages[step]?.name}.`
+        : `Shown end to end, ${n} of ${n} stages. An illustration: no booking was made.`;
 
-    if (!desktop) {
-      list?.scrollTo({ left: 0, behavior: 'smooth' });
-      setStatus(`Step 1 of ${steps.length} — ${steps[0]?.title ?? ''}`);
-      return;
-    }
-
-    const id = ++runId.current;
-    setPhase('running');
-    animate('[data-fill]', { scale: 0.6, opacity: 0 }, { duration: 0 });
-    animate('[data-connector]', { scaleX: 0 }, { duration: 0 });
-
-    for (let i = 0; i < steps.length; i += 1) {
-      if (runId.current !== id) return;
-      setStatus(`Step ${i + 1} of ${steps.length} — ${steps[i].title}`);
-      await animate(`[data-step="${i}"] [data-fill]`, { scale: 1, opacity: 1 }, { duration: NODE_SECONDS, ease: EASE_OUT });
-      if (i < steps.length - 1) {
-        await animate(`[data-step="${i}"] [data-connector]`, { scaleX: 1 }, { duration: LINK_SECONDS, ease: 'easeInOut' });
-      }
-    }
-
-    if (runId.current === id) {
-      setPhase('done');
-      setStatus(`Workflow complete — ${steps.length} of ${steps.length} steps.`);
-    }
-  };
-
-  const label = phase === 'idle' ? 'Run this workflow' : phase === 'running' ? 'Running…' : 'Replay';
 
   return (
-    <div ref={scope} className={styles.stepper} data-reduced={reduceMotion ? 'true' : undefined}>
-      <div className={styles.controls}>
-        {reduceMotion ? (
-          <a className={styles.run} href={`#${LIST_ID}`}>
-            Read the workflow
-          </a>
-        ) : (
+    <div className={styles.stepper} data-phase={phase}>
+      <div className={styles.side}>
+        {intro}
+        <div className={styles.controls}>
           <button
             type="button"
             className={styles.run}
-            onClick={run}
-            aria-controls={LIST_ID}
-            data-cursor="play"
+            onClick={() => setStep(0)}
+            aria-controls={TRACK_ID}
             data-cta-placement="labs_run_workflow"
           >
-            <PlayGlyph />
-            {label}
+            <span className={styles.play} aria-hidden="true">
+              <svg width="10" height="10" viewBox="0 0 10 10" focusable="false">
+                <path d="M2 1v8l7-4-7-4Z" fill="currentColor" />
+              </svg>
+            </span>
+            {/* A stable name: progress is announced once, by the status region, not by the button too. */}
+            Run this workflow
           </button>
-        )}
-        <p className={styles.status} role="status">
-          {status}
-        </p>
+          <p className={styles.status} role="status">
+            {status}
+          </p>
+        </div>
+        {footnote ? <p className={styles.footnote}>{footnote}</p> : null}
       </div>
 
-      <ol id={LIST_ID} className={styles.steps} data-steps aria-label={`${productName} workflow`}>
-        {steps.map((step, i) => (
-          <li key={step.id} className={styles.step} data-step={i} data-active="false">
-            <div className={styles.rail} aria-hidden="true">
-              <span className={styles.node}>
-                <span className={styles.fill} data-fill />
-              </span>
-              {i < steps.length - 1 ? (
-                <span className={styles.connector}>
-                  <span className={styles.connectorFill} data-connector />
-                </span>
-              ) : null}
-            </div>
-            <span className={styles.no}>{pad(i + 1)}</span>
-            <h3 className={styles.stepTitle}>{step.title}</h3>
-            <p className={styles.stepText}>{step.text}</p>
-            <span className={styles.slideMeta}>
-              Step {i + 1} of {steps.length} · swipe
-            </span>
-          </li>
-        ))}
-      </ol>
+      <div ref={trackRef} className={styles.track}>
+        <span className={styles.rail} aria-hidden="true">
+          <span className={styles.railFill} />
+          <span className={styles.token} />
+        </span>
+        <ol id={TRACK_ID} className={styles.stages} role="list" aria-label="The stages of one booking">
+        {stages.map((stage, i) => {
+          const state = phase === 'idle' ? 'idle' : i < step || phase === 'done' ? 'done' : i === step ? 'active' : 'pending';
+          return (
+            <li key={stage.id} className={styles.stage} data-state={state} aria-current={state === 'active' ? 'step' : undefined}>
+              <span className={styles.node} data-node aria-hidden="true" />
+              <h3 className={styles.name}>{stage.name}</h3>
+              <dl className={styles.pair}>
+                <div>
+                  <dt>What the traveller sees</dt>
+                  <dd>{stage.surface}</dd>
+                </div>
+                <div className={styles.under}>
+                  <dt>Under the hood</dt>
+                  <dd>{stage.engineering}</dd>
+                </div>
+              </dl>
+            </li>
+          );
+        })}
+        </ol>
+        {after ? <div className={styles.after}>{after}</div> : null}
+      </div>
     </div>
-  );
-}
-
-function PlayGlyph() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
-      <path d="M3 1.5v9l7-4.5-7-4.5Z" fill="currentColor" />
-    </svg>
   );
 }

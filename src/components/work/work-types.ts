@@ -45,3 +45,27 @@ export interface WorkflowStep {
   title: string;
   text: string;
 }
+
+/**
+ * One layer of the /our-work pointer preview. Serialisable, because it crosses
+ * into the client island; the catalog builds it from the case stories.
+ */
+export interface PreviewItem {
+  slug: string;
+  /** Real desktop screenshot, or null when the work has no public screen. */
+  src: string | null;
+  /** Stage names drawn as a labelled flow when there is no screenshot. */
+  flow?: readonly string[];
+  /** Small caption on the card: the live address, or what the screenshot shows. */
+  caption?: string;
+}
+
+/** One stage of the MAPL Labs pipeline illustration (/labs). */
+export interface PipelineStage {
+  id: string;
+  name: string;
+  /** What the traveller sees at this stage. */
+  surface: string;
+  /** The software doing the work underneath ("Under the hood"). */
+  engineering: string;
+}
