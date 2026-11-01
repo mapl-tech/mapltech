@@ -195,6 +195,13 @@
   &:focus-within {
     border-color: rgba($color-red, 0.7);
   }
+
+  // The pill is the visible control, so it carries the site-wide ring for its
+  // input (which drops its own outline to avoid a box inside the pill).
+  &:has(.input:focus-visible) {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
 }
 
 .input {
