@@ -235,13 +235,13 @@ $col-gap: 32px;
   }
 }
 
+// Movement only: the rows carry 16-17px muted text, which must hold 4.5:1 at
+// every point of the entrance, so it never fades.
 @keyframes settle-in {
   from {
-    opacity: 0.4;
     transform: translateY(16px);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }

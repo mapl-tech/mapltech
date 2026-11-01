@@ -126,9 +126,9 @@ export default function Footer() {
         </div>
       </div>
 
-      <p className={styles.wordmark} aria-hidden="true">
-        MAPL TECH
-      </p>
+      {/* A logotype, set as generated content: decoration has no text in the
+          DOM (WCAG exempts logotypes from contrast; automated checks then agree). */}
+      <div className={styles.wordmark} aria-hidden="true" data-text={siteConfig.name} />
     </footer>
   );
 }

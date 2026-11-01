@@ -269,12 +269,16 @@ function Digits({ text, flip }: { text: string; flip: boolean }) {
   );
 }
 
+// The flipping digits are one span per character, so they are hidden from
+// assistive tech and the whole time is read once from a visually hidden copy
+// (aria-label is not allowed on <time> without a role).
 function Clock({ hhmm, flip, className }: { hhmm: string; flip: boolean; className?: string }) {
   return (
-    <time className={className} dateTime={hhmm} aria-label={hhmm}>
+    <time className={className} dateTime={hhmm}>
       <span aria-hidden="true">
         <Digits text={hhmm} flip={flip} />
       </span>
+      <span className="visually-hidden">{hhmm}</span>
     </time>
   );
 }

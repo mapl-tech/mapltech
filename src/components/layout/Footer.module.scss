@@ -299,4 +299,8 @@
   transform: translateY(8%);
   user-select: none;
   pointer-events: none;
+
+  &::before {
+    content: attr(data-text);
+  }
 }

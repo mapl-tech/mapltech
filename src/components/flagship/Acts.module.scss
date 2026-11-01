@@ -66,10 +66,10 @@
   }
 }
 
+// Starts dim but never under 3:1 for this large text (floor 0.36 on the ground).
 @keyframes hush {
   from {
-    opacity: 0.08;
-    filter: blur(0px);
+    opacity: 0.4;
     transform: translateY(12px);
   }
   to {
