@@ -6,15 +6,19 @@ import { FRAGMENT_SHADER, VERTEX_SHADER } from './lightFieldShader';
 import styles from './LightField.module.scss';
 
 /**
- * A real-time crimson light field (raw WebGL, no library). Renders at half
- * resolution (the light is soft, so nobody can tell) with the pixel ratio
- * capped, pauses whenever it is off screen or the tab is hidden, and follows
- * the pointer with an eased bloom on mice.
+ * A crimson light field (raw WebGL, no library), rendered at half resolution
+ * with the pixel ratio capped (the light is soft, so nobody can tell).
  *
- * Degrades in layers: reduced motion (and touch, when `liveOnTouch` is false)
- * draws one still frame; no WebGL, a shader
- * failure or a lost context leaves the CSS gradient behind the canvas, which
- * is styled to read as the same light. Decorative only (aria-hidden).
+ * Motion, by design: the first time the field comes into view the light flows
+ * in and settles on its signature frame within 4.5s, then holds. After that it
+ * moves only with a mouse (an eased bloom that follows the pointer). Nothing
+ * moves on its own for more than five seconds (WCAG 2.2.2) and nothing renders
+ * while the field is still, off screen or in a hidden tab.
+ *
+ * Degrades in layers: reduced motion, `still`, and touch when `liveOnTouch` is
+ * false draw the signature frame at once; no WebGL, a shader failure or a lost
+ * context leaves the CSS gradient behind the canvas, styled to read as the
+ * same light. Decorative only (aria-hidden).
  */
 export interface LightFieldProps {
   /** Where the light gathers on landscape screens, 0..1 from the top-left. */
@@ -25,9 +29,11 @@ export interface LightFieldProps {
   portraitY?: number;
   /** Overall brightness multiplier. */
   intensity?: number;
+  /** Draw the signature frame only: no settle, no pointer bloom. */
+  still?: boolean;
   /**
-   * Animate on touch devices too (default). Pass false for a section that
-   * reads just as well still, to spare phone GPUs and batteries.
+   * Settle on touch devices too (default). Pass false for a section that reads
+   * just as well still, to spare phone GPUs and batteries.
    */
   liveOnTouch?: boolean;
   className?: string;
@@ -36,11 +42,16 @@ export interface LightFieldProps {
 const MAX_PIXEL_RATIO = 1.5;
 const RENDER_SCALE = 0.5;
 /**
- * The clock starts here rather than at 0: this moment has the richest folds,
- * so the first paint and the reduced-motion still frame are the same picture.
+ * The signature frame: the moment with the richest folds. The settle ends
+ * here, and it is what reduced motion, `still` and the OG image show.
  */
 const START_TIME = 60;
+/** How long the light flows in, and how far (in shader seconds) it travels. */
+const SETTLE_MS = 4500;
+const SETTLE_SPAN = 6;
 const QUAD = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
+
+const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
 
 function compile(gl: WebGLRenderingContext, type: number, source: string): WebGLShader | null {
   const shader = gl.createShader(type);
@@ -74,6 +85,7 @@ export default function LightField({
   portraitX = 0.5,
   portraitY = 0.72,
   intensity = 1,
+  still: stillProp = false,
   liveOnTouch = true,
   className,
 }: LightFieldProps) {
@@ -81,8 +93,7 @@ export default function LightField({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduceMotion = usePrefersReducedMotion();
   const finePointer = useFinePointer();
-  // One still frame: what reduced motion gets, and touch devices when asked.
-  const still = reduceMotion || (!liveOnTouch && !finePointer);
+  const still = stillProp || reduceMotion || (!liveOnTouch && !finePointer);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -108,11 +119,17 @@ export default function LightField({
     const uIntensity = gl.getUniformLocation(program, 'u_intensity');
 
     let frame = 0;
-    let visible = true;
+    let visible = false;
     let portrait = false;
-    const start = performance.now();
+    /** When the settle began (first time in view); null until then. */
+    let settleStart: number | null = null;
     // Target and eased pointer, 0..1 from the top-left; -1 until a mouse moves.
     const pointer = { x: -1, y: -1, targetX: -1, targetY: -1 };
+
+    const settleProgress = (now: number) =>
+      still ? 1 : settleStart === null ? 0 : Math.min(1, (now - settleStart) / SETTLE_MS);
+    const pointerEasing = () =>
+      pointer.targetX >= 0 && (Math.abs(pointer.targetX - pointer.x) > 0.0005 || Math.abs(pointer.targetY - pointer.y) > 0.0005);
 
     const resize = () => {
       const scale = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO) * RENDER_SCALE;
@@ -135,7 +152,7 @@ export default function LightField({
       const fx = portrait ? portraitX : focusX;
       const fy = portrait ? portraitY : focusY;
       gl.uniform2f(uResolution, canvas.width, canvas.height);
-      gl.uniform1f(uTime, still ? START_TIME : START_TIME + (now - start) / 1000);
+      gl.uniform1f(uTime, START_TIME - SETTLE_SPAN * (1 - easeOutCubic(settleProgress(now))));
       // GL's y axis points up; ours points down.
       gl.uniform2f(uPointer, pointer.x, pointer.x < 0 ? -1 : 1 - pointer.y);
       gl.uniform2f(uFocus, fx, 1 - fy);
@@ -143,22 +160,25 @@ export default function LightField({
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
 
+    // Frames run only while something is moving: the settle, or the bloom
+    // easing after the pointer. Otherwise the last frame simply stays.
     const loop = (now: number) => {
       frame = 0;
       draw(now);
-      schedule();
+      if (settleProgress(now) < 1 || pointerEasing()) schedule();
     };
     const schedule = () => {
-      if (!frame && visible && !still && document.visibilityState === 'visible') {
+      if (!frame && visible && document.visibilityState === 'visible') {
         frame = requestAnimationFrame(loop);
       }
     };
 
     const onPointer = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse') return;
+      if (event.pointerType !== 'mouse' || still) return;
       const rect = canvas.getBoundingClientRect();
       pointer.targetX = (event.clientX - rect.left) / rect.width;
       pointer.targetY = (event.clientY - rect.top) / rect.height;
+      schedule();
     };
     const onVisibility = () => schedule();
     const onContextLost = (event: Event) => {
@@ -170,10 +190,11 @@ export default function LightField({
 
     const resizeObserver = new ResizeObserver(() => {
       resize();
-      if (still) draw(performance.now());
+      draw(performance.now()); // a resized canvas is cleared: redraw the current frame
     });
     const intersection = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
+      if (visible && settleStart === null && !still) settleStart = performance.now();
       schedule();
     });
     resizeObserver.observe(canvas);
@@ -185,7 +206,6 @@ export default function LightField({
     resize();
     draw(performance.now());
     root.dataset.live = '';
-    schedule();
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
