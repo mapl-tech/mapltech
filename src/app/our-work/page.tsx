@@ -188,7 +188,7 @@ export default function OurWorkPage() {
               </div>
               <div className={styles.slotField} data-field="result">
                 <dt>Result</dt>
-                <dd className={styles.result}>A price range in 60 seconds, before we ask for anything.</dd>
+                <dd className={styles.result}>A published price range, before we ask for anything.</dd>
               </div>
             </dl>
             <div className={styles.slotActions}>
@@ -209,9 +209,9 @@ export default function OurWorkPage() {
   );
 }
 
-/** "Websites, automation and AI, internal tools": names joined in sentence case (acronyms kept). */
+/** "Web Development, Automation & AI, Custom Internal Tools": service names as named. */
 function sentenceList(names: readonly string[]): string {
-  return names.map((name, i) => (i === 0 ? name : name.charAt(0).toLowerCase() + name.slice(1))).join(', ');
+  return names.join(', ');
 }
 
 /** One museum label. The client name is the link; it stretches over the whole row. */

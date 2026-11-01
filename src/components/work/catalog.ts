@@ -135,12 +135,12 @@ export function catalogVoice(): CatalogVoice | undefined {
   return undefined;
 }
 
-/** Homepage vocabulary for the four service lines (flagship content.ts LAYERS). */
+/** The four service lines by their canonical names (nav, homepage, pricing). */
 export const SERVICE_NAMES: Record<EstimateService, string> = {
-  web: 'Websites',
-  automation: 'Automation and AI',
-  tools: 'Internal tools',
-  cloud: 'Cloud',
+  web: SERVICE_META.web.label,
+  automation: SERVICE_META.automation.label,
+  tools: SERVICE_META.tools.label,
+  cloud: SERVICE_META.cloud.label,
 };
 
 /** The service lines that have at least one project on view, by name. */

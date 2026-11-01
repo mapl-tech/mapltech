@@ -269,7 +269,7 @@ export default function CaseStudy({
               <Link href={estimateHref} className={styles.nextCard} data-cta-placement={`case_${entry.slug}_next`}>
                 <span className={styles.nextLabel}>Your project, next.</span>
                 <span className={styles.nextText}>
-                  Price it in 60 seconds from our public list, then we scope it with you on a short call.
+                  Price it from our public list, then we scope it with you on a 20-minute call.
                 </span>
                 <span className={styles.nextCta}>
                   Price your project<span aria-hidden="true"> →</span>
