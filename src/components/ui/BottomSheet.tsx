@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { Drawer } from 'vaul';
 import { usePrefersReducedMotion } from './useMediaQuery';
 
@@ -35,6 +35,11 @@ export interface BottomSheetProps {
   modal?: boolean;
   dismissible?: boolean;
   className?: string;
+  /**
+   * Where focus goes when the sheet closes, for sheets opened by a controlled
+   * button rather than a Drawer.Trigger (Radix can only restore to its own trigger).
+   */
+  returnFocusRef?: RefObject<HTMLElement | null>;
 }
 
 const OVERLAY: CSSProperties = {
@@ -100,6 +105,7 @@ export default function BottomSheet({
   modal = true,
   dismissible = true,
   className = '',
+  returnFocusRef,
 }: BottomSheetProps) {
   const reduceMotion = usePrefersReducedMotion();
   const [internalSnap, setInternalSnap] = useState<SnapPoint | null>(snapPoints[0] ?? null);
@@ -118,6 +124,10 @@ export default function BottomSheet({
       repositionInputs
       modal={modal}
       dismissible={dismissible}
+      // vaul defaults this to false, which cancels Radix's focus-on-open: focus
+      // stayed on the page, Tab walked out of the "modal" sheet and Escape did
+      // not hand focus back. With it, focus moves in, is trapped, and returns.
+      autoFocus={modal}
     >
       {trigger ? <Drawer.Trigger asChild>{trigger}</Drawer.Trigger> : null}
       <Drawer.Portal>
@@ -127,6 +137,11 @@ export default function BottomSheet({
           style={CONTENT}
           data-reduced-motion={reduceMotion ? '' : undefined}
           aria-describedby={undefined}
+          onCloseAutoFocus={(event) => {
+            if (!returnFocusRef?.current) return;
+            event.preventDefault();
+            returnFocusRef.current.focus();
+          }}
         >
           <Drawer.Handle className="bottom-sheet__handle" style={HANDLE} />
           <div className="bottom-sheet__head" style={HEAD}>

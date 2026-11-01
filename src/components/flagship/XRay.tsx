@@ -118,9 +118,9 @@ export default function XRay() {
           ))}
         </ol>
 
-        <p className={styles.verdict} aria-live="polite">
-          {verdict}
-        </p>
+        {/* No live region: the legend above is the accessible record, so the line
+            settling as telemetry arrives never interrupts a screen reader. */}
+        <p className={styles.verdict}>{verdict}</p>
       </div>
     </section>
   );

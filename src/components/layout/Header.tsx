@@ -286,6 +286,7 @@ export default function Header() {
   const compact = useCompact();
   const [menuOpen, setMenuOpen] = useState(false);
   const sheetId = useId();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   return (
     <header className={styles.header} data-compact={compact ? '' : undefined} style={VIEW_TRANSITION_ANCHOR}>
@@ -316,6 +317,7 @@ export default function Header() {
           </span>
 
           <button
+            ref={menuButtonRef}
             type="button"
             className={styles.menuButton}
             aria-label="Open menu"
@@ -329,7 +331,13 @@ export default function Header() {
         </div>
       </div>
 
-      <MobileNav id={sheetId} open={menuOpen} onOpenChange={setMenuOpen} pathname={pathname} />
+      <MobileNav
+        id={sheetId}
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        pathname={pathname}
+        returnFocusRef={menuButtonRef}
+      />
     </header>
   );
 }

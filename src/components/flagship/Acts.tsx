@@ -126,13 +126,11 @@ export function Close({ image }: { image: { src: string; width: number; height: 
   return (
     <section className={styles.close} aria-labelledby="close-title">
       {image ? (
-        <Image
-          src={image.src}
-          alt={CLOSE.imageAlt}
-          fill
-          sizes="100vw"
-          className={styles.closeImg}
-        />
+        // A wrapper sizes the photograph: full-bleed on landscape, the top of the
+        // section on portrait so the copy below sits on solid ground, not on lit windows.
+        <div className={styles.closeMedia}>
+          <Image src={image.src} alt={CLOSE.imageAlt} fill sizes="100vw" className={styles.closeImg} />
+        </div>
       ) : null}
       <div className={styles.closeScrim} aria-hidden="true" />
       <div className={styles.closeInner}>

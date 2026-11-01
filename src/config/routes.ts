@@ -11,13 +11,13 @@
  * post data and are never guessed. Do not use `new Date()` here: a sitemap
  * whose every entry is "modified today" tells crawlers nothing.
  */
-import { siteConfig } from '@/config/site';
+import { listedProjects, siteConfig } from '@/config/site';
 import { blogPosts } from '@/data/blog-posts';
 
 export const SITE_URL = siteConfig.url;
 
 /** Pages touched by the 2026 interactive redesign carry this lastModified. */
-export const REDESIGN_DATE = '2026-09-22';
+export const REDESIGN_DATE = '2026-11-01'; // flagship rebuild of every page
 
 export interface RouteEntry {
   /** Path relative to the site root, always starting with '/'. */
@@ -36,7 +36,7 @@ export const staticRoutes: readonly RouteEntry[] = [
   // Service pages. `/services` itself is a redirect stub to
   // /services/web-development and was not touched by the redesign
   // (last commit 2026-02-28).
-  { path: '/services', lastModified: '2026-02-28' },
+  { path: '/services', lastModified: REDESIGN_DATE },
   { path: '/services/web-development', lastModified: REDESIGN_DATE },
   { path: '/services/automation-ai-workflow-setup', lastModified: REDESIGN_DATE },
   { path: '/services/custom-internal-tools', lastModified: REDESIGN_DATE },
@@ -117,6 +117,14 @@ export function toISODate(input: string): string {
   return `${parsed.getUTCFullYear()}-${pad2(parsed.getUTCMonth() + 1)}-${pad2(parsed.getUTCDate())}`;
 }
 
+/** One case-study page per listed project (hidden projects have no page). */
+export function caseRoutes(): RouteEntry[] {
+  return listedProjects().map((project) => ({
+    path: `/our-work/${project.slug}`,
+    lastModified: REDESIGN_DATE,
+  }));
+}
+
 /** One route per blog post, dated from the post itself. */
 export function blogRoutes(): RouteEntry[] {
   return blogPosts.map((post) => ({
@@ -132,7 +140,7 @@ let cachedIndex: Map<string, string> | undefined;
 export function allRoutes(): RouteEntry[] {
   if (!cachedRoutes) {
     const seen = new Set<string>();
-    cachedRoutes = [...staticRoutes, ...blogRoutes()].filter((route) => {
+    cachedRoutes = [...staticRoutes, ...caseRoutes(), ...blogRoutes()].filter((route) => {
       if (seen.has(route.path)) return false;
       seen.add(route.path);
       return true;

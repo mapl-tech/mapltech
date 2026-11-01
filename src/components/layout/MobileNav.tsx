@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type SyntheticEvent } from 'react';
+import { useState, type RefObject, type SyntheticEvent } from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import BottomSheet, { type SnapPoint } from '@/components/ui/BottomSheet';
@@ -45,9 +45,11 @@ export interface MobileNavProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   pathname: string;
+  /** The hamburger: focus returns here when the sheet closes. */
+  returnFocusRef?: RefObject<HTMLElement | null>;
 }
 
-export default function MobileNav({ id, open, onOpenChange, pathname }: MobileNavProps) {
+export default function MobileNav({ id, open, onOpenChange, pathname, returnFocusRef }: MobileNavProps) {
   const [snap, setSnap] = useState<SnapPoint | null>(SNAP_POINTS[0]);
 
   const close = () => onOpenChange(false);
@@ -69,6 +71,7 @@ export default function MobileNav({ id, open, onOpenChange, pathname }: MobileNa
       activeSnapPoint={snap}
       setActiveSnapPoint={setSnap}
       className={styles.sheet}
+      returnFocusRef={returnFocusRef}
     >
       <nav id={id} aria-label="Mobile" className={styles.sheetNav}>
         <ul className={styles.sheetList}>

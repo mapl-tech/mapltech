@@ -50,10 +50,11 @@
   padding: 0 $space-16;
   border: 1px solid $color-hairline-strong;
   border-radius: $radius-pill;
-  font-family: $font-mono;
-  font-size: $font-size-xs;
-  letter-spacing: $letter-spacing-wide;
-  text-transform: uppercase;
+  font-family: $font-body;
+  font-size: 0.9375rem;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0;
+  text-transform: none;
   color: $color-fg-muted;
   cursor: pointer;
   user-select: none;
@@ -85,11 +86,13 @@
 
 .footnote {
   margin: 0;
-  font-size: $font-size-sm;
+  font-size: 1rem;
   color: $color-fg-muted;
 }
 
-// ---- Summary: right rail on desktop, sticky bottom card on phones/tablets ----
+// ---- Summary: right rail on desktop; on phones/tablets it follows the inputs ----
+// (It used to be a sticky bottom card, which covered the size chips while the
+// visitor was choosing them. Three short chip groups fit above it anyway.)
 
 .summary {
   @include surface(2);
@@ -98,12 +101,8 @@
   padding: $space-24;
 
   @media (max-width: #{$breakpoint-lg - 1px}) {
-    position: sticky;
-    bottom: 0;
-    z-index: 2;
     gap: $space-12;
     padding: $space-16 $space-16 $space-24;
-    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.55);
   }
 }
 
@@ -137,10 +136,10 @@
 .tier,
 .monthly {
   margin: 0;
-  font-family: $font-mono;
-  font-size: $font-size-xs;
+  font-family: $font-body;
+  font-size: 1rem;
   line-height: 1.5;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   color: $color-fg-muted;
 }
 
@@ -223,7 +222,8 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  @include mono-label($color-fg-muted);
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
   text-decoration: underline;
   text-underline-offset: 4px;
   transition: color $transition-fast;

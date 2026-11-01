@@ -86,6 +86,8 @@
   min-width: 0;
 
   > ul {
+    display: grid;
+    gap: 4px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -94,7 +96,8 @@
   > ul a {
     display: inline-flex;
     align-items: center;
-    min-height: 40px;
+    min-height: 44px;
+    min-width: 44px;
     font-size: $font-size-base;
     color: rgba($color-fg, 0.74);
     overflow-wrap: anywhere;
@@ -114,11 +117,12 @@
   font-family: $font-body;
 }
 
+.column > .social,
 .social {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin: 12px 0 0;
+  gap: 8px;
+  margin: 16px 0 0;
   padding: 0;
   list-style: none;
 
@@ -162,7 +166,7 @@
 
 .newsText {
   margin: 6px 0 0;
-  font-size: $font-size-sm;
+  font-size: 1rem;
   color: rgba($color-fg, 0.68);
 }
 
@@ -232,8 +236,8 @@
   gap: 8px 24px;
   padding: 20px 0 24px;
   border-top: 1px solid $color-hairline;
-  font-size: $font-size-sm;
-  color: rgba($color-fg, 0.6);
+  font-size: 1rem;
+  color: rgba($color-fg, 0.66);
 
   p {
     margin: 0;
@@ -251,8 +255,8 @@
   a {
     display: inline-flex;
     align-items: center;
-    min-height: 40px;
-    color: rgba($color-fg, 0.68);
+    min-height: 44px;
+    color: rgba($color-fg, 0.7);
 
     &:hover {
       color: $color-fg;

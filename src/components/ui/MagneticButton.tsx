@@ -107,10 +107,12 @@ export default function MagneticButton({
   // The transform lives on this inner surface; the <a>/<button> box never moves,
   // so the hit area and layout stay stable while the label leans toward the pointer.
   const surface = (
+    // No `whileTap`: framer-motion adds tabIndex=0 to a tappable span, which put a
+    // second tab stop inside every button. Press feedback is CSS (`scale` on
+    // :active in globals.scss), which composes with the magnetic transform.
     <motion.span
       className={`magnetic-btn magnetic-btn--${variant} ${SIZE_CLASS[size]} ${className}`.trim()}
       style={{ x: springX, y: springY, touchAction: 'manipulation' }}
-      whileTap={reduceMotion || disabled ? undefined : { scale: 0.97 }}
     >
       <span className="magnetic-btn__text">{children}</span>
       <span className="magnetic-btn__glow" aria-hidden="true" />

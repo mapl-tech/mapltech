@@ -15,6 +15,9 @@ import { routeLastModified } from '@/config/routes';
 import { formatMoney, parsePriceLabel } from '@/lib/estimate';
 import type { BackboneSection } from '@/components/ui/Backbone';
 
+/** "$3,500-$5,000" → "$3,500": the low end of a published range, as written. */
+const fromOf = (label: string): string => label.split('-')[0].trim();
+
 /* ------------------------------------------------------------------ */
 /* Page identity (mirrors the root layout metadata, byte for byte)      */
 /* ------------------------------------------------------------------ */
@@ -408,7 +411,7 @@ export const FAQ_ITEMS: readonly FaqEntry[] = [
   },
   {
     question: 'How do you price white-label work?',
-    answer: `Fixed ranges, published on our pricing page: web development from ${web[0].price}; automation from ${automation[0].price} up to ${automation[automation.length - 1].price}; internal tools from ${tools[0].price} up to ${tools[tools.length - 1].price}; cloud engineering from ${cloud[0].price} up to ${cloud[cloud.length - 1].price}. Partner retainers run from ${bundleLow} to ${bundleHigh} a month and hourly work is ${pricing.hourlyRates.standard}. You get a fixed quote after a 20-min scoping call.`,
+    answer: `Every price is public. Web development starts at ${fromOf(web[0].price)}, automation at ${fromOf(automation[0].price)}, internal tools at ${fromOf(tools[0].price)} and cloud engineering at ${fromOf(cloud[0].price)}; the pricing page lists every tier. Partner retainers run ${bundleLow} to ${bundleHigh} a month, and hourly work is ${pricing.hourlyRates.standard}. You get a fixed quote after a 20-minute scoping call.`,
   },
   {
     question: "Can you work in our client's timezone?",

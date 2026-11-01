@@ -68,7 +68,7 @@ function LayerPanel({ layer }: { layer: Layer }) {
         <p className={styles.meta}>
           <span className={styles.price}>{layer.fromPrice}</span>
           <Link href={layer.href} className={styles.more}>
-            How we build {layer.name.toLowerCase()}
+            {layer.linkLabel}
             <span aria-hidden="true"> →</span>
           </Link>
         </p>

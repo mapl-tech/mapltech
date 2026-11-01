@@ -199,10 +199,10 @@ export default function EstimateTeaser() {
 
         <div className={styles.actions}>
           <Cta placement="home_estimate_refine" href={href} size="medium" cursor="estimate">
-            Refine on the pricing page
+            Open the full estimate
           </Cta>
           <Link href="/contact-us" className={styles.callLink} data-cta-placement="home_estimate_call">
-            or book a 20-min scoping call
+            Book a call
           </Link>
         </div>
       </aside>

@@ -24,7 +24,7 @@
   /* Text */
   --color-fg: #f5f2ee;
   --color-fg-muted: rgba(245, 242, 238, 0.64);
-  --color-fg-dim: rgba(245, 242, 238, 0.4);
+  --color-fg-dim: rgba(245, 242, 238, 0.52);
 
   /* Brand red: the only interactive accent */
   --color-brand: #f03350;

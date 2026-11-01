@@ -63,7 +63,6 @@ export default function Hero() {
       <div className={styles.scrim} aria-hidden="true" />
 
       <div className={styles.copy}>
-        <p className={styles.eyebrow}>{HERO.eyebrow}</p>
         <h1 id="home-h1" className={styles.title}>
           {HERO.titleLines.map((line) => (
             <span key={line} className={styles.titleLine}>

@@ -7,13 +7,13 @@
  */
 import { listedProjects, pricing, testimonials } from '@/config/site';
 import { estimateHref, parsePriceLabel, type EstimateService } from '@/lib/estimate';
+import { ESTIMATE_HREF, ESTIMATE_LABEL } from '@/components/layout/chrome';
 
 /** The one primary action, labelled the same everywhere (header, hero, bar, close). */
-export const PRIMARY_CTA = { label: 'Price your project', href: estimateHref(null) } as const;
+export const PRIMARY_CTA = { label: ESTIMATE_LABEL, href: ESTIMATE_HREF } as const;
 export const SECONDARY_CTA = { label: 'See the work', href: '/our-work' } as const;
 
 export const HERO = {
-  eyebrow: 'White-label engineering for agencies',
   titleLines: ['Your agency sells the vision.', 'We engineer what holds it up.'],
   lede: 'Senior engineers for websites, AI automation, internal tools and cloud, shipped under your brand. Prices are public.',
   trust: '60 seconds. You see the number before we ask for anything.',
@@ -59,7 +59,7 @@ export const PROBLEM = {
   label: 'Launch week, a familiar story',
   lines: [
     'The site launches on time.',
-    'Three weeks later the booking form breaks, the developer has moved on, and nobody can explain the hosting bill.',
+    'Three weeks later the booking form breaks, and the developer has moved on.',
     "Your client doesn't call the developer. They call you.",
   ],
 } as const;
@@ -68,6 +68,8 @@ export interface Layer {
   id: string;
   service: EstimateService;
   name: string;
+  /** Link text to the service page, cased by hand ("AI", not "ai"). */
+  linkLabel: string;
   summary: string;
   deliverables: readonly string[];
   fromPrice: string;
@@ -89,7 +91,8 @@ export const LAYERS: readonly Layer[] = [
   {
     id: 'layer-web',
     service: 'web',
-    name: 'Websites',
+    name: 'Web Development',
+    linkLabel: 'How we build websites',
     summary: 'Custom-coded and headless sites that load fast, rank, and pass an accessibility audit on launch day.',
     deliverables: ['Next.js or WordPress, chosen for the client', 'A CMS your client can edit without calling you', 'Core Web Vitals and WCAG AA as acceptance criteria'],
     fromPrice: from(pricing.webDevelopment.tiers[0].price),
@@ -104,7 +107,8 @@ export const LAYERS: readonly Layer[] = [
   {
     id: 'layer-automation',
     service: 'automation',
-    name: 'Automation and AI',
+    name: 'Automation & AI',
+    linkLabel: 'How we build automation and AI',
     summary: 'CRM workflows, AI intake and agents that take the manual work out of your client’s week.',
     deliverables: ['Lead routing, follow-ups and reporting on autopilot', 'AI agents with guardrails and an audit trail', 'Integrations with the tools the team already uses'],
     fromPrice: from(pricing.automation.tiers[0].price),
@@ -119,7 +123,8 @@ export const LAYERS: readonly Layer[] = [
   {
     id: 'layer-tools',
     service: 'tools',
-    name: 'Internal tools',
+    name: 'Custom Internal Tools',
+    linkLabel: 'How we build internal tools',
     summary: 'Dashboards, client portals and ops systems built around how the team actually works.',
     deliverables: ['Role-based access from day one', 'Live data from the systems you already pay for', 'Software your team owns, not another subscription'],
     fromPrice: from(pricing.internalTools.tiers[0].price),
@@ -134,7 +139,8 @@ export const LAYERS: readonly Layer[] = [
   {
     id: 'layer-cloud',
     service: 'cloud',
-    name: 'Cloud',
+    name: 'Cloud Engineering',
+    linkLabel: 'How we run cloud infrastructure',
     summary: 'Infrastructure as code, CI/CD, monitoring and migrations, so the thing you shipped stays up.',
     deliverables: ['AWS, Google Cloud or Azure, written as code', 'Pipelines that test every change before it ships', 'Monitoring that pages us before your client notices'],
     fromPrice: from(pricing.cloudEngineering.tiers[0].price),
@@ -143,7 +149,7 @@ export const LAYERS: readonly Layer[] = [
   },
 ];
 
-export const SILENCE = 'Every claim on this page can be checked. Start with this page.';
+export const SILENCE = 'Don’t take our word for any of this. Start with the page you’re reading.';
 
 export const XRAY = {
   title: 'This page, taken apart.',
@@ -227,7 +233,7 @@ export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') 
 
 export const FOUNDERS = {
   title: 'Two founders, three cities, your hours.',
-  lede: 'Toronto is home base. Our teams in Lagos and Kingston overlap with Eastern time every working day, so your client never waits a night for an answer.',
+  lede: 'Toronto is home base. Kingston works within an hour of Eastern time all year, and Lagos’s afternoon overlaps the Eastern morning, so your working day is covered by people who know your project.',
   people: [
     { name: 'Leshan Patterson', role: 'Co-founder and Director', image: '/images/team/leshan-patterson.jpg' },
     { name: 'Mercy Akuma', role: 'Co-founder and Director', image: '/images/team/mercy-akuma.jpg' },
@@ -239,7 +245,7 @@ export const CLOSE = {
   lede: 'Pick one. The estimator opens with it selected, and the price is on screen before we ask for anything.',
   choices: (['web', 'automation', 'tools', 'cloud'] as const).map((service) => ({
     service,
-    label: { web: 'A website', automation: 'An automation', tools: 'An internal tool', cloud: 'Cloud infrastructure' }[service],
+    label: { web: 'Web Development', automation: 'Automation & AI', tools: 'Custom Internal Tools', cloud: 'Cloud Engineering' }[service],
     href: estimateHref({ services: [service] }),
   })),
   imageAlt: 'The same Toronto tower, finished and lit at night.',

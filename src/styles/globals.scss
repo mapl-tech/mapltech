@@ -195,8 +195,8 @@ dd, td, th, time, output {
   top: $space-md;
   left: $space-md;
   z-index: $z-toast;
-  padding: $space-sm $space-md;
-  background: $color-red;
+  padding: 0 $space-md;
+  background: $color-red-fill; // white label 5.01:1 (#F03350 was 3.97:1)
   color: $color-white;
   border-radius: $radius-md;
   font-family: $font-body;
@@ -204,8 +204,11 @@ dd, td, th, time, output {
 
   &:focus {
     position: fixed;
+    display: inline-flex;
+    align-items: center;
     width: auto;
     height: auto;
+    min-height: 44px;
     clip: auto;
     overflow: visible;
   }
@@ -373,6 +376,15 @@ main:focus {
   @include pointer-fine-motion {
     &:hover &__glow {
       opacity: 1;
+    }
+  }
+
+  // Press feedback (replaces framer's whileTap, which made the span focusable).
+  @include motion-ok {
+    transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast, scale 120ms cubic-bezier(0.23, 1, 0.32, 1);
+
+    .magnetic-btn-box:active > & {
+      scale: 0.97;
     }
   }
 

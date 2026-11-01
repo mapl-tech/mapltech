@@ -171,8 +171,12 @@
   pointer-events: none;
   background: linear-gradient(180deg, rgba(5, 8, 14, 0.6) 0%, rgba(5, 8, 14, 0.5) 40%, rgba(5, 8, 14, 0) 60%);
 
+  // Measured: the CTA row crosses the brightest city lights in the plate, so the
+  // corner density reaches past the actions (link was 3.59:1 at its lightest point).
   @media (min-aspect-ratio: 1/1) {
-    background: radial-gradient(85% 95% at 0% 100%, rgba(5, 8, 14, 0.8) 0%, rgba(5, 8, 14, 0.5) 40%, rgba(5, 8, 14, 0) 72%);
+    background:
+      linear-gradient(90deg, rgba(5, 8, 14, 0.78) 0%, rgba(5, 8, 14, 0.62) 32%, rgba(5, 8, 14, 0) 58%),
+      radial-gradient(85% 95% at 0% 100%, rgba(5, 8, 14, 0.7) 0%, rgba(5, 8, 14, 0.35) 45%, rgba(5, 8, 14, 0) 72%);
   }
 }
 
@@ -196,21 +200,6 @@
 
   > * {
     max-width: 40rem;
-  }
-}
-
-.eyebrow {
-  @include mono-label($color-fg-muted);
-  margin: 0 0 24px;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-
-  &::before {
-    content: '';
-    width: 28px;
-    height: 2px;
-    background: $color-red;
   }
 }
 
@@ -296,6 +285,6 @@
 
 .trust {
   margin: 20px 0 0;
-  font-size: $font-size-sm;
+  font-size: 1rem;
   color: rgba($color-fg, 0.72);
 }

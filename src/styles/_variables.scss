@@ -43,11 +43,11 @@ $color-navy-mid: $color-surface-3;
 // Text (canonical) - warm white on the warm ground
 //   fg        #F5F2EE                 ~18.6:1 on #0a0a0a
 //   fg-muted  rgba(245,242,238,0.64)  ~7.4:1  (blended #A09F9C)
-//   fg-dim    rgba(245,242,238,0.40)  ~3.6:1  - labels/large text only, never body copy
+//   fg-dim    rgba(245,242,238,0.52)  ~5.1:1  - the dimmest text allowed (labels, meta); measured
 // --------------------------------------------
 $color-fg: #F5F2EE;
 $color-fg-muted: rgba(245, 242, 238, 0.64);
-$color-fg-dim: rgba(245, 242, 238, 0.40);
+$color-fg-dim: rgba(245, 242, 238, 0.52); // was 0.40 (3.6:1, failed AA for 13px labels)
 
 // White & Text (legacy names) - WCAG AA contrast ratios on the ground
 $color-white: #ffffff;                          // 21:1 contrast

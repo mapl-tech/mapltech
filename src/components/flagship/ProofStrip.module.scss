@@ -24,7 +24,9 @@
 
 .caption {
   margin: 0;
-  @include mono-label(rgba($color-fg, 0.62));
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba($color-fg, 0.7);
 
   @include lg {
     grid-column: 1;

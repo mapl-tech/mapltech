@@ -9,7 +9,7 @@
   height: 340vh;
 
   @media (max-width: #{$breakpoint-md - 1px}) {
-    height: 280vh;
+    height: 220vh;
   }
 
   &[data-static] {

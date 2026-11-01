@@ -28,11 +28,11 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: `${siteConfig.name} | Systems, Automation & Infrastructure for Agencies`,
+    default: `${siteConfig.name} | White-Label Web, Automation & Cloud for Agencies`,
     template: `%s | ${siteConfig.name}`,
   },
   description:
-    'MAPL TECH is a systems, automation, cloud, and infrastructure partner for digital agencies. We build scalable websites, internal tools, AI-driven workflows, and cloud infrastructure that support complex client projects beyond design and marketing.',
+    'Senior engineers for agencies: websites, AI automation, internal tools and cloud, shipped under your brand. Public prices from $3,500. Toronto, Lagos and Kingston.',
   metadataBase: new URL(siteConfig.url),
   keywords: [
     'MAPL TECH',
@@ -98,15 +98,15 @@ export const metadata: Metadata = {
     locale: 'en_CA',
     url: siteConfig.url,
     siteName: siteConfig.name,
-    title: `${siteConfig.name} | Systems, Automation & Infrastructure Partner for Digital Agencies`,
+    title: `${siteConfig.name} | White-Label Engineering for Agencies`,
     description:
-      'MAPL TECH is a systems, automation, cloud, and infrastructure partner for digital agencies. We build scalable websites, internal tools, AI-driven workflows, and cloud infrastructure that support complex client projects beyond design and marketing.',
+      'Senior engineers for agencies: websites, AI automation, internal tools and cloud, shipped under your brand. Public prices from $3,500. Toronto, Lagos and Kingston.',
     images: [
       {
-        url: '/images/og-image.png',
+        url: '/images/og-flagship.jpg',
         width: 1200,
         height: 630,
-        alt: 'MAPL TECH - Systems, Automation & Infrastructure for Agencies',
+        alt: 'MAPL TECH: Your agency sells the vision. We engineer what holds it up.',
       },
     ],
   },
@@ -114,10 +114,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@mapltech',
     creator: '@mapltech',
-    title: `${siteConfig.name} | Systems, Automation & Infrastructure Partner for Digital Agencies`,
+    title: `${siteConfig.name} | White-Label Engineering for Agencies`,
     description:
-      'MAPL TECH is a systems, automation, cloud, and infrastructure partner for digital agencies. We build scalable websites, internal tools, AI-driven workflows, and cloud infrastructure.',
-    images: ['/images/og-image.png'],
+      'Senior engineers for agencies: websites, AI automation, internal tools and cloud, shipped under your brand. Public prices from $3,500.',
+    images: ['/images/og-flagship.jpg'],
   },
   robots: {
     index: true,

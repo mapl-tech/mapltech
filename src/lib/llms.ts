@@ -10,6 +10,7 @@
 import { siteConfig, pricing, listedProjects, labsProjects, careers, testimonials } from '@/config/site';
 import { executives, teamMembers, countries } from '@/config/team';
 import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
+import { findStory } from '@/components/case/stories';
 import { absoluteUrl, isSitemapPath, toISODate } from '@/config/routes';
 import {
   ORG_LEGAL_NAME,
@@ -190,12 +191,23 @@ function workShort(): string {
   const grouped = [...byCategory.entries()].map(([category, titles]) => `${category}: ${titles.join(', ')}`).join('; ');
   const labs = labsProjects.map((p) => `${p.name} (${p.status}): ${p.tagline}`).join('. ');
   const quotes = publishedTestimonials().map((t) => `- Client quote: "${t.quote}" (${t.name}, ${t.role}, ${t.company})`);
+  // Each case study with its own page, one-line outcome and sourced results.
+  const cases = listedProjects().flatMap((project) => {
+    const story = findStory(project.slug);
+    if (!story) return [];
+    const results = story.results?.map((r) => `${r.value} ${r.label}`).join('; ');
+    return [`- ${link(`${story.client} case study`, `/our-work/${project.slug}`)}: ${story.headline}${results ? ` Results: ${results}.` : ''}`];
+  });
   return [
     '## Work',
     '',
     `- ${link('Our Work', '/our-work')}: ${listedProjects().length} client projects. ${grouped}.`,
     `- ${link('MAPL Labs', '/labs')}: products ${ORG_NAME} builds and operates in-house. ${labs}.`,
     ...quotes,
+    '',
+    '### Case studies',
+    '',
+    ...cases,
   ].join('\n');
 }
 
@@ -324,9 +336,17 @@ function pricingFull(): string {
 }
 
 function workFull(): string {
-  const projects = listedProjects().map(
-    (p) => `- **${p.title}** (${p.category}): ${p.description} Tags: ${p.tags.join(', ')}.`,
-  );
+  const projects = listedProjects().map((p) => {
+    const story = findStory(p.slug);
+    const results = story?.results?.map((r) => `${r.value} ${r.label}`).join('; ');
+    const built = story?.built?.stages.map((stage) => `${stage.name}: ${stage.text}`).join(' ');
+    return [
+      `- **${p.title}** (${p.category}), ${link('case study', `/our-work/${p.slug}`)}: ${story?.headline ?? p.description} Tags: ${p.tags.join(', ')}.`,
+      ...(built ? [`  - What was built: ${built}`] : []),
+      ...(results ? [`  - Results: ${results}.`] : []),
+      ...(story?.sources ? [`  - Sources: ${story.sources}`] : []),
+    ].join('\n');
+  });
   const labs = labsProjects.flatMap((p) => [
     `- **${p.name}** (${p.status}): ${p.tagline}. ${p.description}`,
     ...p.capabilities.map((c) => `  - ${c}`),
