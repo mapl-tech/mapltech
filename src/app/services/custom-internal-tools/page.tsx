@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import ServicePage from '@/components/services/ServicePage';
+import { serviceMetadata } from '@/components/services/serviceContent';
 
-const DESCRIPTION =
-  'MAPL TECH builds custom dashboards, client portals, and operations platforms designed around how your agency actually works. Role-based access, real-time analytics, and integrations with your existing stack.';
-
+/* Copy, prices and sources: src/components/services/serviceContent.ts. Template: ServicePage. */
 export const metadata: Metadata = {
-  title: 'Custom Internal Tools for Agencies',
-  description: DESCRIPTION,
+  ...serviceMetadata('custom-internal-tools'),
   keywords: [
     'custom internal tools',
     'agency dashboards',
@@ -20,16 +18,8 @@ export const metadata: Metadata = {
     'agency operations tools',
     'MAPL TECH internal tools',
   ],
-  openGraph: {
-    title: 'Custom Internal Tools for Agencies | MAPL TECH',
-    description:
-      'Custom dashboards, client portals, and operations platforms built around how your agency actually works. Not adapted from someone else\'s workflow.',
-  },
-  alternates: {
-    canonical: 'https://mapltech.com/services/custom-internal-tools',
-  },
 };
 
 export default function CustomInternalToolsPage() {
-  return <ServicePage slug="custom-internal-tools" description={DESCRIPTION} />;
+  return <ServicePage slug="custom-internal-tools" />;
 }

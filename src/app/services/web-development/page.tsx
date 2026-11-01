@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import ServicePage from '@/components/services/ServicePage';
+import { serviceMetadata } from '@/components/services/serviceContent';
 
-const DESCRIPTION =
-  'MAPL TECH builds custom-coded websites engineered for speed, accessibility, and long-term maintainability. From headless CMS builds to full-stack React applications, we handle the complex development so your agency can focus on design and client strategy.';
-
+/* Copy, prices and sources: src/components/services/serviceContent.ts. Template: ServicePage. */
 export const metadata: Metadata = {
-  title: 'Custom Web Development for Agencies',
-  description: DESCRIPTION,
+  ...serviceMetadata('web-development'),
   keywords: [
     'custom web development',
     'agency web development partner',
@@ -20,16 +18,8 @@ export const metadata: Metadata = {
     'mobile-first web design',
     'MAPL TECH web development',
   ],
-  openGraph: {
-    title: 'Custom Web Development for Agencies | MAPL TECH',
-    description:
-      'Custom-coded, performance-optimized websites built for agencies. From headless CMS to full-stack React, engineered for speed and accessibility.',
-  },
-  alternates: {
-    canonical: 'https://mapltech.com/services/web-development',
-  },
 };
 
 export default function WebDevelopmentPage() {
-  return <ServicePage slug="web-development" description={DESCRIPTION} />;
+  return <ServicePage slug="web-development" />;
 }

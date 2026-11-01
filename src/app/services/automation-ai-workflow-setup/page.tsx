@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import ServicePage from '@/components/services/ServicePage';
+import { serviceMetadata } from '@/components/services/serviceContent';
 
-const DESCRIPTION =
-  'MAPL TECH builds intelligent automation and AI workflows that connect your CRM, project tools, invoicing, and client intake into seamless pipelines. Custom AI agents, predictive analytics, and multi-system integrations that eliminate manual busywork for agencies.';
-
+/* Copy, prices and sources: src/components/services/serviceContent.ts. Template: ServicePage. */
 export const metadata: Metadata = {
-  title: 'Automation & AI Workflow Setup for Agencies',
-  description: DESCRIPTION,
+  ...serviceMetadata('automation-ai-workflow-setup'),
   keywords: [
     'automation for agencies',
     'AI workflow setup',
@@ -20,16 +18,8 @@ export const metadata: Metadata = {
     'agency operations automation',
     'MAPL TECH automation',
   ],
-  openGraph: {
-    title: 'Automation & AI Workflow Setup for Agencies | MAPL TECH',
-    description:
-      'Intelligent automation and AI workflows that connect your CRM, tools, and client intake into seamless pipelines. Built for agencies.',
-  },
-  alternates: {
-    canonical: 'https://mapltech.com/services/automation-ai-workflow-setup',
-  },
 };
 
 export default function AutomationPage() {
-  return <ServicePage slug="automation-ai-workflow-setup" description={DESCRIPTION} />;
+  return <ServicePage slug="automation-ai-workflow-setup" />;
 }

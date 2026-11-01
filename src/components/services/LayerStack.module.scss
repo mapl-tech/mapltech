@@ -1,0 +1,419 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The layer stack: a live system diagram. Planes, back to front: offset frame
+// -> card -> request path (trunk, hops, ports) -> four windows. Each window
+// sits a step further back than the one above it; the request enters every
+// one of them. The lit window is pulled forward out of its frame.
+
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-ui: cubic-bezier(0.23, 1, 0.32, 1);
+$pull: 8px;
+
+// A size container: the stack responds to the column it is placed in, not the viewport.
+.system {
+  position: relative;
+  max-width: 34rem;
+  container: layer-stack / inline-size;
+  margin: 0 14px 14px 0; // room for the offset frame inside the container
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  padding: 18px 22px 24px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 16px;
+  background: radial-gradient(70% 60% at 100% 0%, rgba($color-red, 0.04) 0%, transparent 60%), $color-surface-1;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 32px 64px -32px rgba(0, 0, 0, 0.85);
+
+  @container layer-stack (max-width: 420px) {
+    padding: 16px 16px 20px;
+  }
+}
+
+// The frame behind the surface, the site-wide motif.
+.structure {
+  position: absolute;
+  inset: 14px -14px -14px 14px;
+  z-index: 0;
+  border: 1px solid rgba($color-red, 0.6);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 8px;
+  @include mono-label(rgba($color-fg, 0.64));
+  font-size: 0.75rem;
+}
+
+// Red is reserved for the path itself; the label stays neutral.
+.headPath {
+  color: rgba($color-fg, 0.82);
+}
+
+// ---------------------------------------------------------------- the request path
+.stack {
+  --gap: 10px; // between windows
+  --hop: 58px; // where the request enters a window, from its top edge
+  --trunk: 8px; // x of the path
+  --gutter: 30px; // left edge of the first window
+  --step: 10px; // each layer sits one step further back
+  position: relative;
+  margin: 0;
+  padding: 18px 0 0;
+  list-style: none;
+
+  @container layer-stack (max-width: 420px) {
+    --hop: 52px;
+    --gutter: 24px;
+    --step: 6px;
+  }
+
+  // Where the request starts: the visitor.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(var(--trunk) - 4px);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: $color-red;
+  }
+
+  &::after {
+    opacity: 0;
+  }
+}
+
+.layer {
+  position: relative;
+  padding-left: calc(var(--gutter) + var(--i, 0) * var(--step));
+
+  & + & {
+    margin-top: var(--gap);
+  }
+
+  // The path down to this layer...
+  &::before {
+    content: '';
+    position: absolute;
+    left: var(--trunk);
+    top: calc(-1 * var(--gap));
+    bottom: 0;
+    width: 2px;
+    background: $color-red;
+    transform-origin: top;
+  }
+
+  &:first-child::before {
+    top: -13px;
+  }
+
+  &:last-child::before {
+    bottom: auto;
+    height: calc(var(--gap) + var(--hop));
+  }
+
+  // ...and across into its window.
+  &::after {
+    content: '';
+    position: absolute;
+    left: var(--trunk);
+    top: var(--hop);
+    width: calc(var(--gutter) + var(--i, 0) * var(--step) - var(--trunk));
+    height: 2px;
+    background: $color-red;
+    transform-origin: left;
+  }
+}
+
+// The port where the request meets the window.
+.hop {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--hop) - 3px);
+  left: calc(var(--gutter) + var(--i, 0) * var(--step) - 4px);
+  width: 8px;
+  height: 8px;
+  border: 2px solid rgba($color-fg, 0.55);
+  border-radius: 50%;
+  background: $color-ground;
+  pointer-events: none;
+  transition: border-color 160ms $ease-ui;
+}
+
+// A port turns red where the request is: the lit layer, or the one under the pointer.
+.layer:hover .hop {
+  border-color: $color-red;
+}
+
+// ---------------------------------------------------------------- windows
+.window {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-areas:
+    'bar bar'
+    'glyph name'
+    'glyph price';
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 2px;
+  padding: 0 16px 13px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 10px;
+  background: #151417;
+  color: rgba($color-fg, 0.86);
+  transition:
+    border-color 160ms $ease-ui,
+    background-color 160ms $ease-ui,
+    color 160ms $ease-ui,
+    transform 220ms $ease-ui;
+  @include focus-ring;
+
+  @container layer-stack (max-width: 420px) {
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 12px;
+    padding: 0 12px 11px;
+  }
+}
+
+// Window chrome: three dots and the layer's job as the title.
+.bar {
+  grid-area: bar;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin: 0 -16px 10px;
+  padding: 7px 16px;
+  border-bottom: 1px solid $color-hairline;
+
+  @container layer-stack (max-width: 420px) {
+    margin: 0 -12px 9px;
+    padding: 7px 12px;
+  }
+}
+
+.dots {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 6px;
+  background: radial-gradient(circle at 3px 3px, rgba($color-fg, 0.34) 2.4px, transparent 2.9px) 0 0 / 12px 6px repeat-x;
+}
+
+.role {
+  min-width: 0;
+  @include mono-label(rgba($color-fg, 0.64));
+  font-size: 0.75rem;
+}
+
+.glyph {
+  grid-area: glyph;
+  width: 44px;
+  height: 32px;
+  color: rgba($color-fg, 0.5);
+  transition: color 160ms $ease-ui;
+
+  @container layer-stack (max-width: 420px) {
+    width: 36px;
+    height: 26px;
+  }
+}
+
+.name {
+  grid-area: name;
+  align-self: end;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.0625rem, 0.98rem + 0.4vw, 1.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: inherit;
+}
+
+// The one list-price style across the services pages: 16px, semibold, tabular.
+.price {
+  grid-area: price;
+  align-self: start;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1.45;
+  color: rgba($color-fg, 0.9);
+  @include tabular;
+}
+
+@include pointer-fine {
+  .window:hover {
+    border-color: rgba($color-fg, 0.3);
+    background-color: #19181b;
+    color: $color-fg;
+  }
+}
+
+@include pointer-fine-motion {
+  .layer:not([data-current]) .window:hover {
+    transform: translateX(-4px);
+  }
+}
+
+// ---------------------------------------------------------------- the lit layer
+// Pulled forward out of its frame, the frame left where the window stood.
+.frame {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  top: 8px;
+  bottom: -8px;
+  left: calc(var(--gutter) + var(--i, 0) * var(--step));
+  right: 0;
+  border: 1px solid rgba($color-red, 0.5);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.layer[data-current] {
+  &::after {
+    width: calc(var(--gutter) + var(--i, 0) * var(--step) - var(--trunk) - #{$pull});
+  }
+
+  .frame {
+    display: block;
+  }
+
+  .hop {
+    border-color: $color-red;
+    transform: translateX(-$pull);
+  }
+
+  .window {
+    border-color: rgba($color-red, 0.85);
+    background: #1a171c;
+    color: $color-fg;
+    box-shadow: 0 22px 44px -24px rgba(0, 0, 0, 0.95);
+    transform: translateX(-$pull);
+  }
+
+  .dots {
+    background-image: radial-gradient(circle at 3px 3px, rgba($color-red, 0.9) 2.4px, transparent 2.9px);
+  }
+
+  .role {
+    color: #ff5c73;
+  }
+
+  .glyph {
+    color: $color-red;
+  }
+
+  .price {
+    color: $color-fg;
+  }
+}
+
+// ---------------------------------------------------------------- the request, once
+// The windows are readable from the first paint (they are navigation). On load
+// only the request moves: it leaves the visitor, runs down the path and enters
+// each layer in turn (140ms apart, done in ~0.8s), then the lit window comes
+// forward out of its frame. The origin pulses twice (under five seconds) and stops. Reduced
+// motion: the finished diagram, nothing moves.
+@include motion-ok {
+  .stack::after {
+    animation: pulse 2.4s $ease-out 1.2s 2 both; // 4.8s in all: under WCAG 2.2.2's five seconds
+  }
+
+  .layer::before {
+    animation: run-down 140ms linear both;
+    animation-delay: calc(var(--i, 0) * 140ms + 80ms);
+  }
+
+  .layer::after {
+    animation: run-across 140ms ease-out both;
+    animation-delay: calc(var(--i, 0) * 140ms + 200ms);
+  }
+
+  .hop {
+    animation: port-in 200ms ease-out both;
+    animation-delay: calc(var(--i, 0) * 140ms + 300ms);
+  }
+
+  .layer[data-current] .window {
+    animation: pull 480ms $ease-out 0.85s both;
+  }
+
+  .layer[data-current] .hop {
+    animation: pull 480ms $ease-out 0.85s both;
+  }
+
+  .layer[data-current] .frame {
+    animation: frame-in 480ms $ease-out 0.85s both;
+  }
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+
+@keyframes run-down {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes run-across {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes port-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pull {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(-$pull);
+  }
+}
+
+@keyframes frame-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
