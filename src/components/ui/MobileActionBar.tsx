@@ -133,7 +133,7 @@ export default function MobileActionBar({
     >
       {/* One action only (Sentinel sticky-mobile-cta-bar): context left, the CTA right. */}
       <div className="flex items-center gap-3 px-4 py-2">
-        <p className="m-0 flex-1 text-[14px] leading-tight" style={{ color: 'rgba(246, 243, 239, 0.78)' }}>
+        <p className="m-0 flex-1 text-[15px] leading-tight" style={{ color: 'rgba(246, 243, 239, 0.78)' }}>
           {context}
         </p>
         <Link

@@ -6,7 +6,7 @@
  * cited inline. Copy rules: no em dashes, no hype verbs, one label per action.
  */
 import { listedProjects, pricing, testimonials } from '@/config/site';
-import { estimateHref, parsePriceLabel, type EstimateService } from '@/lib/estimate';
+import { SIZE_OPTIONS, estimate, estimateHref, formatLineRange, parsePriceLabel, type EstimateService } from '@/lib/estimate';
 import { ESTIMATE_HREF, ESTIMATE_LABEL } from '@/components/layout/chrome';
 
 /** The one primary action, labelled the same everywhere (header, hero, bar, close). */
@@ -14,12 +14,33 @@ export const PRIMARY_CTA = { label: ESTIMATE_LABEL, href: ESTIMATE_HREF } as con
 export const SECONDARY_CTA = { label: 'See the work', href: '/our-work' } as const;
 
 export const HERO = {
-  titleLines: ['Your agency sells the vision.', 'We engineer what holds it up.'],
-  lede: 'Senior engineers for websites, AI automation, internal tools and cloud, shipped under your brand. Prices are public.',
-  trust: '60 seconds. You see the number before we ask for anything.',
-  imageAlt:
-    'A tower under construction in downtown Toronto at blue hour: dark glass on the lower floors, an exposed red steel frame above, a tower crane and the CN Tower in the distance.',
+  titleLines: ['Your agency sells the vision.', 'We engineer the software behind it.'],
+  lede: 'Websites, AI automation, internal tools and cloud, built by senior engineers and shipped under your brand. Our prices are public.',
+  /** Real work behind the price check (decorative; the case studies carry the detail). */
+  frames: {
+    browser: { src: '/images/cases/lro-desktop.jpg', width: 1800, height: 1125, url: 'lrostaffing.com' },
+    phone: { src: '/images/cases/tours-mobile.jpg', width: 780, height: 1688 },
+  },
 } as const;
+
+/** The price check in the hero (HeroEstimate). Ranges come from src/lib/estimate.ts. */
+export const HERO_ESTIMATE = {
+  /** Opens on a website at the smallest size. */
+  openingService: 'web' as EstimateService,
+  title: 'What it costs',
+  meta: 'No email needed',
+  serviceLegend: 'What do you need?',
+  sizeLegend: 'How big?',
+  customLabel: 'Custom quote',
+} as const;
+
+/** The price check's opening range, for the X-ray's replica of the hero. */
+export const HERO_OPENING_RANGE = formatLineRange(
+  estimate({
+    services: [HERO_ESTIMATE.openingService],
+    size: { [HERO_ESTIMATE.openingService]: SIZE_OPTIONS[HERO_ESTIMATE.openingService][0].key },
+  }).lines[0],
+);
 
 /** Lowest public "from" price across the four service lines (site.ts `pricing`). */
 function lowestFromPrice(): number {
@@ -41,12 +62,14 @@ function money(n: number): string {
 
 /** Proof strip. Numbers as published on the live homepage (Projects Supported, Years Combined Experience). */
 export const PROOF = {
+  // Sizes keep each file's own aspect ratio (LRO 400x273, FOCAS 300x86, CHHA 184x192,
+  // Loop and Crowned Spice square), optically balanced around a 34px height.
   logos: [
-    { name: 'LRO Staffing', src: '/images/clients/lro-staffing.png', width: 132, height: 30, invert: true },
-    { name: 'Loop', src: '/images/clients/loop.webp', width: 74, height: 32, invert: false },
-    { name: 'FOCAS Canada', src: '/images/clients/focas-canada.png', width: 120, height: 22, invert: true },
-    { name: 'CHHA-NCR', src: '/images/clients/chha-ncr.svg', width: 96, height: 32, invert: true },
-    { name: 'Crowned Spice', src: '/images/clients/crowned-spice.png', width: 70, height: 34, invert: false },
+    { name: 'LRO Staffing', src: '/images/clients/lro-staffing.png', width: 50, height: 34, invert: true },
+    { name: 'Loop', src: '/images/clients/loop.webp', width: 34, height: 34, invert: false },
+    { name: 'FOCAS Canada', src: '/images/clients/focas-canada.png', width: 84, height: 24, invert: true },
+    { name: 'CHHA-NCR', src: '/images/clients/chha-ncr.svg', width: 33, height: 34, invert: true },
+    { name: 'Crowned Spice', src: '/images/clients/crowned-spice.png', width: 34, height: 34, invert: false },
   ],
   stats: [
     { value: 200, suffix: '+', label: 'projects supported' },
@@ -161,7 +184,7 @@ export const XRAY = {
     { id: 'delivery', name: 'Delivery', note: 'How it reached you' },
     { id: 'speed', name: 'Speed', note: 'How fast, measured on your device' },
   ],
-  components: ['Header', 'Hero', 'ProofStrip', 'Problem', 'Layers', 'XRay', 'WorkStack', 'Spotlight', 'Estimator', 'Founders', 'Faq', 'Close', 'Footer'],
+  components: ['Header', 'Hero', 'HeroEstimate', 'LightField', 'ProofStrip', 'Problem', 'Layers', 'XRay', 'WorkStack', 'Spotlight', 'Founders', 'Faq', 'Close', 'Footer'],
 } as const;
 
 export interface WorkCard {
@@ -231,6 +254,28 @@ export const WORK: readonly WorkCard[] = (
 /** The one approved client quote (site.ts `testimonials`, LRO Staffing). */
 export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') ?? null;
 
+/**
+ * Proof beside the hero's decision: the approved quote's opening sentence,
+ * verbatim and attributed. The Spotlight act quotes the rest (SPOTLIGHT_QUOTE).
+ */
+const spotlightSentences = SPOTLIGHT?.quote.match(/[^.!?]+[.!?]+/g)?.map((sentence) => sentence.trim()) ?? [];
+
+export const HERO_PROOF = SPOTLIGHT
+  ? {
+      quote: spotlightSentences[0] ?? SPOTLIGHT.quote,
+      name: SPOTLIGHT.name,
+      role: `${SPOTLIGHT.role}, ${SPOTLIGHT.company}`,
+      image: SPOTLIGHT.image,
+    }
+  : null;
+
+/**
+ * What the Spotlight act quotes: the rest of the same approved quote, so the
+ * page never shows one sentence twice (the whole quote if it is one sentence).
+ */
+export const SPOTLIGHT_QUOTE =
+  spotlightSentences.length > 1 ? spotlightSentences.slice(1).join(' ') : (SPOTLIGHT?.quote ?? '');
+
 export const FOUNDERS = {
   title: 'Two founders, three cities, your hours.',
   lede: 'Toronto is home base. Kingston works within an hour of Eastern time all year, and Lagos’s afternoon overlaps the Eastern morning, so your working day is covered by people who know your project.',
@@ -248,7 +293,6 @@ export const CLOSE = {
     label: { web: 'Web Development', automation: 'Automation & AI', tools: 'Custom Internal Tools', cloud: 'Cloud Engineering' }[service],
     href: estimateHref({ services: [service] }),
   })),
-  imageAlt: 'The same Toronto tower, finished and lit at night.',
 } as const;
 
 export const MOBILE_BAR_CONTEXT = `Public prices, from ${money(LOWEST_PRICE)}`;

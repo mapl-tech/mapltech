@@ -10,7 +10,8 @@ import styles from './Footer.module.scss';
  * Footer (flagship redesign). Server Component; the only client islands are
  * the newsletter form and the social icons.
  *
- * Order: the one ask (same label as everywhere) → sitemap columns for the
+ * Order: the one ask (same label as everywhere; hidden on pages that end on
+ * their own close section, marked `data-page-close`) → sitemap columns for the
  * diligent and the lost (Sentinel mega-footer) → newsletter → legal → the
  * wordmark set at composition scale, the last thing on every page.
  * One step darker than the page ground; on phones the bottom padding clears

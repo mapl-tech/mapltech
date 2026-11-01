@@ -76,13 +76,14 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   );
 }
 
-// Brand states: hover #FF3D5A, pressed #C4213C.
+// Brand states on the filled button: hover #C4213C, pressed #A81B33 (white
+// label 5.79:1 and 7.2:1; the old bright gradient measured 3.46-3.97:1).
 .magnetic-btn-box:hover .magnetic-btn--primary {
-  background: linear-gradient(135deg, $color-red 0%, $color-red-bright 100%);
+  background: $color-red-fill-hover;
 }
 
 .magnetic-btn-box:active .magnetic-btn--primary {
-  background: $color-red-deep;
+  background: $color-red-fill-pressed;
   box-shadow: none;
 }
 

@@ -1,12 +1,12 @@
 import Image from 'next/image';
-import CountUp from '@/components/home/CountUp';
 import { PROOF } from './content';
 import styles from './ProofStrip.module.scss';
 
 /**
  * Act 2, Reassurance. Real client logos (the live homepage's set) and the three
  * numbers MAPL TECH already publishes. Small and fast: this is information, not
- * an experience, so it never pins or holds.
+ * an experience, so it never pins, holds or counts up (a counting number spends
+ * a second showing a figure that isn't true).
  */
 export default function ProofStrip() {
   return (
@@ -32,7 +32,7 @@ export default function ProofStrip() {
             <div key={stat.label} className={styles.stat}>
               <dt className={styles.statLabel}>{stat.label}</dt>
               <dd className={styles.statValue}>
-                <CountUp value={stat.value} />
+                {stat.value.toLocaleString('en-US')}
                 {stat.suffix}
               </dd>
             </div>

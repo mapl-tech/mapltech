@@ -1,88 +1,124 @@
 import Link from 'next/link';
-import { getImageProps } from 'next/image';
-import Cta from '@/components/home/Cta';
-import towerDesktop from '@/assets/flagship/tower-desktop.jpg';
-import towerMobile from '@/assets/flagship/tower-mobile.jpg';
+import Image, { getImageProps } from 'next/image';
+import { preload } from 'react-dom';
 import DepthScene from './DepthScene';
-import { HERO, PRIMARY_CTA, SECONDARY_CTA } from './content';
-import { COLUMN_SEGMENTS, FLOOR_SEGMENTS, NODES, TRACE_VIEWBOX, segmentPath } from './towerTrace';
+import HeroEstimate from './HeroEstimate';
+import LightField from './LightField';
+import { HERO, HERO_PROOF, SECONDARY_CTA } from './content';
 import styles from './Hero.module.scss';
 
 /**
- * Act 1, Recognition. A layered photographic hero: the plate (with the
- * structural trace locked to it) drifts and settles behind copy that rides at
- * 1x. Scrolling draws the steel frame in red: "we engineer what holds it up".
+ * Act 1, Recognition. The promise on the left; on the right, the proof that
+ * this is a software studio: a working price check in front of real work
+ * (the LRO Staffing site in a browser, MAPL Tours on a phone), over a live
+ * light field. The frames lean with the pointer and drift on scroll through
+ * DepthScene's CSS variables; the card stays still so it reads and clicks
+ * cleanly.
  *
- * Art direction: landscape viewports get the 16:9 plate, portrait viewports
- * (phones, portrait tablets) get a native 9:16 composition with sky on top for
- * the copy. Only one source downloads. The H1 is in the first paint, never
- * faded in, so it can be the LCP element on text-first devices.
+ * Reading order is copy, price check, then the next steps (the work and one
+ * attributed client line), which desktop places under the copy, beside the card.
+ *
+ * The frames are desktop-only art: below 1024px their <source> does not match
+ * and the <img> resolves to an inline blank, so phones download nothing. The
+ * H1 is in the first paint, never faded in, so it can be the LCP element.
  */
+
+const DESKTOP = '(min-width: 1024px)';
+const BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+function desktopSource(frame: { src: string; width: number; height: number }, sizes: string) {
+  const { props } = getImageProps({ src: frame.src, width: frame.width, height: frame.height, alt: '', sizes });
+  return { src: props.src, srcSet: props.srcSet, sizes: props.sizes };
+}
+
 export default function Hero() {
-  const common = { alt: HERO.imageAlt, sizes: '100vw' };
-  const {
-    props: { srcSet: desktopSet },
-  } = getImageProps({ ...common, src: towerDesktop });
-  const {
-    props: { srcSet: mobileSet, ...img },
-  } = getImageProps({ ...common, src: towerMobile });
+  const { browser, phone } = HERO.frames;
+  const browserSource = desktopSource(browser, `${DESKTOP} 40vw, 1px`);
+  const phoneSource = desktopSource(phone, `${DESKTOP} 200px, 1px`);
+
+  // The browser frame can be the largest paint on desktop: request it with the
+  // document head, under the same media query, so phones never fetch it.
+  preload(browserSource.src, {
+    as: 'image',
+    imageSrcSet: browserSource.srcSet,
+    imageSizes: browserSource.sizes,
+    media: DESKTOP,
+    fetchPriority: 'high',
+  });
 
   return (
     <DepthScene as="section" className={styles.hero} aria-labelledby="home-h1">
-      <div className={styles.scene}>
-        <picture>
-          <source media="(min-aspect-ratio: 1/1)" srcSet={desktopSet} sizes="100vw" />
-          <img {...img} alt={HERO.imageAlt} srcSet={mobileSet} className={styles.plate} loading="eager" fetchPriority="high" />
-        </picture>
-        <svg
-          className={styles.trace}
-          viewBox={`0 0 ${TRACE_VIEWBOX.width} ${TRACE_VIEWBOX.height}`}
-          preserveAspectRatio="xMidYMid slice"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <g className={styles.columns}>
-            {COLUMN_SEGMENTS.map((segment, i) => (
-              <path key={`c${i}`} d={segmentPath(segment)} pathLength={1} />
-            ))}
-          </g>
-          <g className={styles.floors}>
-            {FLOOR_SEGMENTS.map((segment, i) => (
-              <path key={`f${i}`} d={segmentPath(segment)} pathLength={1} />
-            ))}
-          </g>
-          <g className={styles.nodes}>
-            {NODES.map(([cx, cy], i) => (
-              <circle key={`n${i}`} cx={cx} cy={cy} r={7} />
-            ))}
-          </g>
-        </svg>
-      </div>
+      <LightField className={styles.light} />
 
-      <div className={styles.haze} aria-hidden="true" />
-      <div className={styles.scrim} aria-hidden="true" />
+      <div className={styles.inner}>
+        <div className={styles.copy}>
+          <h1 id="home-h1" className={styles.title}>
+            {HERO.titleLines.map((line) => (
+              <span key={line} className={styles.titleLine}>
+                {line}
+              </span>
+            ))}
+          </h1>
+          <p className={styles.lede}>{HERO.lede}</p>
+        </div>
 
-      <div className={styles.copy}>
-        <h1 id="home-h1" className={styles.title}>
-          {HERO.titleLines.map((line) => (
-            <span key={line} className={styles.titleLine}>
-              {line}
-            </span>
-          ))}
-        </h1>
-        <p className={styles.lede}>{HERO.lede}</p>
-        <div className={styles.actions}>
-          <Cta placement="home_hero_primary" hero href={PRIMARY_CTA.href} size="large">
-            {PRIMARY_CTA.label}
-          </Cta>
+        <div className={styles.stage}>
+          <div className={styles.frames} aria-hidden="true">
+            <div className={styles.browser}>
+              <div className={styles.chrome}>
+                <span className={styles.lights}>
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span className={styles.url}>{browser.url}</span>
+              </div>
+              <picture>
+                <source media={DESKTOP} srcSet={browserSource.srcSet} sizes={browserSource.sizes} />
+                <img
+                  src={BLANK}
+                  alt=""
+                  width={browser.width}
+                  height={browser.height}
+                  className={styles.shot}
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+            <div className={styles.phone}>
+              <picture>
+                <source media={DESKTOP} srcSet={phoneSource.srcSet} sizes={phoneSource.sizes} />
+                <img src={BLANK} alt="" width={phone.width} height={phone.height} className={styles.shot} decoding="async" />
+              </picture>
+            </div>
+          </div>
+
+          <HeroEstimate className={styles.card} />
+        </div>
+
+        {/* After the card in the DOM (and on phones), beside the copy on desktop. */}
+        <div className={styles.next}>
           <Link href={SECONDARY_CTA.href} className={styles.secondary} data-cta-placement="home_hero_secondary">
             {SECONDARY_CTA.label}
             <span aria-hidden="true" className={styles.arrow}>
               →
             </span>
           </Link>
+          {HERO_PROOF ? (
+            <figure className={styles.proof}>
+              {HERO_PROOF.image ? (
+                <Image src={HERO_PROOF.image} alt="" width={44} height={44} className={styles.avatar} />
+              ) : null}
+              <blockquote className={styles.proofQuote}>
+                <p>“{HERO_PROOF.quote}”</p>
+              </blockquote>
+              <figcaption className={styles.proofBy}>
+                {HERO_PROOF.name}, {HERO_PROOF.role}
+              </figcaption>
+            </figure>
+          ) : null}
         </div>
-        <p className={styles.trust}>{HERO.trust}</p>
       </div>
     </DepthScene>
   );

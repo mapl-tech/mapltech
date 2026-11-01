@@ -2,7 +2,7 @@
 @use '../../styles/mixins' as *;
 
 .problem {
-  padding: clamp(96px, 14vw, 200px) 0;
+  padding: clamp(64px, 9vw, 128px) 0 clamp(96px, 14vw, 200px);
 }
 
 .inner {

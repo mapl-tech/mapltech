@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
-import towerDesktop from '@/assets/flagship/tower-desktop.jpg';
-import { HERO, XRAY } from './content';
+import { HERO, HERO_OPENING_RANGE, XRAY } from './content';
 import { formatKb, formatSeconds, usePageTelemetry, type Telemetry } from './telemetry';
 import styles from './XRay.module.scss';
 
@@ -178,7 +176,6 @@ function verdictLine(t: Telemetry): string {
 function SurfacePlane() {
   return (
     <div className={styles.surface}>
-      <Image src={towerDesktop} alt="" fill sizes="(min-width: 1024px) 640px, 80vw" className={styles.surfaceImg} />
       <div className={styles.surfaceBar}>
         <span className={styles.surfaceLogo}>MAPL TECH</span>
         <span className={styles.surfaceCta}>Price your project</span>
@@ -186,6 +183,17 @@ function SurfacePlane() {
       <p className={styles.surfaceTitle}>
         {HERO.titleLines[0]} <em>{HERO.titleLines[1]}</em>
       </p>
+      <div className={styles.surfaceCard}>
+        <span className={styles.surfaceTiles}>
+          <i data-on="" />
+          <i />
+          <i />
+          <i />
+        </span>
+        <span className={styles.surfaceSlider} />
+        <span className={styles.surfaceRange}>{HERO_OPENING_RANGE}</span>
+        <span className={styles.surfaceButton} />
+      </div>
     </div>
   );
 }
@@ -196,16 +204,16 @@ function ComponentsPlane() {
       <span className={styles.box} style={{ left: '3%', top: '4%', width: '94%', height: '11%' }}>
         {'<Header />'}
       </span>
-      <span className={styles.box} style={{ left: '3%', top: '20%', width: '52%', height: '42%' }}>
+      <span className={styles.box} style={{ left: '3%', top: '20%', width: '50%', height: '44%' }}>
         {'<Hero />'}
       </span>
-      <span className={styles.box} style={{ left: '58%', top: '20%', width: '39%', height: '42%' }}>
-        {'<DepthScene />'}
+      <span className={styles.box} style={{ left: '60%', top: '20%', width: '37%', height: '60%' }}>
+        {'<HeroEstimate />'}
       </span>
-      <span className={styles.box} style={{ left: '3%', top: '67%', width: '30%', height: '12%' }}>
-        {'<Cta />'}
+      <span className={styles.box} style={{ left: '3%', top: '68%', width: '50%', height: '12%' }}>
+        {'<LightField />'}
       </span>
-      <span className={styles.box} style={{ left: '3%', top: '83%', width: '94%', height: '12%' }}>
+      <span className={styles.box} style={{ left: '3%', top: '84%', width: '94%', height: '12%' }}>
         {'<ProofStrip />'}
       </span>
     </div>

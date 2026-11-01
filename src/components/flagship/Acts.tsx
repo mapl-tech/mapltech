@@ -2,9 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { LiveClocks } from '@/components/ui/TimezoneOverlap';
 import HomeFaq from '@/components/home/HomeFaq';
-import EstimateTeaser from '@/components/home/EstimateTeaser';
 import type { FaqEntry } from '@/components/home/data';
-import { CLOSE, FOUNDERS, SILENCE, SPOTLIGHT } from './content';
+import LightField from './LightField';
+import { CLOSE, FOUNDERS, SILENCE, SPOTLIGHT, SPOTLIGHT_QUOTE } from './content';
 import styles from './Acts.module.scss';
 
 /** Act 5, authored silence: one line alone, so the peak has something to arrive from. */
@@ -27,7 +27,7 @@ export function Spotlight() {
         </h2>
         <figure className={styles.quote}>
           <blockquote className={styles.quoteText}>
-            <p>{SPOTLIGHT.quote}</p>
+            <p>{SPOTLIGHT_QUOTE}</p>
           </blockquote>
           <figcaption className={styles.attribution}>
             {SPOTLIGHT.image ? (
@@ -41,26 +41,6 @@ export function Spotlight() {
             </span>
           </figcaption>
         </figure>
-      </div>
-    </section>
-  );
-}
-
-/** Act 9, Control: price it yourself; the number lands before any ask. */
-export function Estimator() {
-  return (
-    <section className={styles.estimator} aria-labelledby="estimate-title" id="estimate">
-      <div className={styles.estimatorInner}>
-        <div className={styles.estimatorHead}>
-          <h2 id="estimate-title" className={styles.h2}>
-            Price it yourself.
-          </h2>
-          <p className={styles.lede}>
-            Our price list is public, so this is not a teaser. Pick what you need and the range updates as you go. No
-            email until you want the estimate sent.
-          </p>
-        </div>
-        <EstimateTeaser />
       </div>
     </section>
   );
@@ -121,18 +101,21 @@ export function Faq({ items }: { items: readonly FaqEntry[] }) {
   );
 }
 
-/** Act 12, Resolve: the tower finished, and one tiny first yes that carries into the estimator. */
-export function Close({ image }: { image: { src: string; width: number; height: number } | null }) {
+/**
+ * Act 12, Resolve: the hero's light again, now in full, and one tiny first yes
+ * that carries into the estimator with the service already chosen.
+ */
+export function Close() {
   return (
-    <section className={styles.close} aria-labelledby="close-title">
-      {image ? (
-        // A wrapper sizes the photograph: full-bleed on landscape, the top of the
-        // section on portrait so the copy below sits on solid ground, not on lit windows.
-        <div className={styles.closeMedia}>
-          <Image src={image.src} alt={CLOSE.imageAlt} fill sizes="100vw" className={styles.closeImg} />
-        </div>
-      ) : null}
-      <div className={styles.closeScrim} aria-hidden="true" />
+    <section className={styles.close} aria-labelledby="close-title" data-page-close>
+      <LightField
+        className={styles.closeLight}
+        focusX={0.78}
+        focusY={0.5}
+        portraitX={0.62}
+        portraitY={0.02}
+        liveOnTouch={false}
+      />
       <div className={styles.closeInner}>
         <h2 id="close-title" className={styles.closeTitle}>
           {CLOSE.title}

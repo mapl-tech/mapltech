@@ -387,7 +387,10 @@ export const ESTIMATE_SECTION = {
 
 export interface FaqEntry {
   question: string;
+  /** Plain text: what the FAQPage JSON-LD carries, and the visible answer unless `list` is set. */
   answer: string;
+  /** The same answer in a scannable form for the page (figures one per line). */
+  list?: { lead: string; points: readonly string[]; close?: string };
 }
 
 const bundleLow = lowOf(pricing.bundles[0].price);
@@ -412,6 +415,19 @@ export const FAQ_ITEMS: readonly FaqEntry[] = [
   {
     question: 'How do you price white-label work?',
     answer: `Every price is public. Web development starts at ${fromOf(web[0].price)}, automation at ${fromOf(automation[0].price)}, internal tools at ${fromOf(tools[0].price)} and cloud engineering at ${fromOf(cloud[0].price)}; the pricing page lists every tier. Partner retainers run ${bundleLow} to ${bundleHigh} a month, and hourly work is ${pricing.hourlyRates.standard}. You get a fixed quote after a 20-minute scoping call.`,
+    list: {
+      lead: 'Every price is public, and the pricing page lists every tier.',
+      points: [
+        `Web development from ${fromOf(web[0].price)}`,
+        `Automation and AI from ${fromOf(automation[0].price)}`,
+        `Internal tools from ${fromOf(tools[0].price)}`,
+        `Cloud engineering from ${fromOf(cloud[0].price)}`,
+        `Partner retainers: ${bundleLow} to ${bundleHigh} a month`,
+        // "$65-$120/hour" in site.ts reads as "$65–$120 an hour" here, like every other range.
+        `Hourly work: ${pricing.hourlyRates.standard.replace(/^(\$[\d,]+)-(\$[\d,]+)\/hour$/, '$1–$2 an hour')}`,
+      ],
+      close: 'You get a fixed quote after a 20-minute scoping call.',
+    },
   },
   {
     question: "Can you work in our client's timezone?",

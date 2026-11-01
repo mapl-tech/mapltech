@@ -136,8 +136,13 @@ function deliverablesFrom(key: ServicePricingKey): string[] {
   return out;
 }
 
+/** Lower-cases a leading capital mid-sentence, but leaves acronyms alone ("CRM setup", "AI-powered", "SSL"). */
+function midSentence(text: string): string {
+  return /^[A-Z][a-z]/.test(text) ? text.charAt(0).toLowerCase() + text.slice(1) : text;
+}
+
 function listWords(items: readonly string[]): string {
-  const lowered = items.map((item) => item.charAt(0).toLowerCase() + item.slice(1));
+  const lowered = items.map(midSentence);
   if (lowered.length <= 1) return lowered.join('');
   return `${lowered.slice(0, -1).join(', ')}, and ${lowered[lowered.length - 1]}`;
 }
@@ -160,7 +165,7 @@ function costAnswer(key: ServicePricingKey): string {
 function supportAnswer(key: ServicePricingKey, noun: string): string {
   const lines = recurringFor(key);
   const list = lines
-    .map((line) => `${line.name} (${line.price}${line.description ? `: ${line.description.charAt(0).toLowerCase()}${line.description.slice(1)}` : ''})`)
+    .map((line) => `${line.name} (${line.price}${line.description ? `: ${midSentence(line.description)}` : ''})`)
     .join('; ');
   return `${lines.length === 1 ? 'One' : lines.length === 2 ? 'Two' : 'Three'} monthly ${noun} options: ${list}.`;
 }

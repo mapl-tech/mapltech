@@ -24,6 +24,11 @@ export interface LiveNumberProps {
   /** ids of the controls that drive this value (<output for>). */
   htmlFor?: string;
   id?: string;
+  /**
+   * Visual only: no live region and no hidden copy, for callers that announce
+   * a composed sentence themselves (a range is one announcement, not two).
+   */
+  decorative?: boolean;
 }
 
 const DEFAULT_SPRING: SpringOptions = { stiffness: 120, damping: 22, mass: 0.6 };
@@ -56,6 +61,7 @@ export default function LiveNumber({
   spring = DEFAULT_SPRING,
   htmlFor,
   id,
+  decorative = false,
 }: LiveNumberProps) {
   const reduceMotion = usePrefersReducedMotion();
   const source = useMotionValue(value);
@@ -79,6 +85,14 @@ export default function LiveNumber({
   useMotionValueEvent(animated, 'change', (v) => {
     if (digits.current) digits.current.textContent = `${prefix}${format(v)}${suffix}`;
   });
+
+  if (decorative) {
+    return (
+      <span id={id} className={className} aria-hidden="true">
+        <span ref={digits}>{initialText}</span>
+      </span>
+    );
+  }
 
   return (
     <output id={id} htmlFor={htmlFor} className={className} aria-live="polite" aria-atomic="true">

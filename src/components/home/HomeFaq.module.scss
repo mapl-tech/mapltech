@@ -1,0 +1,31 @@
+@use '../../styles/variables' as *;
+
+// The list form of an answer: a lead sentence, one figure per line, a close.
+.lead,
+.close {
+  margin: 0;
+}
+
+.points {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    position: relative;
+    padding-left: 20px;
+    font-variant-numeric: tabular-nums;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.8em;
+      width: 10px;
+      height: 2px;
+      background: $color-red;
+    }
+  }
+}

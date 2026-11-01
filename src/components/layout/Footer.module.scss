@@ -30,6 +30,12 @@
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
   }
+
+  // A page that ends on its own close section (marked `data-page-close`) has
+  // just asked; a second ask straight after it would compete with the first.
+  :global(body:has([data-page-close])) & {
+    display: none;
+  }
 }
 
 .askLine {

@@ -1,0 +1,384 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The price check card. Translucent over the light field (which is soft, so no
+// blur is needed on phones); on desktop it overlaps real screenshots, so it
+// frosts them. Every target is 44px+, every text pair measured in the gates.
+
+$thumb: 26px;
+$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+.card {
+  container-type: inline-size;
+  position: relative;
+  display: grid;
+  gap: 22px;
+  width: 100%;
+  padding: 22px 20px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  background: rgba(14, 14, 17, 0.74);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 40px 80px -32px rgba(0, 0, 0, 0.85);
+
+  @include sm {
+    padding: 26px 26px 24px;
+  }
+
+  // Short laptop screens: tighter rhythm so the whole card clears the fold.
+  @media (min-width: $breakpoint-lg) and (max-height: 860px) {
+    gap: 16px;
+    padding: 20px 22px;
+  }
+
+  @include lg {
+    background: rgba(14, 14, 17, 0.68);
+    -webkit-backdrop-filter: blur(22px) saturate(1.35);
+    backdrop-filter: blur(22px) saturate(1.35);
+  }
+}
+
+// ---------------------------------------------------------------- head
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: $color-fg;
+}
+
+.meta {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: $color-fg-muted;
+  white-space: nowrap;
+}
+
+// ---------------------------------------------------------------- inputs
+// Under the button, behind a hairline: the choices that drive the price.
+.controls {
+  display: grid;
+  gap: 22px;
+  padding-top: 20px;
+  border-top: 1px solid $color-hairline;
+
+  @media (min-width: $breakpoint-lg) and (max-height: 860px) {
+    gap: 16px;
+    padding-top: 16px;
+  }
+}
+
+.group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  display: block;
+  margin: 0 0 10px;
+  padding: 0;
+  font-size: 0.9375rem;
+  font-weight: $font-weight-medium;
+  color: $color-fg-muted;
+}
+
+.services {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+// A tile: icon over name on narrow cards, side by side once there is room.
+.service {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: 8px;
+  min-height: 72px;
+  padding: 12px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba($color-fg, 0.82);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    border-color 160ms $ease-out,
+    background-color 160ms $ease-out,
+    color 160ms $ease-out;
+
+  @container (min-width: 380px) {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+    min-height: 56px;
+    padding: 0 14px;
+  }
+
+  @media (min-width: $breakpoint-lg) and (max-height: 860px) {
+    min-height: 48px;
+  }
+
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-red, 0.55);
+      color: $color-fg;
+    }
+  }
+
+  &[data-on='true'] {
+    border-color: $color-red;
+    background: rgba($color-red, 0.12);
+    color: $color-fg;
+  }
+
+  &:has(.radio:focus-visible) {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
+// Visually hidden, still focusable and announced; the tile is its label.
+.radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 160ms $ease-out;
+
+  .service[data-on='true'] & {
+    stroke: #ff5c73;
+  }
+}
+
+// The canonical service names (same as the nav and the pricing page); the
+// longer ones take two lines on narrow cards, balanced.
+.serviceName {
+  font-size: 0.9375rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1.25;
+  text-wrap: balance;
+
+  @container (max-width: 330px) {
+    font-size: 0.875rem;
+  }
+}
+
+// ---------------------------------------------------------------- size slider
+.sizeHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+
+  .legend {
+    margin-bottom: 0;
+  }
+}
+
+.sizeValue {
+  font-size: 0.9375rem;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  text-align: right;
+}
+
+// Native range input (keyboard, touch and AT for free), restyled. The fill runs
+// to the thumb's centre: --fill is 0..1 from the component.
+.slider {
+  --track: rgba(255, 255, 255, 0.12);
+  --stop: calc(#{$thumb * 0.5} + var(--fill, 0) * (100% - #{$thumb}));
+  display: block;
+  width: 100%;
+  height: 44px;
+  margin: 2px 0 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-y;
+  border-radius: 10px; // rounds the site-wide focus ring around the control
+
+  &::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, $color-red 0 var(--stop), var(--track) var(--stop) 100%);
+  }
+
+  &::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, $color-red 0 var(--stop), var(--track) var(--stop) 100%);
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: $thumb;
+    height: $thumb;
+    margin-top: -10px;
+    border: 0;
+    border-radius: 50%;
+    background: $color-fg;
+    box-shadow:
+      0 0 0 6px rgba($color-red, 0.22),
+      0 2px 8px rgba(0, 0, 0, 0.5);
+    transition: box-shadow 160ms $ease-out, scale 160ms $ease-out;
+  }
+
+  &::-moz-range-thumb {
+    width: $thumb;
+    height: $thumb;
+    border: 0;
+    border-radius: 50%;
+    background: $color-fg;
+    box-shadow:
+      0 0 0 6px rgba($color-red, 0.22),
+      0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  @include motion-ok {
+    &:active::-webkit-slider-thumb {
+      scale: 1.08;
+    }
+  }
+}
+
+// One mark per size, under each thumb stop.
+.ticks {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 calc(#{$thumb * 0.5} - 2px);
+  margin-top: -6px;
+}
+
+.tick {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.24);
+  transition: background-color 160ms $ease-out;
+
+  &[data-on='true'] {
+    background: $color-red;
+  }
+}
+
+// ---------------------------------------------------------------- result
+.result {
+  min-width: 0;
+}
+
+.resultLabel {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: $color-fg-muted;
+}
+
+.range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.12em;
+  margin: 6px 0 0;
+  font-family: $font-display;
+  font-size: clamp(2.125rem, 1.7rem + 1.6vw, 2.625rem);
+  font-weight: $font-weight-extrabold;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: $color-fg;
+  @include tabular;
+}
+
+.dash,
+.plus {
+  color: rgba($color-fg, 0.5);
+}
+
+.note {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: $color-fg-muted;
+}
+
+// ---------------------------------------------------------------- action
+.submit {
+  width: 100%;
+
+  :global(.magnetic-btn-box),
+  :global(.magnetic-btn) {
+    width: 100%;
+  }
+}
+
+// After each choice the button above it gives one small nudge, so acting on
+// the new price reads as the next step. Two identical keyframes, alternated,
+// so the animation restarts on every change.
+@include motion-ok {
+  .nudgeA :global(.magnetic-btn) {
+    animation: nudge-a 420ms $ease-out;
+  }
+
+  .nudgeB :global(.magnetic-btn) {
+    animation: nudge-b 420ms $ease-out;
+  }
+}
+
+@keyframes nudge-a {
+  40% {
+    scale: 1.03;
+  }
+}
+
+@keyframes nudge-b {
+  40% {
+    scale: 1.03;
+  }
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 160ms $ease-out;
+
+  @include pointer-fine-motion {
+    :global(.magnetic-btn-box):hover & {
+      transform: translateX(4px);
+    }
+  }
+}

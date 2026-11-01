@@ -7,10 +7,9 @@ import Problem from '@/components/flagship/Problem';
 import Layers from '@/components/flagship/Layers';
 import XRay from '@/components/flagship/XRay';
 import WorkStack from '@/components/flagship/WorkStack';
-import { Close, Estimator, Faq, Founders, Silence, Spotlight } from '@/components/flagship/Acts';
+import { Close, Faq, Founders, Silence, Spotlight } from '@/components/flagship/Acts';
 import { LAYERS, WORK } from '@/components/flagship/content';
 import { siteGraph } from '@/lib/schema';
-import towerFinished from '@/assets/flagship/tower-finished.jpg';
 
 /*
  * Homepage, flagship redesign (Nov 2026). Grammar "Surface -> Structure":
@@ -70,10 +69,9 @@ export default function HomePage() {
       <XRay initial={XRAY_STATIC} />
       <WorkStack />
       <Spotlight />
-      <Estimator />
       <Founders />
       <Faq items={FAQ_ITEMS} />
-      <Close image={{ src: towerFinished.src, width: towerFinished.width, height: towerFinished.height }} />
+      <Close />
     </>
   );
 }

@@ -138,19 +138,19 @@
   &[data-plane='surface'] {
     // Thins a little once separated so the planes beneath read through it.
     opacity: calc(1 - var(--sep) * 0.12);
-    background: #070b13;
+    background:
+      radial-gradient(40% 55% at 78% 46%, rgba(240, 51, 80, 0.26) 0%, rgba(240, 51, 80, 0) 70%),
+      radial-gradient(60% 75% at 74% 50%, rgba(92, 13, 23, 0.6) 0%, rgba(92, 13, 23, 0) 72%),
+      #07070a;
     border-color: rgba($color-fg, 0.3);
   }
 }
 
-// Surface: a scaled replica of the hero, real text over the real plate.
+// Surface: a scaled replica of the hero in plain DOM: real text, the light
+// field as CSS, the price check as shapes.
 .surface {
   position: absolute;
   inset: 0;
-}
-
-.surfaceImg {
-  object-fit: cover;
 }
 
 .surfaceBar {
@@ -163,7 +163,6 @@
   font-size: clamp(7px, 0.9vw, 12px);
   color: $color-fg;
   font-weight: $font-weight-semibold;
-  background: linear-gradient(rgba(5, 8, 14, 0.6), transparent);
 }
 
 .surfaceLogo {
@@ -182,8 +181,8 @@
 .surfaceTitle {
   position: absolute;
   left: 5%;
-  bottom: 12%;
-  width: 52%;
+  top: 30%;
+  width: 50%;
   margin: 0;
   font-family: $font-display;
   font-weight: $font-weight-extrabold;
@@ -196,6 +195,61 @@
     font-style: normal;
     color: $color-red;
   }
+}
+
+.surfaceCard {
+  position: absolute;
+  left: 62%;
+  top: 22%;
+  width: 33%;
+  height: 56%;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  align-content: start;
+  gap: 9%;
+  padding: 5%;
+  border: 1px solid rgba($color-fg, 0.14);
+  border-radius: 8px;
+  background: rgba(14, 14, 17, 0.72);
+}
+
+.surfaceTiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+
+  i {
+    height: clamp(8px, 1.3vw, 18px);
+    border: 1px solid rgba($color-fg, 0.16);
+    border-radius: 3px;
+
+    &[data-on] {
+      border-color: $color-red;
+      background: rgba($color-red, 0.16);
+    }
+  }
+}
+
+.surfaceSlider {
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(to right, $color-red 0 18%, rgba($color-fg, 0.16) 18% 100%);
+}
+
+.surfaceRange {
+  align-self: end;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(8px, 1.2vw, 16px);
+  letter-spacing: -0.02em;
+  color: $color-fg;
+  @include tabular;
+}
+
+.surfaceButton {
+  height: clamp(8px, 1.4vw, 18px);
+  border-radius: 999px;
+  background: $color-red-fill;
 }
 
 // Components: the same layout, as named outlines.

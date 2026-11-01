@@ -173,10 +173,12 @@
 }
 
 // Glass effect - nav and sheets only (max two backdrop-filter surfaces in view)
+// Prefixed first: Lightning CSS keeps only the LAST of the pair, and Chrome
+// ignores the -webkit- form, so the standard property must come last.
 @mixin glass($bg: rgba($color-ground, 0.85)) {
   background: $bg;
-  backdrop-filter: blur(16px) saturate(1.2);
   -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
 }
 
 // Card style (legacy) - transform + shadow only, no layout properties animate

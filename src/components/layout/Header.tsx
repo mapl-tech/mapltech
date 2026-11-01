@@ -34,8 +34,11 @@ import styles from './Header.module.scss';
  *   through it, Escape closes it and returns focus, focus or a click leaving
  *   the item closes it. Closed menus are visibility:hidden, so they are never
  *   in the tab order.
- * - Mobile (< 1024px): 56px bar, compact "Price it" CTA, 44px hamburger that
- *   opens the vaul bottom sheet in MobileNav (interaction #9).
+ * - Mobile (< 1024px): 56px bar, compact "Price it" CTA (its accessible name
+ *   is its visible label, WCAG 2.5.3), 44px hamburger that opens the vaul
+ *   bottom sheet in MobileNav (interaction #9).
+ * - While the page's own hero CTA is on screen, the header's CTA steps back to
+ *   an outline, so each first viewport leads with one filled button.
  * - An inline `view-transition-name: site-header` anchors it during page
  *   transitions; styles/_transitions.scss disables its group animation.
  */
@@ -281,15 +284,40 @@ function DesktopNav({ pathname }: { pathname: string }) {
   );
 }
 
+/**
+ * Whether the page's hero CTA (`data-hero-cta`) is on screen: 'in', 'out', or
+ * undefined before the first observation (and on pages without one). Keyed by
+ * path so a stale answer from the previous page is never used.
+ */
+function useHeroCtaView(pathname: string): 'in' | 'out' | undefined {
+  const [seen, setSeen] = useState<{ path: string; view: 'in' | 'out' } | null>(null);
+  useEffect(() => {
+    const target = document.querySelector('[data-hero-cta]');
+    if (!target) return;
+    const observer = new IntersectionObserver(([entry]) =>
+      setSeen({ path: pathname, view: entry.isIntersecting ? 'in' : 'out' }),
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [pathname]);
+  return seen?.path === pathname ? seen.view : undefined;
+}
+
 export default function Header() {
   const pathname = usePathname() ?? '/';
   const compact = useCompact();
+  const heroCtaView = useHeroCtaView(pathname);
   const [menuOpen, setMenuOpen] = useState(false);
   const sheetId = useId();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <header className={styles.header} data-compact={compact ? '' : undefined} style={VIEW_TRANSITION_ANCHOR}>
+    <header
+      className={styles.header}
+      data-compact={compact ? '' : undefined}
+      data-hero-cta-view={heroCtaView}
+      style={VIEW_TRANSITION_ANCHOR}
+    >
       <div className={styles.bar}>
         <Link href="/" className={styles.logo} aria-label="MAPL TECH home">
           <Image src="/images/mapl-tech-logo.svg" alt="MAPL TECH" width={150} height={33} priority />
@@ -310,7 +338,6 @@ export default function Header() {
               size="small"
               placement="header_estimate_compact"
               className={styles.compactBtn}
-              aria-label={ESTIMATE_LABEL}
             >
               {ESTIMATE_LABEL_COMPACT}
             </MagneticButton>
