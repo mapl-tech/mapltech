@@ -1,10 +1,11 @@
 import type { BlogCategory } from '@/data/blog-posts';
 import type { EstimateService } from '@/lib/estimate';
+import { LEGACY_LINKS } from '@/config/legacyLinks';
 
 /**
- * Pure helpers shared by the blog index island and the post template. This
- * file deliberately imports only types, so the client bundle never drags in
- * blog-posts.ts, routes.ts or schema.ts.
+ * Pure helpers shared by the blog index island and the post template. Apart
+ * from the dependency-free legacy link map, this file imports only types, so
+ * the client bundle never drags in blog-posts.ts, routes.ts or schema.ts.
  */
 
 /** Mirrors schema.ts slugify() (kept local to avoid pulling schema into the client). */
@@ -86,17 +87,10 @@ export function anchorHeadings(html: string): { html: string; headings: { id: st
 
 /**
  * Internal links some posts were written with before the service pages got
- * their final slugs. Each old path 404s today, so the template rewrites it to
- * the live page at render time (blog-posts.ts stays the source of record; the
- * same map belongs in next.config redirects for links from outside the site).
+ * their final slugs (LEGACY_LINKS): the template rewrites them to the live
+ * page at render time (blog-posts.ts stays the source of record).
+ * next.config.ts redirects the same paths for links from outside the site.
  */
-export const LEGACY_LINKS: Readonly<Record<string, string>> = {
-  '/services/automation-ai': '/services/automation-ai-workflow-setup',
-  '/services/automation': '/services/automation-ai-workflow-setup',
-  '/services/internal-tools': '/services/custom-internal-tools',
-  '/services/internal-tools-portals': '/services/custom-internal-tools',
-};
-
 export function repairLinks(html: string): string {
   return html.replace(/href=(["'])(\/[^"'#?]*)([^"']*)\1/g, (full, quote: string, path: string, rest: string) => {
     const fixed = LEGACY_LINKS[path.replace(/\/+$/, '')];

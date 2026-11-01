@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { LEGACY_LINKS } from "./src/config/legacyLinks";
 
 const nextConfig: NextConfig = {
   images: {
@@ -12,6 +13,10 @@ const nextConfig: NextConfig = {
     ],
   },
   poweredByHeader: false,
+  // Old service paths still linked from older posts and elsewhere (permanent).
+  async redirects() {
+    return Object.entries(LEGACY_LINKS).map(([source, destination]) => ({ source, destination, permanent: true }));
+  },
   async headers() {
     return [
       {
