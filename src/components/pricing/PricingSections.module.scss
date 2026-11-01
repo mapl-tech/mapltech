@@ -1,0 +1,421 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Quote steps, FAQ and close for /pricing. Same split grammar as the homepage
+// and the case studies: heading left (sticky on wide screens), content right.
+
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+
+.h2 {
+  margin: 0;
+  max-width: 14ch;
+  font-size: $font-size-h2;
+}
+
+.lede {
+  margin: 20px 0 0;
+  max-width: 32rem;
+  font-size: $font-size-lede;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.78);
+}
+
+.split {
+  @include container(1280px);
+  display: grid;
+  gap: 40px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: 72px;
+    align-items: start;
+  }
+}
+
+.splitHead {
+  min-width: 0;
+
+  @include lg {
+    position: sticky;
+    top: 112px;
+  }
+}
+
+// ---------------------------------------------------------------- from range to fixed quote
+.steps {
+  padding: clamp(64px, 11vw, 144px) 0;
+  border-top: 1px solid $color-hairline;
+}
+
+// Stages sit on a vertical timeline that draws as you read.
+.stages {
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 0 0 0 32px;
+  list-style: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+  }
+
+  &::before {
+    background: rgba($color-fg, 0.1);
+  }
+
+  &::after {
+    background: $color-red;
+    transform-origin: top;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .stages::after {
+      animation: draw-line linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 65%;
+    }
+  }
+}
+
+@keyframes draw-line {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.stage {
+  position: relative;
+  padding: 0 0 40px;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -37px;
+    top: 0.45em;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: $color-ground;
+    border: 2px solid $color-red;
+  }
+}
+
+.stageName {
+  margin: 0;
+  font-size: $font-size-h3;
+}
+
+.stageText {
+  margin: 8px 0 0;
+  max-width: 56ch;
+  font-size: $font-size-md;
+  line-height: 1.6;
+  color: rgba($color-fg, 0.8);
+}
+
+// ---------------------------------------------------------------- faq
+.faq {
+  padding: clamp(64px, 11vw, 144px) 0;
+  border-top: 1px solid $color-hairline;
+  scroll-margin-top: 72px;
+}
+
+// The shared Accordion, set as hairline rows so every disclosure on this page
+// shares one treatment (the price list's "What's included" rows). Scoped via
+// the component's className hook; the shared module itself is untouched.
+.faqList {
+  gap: 0;
+  max-width: none;
+  margin: 0;
+  border-top: 1px solid $color-hairline;
+
+  > details {
+    border: 0;
+    border-bottom: 1px solid $color-hairline;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  > details[open] {
+    border-color: $color-hairline;
+  }
+
+  // 4px of air above and below each question keeps adjacent targets 8px apart.
+  > details > summary {
+    margin: 4px 0;
+    padding: 16px 0;
+  }
+
+  > details > summary:focus-visible {
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  // The +/x mark: plain red, no disc, like the price list's +/- marks.
+  > details > summary > span:last-child {
+    background: transparent;
+    color: $color-red;
+  }
+
+  > details[open] > summary > span:last-child {
+    background: transparent;
+  }
+
+  > details > div {
+    padding: 0 0 24px;
+  }
+
+  // The global red rule under an open question spans this unpadded row.
+  > :global(.accordion-item) > :global(.accordion-summary)::after {
+    left: 0;
+    right: 0;
+  }
+}
+
+// ---------------------------------------------------------------- close
+.close {
+  padding: clamp(24px, 4vw, 48px) 0 clamp(64px, 8vw, 112px);
+}
+
+.closeWrap {
+  @include container(1280px);
+}
+
+.closeInner {
+  position: relative;
+  display: grid;
+  gap: 40px;
+  padding: 32px 20px;
+  border-radius: 24px;
+  border: 1px solid $color-hairline-strong;
+  background:
+    radial-gradient(80% 120% at 100% 0%, rgba($color-red, 0.14) 0%, transparent 55%),
+    linear-gradient(180deg, #16141a 0%, #0f0e12 100%);
+
+  @include md {
+    padding: 56px 48px;
+  }
+
+  @include lg {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 64px;
+    align-items: center;
+    padding: 72px 64px;
+  }
+}
+
+.closeMain {
+  min-width: 0;
+}
+
+.closeTitle {
+  margin: 0;
+  max-width: 14ch;
+  font-size: clamp(2.25rem, 1.4rem + 3.2vw, 3.75rem);
+  font-weight: $font-weight-extrabold;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.closeLede {
+  margin: 20px 0 0;
+  max-width: 34rem;
+  font-size: $font-size-lede;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.84);
+}
+
+// The visitor's own estimate, echoed back (teal: a live readout).
+.echo {
+  display: grid;
+  gap: 4px;
+  margin: 24px 0 0;
+  padding: 16px 0 16px 18px;
+  border-left: 2px solid $color-red;
+}
+
+.echoLabel {
+  @include mono-label(rgba($color-fg, 0.68));
+}
+
+.echoRange {
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: $color-signal;
+  @include tabular;
+}
+
+.echoDetail {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba($color-fg, 0.74);
+}
+
+.closeActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 32px;
+  margin-top: 32px;
+}
+
+.primary {
+  @include button-primary;
+  min-height: 52px;
+  @include focus-ring;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    width: 100%;
+  }
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px; // same arrow spacing as the hero's "Book a call"
+  min-height: 48px;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-fg, 0.35);
+  text-underline-offset: 6px;
+  transition: text-decoration-color 160ms $ease;
+
+  @include pointer-fine {
+    &:hover {
+      text-decoration-color: $color-red;
+    }
+  }
+
+  @include focus-ring;
+}
+
+// Social proof beside the decision: one client in her words, then the client logos.
+.proofCol {
+  min-width: 0;
+  padding-top: 32px;
+  border-top: 1px solid $color-hairline;
+
+  @include lg {
+    padding: 0 0 0 40px;
+    border-top: 0;
+    border-left: 1px solid $color-hairline;
+  }
+}
+
+.proof {
+  margin: 0;
+}
+
+.proofQuote {
+  margin: 0;
+
+  p {
+    margin: 0;
+    font-family: $font-display;
+    font-weight: $font-weight-semibold;
+    font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem);
+    line-height: 1.32;
+    letter-spacing: -0.015em;
+    color: $color-fg;
+    text-wrap: pretty;
+
+    &::before {
+      content: '\201C';
+      color: $color-red;
+    }
+
+    &::after {
+      content: '\201D';
+      color: $color-red;
+    }
+  }
+}
+
+.proofBy {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.proofName {
+  display: block;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.proofRole {
+  display: block;
+  font-size: 1rem;
+  color: rgba($color-fg, 0.7);
+}
+
+// The homepage's approved client logos, monochrome so they never compete with the action.
+.clients {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid $color-hairline;
+}
+
+.clientsLabel {
+  margin: 0 0 16px;
+  @include mono-label(rgba($color-fg, 0.7));
+}
+
+.logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+  }
+}
+
+.logoInvert {
+  filter: grayscale(1) invert(1) brightness(1.05);
+  opacity: 0.72;
+}
+
+.logoMono {
+  filter: grayscale(1);
+  opacity: 0.8;
+}
+
+// Focus is never hidden under the fixed header (WCAG 2.4.11).
+:is(.steps, .faq, .close) :is(a, button, input, select, textarea, summary) {
+  scroll-margin-top: 96px;
+}

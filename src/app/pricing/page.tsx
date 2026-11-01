@@ -2,281 +2,104 @@ import type { Metadata } from 'next';
 import Accordion from '@/components/ui/Accordion';
 import JsonLd from '@/components/seo/JsonLd';
 import { faqPage, offerCatalog, pageGraph } from '@/lib/schema';
-import { REDESIGN_DATE, routeLastModified } from '@/config/routes';
-import { pricing } from '@/config/site';
-import { getService } from '@/config/services';
-import { ESTIMATE_SERVICES, SERVICE_META, formatMoney, formatRange, parsePriceLabel, tiersFor } from '@/lib/estimate';
-import Cta from '@/components/pricing/Cta';
+import PricingHero from '@/components/pricing/PricingHero';
 import ScopeEstimator from '@/components/pricing/ScopeEstimator';
-import TierTable from '@/components/pricing/TierTable';
-import Bundles from '@/components/pricing/Bundles';
-import Hourly from '@/components/pricing/Hourly';
+import QuoteSteps from '@/components/pricing/QuoteSteps';
+import PriceList from '@/components/pricing/PriceList';
+import PricingClose from '@/components/pricing/PricingClose';
 import { pricingFaq } from '@/components/pricing/pricingFaq';
-import sections from '@/components/pricing/sections.module.scss';
+import {
+  ESTIMATOR,
+  FAQ_COPY,
+  PRICING_DESCRIPTION,
+  PRICING_PATH,
+  PRICING_TITLE,
+  PRICING_URL,
+} from '@/components/pricing/content';
+import sections from '@/components/pricing/PricingSections.module.scss';
 import styles from './page.module.scss';
 
-const DESCRIPTION =
-  'MAPL TECH pricing for web development, automation & AI workflows, custom internal tools, cloud engineering, and agency partnerships. Transparent pricing with retainer options.';
+/*
+ * /pricing, flagship redesign (Nov 2026). Answer first (the four "from"
+ * prices), then the page's one interaction (the Scope Estimator, #estimator,
+ * deep-linkable as /pricing?svc=web#estimator), what happens after it, the
+ * full price list as plain HTML, the FAQ and the close.
+ *
+ * Every price is read from site.ts through src/lib/estimate.ts. Structured
+ * data is one page graph: WebPage + BreadcrumbList + the OfferCatalog of every
+ * published price (src/lib/schema.ts) + the FAQPage built from the same array
+ * the accordion renders, so markup and JSON-LD can never disagree.
+ */
+
+const SOCIAL_TITLE = `${PRICING_TITLE} | MAPL TECH`;
+// The site's Open Graph image (the root layout's), with its own alt text.
+const OG_IMAGE = '/images/og-flagship.jpg';
 
 export const metadata: Metadata = {
-  title: 'Pricing',
-  alternates: { canonical: 'https://mapltech.com/pricing' },
-  description: DESCRIPTION,
+  title: PRICING_TITLE,
+  description: PRICING_DESCRIPTION,
+  alternates: { canonical: PRICING_URL },
   openGraph: {
-    title: 'Pricing | MAPL TECH',
-    description:
-      'Transparent pricing for web development, agency automation, internal tools, cloud engineering, and partnership bundles.',
+    type: 'website',
+    url: PRICING_URL,
+    siteName: 'MAPL TECH',
+    locale: 'en_CA',
+    title: SOCIAL_TITLE,
+    description: PRICING_DESCRIPTION,
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'MAPL TECH: Your agency sells the vision. We engineer the software behind it.' }],
   },
+  twitter: { card: 'summary_large_image', title: SOCIAL_TITLE, description: PRICING_DESCRIPTION, images: [OG_IMAGE] },
 };
 
-/* ------------------------------------------------------------------ */
-/* Key facts, derived from pricing so they can never drift from the tables */
-/* ------------------------------------------------------------------ */
-
-const lowOf = (label: string) => parsePriceLabel(label).low ?? 0;
-
-const startingPrices = ESTIMATE_SERVICES.map(
-  (service) => `${formatMoney(lowOf(tiersFor(service)[0].price))} ${SERVICE_META[service].shortLabel.toLowerCase()}`,
-).join(' · ');
-
-const webStart = tiersFor('web')[0].price;
-const automationStart = formatMoney(lowOf(tiersFor('automation')[0].price));
-const bundleRange = formatRange(
-  lowOf(pricing.bundles[0].price),
-  parsePriceLabel(pricing.bundles[pricing.bundles.length - 1].price).high ?? lowOf(pricing.bundles[pricing.bundles.length - 1].price),
-);
-
-const web = getService('web-development');
-const stack = web.stack.map((item) => item.replace(' (custom themes, not page builders)', ' (custom themes)')).join(', ');
-const lastReviewed = routeLastModified('/pricing') ?? REDESIGN_DATE;
-
-const JUMP_LINKS = [
-  { href: '#web-development', label: 'Web Development' },
-  { href: '#automation', label: 'Automation & AI' },
-  { href: '#internal-tools', label: 'Internal Tools' },
-  { href: '#cloud-engineering', label: 'Cloud Engineering' },
-  { href: '#bundles', label: 'Agency Bundles' },
-  { href: '#hourly', label: 'Hourly Rates' },
-  { href: '#faq', label: 'FAQ' },
-];
+const pricingGraph = pageGraph({
+  path: PRICING_PATH,
+  name: PRICING_TITLE,
+  description: PRICING_DESCRIPTION,
+  nodes: [offerCatalog({ path: PRICING_PATH }), faqPage(pricingFaq, { path: PRICING_PATH, name: FAQ_COPY.title })],
+});
 
 export default function PricingPage() {
   return (
     <>
-      <JsonLd
-        data={pageGraph({
-          path: '/pricing',
-          name: 'Pricing',
-          description: DESCRIPTION,
-          nodes: [offerCatalog({ path: '/pricing' }), faqPage(pricingFaq, { path: '/pricing' })],
-        })}
-      />
+      <JsonLd data={pricingGraph} />
 
-      {/* 01 Hero - SSR block, no reveal: H1 -> lede -> key facts -> CTAs -> jump links */}
-      <section className={styles.hero} aria-labelledby="pricing-title">
-        <div className={styles.heroInner}>
-          <p className={styles.eyebrow}>Pricing</p>
-          <h1 id="pricing-title" className={styles.title}>
-            Invest in Systems That Pay for Themselves
-          </h1>
-          <p className={styles.lede}>
-            MAPL TECH publishes every price it charges digital agencies. Web builds start at {webStart}, automation from{' '}
-            {automationStart}, and partner retainers run {bundleRange} a month. Build your own estimate below in about 60
-            seconds, then take it into a 20-minute scoping call - no email required until you want the number in writing.
-          </p>
+      <PricingHero />
 
-          <dl className={`kv ${styles.kv}`}>
-            <div>
-              <dt>Starting price</dt>
-              <dd>{startingPrices}</dd>
-            </div>
-            <div>
-              <dt>Typical timeline</dt>
-              <dd>{web.typicalTimeline}</dd>
-            </div>
-            <div>
-              <dt>Stack</dt>
-              <dd>{stack}</dd>
-            </div>
-            <div>
-              <dt>Offices</dt>
-              <dd>Toronto (HQ) &middot; Lagos &middot; Kingston</dd>
-            </div>
-            <div>
-              <dt>Last reviewed</dt>
-              <dd>
-                <time dateTime={lastReviewed} className={styles.reviewed}>
-                  {lastReviewed}
-                </time>
-              </dd>
-            </div>
-          </dl>
-
-          <div className={styles.ctas}>
-            <Cta href="#estimator" hero placement="pricing_hero_primary">
-              Get a 60-second estimate
-            </Cta>
-            <Cta href="/contact-us" variant="secondary" placement="pricing_hero_secondary">
-              Book a 20-min scoping call
-            </Cta>
-          </div>
-
-          <nav className={styles.jump} aria-label="Jump to a pricing section">
-            <span className={styles.jumpLabel} aria-hidden="true">
-              Jump to
-            </span>
-            <ul className={styles.jumpList}>
-              {JUMP_LINKS.map((link) => (
-                <li key={link.href}>
-                  <a href={link.href} className={styles.jumpLink}>
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      </section>
-
-      {/* 02 Scope Estimator - the signature interaction */}
-      <section id="estimator" className={styles.estimatorSection} aria-labelledby="estimator-title">
-        <div className={styles.estimatorInner}>
-          <header className={styles.estimatorHead}>
-            <p className={styles.eyebrow}>Scope estimator</p>
-            <h2 id="estimator-title" className={styles.sectionTitle}>
-              Build your own number in 60 seconds
+      {/* The one interaction: the page stops moving and starts answering. */}
+      <section id="estimator" className={styles.estimator} aria-labelledby="estimator-title">
+        <div className={styles.inner}>
+          <div className={styles.head}>
+            <h2 id="estimator-title" className={styles.title}>
+              {ESTIMATOR.title}
             </h2>
-            <p className={styles.sectionSub}>
-              Every input maps to a published tier below. The output is always a range; the fixed quote comes after a
-              20-minute scoping call.
-            </p>
-          </header>
+            <p className={styles.lede}>{ESTIMATOR.lede}</p>
+          </div>
           <ScopeEstimator />
         </div>
       </section>
 
-      {/* 03-06 Static tier tables: the crawlable price statements */}
-      <TierTable
-        id="web-development"
-        service="web"
-        copy={{
-          eyebrow: 'Web Development',
-          title: 'Websites That Work as Hard as You Do',
-          subtitle:
-            'Custom-coded, performance-optimized sites that convert visitors into clients. No templates. No page builders. No compromises.',
-        }}
-        recurring={{
-          eyebrow: 'Maintenance · monthly, after launch',
-          title: 'Your site needs care after launch day',
-          subtitle:
-            'Security patches, performance monitoring, and ongoing updates keep your site fast, safe, and growing.',
-        }}
-      >
-        <div className={`${sections.callout} reveal`}>
-          <div>
-            <h3>Not sure which plan fits your project?</h3>
-            <p>
-              Tell us what you need and we will recommend the right scope and budget. No pressure, no hard sell - just
-              honest guidance.
-            </p>
-          </div>
-          <Cta href="/contact-us" variant="secondary" placement="pricing_web_callout">
-            Book a 20-min scoping call
-          </Cta>
-        </div>
-      </TierTable>
+      <QuoteSteps />
 
-      <TierTable
-        id="automation"
-        service="automation"
-        copy={{
-          eyebrow: 'Automation & AI',
-          title: 'Stop Doing Manually What Should Run on Autopilot',
-          subtitle:
-            "Agencies that automate their intake, CRM, and ops save 15-20 hours per week. Here's how to get there.",
-        }}
-        recurring={{
-          eyebrow: 'Retainers · monthly',
-          title: "Automations break when nobody's watching them",
-          subtitle: 'A retainer keeps your workflows running, optimized, and evolving as your agency scales.',
-        }}
-      />
+      <PriceList />
 
-      <TierTable
-        id="internal-tools"
-        service="tools"
-        copy={{
-          eyebrow: 'Internal Tools',
-          title: 'Replace the Spreadsheets Your Team Actually Runs On',
-          subtitle:
-            'Custom dashboards, portals, and ops platforms that eliminate the duct-tape systems holding your agency back.',
-        }}
-        recurring={{
-          eyebrow: 'Retainers · monthly',
-          title: 'Your tools should grow with your agency',
-          subtitle: 'New features, bug fixes, and optimizations shipped monthly so your systems never fall behind.',
-        }}
-      />
-
-      <TierTable
-        id="cloud-engineering"
-        service="cloud"
-        copy={{
-          eyebrow: 'Cloud Engineering',
-          title: 'Infrastructure That Runs Itself',
-          subtitle:
-            'Production-grade cloud architecture, CI/CD pipelines, and monitoring - so your agency never worries about uptime or scaling.',
-        }}
-        recurring={{
-          eyebrow: 'Retainers · monthly',
-          title: 'Your infrastructure needs attention after launch day',
-          subtitle:
-            'Ongoing monitoring, cost optimization, and incident response keep your cloud running smoothly as you scale.',
-        }}
-      />
-
-      {/* 07 Agency bundles */}
-      <Bundles />
-
-      {/* 08 Hourly */}
-      <Hourly />
-
-      {/* 09 FAQ - native <details>, FAQPage JSON-LD from the same array */}
-      <section id="faq" className={sections.section} aria-labelledby="faq-title">
-        <div className={sections.faqInner}>
-          <header className={`${sections.head} reveal`}>
-            <p className={sections.eyebrow}>FAQ</p>
-            <h2 id="faq-title" className={sections.title}>
-              Questions We Get Asked a Lot
+      <section id="faq" className={sections.faq} aria-labelledby="faq-title">
+        <div className={sections.split}>
+          <div className={sections.splitHead}>
+            <h2 id="faq-title" className={sections.h2}>
+              {FAQ_COPY.title}
             </h2>
-            <p className={sections.sub}>Straight answers so you can make an informed decision.</p>
-          </header>
-          <div className="reveal">
-            <Accordion items={pricingFaq} name="faq" defaultOpen={0} />
+            <p className={sections.lede}>{FAQ_COPY.lede}</p>
           </div>
+          <Accordion
+            name="pricing-faq"
+            defaultOpen={0}
+            className={sections.faqList}
+            items={pricingFaq.map((item, index) => ({ id: `faq-${index + 1}`, question: item.question, answer: item.answer }))}
+          />
         </div>
       </section>
 
-      {/* 10 Closing band - leads with the call; every price is already on the page */}
-      <section className={sections.band} aria-labelledby="band-title">
-        <div className={`${sections.bandInner} reveal`}>
-          <h2 id="band-title" className={sections.bandTitle}>
-            Let&apos;s Find the Right Fit for Your Agency
-          </h2>
-          <p className={sections.bandBody}>
-            Tell us what&apos;s eating up your team&apos;s time. We&apos;ll show you exactly where automation and better
-            systems will save you money - and build you a plan to get there.
-          </p>
-          <div className={sections.ctaRow}>
-            <Cta href="/contact-us" size="large" placement="pricing_band_primary">
-              Book a 20-min scoping call
-            </Cta>
-            <Cta href="#estimator" variant="secondary" size="large" placement="pricing_band_secondary">
-              Get a 60-second estimate
-            </Cta>
-          </div>
-        </div>
-      </section>
+      <PricingClose />
     </>
   );
 }

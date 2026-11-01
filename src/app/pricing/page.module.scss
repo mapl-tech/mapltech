@@ -2,140 +2,56 @@
 @use '../../styles/mixins' as *;
 
 // ============================================
-// /pricing - hero (SSR block, no reveal) + estimator shell.
-// Static sections style themselves in components/pricing/sections.module.scss.
+// /pricing: the estimator section shell. The hero, the estimator island and
+// the static sections style themselves in src/components/pricing/*.
 // ============================================
 
-.hero {
-  padding: clamp(6.5rem, 12vw, 10rem) 0 $space-64;
+// A quieter, cooler ground than the page: the instrument, lit by its readout.
+.estimator {
+  position: relative;
+  padding: clamp(64px, 11vw, 144px) 0;
+  border-top: 1px solid $color-hairline;
+  border-bottom: 1px solid $color-hairline;
+  background:
+    radial-gradient(70% 55% at 88% 12%, rgba($color-signal, 0.05) 0%, transparent 60%),
+    linear-gradient(180deg, #0d0c10 0%, $color-ground 100%);
 }
 
-.heroInner {
-  @include container;
+.inner {
+  @include container(1280px);
+}
+
+// Same 7/5 split as the estimator below, so the lede sits over the readout.
+.head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr); // the jump row scrolls; it must never widen the page
-  gap: $space-32;
-}
+  gap: 16px;
+  margin-bottom: clamp(40px, 5vw, 64px);
 
-.eyebrow {
-  @include mono-label($color-fg-muted);
+  @include lg {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: 56px;
+    align-items: end;
+  }
+
+  @include xl {
+    column-gap: 80px;
+  }
 }
 
 .title {
-  @include display-type($font-size-display, $line-height-display);
-  color: $color-fg;
-  max-width: 16ch;
+  margin: 0;
+  font-size: $font-size-h2;
 }
 
 .lede {
-  @include lede;
+  margin: 0;
+  max-width: 32rem;
+  font-size: $font-size-lede;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.78);
 }
 
-.kv {
-  max-width: $max-width;
-}
-
-.reviewed {
-  @include tabular;
-}
-
-.ctas {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: $space-16;
-}
-
-// Jump links: anchor row on desktop, horizontal snap row on phones (IX-9)
-.jump {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  min-width: 0;
-  gap: $space-12;
-  padding-top: $space-16;
-  border-top: $border-hairline;
-}
-
-.jumpLabel {
-  @include mono-label($color-fg-dim);
-}
-
-.jumpList {
-  display: flex;
-  min-width: 0;
-  gap: $space-8 $space-24;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  scroll-padding-inline: $container-padding;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  // Bleed to the viewport edge on phones so the row peeks
-  margin-inline: calc(-1 * #{$container-padding});
-  padding-inline: $container-padding;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  @include md {
-    flex-wrap: wrap;
-    overflow: visible;
-    margin-inline: 0;
-    padding-inline: 0;
-  }
-}
-
-.jumpLink {
-  @include mono-label($color-fg-muted);
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  min-height: 44px;
-  scroll-snap-align: start;
-  white-space: nowrap;
-  border-bottom: 1px solid transparent;
-  transition: color $transition-fast, border-color $transition-fast;
-
-  @include pointer-fine {
-    &:hover {
-      color: $color-fg;
-      border-color: $color-red;
-    }
-  }
-
-  &:active {
-    color: $color-fg;
-    border-color: $color-red-pressed;
-  }
-}
-
-// --------------------------------------------
-// Estimator section shell (the island lives inside)
-// --------------------------------------------
-.estimatorSection {
-  padding: $space-section 0;
-  border-top: $border-hairline;
-  scroll-margin-top: 88px;
-}
-
-.estimatorInner {
-  @include container;
-}
-
-.estimatorHead {
-  display: grid;
-  gap: $space-12;
-  max-width: 62ch;
-  margin-bottom: $space-48;
-}
-
-.sectionTitle {
-  @include display-type($font-size-h2, $line-height-tight);
-  color: $color-fg;
-}
-
-.sectionSub {
-  font-size: $font-size-md;
-  line-height: $line-height-normal;
-  color: $color-fg-muted;
+// Focus is never hidden under the fixed header (WCAG 2.4.11).
+.estimator :is(a, button, input, select, textarea, summary) {
+  scroll-margin-top: 96px;
 }

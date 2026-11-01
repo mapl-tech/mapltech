@@ -1,0 +1,564 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The full price list: a sticky heading and index on wide screens, every tier
+// as a row on a red timeline rule (no card grid), monthly lines as a ledger.
+
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+$muted: rgba($color-fg, 0.7);
+
+.list {
+  padding: clamp(64px, 11vw, 144px) 0;
+  border-top: 1px solid $color-hairline;
+  scroll-margin-top: 72px;
+}
+
+.inner {
+  @include container(1280px);
+  display: grid;
+  gap: 48px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: 72px;
+    align-items: start;
+  }
+}
+
+.rail {
+  min-width: 0;
+
+  @include lg {
+    position: sticky;
+    top: 112px;
+  }
+}
+
+.title {
+  margin: 0;
+  max-width: 12ch;
+  font-size: $font-size-h2;
+}
+
+.lede {
+  margin: 20px 0 0;
+  max-width: 30rem;
+  font-size: $font-size-lede;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.78);
+}
+
+// ---------------------------------------------------------------- index (wide screens)
+.index {
+  display: none;
+  margin-top: 40px;
+
+  @include lg {
+    display: block;
+  }
+
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid $color-hairline;
+  }
+
+  // The hairline sits between targets, with air either side of it.
+  li {
+    padding: 3px 0;
+    border-bottom: 1px solid $color-hairline;
+  }
+}
+
+.indexLink {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 48px;
+  padding: 12px 0;
+  color: rgba($color-fg, 0.68);
+  transition: color 160ms $ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $color-red;
+    transform: translateY(-50%) scale(0.6);
+    opacity: 0;
+    transition:
+      opacity 160ms ease-out,
+      transform 160ms $ease;
+  }
+
+  @include pointer-fine {
+    &:hover {
+      color: $color-fg;
+    }
+  }
+
+  &[aria-current='location'] {
+    color: $color-fg;
+
+    &::before {
+      opacity: 1;
+      transform: translateY(-50%) scale(1);
+    }
+  }
+
+  @include focus-ring;
+}
+
+.indexName {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.125rem;
+  letter-spacing: -0.015em;
+}
+
+.indexFrom {
+  font-size: 1rem;
+  white-space: nowrap;
+  @include tabular;
+}
+
+// ---------------------------------------------------------------- groups
+.groups {
+  display: grid;
+  gap: clamp(72px, 9vw, 120px);
+  min-width: 0;
+}
+
+.group {
+  min-width: 0;
+  scroll-margin-top: 96px;
+}
+
+.groupHead {
+  max-width: 44rem;
+  margin-bottom: 32px;
+}
+
+.groupTitle {
+  margin: 0;
+  font-size: clamp(1.625rem, 1.3rem + 1vw, 2.125rem);
+  letter-spacing: -0.025em;
+}
+
+.groupAnswer {
+  margin: 12px 0 0;
+  font-size: $font-size-md;
+  line-height: 1.6;
+  color: rgba($color-fg, 0.86);
+}
+
+.groupNote {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: $muted;
+}
+
+// Links with mixed content (text, hidden text, arrow) are inline-block so the
+// spaces between the parts survive; padding keeps the 44px target.
+.textLink {
+  display: inline-block;
+  min-height: 44px;
+  padding: 10px 0;
+  line-height: 24px;
+  margin-top: 4px;
+  font-weight: $font-weight-semibold;
+  color: $color-red-text;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red-text, 0.4);
+  text-underline-offset: 5px;
+
+  @include pointer-fine {
+    &:hover {
+      text-decoration-color: $color-red-text;
+    }
+  }
+
+  @include focus-ring;
+}
+
+// ---------------------------------------------------------------- tiers on the timeline rule
+.tiers {
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 0 0 0 32px;
+  list-style: none;
+
+  // The track, then the red line that draws over it as the list is read.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 38px;
+    bottom: 38px;
+    width: 2px;
+  }
+
+  &::before {
+    background: rgba($color-fg, 0.1);
+  }
+
+  &::after {
+    background: $color-red;
+    transform-origin: top;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .tiers::after {
+      animation: draw-line linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 70%;
+    }
+  }
+}
+
+@keyframes draw-line {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+// A schedule row: name left, price right on the same line (it wraps under
+// the name only when the two cannot share a line), the detail underneath.
+.tier {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  padding: 32px 0;
+  border-top: 1px solid $color-hairline;
+
+  // The node where this tier meets the line.
+  &::before {
+    content: '';
+    position: absolute;
+    left: -37px;
+    top: 38px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: $color-ground;
+    border: 2px solid $color-red;
+  }
+}
+
+.tierHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 24px;
+  min-width: 0;
+}
+
+.tierName {
+  flex: 1 1 12rem;
+  margin: 0;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.tierPrice {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  margin: 0;
+
+  @include sm {
+    justify-items: end;
+    text-align: right;
+  }
+}
+
+.unitRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+
+  @include sm {
+    flex-direction: row-reverse;
+  }
+}
+
+.tierUnit {
+  @include mono-label(rgba($color-fg, 0.68));
+}
+
+// The number leads visually, its unit sits under it; the DOM still reads
+// "Starting at $5,000" for assistive tech.
+.priceValue {
+  order: -1;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(1.75rem, 1.4rem + 1.1vw, 2.375rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: $color-fg;
+  @include tabular;
+}
+
+.perLarge {
+  margin-left: 2px;
+  font-family: $font-body;
+  font-size: 0.45em;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0;
+  color: $muted;
+}
+
+// The row the visitor's estimate landed on (teal: a live readout).
+.matched {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid rgba($color-signal, 0.45);
+  border-radius: $radius-pill;
+  @include mono-label($color-signal);
+  font-size: 0.75rem;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $color-signal;
+  }
+
+  // The class sets display, so honour the hidden attribute explicitly.
+  &[hidden] {
+    display: none;
+  }
+
+  // Revealing it (display none -> inline-flex) restarts this, so it settles in.
+  @include motion-ok {
+    animation: tag-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes tag-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.tierBody {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tierDesc {
+  margin: 0;
+  max-width: 60ch;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  color: rgba($color-fg, 0.82);
+}
+
+// Feature list: open on tablets and up, a tap away on phones (TierDetails).
+.details {
+  border-top: 1px solid $color-hairline;
+  border-bottom: 1px solid $color-hairline;
+}
+
+.detailsSummary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  cursor: pointer;
+  @include mono-label(rgba($color-fg, 0.86));
+  -webkit-tap-highlight-color: transparent;
+
+  // ::after belongs to the global accordion rule (the red line that draws on open).
+  &::before {
+    content: '+';
+    order: 2;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: $color-red;
+  }
+
+  .details[open] > &::before {
+    content: '\2212';
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 2px;
+  }
+}
+
+// Span the global red rule across this summary (it is inset for padded accordions).
+.details.details > .detailsSummary::after {
+  left: 0;
+  right: 0;
+}
+
+.count {
+  color: rgba($color-fg, 0.68);
+}
+
+.features {
+  display: grid;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 0 0 18px;
+  list-style: none;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 32px;
+  }
+
+  li {
+    position: relative;
+    padding-left: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: rgba($color-fg, 0.82);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.7em;
+      width: 10px;
+      height: 2px;
+      background: $color-red;
+    }
+  }
+}
+
+.tierAction {
+  display: inline-block;
+  justify-self: start;
+  min-height: 44px;
+  padding: 10px 0;
+  line-height: 24px;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-fg, 0.35);
+  text-underline-offset: 5px;
+  transition: text-decoration-color 160ms $ease;
+
+  @include pointer-fine {
+    &:hover {
+      text-decoration-color: $color-red;
+    }
+  }
+
+  @include focus-ring;
+}
+
+// ---------------------------------------------------------------- monthly lines (ledger)
+.monthly {
+  margin-top: 32px;
+  padding: 8px 20px;
+  border: 1px solid $color-hairline;
+  border-radius: 16px;
+  background: $color-surface-1;
+
+  @include md {
+    padding: 8px 32px;
+  }
+}
+
+.monthlyTitle {
+  margin: 0;
+  padding: 16px 0 6px;
+  font-family: $font-body;
+  @include mono-label(rgba($color-fg, 0.68));
+}
+
+.monthlyList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.monthlyRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 16px 0;
+  border-top: 1px solid $color-hairline;
+
+  &:first-child {
+    border-top: 0;
+  }
+}
+
+.monthlyName {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.monthlyPrice {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  text-align: right;
+  color: $color-fg;
+  @include tabular;
+}
+
+.per {
+  margin-left: 2px;
+  font-family: $font-body;
+  font-size: 1rem;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0;
+  color: $muted;
+}
+
+.monthlyDesc {
+  grid-column: 1 / -1;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $muted;
+}
+
+// Focus is never hidden under the fixed header (WCAG 2.4.11): keyboard focus
+// scrolls these controls clear of it.
+.list :is(a, button, input, select, textarea, summary) {
+  scroll-margin-top: 96px;
+}

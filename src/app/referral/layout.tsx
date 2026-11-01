@@ -1,21 +1,28 @@
 import type { Metadata } from 'next';
+import { REFERRAL_DESCRIPTION, REFERRAL_TITLE, REFERRAL_URL } from '@/components/pricing/referralContent';
 
+const SOCIAL_TITLE = `${REFERRAL_TITLE} | MAPL TECH`;
+// The site's Open Graph image (the root layout's), with its own alt text.
+const OG_IMAGE = '/images/og-flagship.jpg';
+
+// Root layout metadata is shallow-merged, so Open Graph and Twitter are set in
+// full here; otherwise they would inherit the homepage's URL and copy.
 export const metadata: Metadata = {
-  title: 'Referral Program',
-  alternates: { canonical: 'https://mapltech.com/referral' },
-  description:
-    'Refer agencies to MAPL TECH and earn rewards. Our referral program thanks you for connecting us with agencies that need systems, automation, and infrastructure support.',
+  title: REFERRAL_TITLE,
+  description: REFERRAL_DESCRIPTION,
+  alternates: { canonical: REFERRAL_URL },
   openGraph: {
-    title: 'Referral Program | MAPL TECH',
-    description:
-      'Refer agencies to MAPL TECH and earn rewards for successful introductions.',
+    type: 'website',
+    url: REFERRAL_URL,
+    siteName: 'MAPL TECH',
+    locale: 'en_CA',
+    title: SOCIAL_TITLE,
+    description: REFERRAL_DESCRIPTION,
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'MAPL TECH: Your agency sells the vision. We engineer the software behind it.' }],
   },
+  twitter: { card: 'summary_large_image', title: SOCIAL_TITLE, description: REFERRAL_DESCRIPTION, images: [OG_IMAGE] },
 };
 
-export default function ReferralLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ReferralLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

@@ -2,221 +2,465 @@
 @use '../../styles/mixins' as *;
 
 // ============================================
-// Scope Estimator (the page's PEAK): controls left, sticky summary rail right.
-// Red marks interactive state only; teal marks the live output only.
+// The Scope Estimator: five questions left, the readout right (sticky on
+// wide screens), a one-line live bar on phones. Red marks choice and
+// emphasis; teal marks the live output and nothing else.
 // ============================================
 
-$rail-top: 88px; // fixed 64px header + 24px
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$label-muted: rgba($color-fg, 0.68);
 
 .estimator {
   display: grid;
-  gap: $space-40;
+  gap: 48px;
   align-items: start;
 
   @include lg {
-    grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
-    gap: $space-48;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 56px;
+  }
+
+  @include xl {
+    gap: 80px;
   }
 }
 
+// ---------------------------------------------------------------- questions
 .controls {
-  display: grid;
-  gap: $space-24;
   min-width: 0;
-}
-
-// --------------------------------------------
-// Fieldsets
-// --------------------------------------------
-.group {
-  display: grid;
-  gap: $space-16;
-  margin: 0;
-  padding: $space-16 $space-24 $space-24;
-  min-width: 0;
-  border: $border-hairline;
-  border-radius: $radius-lg;
-
-  &[hidden] {
-    display: none;
-  }
-}
-
-.legend {
-  @include mono-label($color-fg-muted);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: $space-8;
-  padding: 0 $space-8;
-  margin-left: -$space-8;
 }
 
 .step {
-  color: $color-fg-dim;
+  min-width: 0;
+  margin: 0;
+  padding: 32px 0;
+  border: 0;
+  border-top: 1px solid $color-hairline;
+
+  &:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
 }
 
-.legendHint {
-  color: $color-fg-dim;
-  letter-spacing: 0;
-  text-transform: none;
+// Floated so it joins the flow (a fieldset's rendered legend ignores gaps).
+.legend {
+  float: left;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 16px;
+  padding: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: $color-fg;
+
+  + * {
+    clear: both;
+  }
+}
+
+// Step number with a short red tick after it.
+.index {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: 1rem;
+  color: $color-red;
+  @include tabular;
+
+  &::after {
+    content: '';
+    width: 18px;
+    height: 1px;
+    background: rgba($color-red, 0.7);
+  }
 }
 
 .hint {
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-fg-muted;
+  margin: 0 0 16px;
+  max-width: 56ch;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $label-muted;
 }
 
-// --------------------------------------------
-// Chips (native radio / checkbox inside a label)
-// --------------------------------------------
-.chips {
+// Sub-groups when several lines are priced (size per line).
+.subStep {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  & + & {
+    margin-top: 24px;
+  }
+}
+
+.subLegend {
+  float: left;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 0;
+  @include mono-label($label-muted);
+
+  + * {
+    clear: both;
+  }
+}
+
+// ---------------------------------------------------------------- option grids
+.services {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+// Sizes read as price-list rows (what you get left, the price right) at every width.
+.sizes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+
+  @include sm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+// "Start over": quiet, after the last question, only when there is something to undo.
+.reset {
   display: flex;
   flex-wrap: wrap;
-  gap: $space-8;
-}
-
-.srInput {
-  @include sr-only;
-}
-
-.chip {
-  position: relative;
-  display: inline-flex;
   align-items: center;
-  gap: $space-8;
+  gap: 4px 16px;
+  padding-top: 16px;
+  border-top: 1px solid $color-hairline;
+}
+
+.resetButton {
   min-height: 44px;
-  padding: 0 $space-16;
-  border: $border-hairline-strong;
-  border-radius: $radius-md;
-  background: $color-surface-1;
-  color: $color-text-body;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  line-height: 1.2;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-fg, 0.35);
+  text-underline-offset: 5px;
   cursor: pointer;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  transition: border-color $transition-fast, background-color $transition-fast, color $transition-fast;
 
   @include pointer-fine {
     &:hover {
-      border-color: rgba($color-red, 0.6);
-      color: $color-fg;
+      text-decoration-color: $color-red;
+    }
+  }
+
+  @include focus-ring;
+}
+
+.resetNote {
+  font-size: 1rem;
+  color: $label-muted;
+}
+
+// The native control stays in the DOM: focusable, keyboard-operable, announced.
+.native {
+  @include sr-only;
+}
+
+// ---------------------------------------------------------------- tiles
+.tile {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'mark name price'
+    'mark meta price';
+  align-content: center;
+  column-gap: 12px;
+  row-gap: 2px;
+  min-height: 68px;
+  padding: 14px 16px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 12px;
+  background: $color-surface-1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  scroll-margin: 96px 0;
+  transition:
+    border-color 150ms $ease,
+    background-color 150ms $ease,
+    box-shadow 150ms $ease;
+
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-red, 0.55);
+      background: $color-surface-2;
     }
   }
 
   &:active {
-    border-color: $color-red-pressed;
+    background: $color-surface-2;
   }
 
+  // Selected: a 2px red edge drawn inside (no layout shift) and a faint red wash.
   &[data-checked] {
     border-color: $color-red;
-    background: rgba($color-red, 0.12);
-    color: $color-fg;
+    background: rgba($color-red, 0.08);
+    box-shadow: inset 0 0 0 1px $color-red;
   }
 
   &[data-locked] {
     cursor: default;
   }
 
-  &:has(input:focus-visible) {
+  &:has(.native:focus-visible) {
     outline: $focus-ring;
-    outline-offset: $focus-ring-offset;
+    outline-offset: 3px;
   }
 
-  @include reduced-motion {
-    transition: none;
+  // Tiles without a price column drop it, and its gap, entirely.
+  &:not(:has(.tilePrice)) {
+    grid-template-columns: 20px minmax(0, 1fr);
+    grid-template-areas:
+      'mark name'
+      'mark meta';
+  }
+
+  // The smallest phones: a little more room for the words (a smaller mark,
+  // tighter gap), so every service name fits in two lines at 360px.
+  @media (max-width: 399px) {
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    column-gap: 8px;
+    padding-inline: 12px;
+
+    &:not(:has(.tilePrice)) {
+      grid-template-columns: 18px minmax(0, 1fr);
+    }
+
+    .check,
+    .radio {
+      width: 18px;
+      height: 18px;
+    }
+
+    .check::after {
+      left: 4.5px;
+      top: 1px;
+    }
+
+    .radio::after {
+      inset: 3px;
+    }
   }
 }
 
-.chipSub {
-  font-family: $font-mono;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-regular;
-  color: $color-fg-muted;
+.tileName {
+  grid-area: name;
+  min-width: 0;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1.3;
+  color: $color-fg;
+}
+
+.tileMeta {
+  grid-area: meta;
+  min-width: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: $label-muted;
   @include tabular;
 
-  .chip[data-checked] & {
-    color: $color-fg;
+  .tile[data-checked] & {
+    color: rgba($color-fg, 0.84);
   }
 }
 
-// --------------------------------------------
-// Switch rows (add-ons)
-// --------------------------------------------
+.tilePrice {
+  grid-area: price;
+  align-self: center;
+  padding-left: 8px;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: $color-fg;
+  @include tabular;
+}
+
+// Checkbox and radio marks (the visual twin of the hidden native control).
+.check,
+.radio {
+  grid-area: mark;
+  align-self: start;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border: 1.5px solid rgba($color-fg, 0.5);
+  transition:
+    background-color 150ms $ease,
+    border-color 150ms $ease;
+}
+
+.check {
+  border-radius: 6px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 5.5px;
+    top: 1.5px;
+    width: 5px;
+    height: 10px;
+    border: solid $color-white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 160ms $ease;
+  }
+
+  .tile[data-checked] & {
+    background: $color-red-fill;
+    border-color: $color-red-fill;
+
+    &::after {
+      transform: rotate(45deg) scale(1);
+    }
+  }
+}
+
+.radio {
+  border-radius: 50%;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 3.5px;
+    border-radius: 50%;
+    background: $color-red;
+    transform: scale(0);
+    transition: transform 160ms $ease;
+  }
+
+  .tile[data-checked] & {
+    border-color: $color-red;
+
+    &::after {
+      transform: scale(1);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- switches
+// One tile per add-on, 8px apart like every other option on the form; two
+// columns on wide screens so the question column stays short.
 .switches {
   display: grid;
-  column-gap: $space-24;
+  gap: 8px;
 
-  @include md {
+  @include xl {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 .switch {
-  position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: $space-12;
-  min-height: 48px;
-  padding: $space-8 0;
-  border-bottom: $border-hairline;
+  gap: 20px;
+  min-height: 68px;
+  padding: 14px 16px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 12px;
+  background: $color-surface-1;
   cursor: pointer;
   user-select: none;
+  -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  scroll-margin: 96px 0;
+  transition:
+    border-color 150ms $ease,
+    background-color 150ms $ease;
 
-  &[hidden] {
-    display: none;
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-red, 0.55);
+      background: $color-surface-2;
+    }
   }
 
-  &:has(input:focus-visible) .track {
+  &[data-checked] {
+    border-color: rgba($color-red, 0.7);
+    background: rgba($color-red, 0.06);
+  }
+
+  &:has(.native:focus-visible) {
     outline: $focus-ring;
-    outline-offset: $focus-ring-offset;
+    outline-offset: 3px;
   }
 }
 
+.switchText {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
 .switchLabel {
-  flex: 1;
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-text-body;
+  font-size: 1rem;
+  font-weight: $font-weight-medium;
+  line-height: 1.35;
+  color: rgba($color-fg, 0.88);
 
   .switch[data-checked] & {
     color: $color-fg;
   }
 }
 
-.switchState {
-  @include mono-label($color-fg-dim);
-  min-width: 3ch;
-  text-align: right;
-
-  .switch[data-checked] & {
-    color: $color-fg-muted;
-  }
+.switchEffect {
+  font-size: 1rem;
+  line-height: 1.45;
+  color: $label-muted;
+  @include tabular;
 }
 
 .track {
   position: relative;
   flex-shrink: 0;
-  width: 40px;
-  height: 24px;
-  border: $border-hairline-strong;
+  width: 46px;
+  height: 28px;
+  border: 1.5px solid rgba($color-fg, 0.5);
   border-radius: $radius-pill;
   background: $color-surface-3;
-  transition: background-color $transition-fast, border-color $transition-fast;
+  transition:
+    background-color 160ms $ease,
+    border-color 160ms $ease;
 
   .switch[data-checked] & {
-    background: $color-red;
-    border-color: $color-red;
-  }
-
-  @include reduced-motion {
-    transition: none;
+    background: $color-red-fill;
+    border-color: $color-red-fill;
   }
 }
 
@@ -224,130 +468,180 @@ $rail-top: 88px; // fixed 64px header + 24px
   position: absolute;
   top: 3px;
   left: 3px;
-  width: 16px;
-  height: 16px;
+  width: 19px;
+  height: 19px;
   border-radius: 50%;
   background: $color-fg;
-  transition: transform $transition-fast;
+  transition: transform 160ms $ease;
 
   .switch[data-checked] & {
-    transform: translateX(16px);
-  }
-
-  @include reduced-motion {
-    transition: none;
+    transform: translateX(18px);
   }
 }
 
-.note {
-  padding-left: $space-12;
-  border-left: 2px solid $color-red;
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-text-body;
-
-  &[hidden] {
-    display: none;
-  }
-}
-
-// --------------------------------------------
-// Summary rail (desktop sticky; inline on phones)
-// --------------------------------------------
+// ---------------------------------------------------------------- readout rail
 .rail {
   min-width: 0;
 
+  // Sticky beside the questions; scrolls inside itself only if it ever
+  // outgrows the viewport. The right/bottom padding leaves room for the frame.
   @include lg {
     position: sticky;
-    top: $rail-top;
+    top: 96px;
+    max-height: calc(100svh - 112px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 14px 14px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba($color-fg, 0.2) transparent;
   }
 }
 
-.summary {
-  @include surface(2);
-  display: grid;
-  gap: $space-24;
-  padding: $space-24;
+.readout {
+  position: relative;
+  scroll-margin-top: 72px;
 }
 
-.headline {
-  display: grid;
-  gap: $space-12;
+// The site signature: the readout's red hairline frame, offset behind it.
+.frame {
+  // The offset the frame registers from, and rests at (bottom-right).
+  --frame-x: 16px;
+  position: absolute;
+  inset: 12px -12px -12px 12px;
+  border: 1px solid rgba($color-red, 0.6);
+  border-radius: 20px;
+  pointer-events: none;
+
+  // Phones: offset straight down, so the frame never crosses the 16px gutter.
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    --frame-x: 0px;
+    inset: 10px 0 -10px 0;
+  }
 }
 
-.eyebrow {
-  @include mono-label($color-fg-muted);
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .frame {
+      animation: register linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+  }
+}
+
+@keyframes register {
+  from {
+    transform: translate(var(--frame-x, 16px), 20px);
+    opacity: 0.25;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  padding: 24px 20px;
+  border-radius: 20px;
+  border: 1px solid $color-hairline-strong;
+  background: linear-gradient(180deg, #17151a 0%, #111013 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 32px 80px -40px rgba(0, 0, 0, 0.9);
+
+  @include sm {
+    padding: 32px;
+  }
+}
+
+.readoutTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.readoutLabel {
+  margin: 0;
+  @include mono-label($label-muted);
+  font-family: $font-body;
+}
+
+// Teal = live: the only teal outside the numbers themselves.
+.liveTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  @include mono-label($color-signal);
+
+  &::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: $color-signal;
+    box-shadow: 0 0 0 3px rgba($color-signal, 0.15);
+  }
+}
+
+// The number. Sized to its own container so the longest range never overflows.
+.totalBox {
+  container-type: inline-size;
+  margin-top: 16px;
 }
 
 .total {
+  margin: 0;
+  outline: none;
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 6px;
+    border-radius: 4px;
+  }
+}
+
+.digits {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: $space-4 $space-12;
-  outline: none;
-}
-
-.live,
-.customTotal,
-.dash {
-  @include display-type(clamp(2.25rem, 3.2vw, 3rem), 1);
-  @include tabular;
+  column-gap: 0.06em;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(2rem, 12cqi, 3.75rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
   color: $color-signal;
-  overflow-wrap: anywhere;
+  @include tabular;
+}
+
+.live {
+  white-space: nowrap;
+  color: $color-signal;
 }
 
 .dash {
-  color: rgba($color-signal, 0.55);
+  color: rgba($color-signal, 0.6);
 }
 
-.compact {
-  gap: $space-4;
+.unit {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba($color-fg, 0.86);
 }
 
-.compact .live,
-.compact .customTotal,
-.compact .dash {
-  font-size: 1.875rem;
-}
-
-// Sheet peek: tier, price and monthly line as one wrapping sentence.
-.compactLines {
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-text-body;
-
-  strong {
-    font-weight: $font-weight-semibold;
-    color: $color-fg;
-  }
-}
-
-.totalUnit {
-  @include mono-label($color-fg-dim);
-  width: 100%;
-}
-
-.lines {
-  display: grid;
-  gap: $space-4;
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-text-body;
-
-  strong {
-    font-weight: $font-weight-semibold;
-    color: $color-fg;
-  }
-}
-
-.lineService {
-  color: $color-fg-muted;
+.unitNote {
+  color: $label-muted;
 }
 
 .monthly {
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-text-body;
+  margin: 8px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $label-muted;
 }
 
 .monthlyValue {
@@ -356,141 +650,313 @@ $rail-top: 88px; // fixed 64px header + 24px
   @include tabular;
 }
 
-.divider {
-  height: 1px;
-  background: $color-hairline;
+.monthlyName {
+  color: rgba($color-fg, 0.86);
+}
+
+// ---------------------------------------------------------------- breakdown
+.breakdown {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid $color-hairline;
 }
 
 .subhead {
-  @include mono-label($color-fg-muted);
-  margin-bottom: $space-12;
+  margin: 0 0 16px;
+  @include mono-label($label-muted);
+  font-family: $font-body;
 }
 
+// A red timeline with one node per driver.
 .drivers {
+  position: relative;
   display: grid;
-  gap: $space-8;
+  gap: 16px;
+  margin: 0;
+  padding: 0 0 0 24px;
+  list-style: none;
 
-  li {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: $space-12;
-    align-items: start;
-    font-size: $font-size-sm;
-    line-height: 1.45;
-    color: $color-text-body;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: rgba($color-red, 0.55);
+    transform-origin: top;
   }
 }
 
-.tag {
-  @include mono-label($color-fg-muted);
-  font-size: 0.625rem;
-  min-width: 3.75em;
-  margin-top: 2px;
-  padding: 3px 5px;
-  border: $border-hairline-strong;
-  border-radius: $radius-sm;
-  text-align: center;
-}
-
-.notes {
-  display: grid;
-  gap: $space-4;
-  margin-top: $space-12;
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-fg-muted;
-}
-
-.bundle {
-  display: grid;
-  gap: $space-8;
-  padding: $space-16;
-  border: $border-hairline-strong;
-  border-radius: $radius-md;
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-text-body;
-
-  &[hidden] {
-    display: none;
-  }
-}
-
-.bundleName {
-  font-weight: $font-weight-semibold;
-  color: $color-fg;
-}
-
-.bundlePrice {
-  color: $color-signal;
-  @include tabular;
-}
-
-.bundleLink {
-  @include mono-label($color-fg);
-  width: fit-content;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  text-decoration: underline;
-  text-decoration-color: $color-hairline-strong;
-  text-underline-offset: 5px;
-
-  @include pointer-fine {
-    &:hover {
-      color: $color-red-hover;
-      text-decoration-color: currentColor;
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .drivers::before {
+      animation: draw-line linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 45%;
     }
   }
 }
 
-// --------------------------------------------
-// Send this estimate
-// --------------------------------------------
-.send {
-  display: grid;
-  gap: $space-8;
+@keyframes draw-line {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 
-.label {
-  @include mono-label($color-fg-muted);
+.driver {
+  position: relative;
 
-  span {
-    color: $color-fg-dim;
-    text-transform: none;
-    letter-spacing: 0;
+  &::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #141216;
+    border: 1.5px solid $color-red;
   }
+
+  &[data-kind='service']::before {
+    background: $color-red;
+  }
+
+  // New drivers settle in; existing ones never re-animate (stable keys).
+  @include motion-ok {
+    animation: driver-in 220ms $ease-out both;
+  }
+}
+
+@keyframes driver-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.driverRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.driverName {
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.driverFor {
+  font-weight: $font-weight-regular;
+  color: $label-muted;
+}
+
+.driverMuted {
+  color: $label-muted;
+}
+
+.driverPrice {
+  flex-shrink: 0;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+  color: $color-fg;
+  @include tabular;
+}
+
+.driverSteps {
+  display: grid;
+  gap: 2px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    font-size: 1rem;
+    line-height: 1.45;
+    color: $label-muted;
+  }
+}
+
+.bundleNote {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $label-muted;
+}
+
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: $font-weight-semibold;
+  color: $color-red-text;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red-text, 0.4);
+  text-underline-offset: 4px;
+
+  @include pointer-fine {
+    &:hover {
+      text-decoration-color: $color-red-text;
+    }
+  }
+
+  @include focus-ring;
+}
+
+.caveats {
+  display: grid;
+  gap: 4px;
+  margin: 16px 0 0;
+  padding: 12px 0 0 12px;
+  border-left: 2px solid $color-red;
+  list-style: none;
+
+  li {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: rgba($color-fg, 0.86);
+  }
+}
+
+// ---------------------------------------------------------------- next steps
+.next {
+  display: grid;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.primary {
+  @include button-primary;
+  width: 100%;
+  min-height: 52px;
+  @include focus-ring;
+}
+
+.nextNote {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $label-muted;
+}
+
+// One attributed line of client proof under the action it supports.
+.proof {
+  margin: 8px 0 0;
+  padding: 8px 0 0 16px;
+  border-left: 2px solid $color-red;
+}
+
+.proofQuote {
+  margin: 0;
+
+  p {
+    margin: 0;
+    font-family: $font-display;
+    font-weight: $font-weight-semibold;
+    font-size: 1.0625rem;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: $color-fg;
+
+    &::before {
+      content: '\201C';
+      color: $color-red;
+    }
+
+    &::after {
+      content: '\201D';
+      color: $color-red;
+    }
+  }
+}
+
+.proofBy {
+  margin-top: 8px;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: $label-muted;
+}
+
+.secondary {
+  @include button-secondary;
+  min-height: 48px;
+  padding: 0 20px;
+  font-size: 1rem;
+  @include focus-ring;
+}
+
+// ---------------------------------------------------------------- get it in writing
+.send {
+  display: grid;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid $color-hairline;
+}
+
+.sendTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.sendLabel {
+  font-size: 1rem;
+  line-height: 1.4;
+  color: rgba($color-fg, 0.86);
+}
+
+.optional {
+  color: $label-muted;
 }
 
 .sendRow {
   display: grid;
-  gap: $space-8;
+  gap: 8px;
 
   @include sm {
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
   }
 }
 
 .input {
   width: 100%;
+  min-width: 0;
   min-height: 48px;
-  padding: 0 $space-16;
-  border: $border-hairline-strong;
-  border-radius: $radius-md;
+  padding: 0 14px;
+  // Boundary at 3:1+ against the card (1.4.11).
+  border: 1px solid rgba($color-fg, 0.44);
+  border-radius: 10px;
   background: $color-surface-3;
   color: $color-fg;
-  font-size: 1rem; // 16px+: no iOS zoom
+  font-size: 1rem; // 16px: no iOS zoom
   line-height: 1.2;
 
   &::placeholder {
-    color: $color-fg-dim;
+    color: rgba($color-fg, 0.52);
   }
 
   &:focus-visible {
     outline: $focus-ring;
-    outline-offset: 0;
+    outline-offset: 2px;
     border-color: $color-red;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: $color-red-text;
   }
 }
 
@@ -502,152 +968,200 @@ $rail-top: 88px; // fixed 64px header + 24px
   overflow: hidden;
 }
 
-.sent {
-  display: block;
-  padding: $space-16;
-  border: 1px solid rgba($color-signal, 0.4);
-  border-radius: $radius-md;
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  color: $color-fg;
-}
-
 .error {
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
   color: $color-red-text;
 }
 
-.actions {
-  display: grid;
-  gap: $space-12;
+.sent {
+  display: block;
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid rgba($color-signal, 0.4);
+  border-radius: 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $color-fg;
 }
 
-// Matched tier features (collapsed in the rail, open in the sheet)
-.features {
-  border-top: $border-hairline;
+// ---------------------------------------------------------------- what's included
+.included {
+  margin-top: 24px;
+  border-top: 1px solid $color-hairline;
 }
 
-.featuresSummary {
-  @include mono-label($color-fg-muted);
-  position: relative;
+.includedSummary {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $space-12;
-  min-height: 48px;
+  gap: 12px;
+  min-height: 52px;
   cursor: pointer;
+  @include mono-label(rgba($color-fg, 0.86));
   -webkit-tap-highlight-color: transparent;
-
-  &::-webkit-details-marker {
-    display: none;
-  }
-
-  &::marker {
-    content: '';
-  }
 
   &::after {
     content: '+';
-    font-family: $font-mono;
-    font-size: $font-size-base;
+    font-size: 1.25rem;
     line-height: 1;
-    color: $color-fg-dim;
+    color: $color-red;
   }
 
-  .features[open] > &::after {
+  .included[open] > &::after {
     content: '\2212';
   }
 
   &:focus-visible {
     outline: $focus-ring;
-    outline-offset: -2px;
+    outline-offset: 2px;
   }
 }
 
-.featureGroup {
-  display: grid;
-  gap: $space-8;
-  padding-bottom: $space-16;
+.count {
+  color: $label-muted;
+}
 
-  h4 {
-    font-family: $font-body;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    letter-spacing: 0;
-    color: $color-fg;
-  }
+.includedGroup {
+  padding-bottom: 16px;
 
   ul {
     display: grid;
-    gap: $space-4;
+    gap: 6px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
   }
 
   li {
-    display: flex;
-    gap: $space-8;
-    font-size: $font-size-sm;
-    line-height: $line-height-normal;
-    color: $color-text-body;
+    position: relative;
+    padding-left: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: rgba($color-fg, 0.82);
 
     &::before {
-      content: '\2014';
-      flex-shrink: 0;
-      color: $color-fg-dim;
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.7em;
+      width: 10px;
+      height: 2px;
+      background: $color-red;
     }
   }
 }
 
-// --------------------------------------------
-// Mobile sheet (vaul) placements
-// --------------------------------------------
-.sheet {
-  // BottomSheet's own <h2> title stays for screen readers; the compact head
-  // row below carries the visible label so the 220px peek fits range + CTA.
-  :global(.bottom-sheet__head) > h2 {
-    @include sr-only;
+.includedTitle {
+  margin: 0;
+  font-family: $font-body;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0;
+  color: $color-fg;
+}
+
+// ---------------------------------------------------------------- live bar (below 1024px)
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $z-sticky + 1;
+  padding: 8px 12px calc(8px + #{$safe-bottom});
+  background: rgba($color-ground, 0.94);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid $color-hairline;
+  transform: translateY(110%);
+  visibility: hidden;
+  transition:
+    transform 240ms $ease-out,
+    visibility 0s linear 240ms;
+
+  &[data-visible] {
+    transform: none;
+    visibility: visible;
+    transition:
+      transform 240ms $ease-out,
+      visibility 0s;
+  }
+
+  @include lg {
+    display: none;
+  }
+
+  @include reduced-motion {
+    transition: none;
+
+    &[data-visible] {
+      transition: none;
+    }
   }
 }
 
-.sheetHead {
-  display: grid;
-  gap: $space-8;
-
-  // The peek budget is ~225px: keep the CTA at the 48px minimum, not the rail's 52px.
-  .sheetCta :global(.magnetic-btn) {
-    min-height: 48px;
-  }
-}
-
-.sheetRow {
+.barButton {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $space-12;
-  min-height: 44px;
-}
-
-.sheetToggle {
-  @include mono-label($color-fg);
-  display: inline-flex;
-  align-items: center;
-  gap: $space-8;
-  min-height: 44px;
-  margin-right: -$space-8;
-  padding: 0 $space-8;
-  background: transparent;
-  text-decoration: underline;
-  text-decoration-color: $color-hairline-strong;
-  text-underline-offset: 5px;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 6px 8px 6px 16px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 14px;
+  background: $color-surface-2;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 
   &:active {
-    color: $color-red-pressed;
+    background: $color-surface-3;
   }
+
+  @include focus-ring;
 }
 
-.sheetBody {
+.barText {
   display: grid;
-  gap: $space-24;
-  padding-top: $space-16;
+  min-width: 0;
+}
+
+.barLabel {
+  font-size: 0.75rem;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-label;
+  text-transform: uppercase;
+  color: $label-muted;
+}
+
+.barRange {
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: 1.375rem;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  color: $color-signal;
+  @include tabular;
+}
+
+.barAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  background: rgba($color-fg, 0.06);
+}
+
+.barArrow {
+  color: $color-red;
 }

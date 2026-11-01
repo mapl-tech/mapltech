@@ -1,0 +1,256 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The referral form: single column on phones, paired fields from 640px,
+// labels above inputs, 52px fields, errors under the field they belong to.
+
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+$muted: rgba($color-fg, 0.7);
+
+.form {
+  display: grid;
+  gap: 32px;
+}
+
+.fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  float: left;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid $color-hairline;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.25rem;
+  letter-spacing: -0.015em;
+  color: $color-fg;
+
+  + * {
+    clear: both;
+  }
+}
+
+.fields {
+  display: grid;
+  gap: 20px;
+
+  @include sm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+  }
+}
+
+.field {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.wide {
+  @include sm {
+    grid-column: 1 / -1;
+  }
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1.4;
+  color: $color-fg;
+}
+
+.optional {
+  font-weight: $font-weight-regular;
+  color: $muted;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0 16px;
+  // Boundary at 3:1+ against the card (1.4.11); 0.28 measured 2.35:1.
+  border: 1px solid rgba($color-fg, 0.44);
+  border-radius: 12px;
+  background-color: $color-surface-3;
+  color: $color-fg;
+  font-size: 1rem; // 16px: no iOS zoom
+  line-height: 1.4;
+  transition: border-color 150ms $ease;
+
+  &::placeholder {
+    color: rgba($color-fg, 0.52);
+  }
+
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-fg, 0.62);
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 2px;
+    border-color: $color-red;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: $color-red-text;
+  }
+}
+
+.select {
+  appearance: none;
+  padding-right: 44px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3 5.5 7 9.5l4-4' stroke='%23F03350' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+.textarea {
+  min-height: 128px;
+  padding: 14px 16px;
+  resize: vertical;
+}
+
+.hint {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $muted;
+}
+
+.fieldError {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $color-red-text;
+
+  &::before {
+    content: '';
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    margin-top: 0.55em;
+    border-radius: 50%;
+    background: $color-red-text;
+  }
+}
+
+.formError {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba($color-red-text, 0.5);
+  border-radius: 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $color-fg;
+
+  a {
+    color: $color-red-text;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    @include focus-ring;
+  }
+}
+
+.actions {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+
+.primary {
+  @include button-primary;
+  min-height: 52px;
+  @include focus-ring;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    justify-self: stretch;
+  }
+}
+
+.note {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $muted;
+}
+
+.recaptcha {
+  margin: 0;
+  font-size: 1rem;
+  color: $muted;
+
+  a {
+    display: inline-block;
+    padding: 10px 0;
+    color: rgba($color-fg, 0.86);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    @include focus-ring;
+  }
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+// ---------------------------------------------------------------- sent
+.success {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding: 32px 24px;
+  border-left: 2px solid $color-red;
+  background: rgba($color-fg, 0.03);
+  border-radius: 0 12px 12px 0;
+  outline: none;
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 4px;
+  }
+}
+
+.successTitle {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  color: $color-fg;
+}
+
+.successText {
+  margin: 0;
+  max-width: 44ch;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: rgba($color-fg, 0.86);
+}
+
+.secondary {
+  @include button-secondary;
+  min-height: 48px;
+  margin-top: 4px;
+  @include focus-ring;
+}

@@ -2,19 +2,23 @@
 
 import { useActionState, useId } from 'react';
 import { estimateSubjectText, estimateSummaryText, type EstimateResult } from '@/lib/estimate';
-import Cta from './Cta';
 import styles from './ScopeEstimator.module.scss';
 
 /**
- * Interaction IX-4: "Send this estimate" needs only an email. It posts the
- * engine's plain-text summary (plus the shareable URL) to /api/contact and
- * replaces the form with one inline <output> line - no modal. Bots that fill
- * the hidden "website" field get the same success line and nothing is sent.
+ * "Get it in writing": one optional field, after the number (reciprocity).
+ * It posts the engine's plain-text summary plus the shareable URL to
+ * /api/contact, which emails MAPL TECH with the visitor as Reply-To, so the
+ * copy promises a reply in writing, not an automatic email. The form is
+ * replaced by one inline status line; no modal. Bots that fill the hidden
+ * "website" field get the same success line and nothing is sent.
  */
 
 type SendState = { status: 'idle' } | { status: 'sent'; email: string } | { status: 'error'; message: string };
 
 const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SEND_FAILED =
+  "That didn't send. Check the email address, or write to contact@mapltech.com and attach the estimate link.";
 
 declare global {
   interface Window {
@@ -54,43 +58,39 @@ async function getRecaptchaToken(): Promise<string | undefined> {
 
 interface SendEstimateFormProps {
   result: EstimateResult;
-  /** 'rail' | 'sheet' - namespaces ids and CTA placements. */
-  placement: string;
+  /** Namespaces the CTA placement ("pricing_<placement>_send"). */
+  placement?: string;
 }
 
-export default function SendEstimateForm({ result, placement }: SendEstimateFormProps) {
+export default function SendEstimateForm({ result, placement = 'estimate' }: SendEstimateFormProps) {
   const id = useId();
 
   const [state, formAction, pending] = useActionState<SendState, FormData>(
     async (_previous, formData) => {
       const email = String(formData.get('email') ?? '').trim();
       const honeypot = String(formData.get('website') ?? '');
-      if (!email) return { status: 'error', message: 'Enter the email address to send this estimate to.' };
+      if (!email) return { status: 'error', message: 'Enter your email address, like you@agency.com.' };
+      if (!EMAIL.test(email)) return { status: 'error', message: 'Enter the email address in the format name@agency.com.' };
       if (honeypot) return { status: 'sent', email };
 
       const recaptchaToken = await getRecaptchaToken();
-      const payload = {
-        name: email,
-        email,
-        subject: estimateSubjectText(result),
-        message: estimateSummaryText(result, { shareUrl: window.location.href }),
-        contactMethod: 'email',
-        recaptchaToken,
-      };
-
       try {
         const response = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            name: email,
+            email,
+            subject: estimateSubjectText(result),
+            message: estimateSummaryText(result, { shareUrl: window.location.href }),
+            contactMethod: 'email',
+            recaptchaToken,
+          }),
         });
-        if (!response.ok) {
-          const body = (await response.json().catch(() => ({}))) as { error?: string };
-          return { status: 'error', message: body.error || 'Could not send. Please try again.' };
-        }
+        if (!response.ok) return { status: 'error', message: SEND_FAILED };
         return { status: 'sent', email };
       } catch {
-        return { status: 'error', message: 'Could not send. Check your connection and try again.' };
+        return { status: 'error', message: SEND_FAILED };
       }
     },
     { status: 'idle' },
@@ -104,10 +104,15 @@ export default function SendEstimateForm({ result, placement }: SendEstimateForm
     );
   }
 
+  const errorId = `${id}-error`;
+
   return (
-    <form action={formAction} className={styles.send}>
-      <label htmlFor={`${id}-email`} className={styles.label}>
-        Email <span>(the only field)</span>
+    <form action={formAction} className={styles.send} noValidate aria-labelledby={`${id}-title`}>
+      <p id={`${id}-title`} className={styles.sendTitle}>
+        Want it in writing?
+      </p>
+      <label htmlFor={`${id}-email`} className={styles.sendLabel}>
+        Your email <span className={styles.optional}>(optional, the only field)</span>
       </label>
       <div className={styles.sendRow}>
         <input
@@ -115,16 +120,15 @@ export default function SendEstimateForm({ result, placement }: SendEstimateForm
           className={styles.input}
           type="email"
           name="email"
-          required
           inputMode="email"
           autoComplete="email"
           placeholder="you@agency.com"
-          aria-describedby={state.status === 'error' ? `${id}-error` : undefined}
+          aria-describedby={state.status === 'error' ? errorId : undefined}
           aria-invalid={state.status === 'error' || undefined}
         />
-        <Cta type="submit" size="small" disabled={pending} placement={`pricing_${placement}_send`}>
-          {pending ? 'Sending…' : 'Send this estimate'}
-        </Cta>
+        <button type="submit" className={styles.secondary} disabled={pending} data-cta-placement={`pricing_${placement}_send`}>
+          {pending ? 'Sending…' : 'Get it in writing'}
+        </button>
       </div>
       <div className={styles.honeypot} aria-hidden="true">
         <label>
@@ -132,11 +136,11 @@ export default function SendEstimateForm({ result, placement }: SendEstimateForm
           <input type="text" name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
-      {state.status === 'error' && (
-        <p id={`${id}-error`} className={styles.error} role="alert">
+      {state.status === 'error' ? (
+        <p id={errorId} className={styles.error} role="alert">
           {state.message}
         </p>
-      )}
+      ) : null}
     </form>
   );
 }
