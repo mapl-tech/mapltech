@@ -37,21 +37,8 @@ describe('cleanCopy', () => {
       'pipelines automatically, so your team focuses',
     );
     expect(cleanCopy('a 5-year-old Android')).toBe('a 5-year-old Android');
-    expect(cleanCopy('connect every tool into one seamless pipeline')).toBe('connect every tool into one pipeline');
-  });
-
-  it('retires the construction metaphors', () => {
-    expect(cleanCopy('We architect your automation blueprint: triggers')).toBe(
-      'We architect your automation plan: triggers',
-    );
-    expect(cleanCopy('integrations without rewriting the foundation.')).toBe('integrations without a rewrite.');
-    expect(cleanCopy('a fixed quote after a 20-min scoping call')).toBe('a fixed quote after a 20-minute scoping call');
-    // The tier name is data, never a metaphor.
+    // The tier name is data: only its range changes.
     expect(cleanCopy('Foundation Automation ($3,500-$5,000)')).toBe('Foundation Automation ($3,500–$5,000)');
-  });
-
-  it('keeps one spelling per tier name', () => {
-    expect(cleanCopy('Growth/E-Commerce projects run 5-8 weeks.')).toBe('Growth / E-Commerce projects run 5–8 weeks.');
   });
 });
 

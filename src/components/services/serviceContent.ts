@@ -12,11 +12,12 @@
  *  - case facts: src/components/case/stories.ts (listed projects only).
  * Every sentence written here is cited inline. Nothing is estimated.
  *
- * Copy rules are applied to config strings at render time by `cleanCopy`:
- * a spaced hyphen used as a dash becomes a colon or a comma, numeric ranges
- * get an en dash, and the banned adjective "seamless" is dropped (the fact
- * it decorates is unchanged). FAQ JSON-LD is built from the same cleaned
- * strings the page renders, so markup and structured data cannot disagree.
+ * Punctuation is normalised at render time by `cleanCopy` (a spaced hyphen
+ * used as a dash becomes a colon or a comma, numeric ranges get an en dash),
+ * because the config keeps ASCII ranges the price parser reads. Wording is
+ * fixed at the source; the spec fails if banned or retired words come back.
+ * FAQ JSON-LD is built from the same cleaned strings the page renders, so
+ * markup and structured data cannot disagree.
  */
 import type { Metadata } from 'next';
 import { absoluteUrl } from '@/config/routes';
@@ -66,14 +67,6 @@ export function cleanCopy(text: string): string {
       .replace(/\s+-\s+(\S)/g, (_match, next: string, offset: number, whole: string) =>
         COMMA_AFTER.test(whole.slice(offset).replace(/^\s+-\s+/, '')) ? `, ${next}` : `: ${next}`,
       )
-      .replace(/\bseamless\s+/gi, '')
-      // Retired construction metaphors (owner's direction, Nov 2026); the fact is unchanged.
-      .replace(/\bblueprint\b/g, 'plan')
-      .replace(/\bwithout rewriting the foundation\b/g, 'without a rewrite')
-      // One form for the quote fact across the page ("a 20-minute call").
-      .replace(/\b20-min\b/g, '20-minute')
-      // One spelling for the tier name (site.ts names it "Growth / E-Commerce").
-      .replace(/\bGrowth\/E-Commerce\b/g, 'Growth / E-Commerce')
   );
 }
 
