@@ -124,7 +124,14 @@ export default function MobileNav({ id, open, onOpenChange, pathname, returnFocu
       </nav>
 
       <div className={styles.sheetCta} data-cta-placement="drawer_project">
-        <MagneticButton href={PROJECT_HREF} size="medium" placement="drawer_project" onClick={close}>
+        <MagneticButton
+          href={PROJECT_HREF}
+          size="medium"
+          placement="drawer_project"
+          onClick={close}
+          block
+          className={styles.sheetBtn}
+        >
           {PROJECT_LABEL}
         </MagneticButton>
       </div>

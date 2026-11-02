@@ -1,0 +1,147 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The chrome's button (header, menu, footer, newsletter), built from the same
+// button-base as every other action on the site. The one structural extra is
+// for the lean: the <a>/<button> (.box) never moves, so the hit area and the
+// layout stay put, while the inner .surface follows the pointer.
+//
+// Layered in `base`, so a caller's own module class (Header's .headerBtn, for
+// one) always wins without a specificity contest.
+@layer base {
+  .box {
+    display: inline-block;
+    vertical-align: middle;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  // <button> boxes: no UA chrome; the surface is the button.
+  .reset {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  .block {
+    display: block;
+    width: 100%;
+
+    > .surface {
+      width: 100%;
+    }
+  }
+
+  .surface {
+    @include button-base;
+    position: relative;
+    overflow: hidden;
+    // Never transition transform: the springs write it every frame.
+    transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast;
+
+    // Press feedback on the independent `scale` property, so it composes with
+    // the magnetic transform instead of replacing it.
+    @include motion-ok {
+      transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast,
+        scale 120ms cubic-bezier(0.23, 1, 0.32, 1);
+
+      .box:active > & {
+        scale: 0.97;
+      }
+    }
+  }
+
+  .text {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  // Radial highlight that follows the pointer (--mx/--my set from JS).
+  .glow {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity $transition-base;
+    pointer-events: none;
+
+    @include pointer-fine-motion {
+      .box:hover & {
+        opacity: 1;
+      }
+    }
+  }
+
+  // Crimson fill #D91C3F -> hover #C4213C -> pressed #A81B33 (white label
+  // 5.01, 5.79 and 7.2:1).
+  .primary {
+    background: $color-red-fill;
+    color: $color-white;
+
+    .glow {
+      background: radial-gradient(140px circle at var(--mx, 50%) var(--my, 50%), rgba($color-white, 0.22) 0%, transparent 60%);
+    }
+
+    .box:hover > & {
+      background: $color-red-fill-hover;
+    }
+
+    .box:active > & {
+      background: $color-red-fill-pressed;
+    }
+  }
+
+  // Hairline ghost; red hairline on hover.
+  .secondary {
+    background: transparent;
+    color: $color-fg;
+    border: 1px solid $color-hairline-strong;
+
+    .glow {
+      background: radial-gradient(160px circle at var(--mx, 50%) var(--my, 50%), rgba($color-red, 0.22) 0%, transparent 60%);
+    }
+
+    .box:hover > & {
+      border-color: rgba($color-red, 0.6);
+      color: $color-white;
+    }
+
+    .box:active > & {
+      border-color: $color-red-deep;
+    }
+  }
+
+  .sm {
+    padding: 10px 18px;
+    font-size: $font-size-base;
+  }
+
+  .md {
+    padding: 12px 24px;
+    font-size: $font-size-md;
+
+    @include sm {
+      padding: 14px 28px;
+    }
+  }
+
+  .lg {
+    padding: 14px 28px;
+    font-size: $font-size-md;
+
+    @include sm {
+      padding: 18px 36px;
+    }
+  }
+}

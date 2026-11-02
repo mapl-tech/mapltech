@@ -47,57 +47,6 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 // ---------------------------------------------------------------------------
-// #5 Tactile CTA (MagneticButton)
-// ---------------------------------------------------------------------------
-.magnetic-btn-box {
-  display: inline-block;
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.magnetic-btn {
-  touch-action: manipulation;
-}
-
-// Radial highlight that follows the pointer (--mx/--my set from JS).
-.magnetic-btn .magnetic-btn__glow {
-  background: radial-gradient(
-    140px circle at var(--mx, 50%) var(--my, 50%),
-    rgba($color-white, 0.22) 0%,
-    transparent 60%
-  );
-}
-
-.magnetic-btn--secondary .magnetic-btn__glow {
-  background: radial-gradient(
-    160px circle at var(--mx, 50%) var(--my, 50%),
-    rgba($color-red, 0.22) 0%,
-    transparent 60%
-  );
-}
-
-// Brand states on the filled button: hover #C4213C, pressed #A81B33 (white
-// label 5.79:1 and 7.2:1; the old bright gradient measured 3.46-3.97:1).
-.magnetic-btn-box:hover .magnetic-btn--primary {
-  background: $color-red-fill-hover;
-}
-
-.magnetic-btn-box:active .magnetic-btn--primary {
-  background: $color-red-fill-pressed;
-  box-shadow: none;
-}
-
-.magnetic-btn-box:active .magnetic-btn--secondary {
-  border-color: $color-red-deep;
-}
-
-@media (pointer: coarse) {
-  .magnetic-btn {
-    min-height: 48px;
-  }
-}
-
-// ---------------------------------------------------------------------------
 // #11 Native accordion (<details name><summary>)
 // ---------------------------------------------------------------------------
 .accordion-item {

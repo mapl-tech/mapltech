@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 import Link from 'next/link';
 import { createSpring, type Spring } from './spring';
 import { useFinePointer, usePrefersReducedMotion } from './useMediaQuery';
+import styles from './MagneticButton.module.scss';
 
 export type CursorLabel = 'view' | 'drag' | 'play' | 'external' | 'estimate';
 
@@ -14,7 +15,10 @@ export interface MagneticButtonProps {
   type?: 'button' | 'submit';
   variant?: 'primary' | 'secondary';
   size?: 'small' | 'medium' | 'large';
+  /** Applied to the visual surface, so it can resize or restyle the button. */
   className?: string;
+  /** Stretch to the container's width (phone menu). */
+  block?: boolean;
   external?: boolean;
   disabled?: boolean;
   /** Sets data-cursor so the cursor pill labels the hover (desktop). */
@@ -29,23 +33,7 @@ const SPRING = { stiffness: 350, damping: 18, mass: 0.4 };
 const PULL = 0.18;
 const MAX_PULL = 12;
 
-const SIZE_CLASS = { small: 'btn-sm', medium: 'btn-md', large: 'btn-lg' } as const;
-
-const BOX_STYLE: CSSProperties = {
-  display: 'inline-block',
-  textDecoration: 'none',
-  verticalAlign: 'middle',
-};
-
-const BUTTON_STYLE: CSSProperties = {
-  ...BOX_STYLE,
-  background: 'none',
-  border: 0,
-  padding: 0,
-  color: 'inherit',
-  font: 'inherit',
-  cursor: 'pointer',
-};
+const SIZE_CLASS = { small: styles.sm, medium: styles.md, large: styles.lg } as const;
 
 const clamp = (n: number) => Math.max(-MAX_PULL, Math.min(MAX_PULL, n));
 
@@ -63,6 +51,7 @@ export default function MagneticButton({
   variant = 'primary',
   size = 'medium',
   className = '',
+  block = false,
   external = false,
   disabled = false,
   cursor,
@@ -123,20 +112,16 @@ export default function MagneticButton({
   // The transform lives on this inner surface; the <a>/<button> box never moves,
   // so the hit area and layout stay stable while the label leans toward the pointer.
   const surface = (
-    // Press feedback is CSS (`scale` on :active in globals.scss), which composes
+    // Press feedback is CSS (`scale` on the box's :active), which composes
     // with the magnetic transform written by the springs above.
-    <span
-      ref={surfaceRef}
-      className={`magnetic-btn magnetic-btn--${variant} ${SIZE_CLASS[size]} ${className}`.trim()}
-      style={{ touchAction: 'manipulation' }}
-    >
-      <span className="magnetic-btn__text">{children}</span>
-      <span className="magnetic-btn__glow" aria-hidden="true" />
+    <span ref={surfaceRef} className={`${styles.surface} ${styles[variant]} ${SIZE_CLASS[size]} ${className}`.trim()}>
+      <span className={styles.text}>{children}</span>
+      <span className={styles.glow} aria-hidden="true" />
     </span>
   );
 
+  const boxClass = block ? `${styles.box} ${styles.block}` : styles.box;
   const shared = {
-    className: 'magnetic-btn-box',
     onPointerMove: handlePointerMove,
     onPointerLeave: handlePointerLeave,
     onClick: handleClick,
@@ -150,7 +135,7 @@ export default function MagneticButton({
       return (
         <a
           href={href}
-          style={BOX_STYLE}
+          className={boxClass}
           {...shared}
           {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         >
@@ -159,19 +144,14 @@ export default function MagneticButton({
       );
     }
     return (
-      <Link href={href} style={BOX_STYLE} {...shared}>
+      <Link href={href} className={boxClass} {...shared}>
         {surface}
       </Link>
     );
   }
 
   return (
-    <button
-      type={type}
-      disabled={disabled}
-      style={disabled ? { ...BUTTON_STYLE, cursor: 'not-allowed', opacity: 0.5 } : BUTTON_STYLE}
-      {...shared}
-    >
+    <button type={type} disabled={disabled} className={`${boxClass} ${styles.reset}`} {...shared}>
       {surface}
     </button>
   );
