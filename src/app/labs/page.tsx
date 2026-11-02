@@ -129,6 +129,7 @@ export default function LabsPage() {
                       height={1125}
                       sizes="(min-width: 1280px) 640px, (min-width: 1024px) 50vw, 88vw"
                       preload
+                      fetchPriority="high"
                       className={styles.shot}
                     />
                   </div>

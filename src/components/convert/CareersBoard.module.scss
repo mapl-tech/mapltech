@@ -113,7 +113,8 @@ $link-red: #ff5c73;
     border-bottom-color: rgba($color-red, 0.6);
   }
 
-  // Each row rises into place as it enters (transform and opacity only).
+  // Each row rises into place as it enters: movement only, because its 16-22px
+  // text must hold 4.5:1 at every point of a scroll-driven entrance.
   @supports (animation-timeline: view()) {
     @include motion-ok {
       animation: role-in linear both;
@@ -165,12 +166,10 @@ $link-red: #ff5c73;
 
 @keyframes role-in {
   from {
-    opacity: 0.25;
     transform: translateY(14px);
   }
 
   to {
-    opacity: 1;
     transform: none;
   }
 }
