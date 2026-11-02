@@ -56,7 +56,7 @@ export interface PreviewItem {
   src: string | null;
   /** Stage names drawn as a labelled flow when there is no screenshot. */
   flow?: readonly string[];
-  /** Small caption on the card: the live address, or what the screenshot shows. */
+  /** Caption on the card when the screenshot is not the work itself (what it shows instead). */
   caption?: string;
 }
 

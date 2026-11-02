@@ -1,51 +1,42 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
-$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-
-// Filled: crimson #D91C3F, hover #C4213C, pressed #A81B33 (white label passes AA in every state).
+// The homepage hero's filled pill: crimson #D91C3F, hover #C4213C, pressed
+// #A81B33 (the white label passes AA in every state).
 .primary {
   @include button-primary;
-  @include focus-ring;
-  min-height: 52px;
-  padding-inline: 28px;
+  min-height: 56px;
+  padding: 0 26px 0 30px;
+  gap: 14px;
+  font-size: 1.0625rem;
 
-  // Phones: full width, the biggest target in reach (Fitts's law).
+  @include focus-ring;
+
+  // Phones: the full width, the biggest target in reach.
   @media (max-width: #{$breakpoint-sm - 1px}) {
     width: 100%;
   }
 }
 
-// Underlined text action, the brand's accessible link red (#ff5c73, 5.5:1 on the ground).
+// The site's text action: the underline draws away on hover.
 .text {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  font-weight: $font-weight-semibold;
-  font-size: $font-size-md;
-  color: $color-red-text;
-  text-decoration: underline;
-  text-decoration-color: rgba($color-red-text, 0.4);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 6px;
-  transition: text-decoration-color 160ms $ease-out;
+  @include text-action;
+  font-size: 1.0625rem;
 
-  &:hover {
-    text-decoration-color: $color-red-text;
+  &[data-tone='paper']:focus-visible {
+    outline-color: $color-red-ink;
   }
-
-  @include focus-ring;
 }
 
 .arrow {
-  flex: none;
+  display: inline-block;
+  transition: transform 0.4s $ease-out-expo;
 
-  @include pointer-fine-motion {
-    transition: transform 200ms $ease-out;
-
-    .text:hover & {
-      transform: translateX(3px);
+  .primary:hover &,
+  .text:hover & {
+    @include motion-ok {
+      transform: translateX(4px);
     }
   }
 }

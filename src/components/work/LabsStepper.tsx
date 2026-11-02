@@ -6,26 +6,31 @@ import styles from './LabsStepper.module.scss';
 
 /**
  * /labs signature interaction: "Run this workflow". One button sends a
- * booking down the real MAPL Tours pipeline, stage by stage, drawing the red
- * line as it goes. It is an illustration and says so: nothing here talks to
- * the live system, and the finished state says no booking was made.
+ * booking down the real MAPL Tours pipeline, stage by stage: the meter beside
+ * the button fills a segment per stage (so a phone shows progress where it was
+ * tapped), and on the stages themselves the crimson line draws down the rail
+ * while a token travels from node to node. It is an illustration and says so:
+ * nothing here talks to the live system, and the finished state says no
+ * booking was made.
  *
- * - Every stage (name, what the traveller sees, what runs under the hood) is in the
- *   server HTML and readable at rest; running only moves the highlight.
- * - One React update per stage (900ms beat), never per frame. The token and
- *   the rail fill move with CSS transforms from measured node centres.
+ * - Every stage (name, what the traveller sees, what runs under the hood) is in
+ *   the server HTML and readable at rest; running only moves the highlight.
+ * - One React update per stage (900ms beat, 4.5s end to end, started by the
+ *   reader), never per frame. The token and the rail move with CSS transforms
+ *   from measured node centres; the meter segments fill with a CSS animation.
  * - Progress is announced in a polite live region. Under reduced motion the
- *   global stylesheet zeroes the transitions: highlights change in place.
+ *   global stylesheet zeroes the motion: highlights change in place.
  */
 
 const BEAT_MS = 900;
 const TRACK_ID = 'booking-pipeline';
 
 type Phase = 'idle' | 'running' | 'done';
+type StageState = 'idle' | 'pending' | 'active' | 'done';
 
 export interface LabsStepperProps {
   stages?: readonly PipelineStage[];
-  /** Heading and explanation, server-rendered, shown beside the pipeline. */
+  /** Label, heading and explanation, server-rendered, beside the pipeline. */
   intro?: ReactNode;
   footnote?: ReactNode;
   /** Shown after the last stage: the action at the end of the run. */
@@ -38,6 +43,9 @@ export default function LabsStepper({ stages = [], intro, footnote, after }: Lab
   const stepRef = useRef(-1);
   const n = stages.length;
   const phase: Phase = step < 0 ? 'idle' : step < n ? 'running' : 'done';
+
+  const stateOf = (i: number): StageState =>
+    phase === 'idle' ? 'idle' : phase === 'done' || i < step ? 'done' : i === step ? 'active' : 'pending';
 
   /** Measure node centres and place the rail, its fill and the token for the current step. */
   const sync = useCallback(() => {
@@ -87,7 +95,6 @@ export default function LabsStepper({ stages = [], intro, footnote, after }: Lab
         ? `Stage ${step + 1} of ${n}: ${stages[step]?.name}.`
         : `Shown end to end, ${n} of ${n} stages. An illustration: no booking was made.`;
 
-
   return (
     <div className={styles.stepper} data-phase={phase}>
       <div className={styles.side}>
@@ -108,6 +115,11 @@ export default function LabsStepper({ stages = [], intro, footnote, after }: Lab
             {/* A stable name: progress is announced once, by the status region, not by the button too. */}
             Run this workflow
           </button>
+          <ol className={styles.meter} aria-hidden="true">
+            {stages.map((stage, i) => (
+              <li key={stage.id} className={styles.segment} data-state={stateOf(i)} />
+            ))}
+          </ol>
           <p className={styles.status} role="status">
             {status}
           </p>
@@ -121,25 +133,28 @@ export default function LabsStepper({ stages = [], intro, footnote, after }: Lab
           <span className={styles.token} />
         </span>
         <ol id={TRACK_ID} className={styles.stages} role="list" aria-label="The stages of one booking">
-        {stages.map((stage, i) => {
-          const state = phase === 'idle' ? 'idle' : i < step || phase === 'done' ? 'done' : i === step ? 'active' : 'pending';
-          return (
-            <li key={stage.id} className={styles.stage} data-state={state} aria-current={state === 'active' ? 'step' : undefined}>
-              <span className={styles.node} data-node aria-hidden="true" />
-              <h3 className={styles.name}>{stage.name}</h3>
-              <dl className={styles.pair}>
-                <div>
-                  <dt>What the traveller sees</dt>
-                  <dd>{stage.surface}</dd>
-                </div>
-                <div className={styles.under}>
-                  <dt>Under the hood</dt>
-                  <dd>{stage.engineering}</dd>
-                </div>
-              </dl>
-            </li>
-          );
-        })}
+          {stages.map((stage, i) => {
+            const state = stateOf(i);
+            return (
+              <li key={stage.id} className={styles.stage} data-state={state} aria-current={state === 'active' ? 'step' : undefined}>
+                <p className={styles.index} aria-hidden="true">
+                  <span className={styles.node} data-node />
+                  {String(i + 1).padStart(2, '0')}
+                </p>
+                <h3 className={styles.name}>{stage.name}</h3>
+                <dl className={styles.pair}>
+                  <div>
+                    <dt>What the traveller sees</dt>
+                    <dd>{stage.surface}</dd>
+                  </div>
+                  <div className={styles.under}>
+                    <dt>Under the hood</dt>
+                    <dd>{stage.engineering}</dd>
+                  </div>
+                </dl>
+              </li>
+            );
+          })}
         </ol>
         {after ? <div className={styles.after}>{after}</div> : null}
       </div>

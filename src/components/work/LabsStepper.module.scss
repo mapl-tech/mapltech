@@ -1,64 +1,67 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
-$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 $beat: 640ms; // a little under the 900ms step, so each move settles before the next
+$step: 900ms; // the component's BEAT_MS
 
-// Two columns on wide screens: the sticky explanation and control on the left,
-// the pipeline on the right. Phones: one column, control above the stages.
+// Two columns on wide screens: the explanation and the control on the left
+// (sticky only in landscape, where the whole column fits), the pipeline on the
+// right. Phones: one column, the control and its meter above the stages.
 .stepper {
   display: grid;
-  gap: 40px;
+  gap: clamp(48px, 7vw, 72px);
 
   @include lg {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    column-gap: 72px;
+    column-gap: clamp(48px, 6vw, 96px);
     align-items: start;
   }
 }
 
 .side {
-  @include lg {
+  @media (min-width: $breakpoint-lg) and (min-aspect-ratio: 21/20) {
     position: sticky;
-    top: 112px;
+    top: calc(var(--header-height, 72px) + 40px);
   }
 }
 
 .controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 20px;
-  margin-top: 28px;
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+  margin-top: clamp(28px, 3.4vw, 40px);
 }
 
-// Secondary control: hairline pill with the red play mark, never a second filled button.
+// A secondary control: a hairline pill with the crimson play mark, never a
+// second filled button.
 .run {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  min-height: 48px;
-  padding: 0 22px 0 16px;
+  gap: 14px;
+  min-height: 56px;
+  padding: 0 26px 0 14px;
   border: 1px solid rgba($color-fg, 0.28);
   border-radius: $radius-pill;
   background: transparent;
   font-family: $font-body;
-  font-size: $font-size-md;
+  font-size: 1.0625rem;
   font-weight: $font-weight-semibold;
   color: $color-fg;
   cursor: pointer;
+  touch-action: manipulation;
   transition:
-    border-color 160ms $ease-out,
-    background-color 160ms $ease-out;
+    border-color 0.25s ease,
+    background-color 0.25s ease;
 
   &:hover {
-    border-color: rgba($color-red, 0.7);
+    border-color: rgba($color-red, 0.75);
     background: rgba($color-red, 0.08);
   }
 
   &:active {
     @include motion-ok {
-      scale: 0.98;
+      transform: scale(0.97);
     }
   }
 
@@ -68,52 +71,98 @@ $beat: 640ms; // a little under the 900ms step, so each move settles before the 
 .play {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: $color-red-fill;
   color: $color-white;
+  transition: transform 0.4s $ease-out-expo;
+
+  .run:hover & {
+    @include motion-ok {
+      transform: scale(1.08);
+    }
+  }
+}
+
+// Five segments, one per stage: each fills over its beat as the booking passes.
+.meter {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  width: min(100%, 420px);
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.segment {
+  position: relative;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgba($color-fg, 0.14);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: $color-red;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  &[data-state='done']::after {
+    transform: none;
+  }
+
+  &[data-state='active']::after {
+    animation: segment-fill $step linear both;
+  }
+}
+
+@keyframes segment-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
 }
 
 .status {
-  flex-basis: 100%;
   min-height: 1.5em;
   margin: 0;
-  font-size: 1rem;
+  font-size: $font-size-base;
   line-height: 1.5;
-  color: rgba($color-fg, 0.78);
+  color: $color-fg-muted;
   @include tabular;
 }
 
 .footnote {
-  margin: 28px 0 0;
+  max-width: 40ch;
+  margin: clamp(28px, 3.4vw, 40px) 0 0;
   padding-top: 20px;
   border-top: 1px solid $color-hairline;
   font-size: 1rem;
   line-height: 1.55;
-  color: rgba($color-fg, 0.72);
-  max-width: 40ch;
+  color: $color-fg-muted;
 }
 
 // ---------------------------------------------------------------- the pipeline
 .track {
-  --rail-top: 14px;
-  --rail-height: calc(100% - 120px);
+  --indent: clamp(44px, 4.4vw, 64px);
+  --rail-top: 9px;
+  --rail-height: calc(100% - 160px);
   --fill: 0;
   --token-y: 0px;
   position: relative;
 }
 
-.stages {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-// The progress line: hairline at rest, drawn in red as the booking travels.
+// The progress line: a hairline at rest, drawn in crimson as the booking travels.
 .rail {
   position: absolute;
-  left: 7px;
+  left: 8px;
   top: var(--rail-top);
   height: var(--rail-height);
   width: 2px;
@@ -127,24 +176,26 @@ $beat: 640ms; // a little under the 900ms step, so each move settles before the 
   background: $color-red;
   transform: scaleY(var(--fill));
   transform-origin: top center;
-  transition: transform $beat $ease-out;
+  transition: transform $beat $ease-out-expo;
 }
 
 .token {
   position: absolute;
   z-index: 1;
-  left: -6px;
-  top: -7px;
-  width: 14px;
-  height: 14px;
+  left: -7px;
+  top: -8px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: $color-red;
-  box-shadow: 0 0 0 4px $color-ground;
+  box-shadow:
+    0 0 0 5px $color-ground,
+    0 0 28px 6px rgba($color-red, 0.45);
   opacity: 0;
   transform: translateY(var(--token-y));
   transition:
-    transform $beat $ease-out,
-    opacity 200ms ease-out;
+    transform $beat $ease-out-expo,
+    opacity 0.2s ease-out;
 
   .stepper[data-phase='running'] &,
   .stepper[data-phase='done'] & {
@@ -152,50 +203,75 @@ $beat: 640ms; // a little under the 900ms step, so each move settles before the 
   }
 }
 
+.stages {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .stage {
   position: relative;
-  padding: 0 0 32px 40px;
-
-  @include md {
-    padding: 0 0 40px 44px;
-  }
+  display: grid;
+  gap: 14px;
+  padding: 0 0 clamp(40px, 5vw, 64px) var(--indent);
 
   &:last-child {
     padding-bottom: 0;
   }
 }
 
+// "01" with its node hung on the rail to its left.
+.index {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 18px;
+  margin: 0;
+  @include mono-label;
+  transition: color 0.2s ease-out;
+
+  // Small text: the accessible crimson (#ff5c73, 5.5:1).
+  .stage[data-state='active'] & {
+    color: $color-red-text;
+  }
+}
+
 .node {
   position: absolute;
-  left: 0;
-  top: 6px;
-  width: 16px;
-  height: 16px;
+  left: calc(var(--indent) * -1);
+  top: 0;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 2px solid rgba($color-fg, 0.4);
   background: $color-ground;
   transition:
-    border-color 200ms ease-out,
-    background-color 200ms ease-out;
+    border-color 0.2s ease-out,
+    background-color 0.2s ease-out,
+    box-shadow 0.3s ease-out;
 
   .stage[data-state='active'] &,
   .stage[data-state='done'] & {
     border-color: $color-red;
     background: $color-red;
   }
+
+  .stage[data-state='active'] & {
+    box-shadow: 0 0 0 6px rgba($color-red, 0.2);
+  }
 }
 
+// Large text: #F03350 is 3.66:1 on the ground (AA large needs 3:1).
 .name {
   margin: 0;
   font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: $font-size-h3;
-  line-height: 1.1;
-  letter-spacing: -0.015em;
+  font-weight: 700;
+  font-size: clamp(2rem, 1.3rem + 2.2vw, 3.25rem); // 32px -> 52px
+  line-height: 1;
+  letter-spacing: -0.03em;
   color: $color-fg;
-  transition: color 200ms ease-out;
+  transition: color 0.2s ease-out;
 
-  // Large text: #F03350 is 3.66:1 on the ground (AA large needs 3:1).
   .stage[data-state='active'] & {
     color: $color-red;
   }
@@ -204,30 +280,30 @@ $beat: 640ms; // a little under the 900ms step, so each move settles before the 
 // What the traveller sees, beside what runs under the hood.
 .pair {
   display: grid;
-  gap: 12px;
-  margin: 12px 0 0;
+  gap: 16px;
+  margin: 6px 0 0;
 
   @include md {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px;
+    gap: 32px;
   }
 
   dt {
-    @include mono-label(rgba($color-fg, 0.64));
+    @include mono-label;
   }
 
   dd {
-    margin: 4px 0 0;
+    margin: 8px 0 0;
     font-size: $font-size-base;
     line-height: 1.55;
-    color: rgba($color-fg, 0.86);
+    color: $color-text-body;
   }
 }
 
 .under {
   padding-left: 16px;
   border-left: 1px solid rgba($color-red, 0.45);
-  transition: border-color 200ms ease-out;
+  transition: border-color 0.2s ease-out;
 
   .stage[data-state='active'] &,
   .stage[data-state='done'] & {
@@ -237,11 +313,7 @@ $beat: 640ms; // a little under the 900ms step, so each move settles before the 
 
 // The action at the end of the run, aligned with the stage text.
 .after {
-  margin: 32px 0 0;
-  padding: 24px 0 0 40px;
+  margin: clamp(40px, 5vw, 56px) 0 0;
+  padding: 24px 0 0 var(--indent);
   border-top: 1px solid $color-hairline;
-
-  @include md {
-    padding-left: 44px;
-  }
 }

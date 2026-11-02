@@ -1,12 +1,12 @@
 /**
- * The /our-work catalog (flagship redesign, Nov 2026).
+ * The /our-work index (Nov 2026 award pass).
  *
- * One museum label per listed project, every label in the same schema and
+ * One editorial row per listed project, every row in the same schema and
  * order: client, what we built, sector, year (only where a source dates it),
- * one result (only where the case story publishes one). Display order and
- * visibility come from `workEntries()`, which reads `listedProjects()`, so the
- * owner's order (LRO Staffing first, CHHA-NCR second) holds and hidden
- * projects can never appear.
+ * one result (only where the case story publishes one), and the real capture.
+ * Display order and visibility come from `workEntries()`, which reads
+ * `listedProjects()`, so the owner's order (LRO Staffing first, CHHA-NCR
+ * second) holds and hidden projects can never appear.
  *
  * Sources, field by field:
  * - `built`: condensed from the project's own copy (site.ts description,
@@ -15,13 +15,17 @@
  * - `year`: read from a dated story fact ("Relaunched July 2026", "2026
  *   edition"). Undated projects carry no year rather than a guess.
  * - `result`: the case story's first published result, verbatim.
- * - screenshots: the real captures listed in each story's `media`.
- * A field without a source is absent; the label is one line shorter, never padded.
+ * - `line`: the service line, from site.ts `category` (the filter chips).
+ * - captures: the real screenshots listed in each story's `media`. When a
+ *   capture is not the work itself (UNSVCC: the coalition's public site; the
+ *   dashboard we built is private), the story's caption travels with it as
+ *   `note` and is shown wherever the capture is.
+ * A field without a source is absent; the row is one line shorter, never padded.
  */
 import { findStory, type CaseStory } from '@/components/case/stories';
 import { ESTIMATE_SERVICES, SERVICE_META, formatMoney, parsePriceLabel, tiersFor, type EstimateService } from '@/lib/estimate';
-import { activeServiceLines, approvedTestimonialFor, workEntries, type WorkEntry } from './work-data';
-import type { PreviewItem } from './work-types';
+import { activeServiceLines, approvedTestimonialFor, workEntries, workFilters, type WorkEntry } from './work-data';
+import type { PreviewItem, WorkFilter } from './work-types';
 
 /** Metadata and JSON-LD share these strings, so the two can never drift. */
 export const WORK_PAGE = {
@@ -38,13 +42,19 @@ export interface CatalogItem {
   client: string;
   built: string;
   sector: string;
+  /** The service line the filter chips match on. */
+  line: EstimateService;
   year?: string;
   result?: { value: string; label: string };
-  /** Real phone screenshot for the inline thumbnail (780×1688 captures). */
-  thumb?: string;
-  /** Said under the label when the screenshot is not the work itself. */
+  /** Real desktop capture (1800×1125), shown in a browser frame. */
+  desktop?: string;
+  /** Real phone capture (780×1688). */
+  mobile?: string;
+  /** The address in the browser frame ("lrostaffing.com"). */
+  address?: string;
+  /** Said beside the capture when the screenshot is not the work itself. */
   note?: string;
-  /** Stage names, drawn as a labelled flow when no screenshot exists. */
+  /** Stage names, drawn as a labelled diagram when no screenshot exists. */
   flow?: readonly string[];
   preview: PreviewItem;
 }
@@ -74,8 +84,8 @@ function yearOf(story: CaseStory | undefined): string | undefined {
   return fact?.detail.match(/\b(20\d{2})\b/)?.[1];
 }
 
-/** The live address shown on the preview card ("lrostaffing.com"). */
-function liveAddress(story: CaseStory | undefined, entry: WorkEntry): string | undefined {
+/** The address shown in the browser frame ("lrostaffing.com"). */
+function addressOf(story: CaseStory | undefined, entry: WorkEntry): string | undefined {
   return story?.facts.find((f) => f.term === 'Live')?.detail ?? entry.host;
 }
 
@@ -92,23 +102,36 @@ function toItem(entry: WorkEntry): CatalogItem {
     client: story?.client ?? entry.title,
     built: BUILT[entry.slug] ?? story?.tags[0] ?? entry.serviceLabel,
     sector: story?.tags[1] ?? entry.category,
+    line: entry.service,
     year: yearOf(story),
     result: story?.results?.[0],
-    thumb: media?.mobile,
+    desktop: media?.desktop,
+    mobile: media?.mobile,
+    address: addressOf(story, entry),
     note,
     flow,
     preview: {
       slug: entry.slug,
       src: media?.desktop ?? null,
       flow,
-      caption: note ?? liveAddress(story, entry),
+      caption: note,
     },
   };
 }
 
-/** Every listed project as a catalog label, in display order. */
+/** Every listed project as an index row, in display order. */
 export function catalogItems(): CatalogItem[] {
   return workEntries().map(toItem);
+}
+
+/**
+ * The filter chips: "All" plus every service line with at least one listed
+ * project, with live counts from the config. A line with nothing listed gets
+ * no chip (rather than a dead one); it appears on its own once a project in
+ * that line is listed.
+ */
+export function catalogFilters(): WorkFilter[] {
+  return workFilters().filter((filter) => filter.key === 'all' || filter.count > 0);
 }
 
 export interface CatalogVoice {
@@ -156,7 +179,7 @@ export function lowestFromPrice(): string {
   return formatMoney(Math.min(...lows));
 }
 
-/** The four service pages, linked from the empty slot ("What we build"). */
+/** The four service pages, by canonical name. */
 export function serviceLinks(): { key: EstimateService; name: string; href: string }[] {
   return ESTIMATE_SERVICES.map((key) => ({ key, name: SERVICE_NAMES[key], href: SERVICE_META[key].path }));
 }
@@ -166,4 +189,9 @@ const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'sev
 /** "seven" for 7; digits past twelve. */
 export function countWord(n: number): string {
   return NUMBER_WORDS[n] ?? String(n);
+}
+
+/** "07" for 7: the index's own numbering. */
+export function pad2(n: number): string {
+  return String(n).padStart(2, '0');
 }

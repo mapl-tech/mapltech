@@ -1,0 +1,99 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// The case hero's product shot (case/Case.module.scss .stage), for /labs.
+.stage {
+  --p: 0.5;
+  position: relative;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.frames {
+  position: relative;
+  padding-right: 9%;
+  padding-bottom: 7%;
+  perspective: 1800px;
+}
+
+.browser {
+  overflow: hidden;
+  border-radius: clamp(10px, 1.2vw, 18px);
+  background: #0d0d0f;
+  box-shadow:
+    0 60px 120px -40px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  transform-origin: 50% 0%;
+  // Tilted back while it enters, flat and full size from 42% of the way through.
+  transform: rotateX(calc(max(0, 0.42 - var(--p)) * 46deg)) scale(calc(0.9 + min(var(--p), 0.42) * 0.238));
+  will-change: transform;
+}
+
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: clamp(26px, 2.6vw, 38px);
+  padding: 0 14px;
+  background: #18181b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lights {
+  display: inline-flex;
+  gap: 6px;
+
+  i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+  }
+}
+
+.url {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: $color-fg-muted;
+}
+
+.phone {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 22%;
+  aspect-ratio: 9 / 19.5;
+  overflow: hidden;
+  border-radius: clamp(14px, 2vw, 30px);
+  border: clamp(3px, 0.4vw, 6px) solid #1b1b1e;
+  background: #0d0d0f;
+  box-shadow:
+    0 40px 80px -24px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  transform: translate3d(0, calc((0.5 - var(--p)) * 180px), 0);
+  will-change: transform;
+
+  .shot {
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+}
+
+.shot {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+  margin-top: clamp(20px, 2.6vw, 32px);
+  font-size: 1rem;
+  line-height: 1.45;
+  color: $color-fg-muted;
+}

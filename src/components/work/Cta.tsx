@@ -3,14 +3,15 @@ import Link from 'next/link';
 import styles from './Cta.module.scss';
 
 /**
- * CTAs for the work family (/our-work, /labs), in the case template's idiom:
- * plain links, server-rendered, no client JS. The filled style uses the
- * crimson fill and its AA-safe hover (white label 5.01:1 → 5.79:1) from the
- * button-primary mixin. `placement` is written as `data-cta-placement`
- * ("<page>_<slot>"); `hero` marks the hero CTA for the mobile action bar.
+ * CTAs for the work family (/our-work, /labs), in the homepage's idiom: plain
+ * links, server-rendered, no client JS. The filled pill is the homepage hero's
+ * (crimson #D91C3F, white label 5.01:1); the text action draws its underline
+ * away on hover. `placement` is written as `data-cta-placement`
+ * ("<page>_<slot>"); `hero` marks the page's hero CTA for the mobile action bar
+ * and the header.
  *
- * Labels are fixed site-wide: "Price your project" (estimator) and
- * "Book a call" (/contact-us).
+ * Labels come from the caller; the site-wide vocabulary lives in
+ * components/layout/chrome.ts ("Start a project", "See pricing").
  */
 interface BaseProps {
   href: string;
@@ -28,11 +29,18 @@ export function PrimaryCta({ href, placement, children, className, hero = false 
       data-hero-cta={hero ? '' : undefined}
     >
       {children}
+      <span aria-hidden="true" className={styles.arrow}>
+        →
+      </span>
     </Link>
   );
 }
 
-/** Underlined text action ("Book a call", "Read the case study"). External links open in a new tab and say so. */
+/**
+ * Text action ("See pricing", "Read the case study"). Takes the surrounding
+ * text colour; `tone="paper"` swaps the focus ring to the ink-safe crimson.
+ * External links open in a new tab and say so.
+ */
 export function TextCta({
   href,
   placement,
@@ -40,35 +48,26 @@ export function TextCta({
   className,
   external = false,
   hero = false,
-}: BaseProps & { external?: boolean; hero?: boolean }) {
+  tone = 'dark',
+}: BaseProps & { external?: boolean; hero?: boolean; tone?: 'dark' | 'paper' }) {
   const cls = [styles.text, className].filter(Boolean).join(' ');
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={cls} data-cta-placement={placement}>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={cls} data-tone={tone} data-cta-placement={placement}>
         {children}
         <span className="visually-hidden"> (opens in a new tab)</span>
-        <Arrow diagonal />
+        <span aria-hidden="true" className={styles.arrow}>
+          ↗
+        </span>
       </a>
     );
   }
   return (
-    <Link href={href} className={cls} data-cta-placement={placement} data-hero-cta={hero ? '' : undefined}>
+    <Link href={href} className={cls} data-tone={tone} data-cta-placement={placement} data-hero-cta={hero ? '' : undefined}>
       {children}
-      <Arrow />
+      <span aria-hidden="true" className={styles.arrow}>
+        →
+      </span>
     </Link>
-  );
-}
-
-export function Arrow({ diagonal = false, className }: { diagonal?: boolean; className?: string }) {
-  return (
-    <svg className={className ?? styles.arrow} width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
-      <path
-        d={diagonal ? 'M4 12 12 4M6 4h6v6' : 'M2.5 8h11M9 3.5 13.5 8 9 12.5'}
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }

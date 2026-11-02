@@ -1,185 +1,161 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../components/work/shared' as work;
+@use '../../styles/editorial' as *;
 
-// /our-work, flagship redesign: a catalog, not a card grid. Every project gets
-// the same museum label (client, what we built, sector, year, result), set as
-// editorial rows. Phones: a real phone screenshot beside each label. Wide
-// screens with a mouse: the rows go text-only and the real desktop screenshot
-// rides beside the pointer (WorkIndex.tsx). Spacing: 8px steps, 4px half-steps
-// only between a term and its value.
+// /our-work (Nov 2026 award pass): the page hero counts what is on view, then
+// the index, set like the homepage services index on the dark ground: big
+// names on hairlines, each with its real capture. Then the client voice, MAPL
+// Labs on paper, and the crimson close.
 
-$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-
-// Columns shared by the header strip, every row, the client voice and the empty
-// slot (≥1024px): client · what we built (and its result) · sector and year · arrow.
-$cols: minmax(0, 4fr) minmax(0, 5.4fr) minmax(0, 2.4fr) 40px;
-$col-gap: 32px;
-
-// ---------------------------------------------------------------- hero
-.hero {
-  @include work.page-hero;
-  background:
-    radial-gradient(60% 70% at 88% 0%, rgba($color-red, 0.09) 0%, transparent 62%),
-    $color-ground;
-}
-
-.heroInner {
-  @include work.inner;
+// ===================================================================
+// Hero aside: the count
+// ===================================================================
+.tally {
   display: grid;
-  gap: 32px;
-
-  @include lg {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    column-gap: 72px;
-    row-gap: 40px;
-    align-items: end;
-  }
+  gap: clamp(20px, 2.4vw, 28px);
+  padding-top: clamp(20px, 2.4vw, 28px);
+  border-top: 1px solid $color-hairline-strong;
 }
 
-// Eyebrow + H1 span the full width: the title is the one big statement on the page.
-.heroHead {
-  @include lg {
-    grid-column: 1 / -1;
-  }
-}
-
-.eyebrow {
-  @include work.eyebrow-dash;
-}
-
-.title {
-  @include work.page-title;
-  margin-top: 24px;
-  font-size: clamp(2.75rem, 0.9rem + 7.6vw, 7.5rem);
-  line-height: 0.92;
-  letter-spacing: -0.045em;
-}
-
-.heroCopy {
-  display: grid;
-  justify-items: start;
-  gap: 16px;
-}
-
-.lede {
-  @include work.page-lede;
-}
-
-.facts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px 24px;
+.tallyCount {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
   margin: 0;
-  padding-top: 24px;
-  border-top: 1px solid $color-hairline;
 }
 
-.fact {
-  min-width: 0;
+// An outline numeral (the homepage's Approach treatment), capped under the
+// H1's size: large, but lighter in mass than the title, so the H1 stays the
+// one entry point. Decorative (aria-hidden); the label carries the count.
+.tallyValue {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(4.5rem, 2.4rem + 5.6vw, 7.75rem); // 72px -> 124px (H1 tops out at 136px)
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px $color-red;
+  @include tabular;
+}
+
+.tallyLabel {
+  @include mono-label;
+  padding-bottom: 0.2em;
+}
+
+.tallyFacts {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+
+.tallyFact {
+  display: grid;
+  gap: 4px;
+
+  @include sm {
+    grid-template-columns: 8.5em minmax(0, 1fr);
+    gap: 16px;
+    align-items: baseline;
+  }
 
   dt {
-    @include work.label-term;
+    @include mono-label;
   }
 
   dd {
-    @include work.label-detail;
+    margin: 0;
+    font-size: $font-size-base;
+    line-height: 1.45;
+    color: $color-fg;
     @include tabular;
   }
 }
 
-.factWide {
-  grid-column: 1 / -1;
+// ===================================================================
+// The index
+// ===================================================================
+.index {
+  position: relative;
+  background: $color-ground; // PageHeader's light fades out before its edge
 }
 
-.factLink {
-  @include work.inline-link;
+.indexInner {
+  @include shell;
+  padding-top: clamp(8px, 2vw, 24px);
+  padding-bottom: clamp(56px, 8vw, 112px);
 }
 
-// ---------------------------------------------------------------- catalog
-.catalog {
-  padding: clamp(32px, 5vw, 56px) 0 clamp(16px, 3vw, 32px);
-}
-
-.inner {
-  @include work.inner;
-}
-
-.catalogHead {
+// After the last row: one quiet sentence and a text action, never a second filled button.
+.indexNext {
   display: flex;
-  align-items: baseline;
-  padding-bottom: 16px;
-  border-bottom: 1px solid $color-hairline-strong;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 24px;
+  margin: clamp(28px, 4vw, 44px) 0 0;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-text-body;
 
-  @include lg {
-    display: grid;
-    grid-template-columns: $cols;
-    column-gap: $col-gap;
+  > span {
+    max-width: 44em;
   }
 }
 
-.kicker {
-  @include work.kicker;
-}
+.indexLabel {
+  @include section-label;
 
-// Column names for sighted readers on wide screens; each row's own <dt>s carry them for assistive tech.
-.colName {
-  display: none;
-
-  @include lg {
-    display: block;
-    @include mono-label(rgba($color-fg, 0.64));
+  &::before {
+    @include section-label-rule;
   }
 }
 
-.list {
+.rows {
+  list-style: none;
   margin: 0;
   padding: 0;
-  list-style: none;
+  counter-reset: work;
+  border-top: 1px solid $color-hairline-strong;
 }
 
-// One label. Phones/tablets: thumbnail column + text column. Wide: table row.
+// Phones: the capture, then number · name · arrow, then the facts under the
+// name. Tablets: capture left, words right. Desktop: one line per project,
+// number · capture · name · facts · arrow, like the homepage services index.
 .row {
+  counter-increment: work;
   position: relative;
   display: grid;
-  grid-template-columns: 104px minmax(0, 1fr);
+  grid-template-columns: 32px minmax(0, 1fr) 44px;
   grid-template-areas:
-    'thumb client'
-    'thumb label'
-    'thumb note'
-    'thumb go';
-  grid-template-rows: auto auto auto 1fr;
-  column-gap: 16px;
-  padding: 24px 0;
+    'media media media'
+    'number name go'
+    '. facts facts';
+  column-gap: 12px;
+  align-items: baseline;
+  padding: 24px 0 32px;
+  border-bottom: 1px solid $color-hairline;
 
   @include md {
-    grid-template-columns: 136px minmax(0, 1fr);
-    column-gap: 24px;
+    grid-template-columns: minmax(0, 1.05fr) 28px minmax(0, 1fr) 44px;
+    grid-template-areas:
+      'media number name go'
+      'media . facts facts';
+    grid-template-rows: auto 1fr;
+    column-gap: 20px;
+    align-items: start;
     padding: 32px 0;
   }
 
   @include lg {
-    grid-template-columns: $cols;
-    grid-template-areas: none;
-    grid-template-rows: auto auto;
-    column-gap: $col-gap;
-    align-items: start;
-    padding: 40px 0;
+    grid-template-columns: 40px clamp(184px, 18vw, 264px) minmax(0, 1.1fr) minmax(0, 1fr) 48px;
+    grid-template-areas: 'number media name facts go';
+    grid-template-rows: auto;
+    column-gap: clamp(24px, 2.6vw, 40px);
+    align-items: center;
+    padding: 28px 0;
   }
 
-  // The row's hairline, drawn in as the row arrives (static fallback: just there).
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1px;
-    background: $color-hairline;
-    transform-origin: left center;
-  }
-
-  // The red rule, drawn across the top of the row in focus.
+  // The crimson rule drawn across the top of the row in hover and focus.
   &::before {
     content: '';
     position: absolute;
@@ -191,7 +167,7 @@ $col-gap: 32px;
     background: $color-red;
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform 520ms $ease-out;
+    transition: transform 0.6s $ease-out-expo;
     pointer-events: none;
   }
 
@@ -204,172 +180,247 @@ $col-gap: 32px;
       transform: scaleX(1);
     }
   }
-}
 
-@supports (animation-timeline: view()) {
+  // Rows shown by a filter rise into place (translate only; text never fades).
   @include motion-ok {
-    .row::after {
-      animation: draw-rule linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 100%;
-    }
+    transition: translate 0.7s $ease-out-expo;
 
-    // Never on .client or .rowLink: a transform there would become the stretched
-    // link's containing block and shrink the row's click target to the name.
-    .thumb,
-    .clientName,
-    .label {
-      animation: settle-in linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 60%;
+    @starting-style {
+      translate: 0 24px;
     }
   }
 }
 
-@keyframes draw-rule {
-  from {
-    transform: scaleX(0.04);
+// The index numbering counts visible rows only (hidden rows do not increment).
+.number {
+  grid-area: number;
+  @include mono-label;
+
+  &::before {
+    content: counter(work, decimal-leading-zero);
   }
-  to {
-    transform: scaleX(1);
+
+  // Small text: the accessible crimson (#ff5c73, 5.5:1), not the large-text red.
+  .row:hover &,
+  .row:focus-within & {
+    color: $color-red-text;
   }
 }
 
-// Movement only: the rows carry 16-17px muted text, which must hold 4.5:1 at
-// every point of the entrance, so it never fades.
-@keyframes settle-in {
-  from {
-    transform: translateY(16px);
+// ---------------------------------------------------------------- the capture
+.media {
+  grid-area: media;
+  min-width: 0;
+  margin-bottom: 22px;
+
+  @include md {
+    margin-bottom: 0;
   }
-  to {
-    transform: none;
-  }
+
+  @include rise-in;
 }
 
-// Thumbnail + client name. Phones/tablets let both join the row grid directly.
-.lead {
-  display: contents;
-
-  @include lg {
-    display: flex;
-    align-items: flex-start;
-    gap: 24px;
-    grid-column: 1;
-    grid-row: 1 / span 2;
-    min-width: 0;
-  }
-}
-
-.thumb {
-  grid-area: thumb;
-  position: relative;
-  align-self: start;
-  display: block;
-  aspect-ratio: 3 / 4;
+// The live site in a browser frame (flagship/Work.module.scss), scaled down.
+.browser {
   overflow: hidden;
-  border-radius: 10px;
-  background: $color-surface-2;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+  border-radius: clamp(10px, 1.2vw, 14px);
+  background: #0d0d0f;
+  box-shadow:
+    0 30px 60px -30px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: transform 0.8s $ease-out-expo;
 
-  // Desktop keeps the phone view at rest; with a mouse, the hover adds the
-  // desktop view beside the pointer (WorkIndex.tsx), so the two complement.
   @include lg {
-    flex: 0 0 72px;
+    border-radius: 10px;
   }
 }
 
-.thumbImg {
+@include pointer-fine-motion {
+  .row:hover .browser,
+  .row:hover .diagram {
+    transform: translateY(-4px);
+  }
+}
+
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 30px;
+  padding: 0 12px;
+  background: #18181b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  @include lg {
+    gap: 8px;
+    height: 18px;
+    padding: 0 8px;
+  }
+}
+
+.lights {
+  display: inline-flex;
+  gap: 6px;
+
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  @include lg {
+    gap: 4px;
+
+    i {
+      width: 5px;
+      height: 5px;
+    }
+  }
+}
+
+.url {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: $color-fg-muted;
+
+  @include lg {
+    display: none;
+  }
+}
+
+.shot {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
+  height: auto;
 }
 
-// No screenshot exists (automation-only work): the story's stages as a tiny flow.
-.flowTile {
+// No screenshot exists (automation-only work): the story's stages, plainly
+// marked as a diagram. Same box as a browser frame (chrome + 16:10).
+.diagram {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
-  height: 100%;
-  padding: 12px 8px;
+  gap: 14px;
+  aspect-ratio: 71 / 50;
+  padding: 20px 22px;
+  overflow: hidden;
+  border-radius: clamp(10px, 1.2vw, 14px);
   background:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 16px 16px,
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 16px 16px,
-    #0f1116;
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 18px 18px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 18px 18px,
+    #101012;
+  box-shadow:
+    0 30px 60px -30px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: transform 0.8s $ease-out-expo;
+
+  @include lg {
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
 }
 
-.flowTag {
-  @include mono-label(rgba($color-fg, 0.72));
+.diagramLabel {
+  @include mono-label;
+
+  @include lg {
+    font-size: 0.6875rem;
+  }
 }
 
-.flowSteps {
+.diagramSteps {
   position: relative;
   display: grid;
-  gap: 8px;
-  padding-left: 12px;
+  gap: 10px;
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: none;
 
   &::before {
     content: '';
     position: absolute;
-    left: 2px;
-    top: 8px;
-    bottom: 8px;
+    left: 4px;
+    top: 0.55em;
+    bottom: 0.55em;
     width: 2px;
     background: $color-red;
   }
-}
 
-.flowStep {
-  position: relative;
-  display: block;
-  font-size: $font-size-label;
-  font-weight: $font-weight-semibold;
-  line-height: 1.2;
-  color: $color-fg;
+  li {
+    position: relative;
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1.15;
+    color: $color-fg;
 
-  &::before {
-    content: '';
-    position: absolute;
-    left: -13px;
-    top: 0.3em;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: $color-ground;
-    border: 2px solid $color-red;
+    &::before {
+      content: '';
+      position: absolute;
+      left: -18px;
+      top: 0.32em;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: $color-ground;
+      border: 2px solid $color-red;
+    }
+  }
+
+  @include lg {
+    gap: 6px;
+
+    li {
+      font-size: 0.875rem;
+    }
   }
 }
 
-// Beside a 72px thumbnail on desktop the name steps to 30px, so the longest
-// ("LRO Interactive Salary Guide") holds two lines.
-.client {
-  grid-area: client;
+// What the capture shows when it is not the work itself.
+.note {
+  margin: 12px 0 0;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: $color-fg-muted;
+}
+
+// ---------------------------------------------------------------- name, facts, arrow
+.name {
+  grid-area: name;
   margin: 0;
   font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: clamp(1.5rem, 1.05rem + 1.3vw, 1.875rem);
-  line-height: 1.04;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 1rem + 2.3vw, 3rem); // 28px -> 48px
+  line-height: 1;
   letter-spacing: -0.03em;
   color: $color-fg;
   text-wrap: balance;
 }
 
-.clientName {
+.nameText {
   display: inline-block;
+  transition:
+    transform 0.6s $ease-out-expo,
+    color 0.3s ease;
+}
 
-  @include pointer-fine-motion {
-    transition: translate 380ms $ease-out;
+// Hover and keyboard focus: the name steps right in crimson (large text, 3.66:1).
+.row:focus-within .nameText {
+  color: $color-red;
+}
 
-    .row:hover & {
-      translate: 8px 0;
-    }
+@include pointer-fine-motion {
+  .row:hover .nameText {
+    color: $color-red;
+    transform: translateX(12px);
   }
 }
 
-// The whole row is the target (Fitts's law): the client link stretches over it.
-.rowLink {
+// The whole row is the target: the client link stretches over it. Never put a
+// transform on .name or .link, or the overlay would shrink to the name.
+.link {
   color: inherit;
   text-decoration: none;
 
@@ -391,29 +442,26 @@ $col-gap: 32px;
   }
 }
 
-// Set like a museum label: a fixed order and no printed field names (each <dt>
-// stays for assistive tech; the desktop header strip names the columns).
-// Phones/tablets: the description, then "sector · year" on one muted line,
-// then the result on its red rule.
-.label {
-  grid-area: label;
-  display: block;
-  margin: 8px 0 0;
+// Fixed order, no printed field names (each <dt> stays for assistive tech):
+// what we built, then sector and year on one muted line, then the result.
+.facts {
+  grid-area: facts;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  row-gap: 8px;
+  margin: 14px 0 0;
+
+  @include md {
+    margin-top: 16px;
+  }
 
   @include lg {
-    display: grid;
-    grid-area: auto;
-    grid-column: 2 / 4;
-    grid-row: 1;
-    grid-template-columns: subgrid;
-    grid-template-rows: auto auto;
-    column-gap: $col-gap;
-    row-gap: 4px;
     margin: 0;
   }
 }
 
-.field {
+.fact {
   min-width: 0;
 
   dt {
@@ -424,254 +472,151 @@ $col-gap: 32px;
     margin: 0;
     font-size: $font-size-base;
     line-height: 1.45;
-    color: rgba($color-fg, 0.88);
   }
 
-  &[data-field='built'] {
-    margin-bottom: 8px;
+  &[data-field='built'],
+  &[data-field='result'] {
+    flex-basis: 100%;
   }
 
-  // Sector and year run as one line of text; the dot is glued to both sides
-  // with no-break spaces, so a narrow line breaks inside the sector instead.
-  &[data-field='sector'],
-  &[data-field='year'],
-  &[data-field='sector'] dd,
-  &[data-field='year'] dd {
-    display: inline;
+  &[data-field='built'] dd {
+    color: $color-text-body;
   }
 
   &[data-field='sector'] dd,
   &[data-field='year'] dd {
-    font-size: 1rem;
-    color: rgba($color-fg, 0.72);
+    color: $color-fg-muted;
     @include tabular;
   }
 
+  // A dot between sector and year (a shape, so nothing extra is read aloud).
   &[data-field='year'] dd::before {
-    content: '\00A0\00B7\00A0';
-    color: rgba($color-fg, 0.5);
-  }
-
-  &[data-field='result'] {
-    margin-top: 16px;
-  }
-
-  @include lg {
-    &[data-field='built'] {
-      grid-column: 1;
-      grid-row: 1;
-      margin-bottom: 0;
-    }
-
-    &[data-field='sector'] {
-      grid-column: 2;
-      grid-row: 1;
-
-      dd {
-        font-size: $font-size-base;
-        color: rgba($color-fg, 0.88);
-      }
-    }
-
-    &[data-field='year'] {
-      grid-column: 2;
-      grid-row: 2;
-
-      dd::before {
-        content: none;
-      }
-    }
-
-    // The proof sits under what we built, on the red rule.
-    &[data-field='result'] {
-      grid-column: 1;
-      grid-row: 2;
-      margin-top: 16px;
-    }
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    margin: 0 10px;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: middle;
   }
 }
 
-// Result: the value and its meaning on one baseline, hung on a red rule that
-// draws itself as the row arrives (static fallback: drawn).
-.result {
-  position: relative;
+// The value and its meaning on one baseline, hung on a crimson rule.
+.fact .result {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 4px 12px;
-  padding-left: 16px;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: $color-red;
-    transform-origin: top center;
-  }
-}
-
-@supports (animation-timeline: view()) {
-  @include motion-ok {
-    .result::before {
-      animation: draw-rule-y linear both;
-      animation-timeline: view();
-      animation-range: entry 30% cover 45%;
-    }
-  }
-}
-
-@keyframes draw-rule-y {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
+  gap: 2px 12px;
+  margin-top: 6px;
+  padding-left: 14px;
+  border-left: 2px solid $color-red;
 }
 
 .value {
   font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: 1.5rem;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+  font-weight: 800;
+  font-size: 1.75rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
   color: $color-fg;
   @include tabular;
-
-  @include lg {
-    font-size: 1.75rem;
-  }
 }
 
 .resultLabel {
-  font-size: 1rem;
-  line-height: 1.45;
-  color: rgba($color-fg, 0.8);
+  color: $color-fg-muted;
 }
 
-.note {
-  grid-area: note;
-  margin: 12px 0 0;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: rgba($color-fg, 0.68);
-
-  @include lg {
-    grid-area: auto;
-    grid-column: 2 / 4;
-    grid-row: 2;
-    margin-top: 16px;
-  }
-}
-
-// "Case study →" on touch; just the arrow on wide screens.
 .go {
   grid-area: go;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  font-weight: $font-weight-semibold;
-  font-size: $font-size-base;
-  color: $color-red-text;
+  justify-self: end;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid $color-hairline-strong;
+  font-size: 1.1rem;
+  color: $color-fg;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.6s $ease-out-expo;
 
   @include lg {
-    grid-area: auto;
-    grid-column: 4;
-    grid-row: 1;
-    justify-content: flex-end;
-    margin-top: 4px;
-    color: rgba($color-fg, 0.64);
-  }
-
-  @include pointer-fine-motion {
-    transition:
-      color 200ms ease-out,
-      translate 300ms $ease-out;
-
-    .row:hover & {
-      color: $color-red;
-      translate: 4px 0;
-    }
+    width: 48px;
+    height: 48px;
   }
 }
 
-.goText {
-  @include lg {
-    @include sr-only;
+.row:focus-within .go {
+  background: $color-fg;
+  border-color: $color-fg;
+  color: $color-ground;
+}
+
+@include pointer-fine-motion {
+  .row:hover .go {
+    background: $color-fg;
+    border-color: $color-fg;
+    color: $color-ground;
+    transform: rotate(-45deg);
   }
 }
 
-.labsNote {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 16px;
-  margin: 24px 0 0;
-  font-size: $font-size-base;
-  color: rgba($color-fg, 0.76);
-}
-
-// ---------------------------------------------------------------- the client voice
-// Proof beside the decision: the one approved client quote, just before the slot.
-// Container queries: the voice and the slot lay out from their own section's
-// width, not the viewport's (the catalog rows stay on viewport queries because
-// the preview island enables itself with the same viewport query).
+// ===================================================================
+// The client voice
+// ===================================================================
 .voice {
-  container: voice / inline-size;
-  padding: clamp(48px, 7vw, 96px) 0 clamp(32px, 5vw, 64px);
+  background: $color-ground;
 }
 
 .voiceInner {
-  @include work.inner;
+  @include shell;
   display: grid;
-  gap: 24px;
+  gap: 28px;
+  padding-top: clamp(24px, 4vw, 48px);
+  padding-bottom: $editorial-pad-y;
 
-  @container voice (min-width: 1024px) {
-    grid-template-columns: $cols;
-    column-gap: $col-gap;
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
   }
 }
 
-.voiceKicker {
-  @include work.kicker;
-  padding-top: 12px;
+.voiceLabel {
+  @include section-label;
+  align-self: start;
+
+  &::before {
+    @include section-label-rule;
+  }
+
+  @include lg {
+    padding-top: 0.9em;
+    grid-row: span 2;
+  }
 }
 
 .quote {
-  position: relative;
   margin: 0;
+  display: grid;
+  gap: 28px;
+}
 
-  @container voice (min-width: 1024px) {
-    grid-column: 2 / 4;
-  }
-
-  blockquote {
-    margin: 0;
-  }
+.quoteText {
+  margin: 0;
 
   p {
     margin: 0;
     font-family: $font-display;
-    font-weight: $font-weight-semibold;
-    font-size: clamp(1.375rem, 1rem + 1.5vw, 2.25rem);
-    line-height: 1.25;
+    font-weight: 600;
+    font-size: clamp(1.625rem, 1rem + 2.2vw, 3rem); // 26px -> 48px
+    line-height: 1.16;
     letter-spacing: -0.02em;
     color: $color-fg;
     text-wrap: pretty;
-
-    &::before {
-      content: '\201C';
-      color: $color-red;
-    }
-
-    &::after {
-      content: '\201D';
-      color: $color-red;
-    }
   }
 }
 
@@ -679,7 +624,11 @@ $col-gap: 32px;
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 24px;
+
+  > span {
+    display: grid;
+    gap: 2px;
+  }
 }
 
 .avatar {
@@ -691,158 +640,221 @@ $col-gap: 32px;
 }
 
 .quoteName {
-  display: block;
   font-weight: $font-weight-semibold;
-  font-size: $font-size-md;
   color: $color-fg;
 }
 
 .quoteRole {
-  display: block;
-  font-size: 1rem;
-  color: rgba($color-fg, 0.72);
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
 }
 
-// ---------------------------------------------------------------- the empty slot
-// The reader's project, set as the catalog's next label: dashed, in red.
-.next {
-  container: slot / inline-size;
-  padding: clamp(24px, 4vw, 40px) 0 clamp(80px, 11vw, 144px);
+.voiceMore {
+  margin: 0;
+
+  @include lg {
+    grid-column: 2;
+  }
 }
 
-.slot {
+// ===================================================================
+// MAPL Labs (paper)
+// ===================================================================
+.labs {
+  position: relative;
+  background: $color-paper;
+  color: $color-ink;
+  border-radius: clamp(24px, 3vw, 40px) clamp(24px, 3vw, 40px) 0 0;
+}
+
+.labsInner {
+  @include shell;
+  @include section-pad;
+  display: grid;
+  gap: clamp(40px, 6vw, 80px);
+}
+
+.labsHead {
   display: grid;
   gap: 24px;
-  padding: 32px 20px;
-  border: 1px dashed rgba($color-red, 0.6);
-  border-radius: 20px;
-  background: rgba($color-red, 0.035);
 
-  @container slot (min-width: 768px) {
-    padding: 40px 32px;
-  }
-
-  @container slot (min-width: 1024px) {
-    grid-template-columns: $cols;
-    column-gap: $col-gap;
-    row-gap: 32px;
-    margin-inline: -32px;
-    padding: 48px 32px 40px;
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
   }
 }
 
-.slotTitle {
+.labsLabel {
+  @include section-label($color-ink-muted);
+  align-self: start;
+
+  &::before {
+    @include section-label-rule($color-red-ink);
+  }
+
+  @include lg {
+    padding-top: 0.9em;
+    grid-row: span 2;
+  }
+}
+
+.labsTitle {
+  @include section-title;
+  max-width: 13em;
+  color: $color-ink;
+}
+
+.labsLede {
+  @include lede;
+  margin: 0;
+  color: $color-ink-muted;
+}
+
+// Products on hairlines beside the live product on a phone. Phones: the phone
+// first (the picture, then its caption), then the products and the link.
+.labsBody {
+  display: grid;
+  grid-template-areas:
+    'media'
+    'products'
+    'more';
+  gap: 40px;
+
+  @include md {
+    grid-template-columns: minmax(0, 1fr) clamp(220px, 30vw, 280px);
+    grid-template-areas:
+      'products media'
+      'more media';
+    grid-template-rows: auto 1fr;
+    column-gap: 48px;
+    row-gap: 32px;
+  }
+
+  // Aligned with the heading column above (3fr | 9fr, 48px apart).
+  @include lg {
+    margin-left: calc((100% - 48px) * 0.25 + 48px);
+    grid-template-columns: minmax(0, 1fr) clamp(240px, 21vw, 300px);
+    column-gap: clamp(48px, 6vw, 96px);
+  }
+}
+
+.products {
+  grid-area: products;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid $color-ink-hairline;
+}
+
+.product {
+  display: grid;
+  gap: 12px;
+  padding: clamp(24px, 3vw, 36px) 0;
+  border-bottom: 1px solid $color-ink-hairline;
+}
+
+// A status mark beside the label: filled crimson for live, an open ring otherwise.
+.status {
+  @include mono-label($color-ink-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+  }
+
+  &[data-status='live'] {
+    color: $color-ink;
+
+    &::before {
+      background: $color-red-ink;
+      border-color: $color-red-ink;
+    }
+  }
+}
+
+.productName {
   margin: 0;
   font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem);
-  line-height: 1;
+  font-weight: 800;
+  font-size: clamp(2.25rem, 1.2rem + 3.4vw, 4.5rem); // 36px -> 72px
+  line-height: 0.95;
   letter-spacing: -0.035em;
-  color: $color-fg;
-  text-wrap: balance;
-
-  @container slot (min-width: 1024px) {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-  }
+  color: $color-ink;
 }
 
-.slotLabel {
-  display: grid;
-  gap: 16px;
+.productLine {
   margin: 0;
-
-  @container slot (min-width: 768px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 24px;
-  }
-
-  @container slot (min-width: 1024px) {
-    grid-column: 2 / 4;
-    grid-template-columns: subgrid;
-    column-gap: $col-gap;
-  }
+  max-width: 30em;
+  font-size: $font-size-lede;
+  line-height: 1.45;
+  color: $color-ink-muted;
 }
 
-// Unlike the rows, the slot has no header strip above it, so its terms stay visible.
-.slotField {
-  min-width: 0;
-
-  dt {
-    @include work.label-term;
-  }
-
-  dd {
-    @include work.label-detail;
-  }
-
-  // Tablet and up: the four chips take the whole label width, then result and sector share a line.
-  @container slot (min-width: 768px) {
-    &[data-field='built'] {
-      grid-column: 1 / -1;
-      grid-row: 1;
-    }
-
-    &[data-field='result'] {
-      grid-column: 1;
-      grid-row: 2;
-    }
-
-    &[data-field='sector'] {
-      grid-column: 2;
-      grid-row: 2;
-    }
-  }
-}
-
-// The four service pages as 44px chips (8px apart), one tap each.
-.services {
+.productResult {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
-
-  a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0 16px;
-    border-radius: $radius-pill;
-    border: 1px solid rgba($color-fg, 0.24);
-    font-size: $font-size-base;
-    font-weight: $font-weight-medium;
-    color: $color-fg;
-    text-decoration: none;
-    transition:
-      border-color 160ms $ease-out,
-      background-color 160ms $ease-out;
-
-    &:hover {
-      border-color: rgba($color-red, 0.7);
-      background: rgba($color-red, 0.08);
-    }
-
-    @include focus-ring;
-  }
+  align-items: baseline;
+  gap: 2px 14px;
+  margin: 6px 0 0;
+  padding-left: 14px;
+  border-left: 2px solid $color-red-ink;
+  font-size: $font-size-base;
+  line-height: 1.45;
+  color: $color-ink-muted;
 }
 
-.slotActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px 32px;
-
-  @container slot (min-width: 1024px) {
-    grid-column: 2 / -1;
-  }
-}
-
-.slotNote {
-  flex-basis: 100%;
-  margin: 0;
-  font-size: 1rem;
-  color: rgba($color-fg, 0.72);
+.productValue {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: $color-ink;
   @include tabular;
+}
+
+.labsMedia {
+  grid-area: media;
+  justify-self: center;
+  width: min(68vw, 280px);
+
+  @include md {
+    width: 100%;
+  }
+
+  @include md {
+    justify-self: end;
+  }
+
+  @include rise-in;
+}
+
+// The phone treatment from the case template's phone row, on paper.
+.labsPhone {
+  overflow: hidden;
+  aspect-ratio: 9 / 19.5;
+  border-radius: clamp(28px, 3vw, 40px);
+  border: 6px solid $color-ink;
+  background: $color-ink;
+  box-shadow: 0 40px 80px -30px rgba(11, 11, 12, 0.5);
+}
+
+.labsShot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.labsMore {
+  grid-area: more;
+  margin: 0;
 }

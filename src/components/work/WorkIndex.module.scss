@@ -1,77 +1,135 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-
-$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+@use '../../styles/editorial' as *;
 
 .index {
   position: relative;
 }
 
-// ---------------------------------------------------------------- the card
-// Positioned by JS (translate3d on this element); its appearance lives on .card,
+// ---------------------------------------------------------------- filtering
+// One attribute on the root hides the rows of every other line; the rows stay
+// in the server HTML. Hidden rows drop out of the index numbering too (CSS
+// counters skip display: none), so the visible rows always count 01, 02, 03.
+@each $line in (web, automation, tools, cloud) {
+  .index[data-filter='#{$line}'] [data-line]:not([data-line='#{$line}']) {
+    display: none;
+  }
+}
+
+// ---------------------------------------------------------------- toolbar
+// The section label on the left, the chips on the right (stacked on phones).
+.toolbar {
+  display: grid;
+  gap: 20px;
+  padding-bottom: clamp(24px, 3vw, 36px);
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
+    align-items: center;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  @include lg {
+    justify-content: flex-end;
+  }
+}
+
+// 44px pills, 8px apart. Pressed: the paper fill (ink label 17:1).
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 16px 0 18px;
+  border-radius: $radius-pill;
+  border: 1px solid rgba($color-fg, 0.22);
+  background: transparent;
+  font-family: $font-body;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  color: $color-fg;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+
+  &:hover {
+    border-color: rgba($color-red, 0.75);
+  }
+
+  &[aria-pressed='true'] {
+    background: $color-paper;
+    border-color: $color-paper;
+    color: $color-ink;
+  }
+
+  &:active {
+    @include motion-ok {
+      transform: scale(0.97);
+    }
+  }
+
+  @include focus-ring;
+}
+
+// Muted on the ground (7.4:1), ink-muted on the paper fill (6.4:1).
+.count {
+  @include mono-label;
+  font-size: 0.8125rem;
+
+  .chip[aria-pressed='true'] & {
+    color: $color-ink-muted;
+  }
+}
+
+// ---------------------------------------------------------------- the preview card
+// The homepage services preview on the dark ground: a 16:10 frame that eases
+// after the pointer, each screenshot turning in from a slight tilt.
+// Positioned by JS (translate3d on this element); each layer animates itself,
 // so the two transforms never fight.
 .float {
   position: fixed;
   top: 0;
   left: 0;
   z-index: 60; // above the page, below the header (200) and sheets
-  width: 456px;
-  height: 285px;
+  width: clamp(300px, 28vw, 420px);
+  aspect-ratio: 16 / 10;
   pointer-events: none;
   will-change: transform;
-}
-
-.card {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 12px;
-  background: $color-surface-2;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    0 32px 64px -24px rgba(0, 0, 0, 0.9);
-  opacity: 0;
-  transform: scale(0.94);
-  transform-origin: 30% 50%;
-  transition:
-    opacity 180ms ease-out,
-    transform 320ms $ease-out;
-
-  .float[data-visible='true'] & {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-// The site's offset red hairline behind the card, which slides into place
-// as the card appears.
-.frame {
-  position: absolute;
-  inset: 14px -14px -14px 14px;
-  border: 1px solid rgba($color-red, 0.7);
-  border-radius: 14px;
-  opacity: 0;
-  transform: translate(10px, 10px);
-  transition:
-    opacity 200ms ease-out,
-    transform 420ms $ease-out 60ms;
-
-  .float[data-visible='true'] & {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 .layer {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  background: $color-ground;
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
   opacity: 0;
-  transition: opacity 200ms ease-out;
+  transform: scale(0.86) rotate(-3deg);
+  transition:
+    opacity 0.35s ease,
+    transform 0.6s $ease-out-expo;
 
   &[data-active='true'] {
     opacity: 1;
+    transform: none;
+  }
+
+  .float:not([data-visible='true']) & {
+    opacity: 0;
+    transform: scale(0.86) rotate(-3deg);
   }
 }
 
@@ -81,27 +139,21 @@ $ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   height: 100%;
   object-fit: cover;
   object-position: top center;
-  transform: scale(1.06);
-  transition: transform 700ms $ease-out;
-
-  .layer[data-active='true'] & {
-    transform: none;
-  }
 }
 
+// Only where the screenshot is not the work itself (what it shows instead).
 .caption {
   position: absolute;
   left: 12px;
+  right: 12px;
   bottom: 12px;
-  max-width: calc(100% - 24px);
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: rgba(8, 8, 10, 0.86);
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(8, 8, 10, 0.9);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
   font-size: $font-size-xs;
-  line-height: 1.35;
+  line-height: 1.4;
   color: $color-fg;
-  @include tabular;
 }
 
 // ---------------------------------------------------------------- flow (no screenshot)
@@ -111,49 +163,48 @@ $ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 20px;
-  padding: 28px 32px 48px;
+  gap: 18px;
+  padding: 24px 28px;
   background:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 32px 32px,
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 32px 32px,
-    #0f1116;
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 22px 22px,
+    #101012;
 }
 
 .flowLabel {
-  @include mono-label(rgba($color-fg, 0.68));
+  @include mono-label;
 }
 
 .flowSteps {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0;
+  gap: 12px 0;
   margin: 0;
   padding: 0;
   list-style: none;
 
   li {
-    display: flex;
-    align-items: center;
-    padding: 12px 14px;
+    position: relative;
+    padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid rgba($color-fg, 0.22);
-    background: $color-surface-1;
+    border: 1px solid rgba($color-fg, 0.18);
+    background: #17171a;
     font-family: $font-display;
     font-weight: $font-weight-bold;
-    font-size: 1rem;
+    font-size: 0.9375rem;
     color: $color-fg;
     white-space: nowrap;
 
     & + li {
-      margin-left: 28px;
-      position: relative;
+      margin-left: 22px;
 
       &::before {
         content: '';
         position: absolute;
-        right: 100%;
+        right: calc(100% + 1px);
         top: 50%;
-        width: 28px;
+        width: 22px;
         height: 2px;
         background: $color-red;
       }
