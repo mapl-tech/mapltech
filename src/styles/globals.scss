@@ -33,6 +33,9 @@ html {
   accent-color: $color-red;
   // The fixed header's height, for full-bleed heroes that sit under it.
   --header-height: 72px;
+  // Keyboard focus and in-page jumps land below the fixed header, never under
+  // it (WCAG 2.4.11). The bottom action bar sets scroll-padding-bottom itself.
+  scroll-padding-top: calc(var(--header-height) + 16px);
 
   @media (max-width: #{$breakpoint-md - 1px}) {
     --header-height: 60px;

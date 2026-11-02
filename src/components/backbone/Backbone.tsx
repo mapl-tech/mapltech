@@ -57,6 +57,10 @@ export default function Backbone({ className, toggleClassName }: { className?: s
     const canvas = canvasRef.current;
     if (!host || !canvas) return;
 
+    // Data saver on: no 3D download; the CSS light stays the hero's art.
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (connection?.saveData || window.matchMedia('(prefers-reduced-data: reduce)').matches) return;
+
     let cancelled = false;
     let started = false;
     let timer = 0;

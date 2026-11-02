@@ -56,6 +56,12 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     bottom: auto;
     height: max(41svh, 290px);
 
+    // Short phones (640-760px tall): a shorter band, so the primary CTA lands in
+    // the first viewport.
+    @media (max-height: 760px) {
+      height: max(34svh, 220px);
+    }
+
     canvas {
       // Clear of the header at the top, fading out before the copy at the bottom.
       -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--header-height, 60px) + 28px), #000 58%, transparent 100%);
@@ -88,6 +94,10 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     justify-content: flex-start;
     gap: 40px;
     padding-top: max(44svh, 300px);
+
+    @media (max-height: 760px) {
+      padding-top: max(36svh, 232px);
+    }
   }
 }
 
@@ -133,6 +143,12 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   letter-spacing: -0.035em;
   color: $color-fg;
   text-wrap: balance;
+
+  // Short phones: a 34px floor, so the line under it and the primary CTA fit
+  // the first viewport (with the shorter scene band).
+  @media #{$portrait} and (max-height: 760px) {
+    font-size: clamp(2.125rem, 0.95rem + 4.3vw, 5.75rem);
+  }
 
   // Transform only: the H1 is painted at full opacity in the first frame (LCP).
   @include motion-ok {
