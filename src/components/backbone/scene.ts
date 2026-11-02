@@ -178,6 +178,17 @@ function seeded(seed: number) {
 
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 
+/**
+ * Hands the main thread back between setup steps. The GL context, the
+ * environment bake and the scene build each cost tens of milliseconds on a
+ * phone; run back to back they are one long task that a tap could land in.
+ */
+function yieldToMain(): Promise<void> {
+  const { scheduler } = globalThis as { scheduler?: { yield?: () => Promise<void> } };
+  if (scheduler?.yield) return scheduler.yield();
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 const noop: BackboneHandle = {
   pointer() {},
   shock() {},
@@ -194,12 +205,15 @@ const noop: BackboneHandle = {
 /* ------------------------------------------------------------------ */
 
 export async function createBackbone({ canvas, still, narrow, onReady }: BackboneOptions): Promise<BackboneHandle> {
+  // This chunk's own evaluation just ran; start the setup in a fresh task.
+  await yieldToMain();
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
 
+  await yieldToMain();
   const scene = new Scene();
   const pmrem = new PMREMGenerator(renderer);
   const room = new RoomEnvironment();
@@ -207,6 +221,8 @@ export async function createBackbone({ canvas, still, narrow, onReady }: Backbon
   room.dispose();
   scene.environment = environment;
   scene.environmentIntensity = 0.85;
+
+  await yieldToMain();
 
   const key = new DirectionalLight(0xffffff, 1.5);
   key.position.set(5, 7, 9);
@@ -613,6 +629,7 @@ export async function createBackbone({ canvas, still, narrow, onReady }: Backbon
   visible = false; // no frames until the shaders are ready
   resize(rect.width, rect.height);
   writeInstances();
+  await yieldToMain();
   // KHR_parallel_shader_compile where available: the compile does not block the main thread.
   await renderer.compileAsync(scene, camera);
   if (disposed) return noop;
