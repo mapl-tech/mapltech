@@ -1,7 +1,8 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import Backbone from '@/components/backbone/Backbone';
 import { LiveClocks } from '@/components/ui/TimezoneOverlap';
-import { HERO, PRIMARY_CTA, SECONDARY_CTA } from './content';
+import { HERO, HERO_PROOF, HERO_REASSURE, PRIMARY_CTA, SECONDARY_CTA } from './content';
 import styles from './Hero.module.scss';
 
 /**
@@ -59,6 +60,20 @@ export default function Hero() {
               {SECONDARY_CTA.label}
             </Link>
           </div>
+          <p className={styles.reassure}>{HERO_REASSURE}</p>
+          {HERO_PROOF ? (
+            <figure className={styles.proof}>
+              {HERO_PROOF.image ? (
+                <Image src={HERO_PROOF.image} alt="" width={40} height={40} className={styles.avatar} />
+              ) : null}
+              <blockquote className={styles.proofQuote}>
+                <p>“{HERO_PROOF.quote}”</p>
+              </blockquote>
+              <figcaption className={styles.proofBy}>
+                {HERO_PROOF.name}, {HERO_PROOF.role}
+              </figcaption>
+            </figure>
+          ) : null}
         </div>
 
         <div className={styles.foot}>

@@ -9,7 +9,7 @@
 
 $editorial-max: 1440px;
 $editorial-gutter: clamp(20px, 5vw, 72px);
-$editorial-pad-y: clamp(88px, 13vw, 184px);
+$editorial-pad-y: clamp(64px, 10vw, 144px); // phones 64px, desktop caps at 144px
 $ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
 // Light surface for rhythm against the dark ground ("paper").

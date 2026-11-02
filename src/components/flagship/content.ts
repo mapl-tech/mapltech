@@ -217,6 +217,20 @@ export const WORK: readonly WorkCard[] = (
 /** The one approved client quote (site.ts `testimonials`, LRO Staffing). */
 export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') ?? null;
 
+/**
+ * Beside the hero ask: the risk answer (both facts are the FAQ's own answers,
+ * src/components/home/data.ts) and the first sentence of the approved quote.
+ */
+export const HERO_REASSURE = 'Fixed quote after a 20-minute scoping call. Mutual NDA before you share anything.';
+export const HERO_PROOF = SPOTLIGHT
+  ? {
+      quote: SPOTLIGHT.quote.match(/^[^.!?]+[.!?]/)?.[0] ?? SPOTLIGHT.quote,
+      name: SPOTLIGHT.name,
+      role: `${SPOTLIGHT.role}, ${SPOTLIGHT.company}`,
+      image: SPOTLIGHT.image || null,
+    }
+  : null;
+
 export const FOUNDERS = {
   title: 'Two founders, three cities, your hours.',
   lede: 'Toronto is home base. Kingston works within an hour of Eastern time all year, and Lagos’s afternoon overlaps the Eastern morning, so your working day is covered by people who know your project.',
@@ -265,12 +279,15 @@ export const WORK_SECTION = {
   all: { label: 'All client work', href: '/our-work' },
 } as const;
 
-/** The scroll reel: real captures of shipped, listed projects (public/images/cases). */
+/**
+ * The scroll reel: real captures of sites MAPL TECH built (public/images/cases).
+ * UNSVCC is left out: its public site is not our build (we built its internal dashboard).
+ */
 export const REEL = [
   ['lro-desktop', 'chha-mobile', 'salary-desktop'],
   ['tours-mobile', 'focas-desktop', 'lro-mobile'],
   ['chha-desktop', 'salary-mobile', 'tours-desktop'],
-  ['focas-mobile', 'unsvcc-desktop', 'chha-mobile'],
+  ['focas-mobile', 'lro-desktop', 'chha-mobile'],
 ] as const;
 
 export const APPROACH = {

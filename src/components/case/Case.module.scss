@@ -219,6 +219,15 @@ $landscape: '(min-aspect-ratio: 21/20)';
   height: auto;
 }
 
+.stageCaption {
+  margin-top: 20px;
+  // Clear of the phone, which hangs in the stage's bottom-right corner.
+  padding-right: 26%;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  color: $color-fg-muted;
+}
+
 .chrome {
   display: flex;
   align-items: center;
@@ -648,6 +657,13 @@ $landscape: '(min-aspect-ratio: 21/20)';
   box-shadow: 0 60px 120px -40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
+// Still mode (reduced motion): the frames wrap the hand-scrolled viewport.
+.siteScroll[data-still] .siteFrameDesktop,
+.siteScroll[data-still] .siteFramePhone {
+  height: auto;
+  aspect-ratio: auto;
+}
+
 .siteFrameDesktop {
   width: min(1100px, 100%);
   border-radius: clamp(10px, 1.2vw, 18px);
@@ -678,7 +694,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
 
   .siteScroll[data-still] & {
     flex: none;
-    height: min(70vh, 720px);
+    height: min(64vh, 640px);
     overflow-y: auto;
     overscroll-behavior: contain;
 
@@ -838,7 +854,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   max-width: 36em;
   font-size: $font-size-lede;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.92);
+  color: $color-white; // 5.01:1 on the crimson; any transparency drops it under 4.5
 }
 
 .mattersActions {

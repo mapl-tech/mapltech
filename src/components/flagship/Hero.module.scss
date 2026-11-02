@@ -45,14 +45,21 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 .stage {
   z-index: -1;
 
+  // Landscape: rods fade out under the fixed header so its button always reads.
+  canvas {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--header-height, 72px) + 56px));
+    mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--header-height, 72px) + 56px));
+  }
+
   // Portrait: the scene is a band above the copy, fading out before the text.
   @media #{$portrait} {
     bottom: auto;
     height: max(41svh, 290px);
 
     canvas {
-      -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
-      mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+      // Clear of the header at the top, fading out before the copy at the bottom.
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--header-height, 60px) + 28px), #000 58%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--header-height, 60px) + 28px), #000 58%, transparent 100%);
     }
   }
 }
@@ -156,6 +163,58 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   @include motion-ok {
     animation: rise 0.9s $ease-out 0.28s both;
   }
+}
+
+.reassure {
+  margin: 16px 0 0;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  color: $color-fg-muted;
+
+  @include motion-ok {
+    animation: rise 0.9s $ease-out 0.34s both;
+  }
+}
+
+// Attributable proof beside the ask: avatar, the quote's first sentence, who said it.
+.proof {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: 14px;
+  row-gap: 2px;
+  align-items: center;
+  max-width: 34em;
+  margin: clamp(22px, 3vh, 32px) 0 0;
+  padding-top: clamp(18px, 2.4vh, 24px);
+  border-top: 1px solid $color-hairline;
+
+  @include motion-ok {
+    animation: rise 0.9s $ease-out 0.4s both;
+  }
+}
+
+.avatar {
+  grid-row: span 2;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.proofQuote {
+  margin: 0;
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: $color-fg;
+  }
+}
+
+.proofBy {
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
 }
 
 .primary {

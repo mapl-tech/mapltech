@@ -78,20 +78,29 @@ export default function ServiceIndex() {
           <ol ref={listRef} className={styles.rows} onPointerLeave={() => setActive(null)}>
             {LAYERS.map((layer, i) => (
               <li key={layer.id} className={styles.row} data-active={active === i ? '' : undefined}>
+                {/* Named by the service and its price; the summary is the description. */}
                 <Link
                   href={layer.href}
                   className={styles.link}
                   onPointerEnter={() => setActive(i)}
                   onFocus={() => setActive(i)}
                   onBlur={() => setActive(null)}
+                  aria-labelledby={`${layer.id}-name ${layer.id}-meta`}
+                  aria-describedby={`${layer.id}-summary`}
                   data-cta-placement={`home_services_${layer.service}`}
                 >
                   <span className={styles.index} aria-hidden="true">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <span className={styles.name}>{layer.name}</span>
-                  <span className={styles.summary}>{layer.summary}</span>
-                  <span className={styles.meta}>{layer.fromPrice}</span>
+                  <span id={`${layer.id}-name`} className={styles.name}>
+                    {layer.name}
+                  </span>
+                  <span id={`${layer.id}-summary`} className={styles.summary}>
+                    {layer.summary}
+                  </span>
+                  <span id={`${layer.id}-meta`} className={styles.meta}>
+                    {layer.fromPrice}
+                  </span>
                   <span className={styles.go} aria-hidden="true">
                     →
                   </span>

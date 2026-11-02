@@ -49,7 +49,7 @@
   max-width: 34em;
   font-size: $font-size-lede;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.92);
+  color: $color-white; // 5.01:1 on the crimson; any transparency drops it under 4.5
 }
 
 .actions {

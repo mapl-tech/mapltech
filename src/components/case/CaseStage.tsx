@@ -17,18 +17,21 @@ export default function CaseStage({
   desktop,
   mobile,
   alt,
+  caption,
 }: {
   slug: string;
   url?: string;
   desktop: string;
   mobile?: string;
   alt: string;
+  /** Shown under the shot, e.g. when the screenshot is context rather than our build. */
+  caption?: string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
   useScrollProgress(ref, { mode: 'through', rest: 0.5 });
 
   return (
-    <div ref={ref} className={styles.stage}>
+    <figure ref={ref} className={styles.stage}>
       <ViewTransition name={`case-media-${slug}`} share="morph" default="none">
         <div className={styles.stageBrowser}>
           <div className={styles.chrome} aria-hidden="true">
@@ -55,6 +58,7 @@ export default function CaseStage({
           <Image src={mobile} alt="" width={780} height={1688} sizes="(min-width: 1024px) 220px, 30vw" className={styles.stageShot} />
         </div>
       ) : null}
-    </div>
+      {caption ? <figcaption className={styles.stageCaption}>{caption}</figcaption> : null}
+    </figure>
   );
 }

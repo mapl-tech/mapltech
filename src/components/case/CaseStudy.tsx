@@ -99,6 +99,7 @@ export default function CaseStudy({
             desktop={story.media.desktop}
             mobile={story.media.mobile}
             alt={story.media.alt}
+            caption={story.media.caption}
           />
         ) : null}
       </header>
