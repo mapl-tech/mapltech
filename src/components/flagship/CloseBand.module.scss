@@ -11,7 +11,9 @@
   color: $color-white;
 }
 
-// The wordmark's bar, enormous, drifting in from the right edge.
+// The wordmark's bar, enormous, drifting in from the right edge. On a phone
+// it runs under the lede and the actions, so it stays at 8% white: small white
+// text over it still clears 4.6:1 (at 14% it fell to 4.28:1).
 .bar {
   position: absolute;
   z-index: -1;
@@ -19,7 +21,7 @@
   right: clamp(24px, 9vw, 160px);
   width: clamp(18px, 2.2vw, 34px);
   height: 120%;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 999px;
   transform: rotate(14deg);
 }
