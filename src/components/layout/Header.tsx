@@ -305,6 +305,7 @@ function useHeroCtaView(pathname: string): 'in' | 'out' | undefined {
 
 export default function Header() {
   const pathname = usePathname() ?? '/';
+  const onProjectPage = pathname === PROJECT_HREF;
   const compact = useCompact();
   const heroCtaView = useHeroCtaView(pathname);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -326,22 +327,27 @@ export default function Header() {
         <DesktopNav pathname={pathname} />
 
         <div className={styles.utility}>
-          <span className={styles.cta} data-cta-placement="header_project">
-            <MagneticButton href={PROJECT_HREF} size="small" placement="header_project" className={styles.headerBtn}>
-              {PROJECT_LABEL}
-            </MagneticButton>
-          </span>
+          {/* On the brief itself the ask would point at the page you are on. */}
+          {onProjectPage ? null : (
+            <>
+              <span className={styles.cta} data-cta-placement="header_project">
+                <MagneticButton href={PROJECT_HREF} size="small" placement="header_project" className={styles.headerBtn}>
+                  {PROJECT_LABEL}
+                </MagneticButton>
+              </span>
 
-          <span className={styles.ctaCompact} data-cta-placement="header_project_compact">
-            <MagneticButton
-              href={PROJECT_HREF}
-              size="small"
-              placement="header_project_compact"
-              className={styles.compactBtn}
-            >
-              {PROJECT_LABEL}
-            </MagneticButton>
-          </span>
+              <span className={styles.ctaCompact} data-cta-placement="header_project_compact">
+                <MagneticButton
+                  href={PROJECT_HREF}
+                  size="small"
+                  placement="header_project_compact"
+                  className={styles.compactBtn}
+                >
+                  {PROJECT_LABEL}
+                </MagneticButton>
+              </span>
+            </>
+          )}
 
           <button
             ref={menuButtonRef}

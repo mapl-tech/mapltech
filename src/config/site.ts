@@ -392,7 +392,8 @@ export const portfolioProjects = [
   {
     title: 'UNSVCC',
     slug: 'unsvcc',
-    category: 'Web Development',
+    // What we built is the internal dashboard (its public site is not ours).
+    category: 'Custom Internal Tools',
     description: 'Internal operations dashboard with real-time organizational metrics, role-based access, and automated reporting.',
     tags: ['Dashboard', 'Analytics', 'Reporting'],
     image: '/images/case-unsvcc.jpg',

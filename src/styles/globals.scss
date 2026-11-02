@@ -532,10 +532,12 @@ html.lenis, html.lenis body {
   }
 }
 
-// Mobile body text minimum - 17px floor for readability on small screens
+// Mobile body text minimum - a 17px floor for readability on small screens.
+// max() keeps anything that inherits a larger size (ledes, article bodies)
+// instead of flattening it to 17px.
 @media (max-width: $breakpoint-sm) {
   p, li, blockquote, td, th, dd {
-    font-size: 1.0625rem;
+    font-size: max(1.0625rem, 1em);
   }
 }
 

@@ -261,6 +261,12 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-block;
   transition: opacity 0.24s ease, visibility 0s linear 0s;
 
+  // Under 360px the pill and the menu button do not both fit; the bottom
+  // action bar carries "Start a project" there.
+  @media (max-width: 359px) {
+    display: none;
+  }
+
   @include lg {
     display: none;
   }
