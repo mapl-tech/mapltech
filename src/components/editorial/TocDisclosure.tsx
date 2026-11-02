@@ -6,9 +6,18 @@ import styles from './Toc.module.scss';
  * closed by default so the opening paragraph stays near the top. Server
  * rendered, no script; the desktop rail (ArticleToc) takes over on wide screens.
  */
-export default function TocDisclosure({ items, label = 'In this article' }: { items: readonly TocItem[]; label?: string }) {
+export default function TocDisclosure({
+  items,
+  label = 'In this article',
+  tone = 'dark',
+}: {
+  items: readonly TocItem[];
+  label?: string;
+  /** Paper for documents set on the light surface (legal pages). */
+  tone?: 'dark' | 'paper';
+}) {
   return (
-    <details className={styles.disclosure}>
+    <details className={styles.disclosure} data-tone={tone}>
       <summary className={styles.summary}>
         <span className={styles.summaryLabel}>{label}</span>
         <span className={styles.summaryCount}>
@@ -21,7 +30,7 @@ export default function TocDisclosure({ items, label = 'In this article' }: { it
           <li key={item.id}>
             <a href={`#${item.id}`} className={styles.disclosureLink}>
               <span className={styles.disclosureIndex} aria-hidden="true">
-                {index + 1}
+                {String(index + 1).padStart(2, '0')}
               </span>
               {item.text}
             </a>

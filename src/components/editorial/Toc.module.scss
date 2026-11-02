@@ -1,13 +1,14 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
-// Contents for long-form pages. Wide screens: a sticky rail with a structure
-// line that fills as you read. Phones and tablets: a native disclosure in the
-// flow plus a 2px reading bar pinned to the top edge of the viewport.
+// Contents for long-form pages. Wide screens: a sticky, numbered rail in the
+// label column with a hairline that fills as you read (the case study's
+// chapter index, extended). Phones and tablets: a native disclosure in the
+// flow plus a 2px reading line along the top edge of the viewport.
+// `data-tone="paper"` re-inks everything for documents on the light surface.
 
-$ease: cubic-bezier(0.23, 1, 0.32, 1);
-
-// ---------------------------------------------------------------- phone bar
+// ---------------------------------------------------------------- phone line
 .bar {
   position: fixed;
   top: 0;
@@ -36,8 +37,9 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   @include lg {
     display: block;
     position: sticky;
-    top: 112px;
-    max-height: calc(100svh - 140px);
+    top: calc(var(--header-height, 72px) + 40px);
+    max-height: calc(100vh - var(--header-height, 72px) - 80px);
+    max-height: calc(100svh - var(--header-height, 72px) - 80px);
     overflow-y: auto;
     overscroll-behavior: contain;
     scrollbar-width: none;
@@ -49,23 +51,39 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .railLabel {
-  margin: 0 0 16px;
-  @include mono-label(rgba($color-fg, 0.62));
+  @include section-label;
+  margin-bottom: 22px;
+
+  &::before {
+    @include section-label-rule;
+  }
+
+  .rail[data-tone='paper'] & {
+    color: $color-ink-muted;
+
+    &::before {
+      background: $color-red-ink;
+    }
+  }
 }
 
 .railTrack {
   position: relative;
-  padding-left: 20px;
+  padding-left: 22px;
 }
 
 .railLine {
   position: absolute;
   left: 0;
-  top: 6px;
-  bottom: 6px;
+  top: 10px;
+  bottom: 10px;
   width: 1px;
-  background: rgba($color-fg, 0.14);
+  background: $color-hairline-strong;
   overflow: hidden;
+
+  .rail[data-tone='paper'] & {
+    background: $color-ink-hairline;
+  }
 
   @include reduced-motion {
     display: none;
@@ -78,11 +96,16 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   background: $color-red;
   transform: scaleY(0);
   transform-origin: 50% 0;
+
+  .rail[data-tone='paper'] & {
+    background: $color-red-ink;
+  }
 }
 
+// 44px rows, 8px apart (the site's target rule).
 .railList {
   display: grid;
-  gap: 4px;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -91,31 +114,32 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 .railLink {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  gap: 12px;
   min-height: 44px;
-  padding: 8px 0;
-  font-size: 0.9375rem;
+  padding: 10px 0;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
   line-height: 1.4;
-  color: rgba($color-fg, 0.64);
+  color: $color-fg-muted;
+  text-decoration: none;
   text-wrap: pretty;
-  transition: color 160ms $ease;
+  transition: color 0.3s ease;
 
-  // The current section: a node on the structure line.
+  // The section you are reading: a node on the reading line.
   &::before {
     content: '';
     position: absolute;
-    left: -24px;
-    top: 50%;
+    left: -26px;
+    top: 16px;
     width: 9px;
     height: 9px;
     border-radius: 50%;
     background: $color-ground;
     border: 2px solid $color-red;
-    transform: translateY(-50%) scale(0.4);
+    transform: scale(0.4);
     opacity: 0;
-    transition:
-      opacity 160ms ease-out,
-      transform 200ms $ease;
+    transition: opacity 160ms ease-out, transform 0.4s $ease-out-expo;
   }
 
   &:hover {
@@ -127,32 +151,65 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 
     &::before {
       opacity: 1;
-      transform: translateY(-50%) scale(1);
+      transform: none;
     }
   }
 
   @include focus-ring;
+
+  .rail[data-tone='paper'] & {
+    color: $color-ink-muted;
+
+    &::before {
+      background: $color-paper;
+      border-color: $color-red-ink;
+    }
+
+    &:hover,
+    &[aria-current='location'] {
+      color: $color-ink;
+    }
+
+    &:focus-visible {
+      outline-color: $color-red-ink;
+    }
+  }
 }
 
 .railIndex {
   flex: none;
-  min-width: 1.75rem;
-  color: rgba($color-fg, 0.62);
-  @include tabular;
+  min-width: 1.6rem;
+  @include mono-label($color-fg-dim);
 
   [aria-current='location'] > & {
-    color: $color-red-text;
+    color: $color-red-text; // 5.5:1 on the ground (brand red is 3.66:1, too low at 13px)
   }
+
+  .rail[data-tone='paper'] & {
+    color: $color-ink-muted;
+  }
+
+  .rail[data-tone='paper'] [aria-current='location'] > & {
+    color: $color-red-ink;
+  }
+}
+
+.railText {
+  min-width: 0;
 }
 
 // ---------------------------------------------------------------- disclosure
 .disclosure {
-  margin: 0 0 40px;
+  margin: 0 0 clamp(36px, 5vw, 48px);
   border-top: 1px solid $color-hairline-strong;
   border-bottom: 1px solid $color-hairline-strong;
 
   @include lg {
     display: none;
+  }
+
+  &[data-tone='paper'] {
+    border-color: $color-ink-hairline;
   }
 }
 
@@ -171,6 +228,10 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   @include focus-ring;
+
+  [data-tone='paper'] > &:focus-visible {
+    outline-color: $color-red-ink;
+  }
 }
 
 .summaryLabel {
@@ -179,6 +240,10 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   font-size: 1.0625rem;
   letter-spacing: -0.01em;
   color: $color-fg;
+
+  [data-tone='paper'] & {
+    color: $color-ink;
+  }
 }
 
 .summaryCount {
@@ -186,8 +251,12 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   align-items: center;
   gap: 12px;
   font-size: $font-size-sm;
-  color: rgba($color-fg, 0.68);
+  color: $color-fg-muted;
   @include tabular;
+
+  [data-tone='paper'] & {
+    color: $color-ink-muted;
+  }
 }
 
 .chevron {
@@ -197,7 +266,7 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
   transform: rotate(45deg);
-  transition: transform 200ms $ease;
+  transition: transform 200ms ease;
 
   .disclosure[open] & {
     margin-top: 4px;
@@ -207,34 +276,53 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 
 .disclosureList {
   display: grid;
-  gap: 4px;
+  gap: 8px; // 48px rows, 8px apart
   margin: 0;
   padding: 8px 0 12px; // 8px clear of the summary target above
   list-style: none;
+
+  > li + li {
+    padding-top: 8px;
+    border-top: 1px solid $color-hairline;
+  }
+
+  [data-tone='paper'] > & > li + li {
+    border-top-color: $color-ink-hairline;
+  }
 }
 
 .disclosureLink {
   display: flex;
   align-items: baseline;
   gap: 14px;
-  min-height: 44px;
-  padding: 11px 0;
+  min-height: 48px;
+  padding: 12px 0;
   font-size: 1rem;
   line-height: 1.4;
-  color: rgba($color-fg, 0.82);
-  border-top: 1px solid $color-hairline;
+  color: $color-text-body;
+  text-decoration: none;
 
   &:hover {
     color: $color-fg;
   }
 
   @include focus-ring;
+
+  [data-tone='paper'] & {
+    color: $color-ink;
+
+    &:focus-visible {
+      outline-color: $color-red-ink;
+    }
+  }
 }
 
 .disclosureIndex {
   flex: none;
-  min-width: 1.25rem;
-  font-size: $font-size-sm;
-  color: $color-red-text; // #ff5c73, 5.5:1 on the ground (brand red is 3.66:1, too low at 15px)
-  @include tabular;
+  min-width: 1.6rem;
+  @include mono-label($color-red-text);
+
+  [data-tone='paper'] & {
+    color: $color-red-ink;
+  }
 }

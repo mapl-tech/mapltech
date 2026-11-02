@@ -6,12 +6,14 @@ import { absoluteUrl, toISODate } from '@/config/routes';
 import { getPostBySlug, getRelatedPosts, blogPosts } from '@/data/blog-posts';
 import PostArticle from '@/components/editorial/PostArticle';
 import { topicSlug } from '@/components/convert/blog-utils';
+import { topicLabel } from '@/components/editorial/services';
 
 /**
  * /blog/[slug]: one page per post in src/data/blog-posts.ts, prerendered.
  * Template: src/components/editorial/PostArticle.tsx. Structured data: the
  * WebPage, a Blog > topic > post BreadcrumbList and the BlogPosting, all from
- * the same post object the page renders.
+ * the same post object the page renders (the topic crumb carries the same
+ * label as the visible trail, topicLabel()).
  */
 
 interface Props {
@@ -92,7 +94,7 @@ export default async function BlogPostPage({ params }: Props) {
           image: post.coverImage,
           breadcrumbs: [
             { name: 'Blog', path: '/blog' },
-            { name: post.category, path: `/blog?topic=${topicSlug(post.category)}` },
+            { name: topicLabel(post.category), path: `/blog?topic=${topicSlug(post.category)}` },
             { name: post.title, path },
           ],
           nodes: [blogPosting(post)],

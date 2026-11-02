@@ -1,4 +1,6 @@
+import type { BlogCategory } from '@/data/blog-posts';
 import { SERVICE_META, type EstimateService } from '@/lib/estimate';
+import { categoryService } from '@/components/convert/blog-utils';
 
 /** The four service lines, in site order. */
 export const SERVICE_KEYS = ['web', 'automation', 'tools', 'cloud'] as const satisfies readonly EstimateService[];
@@ -14,3 +16,15 @@ export function joinList(items: readonly string[]): string {
 
 /** "Web Development, Automation & AI, Custom Internal Tools and Cloud Engineering". */
 export const SERVICE_LIST = joinList(SERVICE_NAMES);
+
+/**
+ * The name a blog topic is shown under: the canonical service name when the
+ * category is one of the four service lines ("Internal Tools" reads "Custom
+ * Internal Tools"), the category itself otherwise ("Industry"). Topic slugs
+ * and URLs keep coming from the category (topicSlug), so links do not change.
+ * Server-side only: the archive island receives the finished labels.
+ */
+export function topicLabel(category: BlogCategory): string {
+  const service = categoryService(category);
+  return service ? SERVICE_META[service].label : category;
+}

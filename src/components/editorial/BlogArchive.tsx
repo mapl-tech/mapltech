@@ -5,17 +5,21 @@ import Link from 'next/link';
 import { useUrlParams } from '@/components/convert/useUrlState';
 import { useIsClient } from '@/components/ui/useMediaQuery';
 import { searchable } from '@/components/convert/blog-utils';
+import ArticleRow from './ArticleRow';
 import styles from './BlogArchive.module.scss';
 
 /**
- * The blog archive: every post, newest first, grouped by month, with a topic
- * filter and an instant search over titles, one-line answers and topics.
+ * The blog archive, on paper: every post, newest first, grouped by month as
+ * editorial rows, with a topic filter and an instant search over titles,
+ * one-line answers and topics.
  *
  * - All rows are in the server HTML, so every post link is crawlable; filtered
  *   or not-yet-revealed rows carry the `hidden` attribute.
  * - Topic and search mirror to the URL (?topic=, ?q=) through a shallow
  *   replaceState store (no useSearchParams, so the SSR HTML is kept); post
  *   breadcrumbs link here as /blog?topic=...#archive.
+ * - The search text is derived in the browser from the rows already on the
+ *   page, so nothing extra ships in the payload.
  * - Progressive reveal: 24 rows, then "Show 24 more". Without JavaScript the
  *   same control is a link to #archive-all, and :target reveals every row.
  * - Topic counts are facets: they follow the current search.
@@ -28,6 +32,7 @@ export interface ArchiveRow {
   title: string;
   /** The excerpt's first sentence. */
   answer: string;
+  /** The topic as shown (canonical service name or "Industry"). */
   category: string;
   topic: string;
   dateISO: string;
@@ -249,23 +254,17 @@ export default function BlogArchive({ rows, topics, pageSize = 24 }: BlogArchive
               <ol className={styles.list} role="list">
                 {group.rows.map((row) => (
                   <li key={row.slug} className={styles.item} hidden={!visible.has(row.slug)}>
-                    <article className={styles.row} aria-labelledby={`post-${row.slug}`}>
-                      <time className={styles.date} dateTime={row.dateISO}>
-                        {row.dateLabel}
-                      </time>
-                      <div className={styles.main}>
-                        <h4 id={`post-${row.slug}`} className={styles.title}>
-                          <Link href={`/blog/${row.slug}`} className={styles.link}>
-                            {row.title}
-                          </Link>
-                        </h4>
-                        <p className={styles.answer}>{row.answer}</p>
-                      </div>
-                      <p className={styles.meta}>
-                        <span className={styles.topic}>{row.category}</span>
-                        <span className={styles.time}>{row.readTime} min read</span>
-                      </p>
-                    </article>
+                    <ArticleRow
+                      href={`/blog/${row.slug}`}
+                      title={row.title}
+                      excerpt={row.answer}
+                      category={row.category}
+                      dateISO={row.dateISO}
+                      dateLabel={row.dateLabel}
+                      readTime={row.readTime}
+                      headingId={`post-${row.slug}`}
+                      as="h4"
+                    />
                   </li>
                 ))}
               </ol>
@@ -281,7 +280,7 @@ export default function BlogArchive({ rows, topics, pageSize = 24 }: BlogArchive
         </p>
         <p className={styles.emptyText}>
           Try a shorter word or another topic. Weighing a build rather than researching one? The estimator answers
-          faster than an article: <Link href="/pricing#estimator">Price your project</Link>.
+          faster than an article: <Link href="/pricing#estimator">open the estimator</Link>.
         </p>
         <button type="button" className={styles.emptyButton} onClick={clearAll}>
           Clear search and topic

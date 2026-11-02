@@ -1,17 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { blogPosts } from '@/data/blog-posts';
-import { ESTIMATE_HREF, ESTIMATE_LABEL } from '@/components/layout/chrome';
-import LightField from '@/components/flagship/LightField';
+import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { SERVICE_NAMES } from '@/components/editorial/services';
 import NotFoundHint from '@/components/editorial/NotFoundHint';
 import styles from '@/components/editorial/NotFound.module.scss';
 
 /**
- * The site-wide 404 (any unmatched URL and every notFound() call). Plain words,
- * the six places people usually want, the primary action, and a way home.
- * Type-led on the dark ground, lit by the homepage's crimson light field: the
- * "404" is the surface and its red outline, offset behind, the structure.
+ * The site-wide 404 (any unmatched URL and every notFound() call), kept light:
+ * no WebGL and no script beyond the path-aware hint. Very large numerals under
+ * the page light, a plain sentence as the H1, the one primary action and the
+ * way home, then the six places people usually want as editorial rows.
  * Next.js marks the response noindex.
  */
 
@@ -35,55 +34,62 @@ const PLACES = [
 export default function NotFound() {
   return (
     <section className={styles.page} aria-labelledby="nf-title">
-      <LightField className={styles.light} focusX={0.78} focusY={0.4} portraitX={0.42} portraitY={0.14} intensity={0.85} still />
-      <div className={styles.grid}>
-        <p className={styles.numerals} aria-hidden="true">
-          <span className={styles.surface}>404</span>
-          <span className={styles.structure}>404</span>
-        </p>
+      <div className={styles.light} aria-hidden="true" />
+      <div className={styles.inner}>
+        <div className={styles.stage}>
+          <p className={styles.numerals} aria-hidden="true">
+            <span>4</span>
+            <span className={styles.zero}>0</span>
+            <span>4</span>
+          </p>
 
-        <div className={styles.copy}>
-          <p className={styles.eyebrow}>
-            <span>Error 404</span>
-          </p>
-          <h1 id="nf-title" className={styles.title}>
-            We can&rsquo;t find that page.
-          </h1>
-          <p className={styles.lede}>
-            The link may be out of date, or the page has moved. These are the places most people are looking for.
-          </p>
-          <NotFoundHint />
-          <div className={styles.actions}>
-            <Link href={ESTIMATE_HREF} className={styles.primary} data-cta-placement="not_found_estimate">
-              {ESTIMATE_LABEL}
-            </Link>
-            <Link href="/" className={styles.textLink}>
-              Back to the homepage
-            </Link>
+          <div className={styles.copy}>
+            <p className={styles.label}>Error 404</p>
+            <h1 id="nf-title" className={styles.title}>
+              We can&rsquo;t find that page.
+            </h1>
+            <p className={styles.lede}>
+              The link may be out of date, or the page has moved. These are the places most people are looking for.
+            </p>
+            <NotFoundHint />
+            <div className={styles.actions} data-hero-cta="">
+              <Link href={PROJECT_HREF} className={styles.primary} data-cta-placement="not_found_project">
+                {PROJECT_LABEL}
+                <span aria-hidden="true" className={styles.arrow}>
+                  →
+                </span>
+              </Link>
+              <Link href="/" className={styles.textLink} data-cta-placement="not_found_home">
+                Back to the homepage
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
 
-      <nav className={styles.places} aria-labelledby="nf-places">
-        <h2 id="nf-places" className={styles.placesTitle}>
-          Where to next
-        </h2>
-        <ul className={styles.list} role="list">
-          {PLACES.map((place) => (
-            <li key={place.href} className={styles.place}>
-              <span className={styles.placeText}>
-                <Link href={place.href} className={styles.placeName}>
-                  {place.name}
-                </Link>
-                <span className={styles.placeNote}>{place.note}</span>
-              </span>
-              <span className={styles.placeArrow} aria-hidden="true">
-                →
-              </span>
-            </li>
-          ))}
-        </ul>
-      </nav>
+        <nav className={styles.places} aria-labelledby="nf-places">
+          <h2 id="nf-places" className={styles.placesTitle}>
+            Where to next
+          </h2>
+          <ul className={styles.list} role="list">
+            {PLACES.map((place, i) => (
+              <li key={place.href} className={styles.place}>
+                <span className={styles.placeIndex} aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className={styles.placeText}>
+                  <Link href={place.href} className={styles.placeName} data-cta-placement={`not_found_${place.name.toLowerCase()}`}>
+                    {place.name}
+                  </Link>
+                  <span className={styles.placeNote}>{place.note}</span>
+                </span>
+                <span className={styles.placeArrow} aria-hidden="true">
+                  →
+                </span>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
     </section>
   );
 }

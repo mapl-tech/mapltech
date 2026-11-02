@@ -1,12 +1,14 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
-// The archive: search + topic facets, then months of rows. Elements toggled
-// with the `hidden` attribute (groups, rows, empty state, "show more") never get
-// an unconditional `display`, so the attribute always wins.
+// The archive on paper: search + topic facets, then months of editorial rows
+// (Rows.module.scss). Elements toggled with the `hidden` attribute (groups,
+// rows, the empty state, "Show more") never get an unconditional `display`,
+// so the attribute always wins. Ink on paper 17.6:1, ink-muted 6.4:1,
+// crimson-ink 5.5:1; control borders at 50% ink clear 3:1 against the paper.
 
-$ease: cubic-bezier(0.23, 1, 0.32, 1);
-$link: $color-red-text;
+$control-border: rgba(11, 11, 12, 0.5);
 
 .archive {
   position: relative;
@@ -15,18 +17,20 @@ $link: $color-red-text;
 // ---------------------------------------------------------------- controls
 .controls {
   display: grid;
-  gap: 24px;
+  gap: 28px;
+  padding-bottom: clamp(28px, 3vw, 40px);
+  border-bottom: 1px solid $color-ink-hairline;
 
   @include lg {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
     gap: 48px;
-    align-items: end;
+    align-items: start;
   }
 }
 
 .label {
-  margin: 0 0 10px;
-  @include mono-label(rgba($color-fg, 0.66));
+  margin: 0 0 12px;
+  @include mono-label($color-ink-muted);
 }
 
 .search {
@@ -39,13 +43,13 @@ $link: $color-red-text;
 
 .icon {
   position: absolute;
-  left: 16px;
+  left: 20px;
   top: 50%;
   width: 20px;
   height: 20px;
   transform: translateY(-50%);
   fill: none;
-  stroke: rgba($color-fg, 0.62);
+  stroke: $color-ink-muted;
   stroke-width: 2;
   stroke-linecap: round;
   pointer-events: none;
@@ -54,19 +58,20 @@ $link: $color-red-text;
 .input {
   display: block;
   width: 100%;
-  height: 52px;
-  padding: 0 52px 0 46px;
-  border-radius: 14px;
-  border: 1px solid rgba($color-fg, 0.2);
-  background: $color-surface-1;
+  height: 56px;
+  padding: 0 56px 0 52px;
+  border-radius: $radius-full;
+  border: 1px solid $control-border;
+  background: rgba(255, 255, 255, 0.55);
+  font-family: $font-body;
   font-size: 1.0625rem; // 17px: never under 16px (no iOS zoom)
-  color: $color-fg;
-  transition: border-color 160ms $ease;
+  color: $color-ink;
+  transition: border-color 160ms ease, background-color 160ms ease;
   -webkit-appearance: none;
   appearance: none;
 
   &::placeholder {
-    color: rgba($color-fg, 0.62);
+    color: $color-ink-muted;
     opacity: 1;
   }
 
@@ -77,19 +82,20 @@ $link: $color-red-text;
   }
 
   &:hover {
-    border-color: rgba($color-fg, 0.34);
+    border-color: $color-ink;
   }
 
   &:focus-visible {
-    border-color: $color-red;
-    outline: $focus-ring;
-    outline-offset: $focus-ring-offset;
+    border-color: $color-red-ink;
+    background: rgba(255, 255, 255, 0.8);
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 2px;
   }
 }
 
 .clear {
   position: absolute;
-  right: 4px;
+  right: 6px;
   top: 50%;
   display: grid;
   place-items: center;
@@ -97,14 +103,16 @@ $link: $color-red-text;
   height: 44px;
   border-radius: 50%;
   transform: translateY(-50%);
-  color: rgba($color-fg, 0.78);
+  color: $color-ink;
 
   &:hover {
-    color: $color-fg;
-    background: rgba($color-fg, 0.06);
+    background: rgba(11, 11, 12, 0.06);
   }
 
-  @include focus-ring;
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 2px;
+  }
 }
 
 .clearIcon {
@@ -144,32 +152,28 @@ $link: $color-red-text;
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-height: 44px;
-  padding: 0 16px;
+  padding: 0 18px;
   border-radius: $radius-full;
-  border: 1px solid rgba($color-fg, 0.18);
+  border: 1px solid rgba(11, 11, 12, 0.22);
   font-size: 0.9375rem;
   font-weight: $font-weight-medium;
-  color: rgba($color-fg, 0.86);
+  color: $color-ink;
   white-space: nowrap;
-  transition:
-    border-color 160ms $ease,
-    background-color 160ms $ease,
-    color 160ms $ease;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
 
   &:hover {
-    border-color: rgba($color-fg, 0.4);
-    color: $color-fg;
+    border-color: $color-ink;
   }
 
   &[aria-pressed='true'] {
-    border-color: $color-red;
-    background: rgba($color-red-fill, 0.18);
-    color: $color-fg;
+    border-color: $color-ink;
+    background: $color-ink;
+    color: $color-paper;
 
     .count {
-      color: rgba($color-fg, 0.86);
+      color: rgba(241, 237, 231, 0.74);
     }
   }
 
@@ -179,27 +183,29 @@ $link: $color-red-text;
     }
   }
 
-  @include focus-ring;
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 2px;
+  }
 }
 
 .count {
   font-size: $font-size-sm;
-  color: rgba($color-fg, 0.66);
+  color: $color-ink-muted;
   @include tabular;
 }
 
 .status {
   min-height: 1.5em;
-  margin: 28px 0 0;
+  margin: 20px 0 0;
   font-size: $font-size-sm;
-  color: rgba($color-fg, 0.7);
+  color: $color-ink-muted;
   @include tabular;
 }
 
 // ---------------------------------------------------------------- groups
 .groups {
-  margin-top: 4px;
-  scroll-margin-top: 96px;
+  scroll-margin-top: calc(var(--header-height, 72px) + 24px);
 }
 
 .month {
@@ -207,27 +213,24 @@ $link: $color-red-text;
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  margin: 44px 0 0;
-  padding-bottom: 12px;
-  border-bottom: 1px solid $color-hairline-strong;
+  margin: clamp(48px, 6vw, 80px) 0 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $color-ink;
   font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
-  color: $color-fg;
+  font-weight: 800;
+  font-size: clamp(1.375rem, 1rem + 1vw, 2rem); // 22px -> 32px
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: $color-ink;
 }
 
 .group:first-child .month {
-  margin-top: 20px;
+  margin-top: 28px;
 }
 
 .monthCount {
-  font-family: $font-body;
-  font-weight: $font-weight-regular;
-  font-size: $font-size-sm;
-  letter-spacing: 0;
-  color: rgba($color-fg, 0.66);
-  @include tabular;
+  flex: none;
+  @include mono-label($color-ink-muted);
 }
 
 .list {
@@ -236,158 +239,24 @@ $link: $color-red-text;
   list-style: none;
 }
 
-// One row: a stretched title link makes the whole row the target while the
-// link's accessible name stays the title.
-.row {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas:
-    'date meta'
-    'main main';
-  gap: 6px 14px;
-  padding: 20px 0 22px;
-  border-bottom: 1px solid $color-hairline;
-
-  @include md {
-    grid-template-columns: 76px minmax(0, 1fr) 190px;
-    grid-template-areas: 'date main meta';
-    gap: 8px 32px;
-    align-items: baseline;
-    padding: 24px 0;
-  }
-
-  // The structure line, on real hover only.
-  &::before {
-    content: '';
-    position: absolute;
-    left: -20px;
-    top: 24px;
-    bottom: 24px;
-    width: 2px;
-    background: $color-red;
-    transform: scaleY(0);
-    transform-origin: 50% 0;
-    opacity: 0;
-  }
-
-  @include pointer-fine-motion {
-    &::before {
-      transition:
-        transform 240ms $ease,
-        opacity 160ms ease-out;
-    }
-
-    &:hover::before {
-      transform: scaleY(1);
-      opacity: 1;
-    }
-  }
-}
-
-.date {
-  grid-area: date;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: rgba($color-fg, 0.76);
-  white-space: nowrap;
-  @include tabular;
-}
-
-.main {
-  grid-area: main;
-  min-width: 0;
-}
-
-.title {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: clamp(1.1875rem, 1.1rem + 0.4vw, 1.375rem);
-  line-height: 1.25;
-  letter-spacing: -0.012em;
-  color: $color-fg;
-  text-wrap: pretty;
-  transition: color 160ms $ease;
-}
-
-.link {
-  color: inherit;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 10px;
-  }
-
-  // The ring sits on the link itself (the title), where focus really is.
-  @include focus-ring;
-}
-
-.answer {
-  margin: 6px 0 0;
-  font-size: 1rem;
-  line-height: 1.55;
-  color: rgba($color-fg, 0.72);
-  @include line-clamp(2);
-}
-
-.meta {
-  grid-area: meta;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 12px;
-  margin: 0;
-  font-size: $font-size-sm;
-  color: rgba($color-fg, 0.68);
-  @include tabular;
-
-  > span + span::before {
-    content: '·';
-    margin-right: 12px;
-    color: rgba($color-fg, 0.4);
-  }
-
-  @include md {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-    text-align: right;
-
-    > span + span::before {
-      content: none;
-    }
-  }
-}
-
-.row:hover .title {
-  color: $link;
-}
-
-// Rows that appear (after a filter, a search or 'Show more') rise 6px and fade
-// in; rows that stay visible do not replay. The first eight in a group step in
-// 24ms apart. Skipped entirely under reduced motion.
+// Rows that appear (after a filter, a search or "Show more") settle up into
+// place; rows that stay visible do not replay. Transform only (text is never
+// faded), the first eight in a group 30ms apart, nothing under reduced motion.
 @include motion-ok {
-  .item:not([hidden]) .row {
-    animation: row-in 220ms cubic-bezier(0.23, 1, 0.32, 1) backwards;
+  .item:not([hidden]) > article {
+    animation: row-in 420ms $ease-out-expo backwards;
   }
 
   @for $i from 2 through 8 {
-    .item:nth-child(#{$i}):not([hidden]) .row {
-      animation-delay: #{($i - 1) * 24}ms;
+    .item:nth-child(#{$i}):not([hidden]) > article {
+      animation-delay: #{($i - 1) * 30}ms;
     }
   }
 }
 
 @keyframes row-in {
   from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: translate3d(0, 14px, 0);
   }
 }
 
@@ -395,43 +264,73 @@ $link: $color-red-text;
 .empty {
   margin-top: 32px;
   padding: clamp(24px, 4vw, 40px);
-  border-radius: 16px;
-  border: 1px dashed rgba($color-red, 0.55);
-  background: rgba($color-red, 0.03);
+  border-radius: 22px;
+  border: 1px dashed rgba(184, 29, 56, 0.55);
+  background: rgba(184, 29, 56, 0.04);
 }
 
 .emptyTitle {
   margin: 0;
   font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: 1.375rem;
-  line-height: 1.25;
-  letter-spacing: -0.015em;
-  color: $color-fg;
+  font-weight: 700;
+  font-size: clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: $color-ink;
 }
 
 .emptyText {
-  margin: 10px 0 0;
-  max-width: 56ch;
-  font-size: 1rem;
+  margin: 12px 0 0;
+  max-width: 40em;
+  font-size: $font-size-base;
   line-height: 1.6;
-  color: rgba($color-fg, 0.78);
+  color: $color-ink-muted;
 
   a {
     font-weight: $font-weight-semibold;
-    color: $link;
+    color: $color-red-ink;
     text-decoration: underline;
-    text-decoration-color: rgba($link, 0.45);
+    text-decoration-color: rgba(184, 29, 56, 0.45);
     text-underline-offset: 4px;
 
-    @include focus-ring;
+    &:hover {
+      text-decoration-color: currentColor;
+    }
+
+    &:focus-visible {
+      outline: $focus-ring-width solid $color-red-ink;
+      outline-offset: 2px;
+    }
+  }
+}
+
+@mixin ink-button {
+  @include button-base;
+  min-height: 52px;
+  background: transparent;
+  color: $color-ink;
+  border: 1px solid $color-ink;
+
+  &:hover {
+    background: $color-ink;
+    color: $color-paper;
+  }
+
+  @include motion-ok {
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 3px;
   }
 }
 
 .emptyButton {
-  @include button-secondary;
+  @include ink-button;
   margin-top: 20px;
-  @include focus-ring;
 }
 
 .more:not([hidden]) {
@@ -439,18 +338,15 @@ $link: $color-red-text;
   flex-wrap: wrap;
   align-items: center;
   gap: 12px 24px;
-  margin-top: 32px;
+  margin-top: clamp(32px, 4vw, 48px);
 }
 
 .moreButton {
-  @include button-secondary;
-  @include focus-ring;
+  @include ink-button;
 }
 
 .moreCount {
-  font-size: $font-size-sm;
-  color: rgba($color-fg, 0.68);
-  @include tabular;
+  @include mono-label($color-ink-muted);
 }
 
 // Without JavaScript, "Show more" links to #archive-all and this reveals every row.
