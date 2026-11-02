@@ -1,18 +1,19 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use './company' as c;
+@use '../../styles/editorial' as *;
 
-// Who is behind the company, next to the apply form: the two founders' own
-// photos (one grayscale treatment), their names and titles, and the team link.
+// Who is behind the company, beside the apply form on paper: the two
+// founders' own photos (one grayscale treatment), their names and titles,
+// and the team link. Ink on paper: ink-muted 6.4:1.
 
 .note {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 16px;
   align-items: center;
-  margin: 28px 0 0;
-  padding-top: 20px;
-  border-top: 1px solid $color-hairline;
+  margin: 0;
+  padding-top: 24px;
+  border-top: 1px solid $color-ink-hairline;
 }
 
 .faces {
@@ -20,15 +21,15 @@
 }
 
 .face {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 0 0 2px $color-ground;
-  @include c.founder-photo;
+  box-shadow: 0 0 0 3px $color-paper;
+  filter: grayscale(1) contrast(1.06) brightness(0.96);
 
   & + & {
-    margin-left: -12px;
+    margin-left: -14px;
   }
 }
 
@@ -36,16 +37,20 @@
   margin: 0;
   font-size: $font-size-base;
   line-height: 1.5;
-  color: rgba($color-fg, 0.78);
+  color: $color-ink-muted;
 }
 
 .names {
-  color: $color-fg;
+  color: $color-ink;
   font-weight: $font-weight-semibold;
 }
 
 .link {
   grid-column: 1 / -1;
   justify-self: start;
-  @include c.text-link;
+  @include text-action($color-ink);
+
+  &:focus-visible {
+    outline-color: $color-red-ink;
+  }
 }

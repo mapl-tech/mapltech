@@ -1,0 +1,272 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// The company family (/about-us, /team, /careers, /nigeria, /jamaica), Nov 2026
+// award pass: the homepage's editorial system, shared. Dark ground, one or two
+// paper sections for rhythm, the crimson close. Every component in the family
+// takes its section shell, label, title, lede and actions from here.
+
+// ---------------------------------------------------------------- surfaces
+.dark {
+  position: relative;
+  background: $color-ground;
+  color: $color-fg;
+  scroll-margin-top: var(--header-height, 72px);
+}
+
+// Paper: ink on #F1EDE7 (ink 17.6:1, ink-muted 6.4:1, crimson-ink 5.5:1).
+.paper {
+  position: relative;
+  background: $color-paper;
+  color: $color-ink;
+  border-radius: clamp(24px, 3vw, 40px);
+  scroll-margin-top: var(--header-height, 72px);
+}
+
+.inner {
+  @include shell;
+  @include section-pad;
+}
+
+// A dark section that follows another dark section gets the hairline the
+// homepage FAQ uses, so the seam reads as a new chapter.
+.ruled {
+  border-top: 1px solid $color-hairline;
+}
+
+// ---------------------------------------------------------------- section voice
+// Label in a 3fr column, title and lede in 9fr (the homepage Statement and Proof grid).
+.head {
+  display: grid;
+  gap: 24px;
+  margin-bottom: clamp(48px, 7vw, 96px);
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
+
+    > .label {
+      grid-row: span 2;
+    }
+
+    // Everything after the label stays in the content column, however many lines.
+    > :not(.label) {
+      grid-column: 2;
+    }
+  }
+}
+
+// Content that sits in the 9fr column under a section head.
+.offset {
+  min-width: 0;
+
+  @include lg {
+    margin-left: calc((100% - 48px) * 3 / 12 + 48px);
+  }
+}
+
+// A note under a head's lede (a footnote, a link).
+.headNote {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  max-width: 44rem;
+
+  p {
+    margin: 0;
+    font-size: $font-size-base;
+    line-height: 1.55;
+    color: $color-fg-muted;
+  }
+}
+
+.label {
+  @include section-label;
+  align-self: start;
+
+  &::before {
+    @include section-label-rule;
+  }
+
+  @include lg {
+    padding-top: 0.9em;
+  }
+
+  .paper & {
+    color: $color-ink-muted;
+
+    &::before {
+      background: $color-red-ink;
+    }
+  }
+}
+
+// The label's rule in its own colour where a heading is set as a label.
+.labelNo {
+  color: $color-red;
+
+  .paper & {
+    color: $color-red-ink;
+  }
+}
+
+.title {
+  @include section-title;
+  max-width: 15em;
+  color: $color-fg;
+
+  .paper & {
+    color: $color-ink;
+  }
+}
+
+.lede {
+  @include lede;
+  margin: 0;
+
+  .paper & {
+    color: $color-ink-muted;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 4px;
+
+    @include focus-ring;
+  }
+}
+
+// ---------------------------------------------------------------- actions
+// The hero's filled ask (white on #D91C3F, 5.01:1) and its quiet partner.
+.primary {
+  @include button-primary;
+  min-height: 56px;
+  padding: 0 26px 0 30px;
+  gap: 14px;
+  font-size: 1.0625rem;
+
+  @include focus-ring;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.35s $ease-out-expo;
+
+  .primary:hover &,
+  .action:hover & {
+    @include motion-ok {
+      transform: translateX(4px);
+    }
+  }
+}
+
+.secondary {
+  @include text-action($color-fg);
+  font-size: 1.0625rem;
+}
+
+// In-section text link: the underline draws away on hover.
+.action {
+  @include text-action($color-fg);
+
+  .paper & {
+    color: $color-ink;
+
+    &:focus-visible {
+      outline-color: $color-red-ink;
+    }
+  }
+}
+
+// ---------------------------------------------------------------- facts band
+// The page's answer-first facts, under the hero: what a buyer, a candidate or
+// an assistant quoting the page needs first. Read as the hero's foot.
+.facts {
+  position: relative;
+  // The PageHeader's bottom-left glow (50% x 50% at 0% 100%, 0.07, gone at
+  // 70%) carried on past its edge, mirrored, so the hero has no seam.
+  background:
+    radial-gradient(50vw 440px at 0% 0%, rgba(217, 28, 63, 0.07) 0%, transparent 70%),
+    $color-ground;
+}
+
+.factsInner {
+  @include shell;
+}
+
+.factsGrid {
+  --cols: 3;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 20px;
+  margin: 0;
+  padding-top: 24px;
+  border-top: 1px solid $color-hairline-strong;
+
+  @include md {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 32px;
+
+    // Four facts read as two pairs on a tablet, not three and an orphan.
+    &[data-count='4'] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @include xl {
+    &,
+    &[data-count='4'] {
+      grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    }
+  }
+}
+
+.fact {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 0;
+
+  dt {
+    @include mono-label;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    color: $color-fg;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// ---------------------------------------------------------------- cards
+// When a card is right: #121214, a 1px ring, 22-36px radius.
+.card {
+  position: relative;
+  border-radius: clamp(22px, 2.6vw, 32px);
+  background: #121214;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), 0 40px 80px -40px rgba(0, 0, 0, 0.7);
+  color: $color-fg;
+}
+
+// Wide-screen-only hero figures (they repeat what phones meet further down).
+.wideOnly {
+  display: none;
+
+  @include lg {
+    display: block;
+  }
+}
+
+// Below lg, collapse the wrapper PageHeader puts around a wide-only figure as
+// well, so an empty grid item does not add its gap under the hero's actions.
+@media (max-width: #{$breakpoint-lg - 1px}) {
+  :global(div):has(> .wideOnly) {
+    display: none;
+  }
+}

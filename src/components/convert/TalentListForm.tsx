@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type FocusEvent, type FormEvent } from 'react';
 import { checkField, checkForm, type FieldRule } from '@/components/company/formErrors';
 import css from '@/components/company/CareersForm.module.scss';
-import Cta from './Cta';
 import { field, useContactSubmit } from './useContactSubmit';
 import forms from './forms.module.scss';
 
@@ -180,16 +179,14 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
       ) : null}
 
       <div className={`${forms.actions} ${css.actions}`}>
-        <Cta
-          placement="careers_talent_submit"
+        <button
           type="submit"
-          variant="secondary"
-          size="medium"
+          className={`${css.submit} ${css.submitQuiet}`}
           disabled={status === 'sending'}
-          wrapperClassName={css.submit}
+          data-cta-placement="careers_talent_submit"
         >
           {status === 'sending' ? 'Sending…' : 'Join the talent list'}
-        </Cta>
+        </button>
       </div>
     </form>
   );

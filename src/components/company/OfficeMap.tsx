@@ -64,19 +64,29 @@ export interface OfficeMapProps {
   caption?: string;
   /** 'load' when the map sits in a hero (on screen at load); 'scroll' draws as it scrolls in. */
   draw?: 'scroll' | 'load';
+  /** The decorative "Equator" and "0°" labels; off where a card covers the figure's foot. */
+  axes?: boolean;
   className?: string;
 }
 
 const DEFAULT_CAPTION = 'Toronto, Kingston and Lagos, drawn to scale by latitude and longitude.';
 
 /**
- * Where we work, as a structural drawing rather than a stock photo: the three
- * offices plotted to scale on a latitude and longitude grid, joined by red
- * arcs that draw as the figure scrolls into view (static under reduced
- * motion). Lines are SVG with non-scaling strokes; labels are HTML so they
- * stay legible at 360px. Server Component, no JavaScript.
+ * Where we work, as a drawing rather than a stock photo: the three offices
+ * plotted to scale on a latitude and longitude grid, joined by crimson arcs
+ * that draw as the figure scrolls into view (static under reduced motion).
+ * Lines are SVG with non-scaling strokes; labels are HTML so they stay
+ * legible at 360px. Server Component, no JavaScript.
  */
-export default function OfficeMap({ focus, captionHidden = false, notes, caption = DEFAULT_CAPTION, draw = 'scroll', className = '' }: OfficeMapProps) {
+export default function OfficeMap({
+  focus,
+  captionHidden = false,
+  notes,
+  caption = DEFAULT_CAPTION,
+  draw = 'scroll',
+  axes = true,
+  className = '',
+}: OfficeMapProps) {
   return (
     <figure className={`${styles.map} ${className}`.trim()} data-focus={focus} data-draw={draw}>
       <div className={styles.canvas}>
@@ -121,12 +131,16 @@ export default function OfficeMap({ focus, captionHidden = false, notes, caption
           ))}
         </ul>
 
-        <span className={`${styles.axis} ${styles.axisEquator}`} aria-hidden="true">
-          Equator
-        </span>
-        <span className={`${styles.axis} ${styles.axisMeridian}`} aria-hidden="true">
-          0°
-        </span>
+        {axes ? (
+          <>
+            <span className={`${styles.axis} ${styles.axisEquator}`} aria-hidden="true">
+              Equator
+            </span>
+            <span className={`${styles.axis} ${styles.axisMeridian}`} aria-hidden="true">
+              0°
+            </span>
+          </>
+        ) : null}
       </div>
       <figcaption className={captionHidden ? 'visually-hidden' : styles.caption}>
         {caption}

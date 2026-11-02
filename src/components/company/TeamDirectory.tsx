@@ -4,6 +4,7 @@ import { countries, teamMembers } from '@/config/team';
 import { slugify } from '@/lib/schema';
 import OfficeClock from './OfficeClock';
 import { TEAM, countWord, listWords } from './content';
+import ed from './Company.module.scss';
 import styles from './TeamDirectory.module.scss';
 
 /** Each country's office (the TimezoneOverlap offices): Toronto is headquarters. */
@@ -23,11 +24,12 @@ function initialsOf(name: string): string {
 }
 
 /**
- * The rest of the team as listed in config/team.ts: name and title only,
- * grouped by country, initials instead of photos. These records carry
+ * The rest of the team as listed in config/team.ts, set like a credits roll
+ * on paper: grouped by country beside each office's live local time, name
+ * and title only, initials instead of photos. These records carry
  * placeholder photos and are not yet confirmed by the owner, so nothing is
- * added to them here (no bios, no Person JSON-LD, no claims) and none of them
- * is featured anywhere else on the site. The `/team#canada`-style and
+ * added to them here (no bios, no Person JSON-LD, no claims) and none of
+ * them is featured anywhere else on the site. The `/team#canada`-style and
  * `/team#name` anchors keep older deep links working.
  */
 export default function TeamDirectory() {
@@ -37,47 +39,50 @@ export default function TeamDirectory() {
   const roleCountries = Array.from(new Set(careers.map((role) => role.country)));
 
   return (
-    <section id="team" className={styles.directory} aria-labelledby="team-title">
-      <div className={styles.inner}>
-        <div className={styles.rail}>
-          <h2 id="team-title" className={styles.h2}>
+    <section id="team" className={ed.paper} aria-labelledby="team-title">
+      <div className={ed.inner}>
+        <header className={ed.head}>
+          <p className={ed.label}>{TEAM.directory.label}</p>
+          <h2 id="team-title" className={ed.title}>
             {TEAM.directory.title}
           </h2>
           <div className={styles.hiring}>
-            <p className={styles.hiringText}>
+            <p className={ed.lede}>
               {countWord(careers.length)} open roles across {listWords(roleCountries)}.
             </p>
-            <Link href="/careers" className={styles.link} data-cta-placement="team_directory_careers">
-              See open roles<span aria-hidden="true"> →</span>
+            <Link href="/careers" className={ed.action} data-cta-placement="team_directory_careers">
+              See open roles
+              <span aria-hidden="true" className={ed.arrow}>
+                →
+              </span>
             </Link>
           </div>
-        </div>
+        </header>
 
         <div className={styles.groups}>
-          {groups.map((group) => (
-            <div key={group.slug} id={group.slug} className={styles.group}>
-              <div className={styles.groupHead}>
-                <h3 className={styles.country}>{group.country}</h3>
-                {OFFICE_OF[group.country] ? (
-                  <OfficeClock city={OFFICE_OF[group.country].city} timeZone={OFFICE_OF[group.country].timeZone} />
-                ) : null}
-              </div>
-              <ul className={styles.people} role="list">
-                {group.members.map((member) => (
-                  <li key={member.name} id={slugify(member.name)} className={styles.member}>
-                    <span className={styles.initials} aria-hidden="true">
-                      {initialsOf(member.name)}
-                    </span>
-                    <span className={styles.who}>
+          {groups.map((group) => {
+            const office = OFFICE_OF[group.country];
+            return (
+              <div key={group.slug} id={group.slug} className={styles.group}>
+                <div className={styles.groupHead}>
+                  <h3 className={styles.country}>{group.country}</h3>
+                  {office ? <OfficeClock city={office.city} timeZone={office.timeZone} /> : null}
+                </div>
+                <ul className={styles.people} role="list">
+                  {group.members.map((member) => (
+                    <li key={member.name} id={slugify(member.name)} className={styles.member}>
+                      <span className={styles.initials} aria-hidden="true">
+                        {initialsOf(member.name)}
+                      </span>
                       <span className={styles.name}>{member.name}</span>
                       <span className="visually-hidden">, </span>
-                      <span className={styles.title}>{member.title}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+                      <span className={styles.role}>{member.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

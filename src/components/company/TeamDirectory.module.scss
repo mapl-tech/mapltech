@@ -1,54 +1,31 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use 'company' as c;
+@use '../../styles/editorial' as *;
 
-// A quiet, ruled directory: deliberately smaller than the founders above it.
-
-.directory {
-  @include c.section(c.$section-y-tight);
-  @include c.rule-top;
-}
-
-.inner {
-  @include c.split(4fr, 7fr, 72px);
-}
-
-.rail {
-  @include c.sticky-rail;
-}
-
-.h2 {
-  @include c.h2;
-  max-width: 11ch;
-}
+// The directory on paper, set like a credits roll: the country and its
+// office clock in the label column, the names in the content column.
 
 .hiring {
-  margin-top: 28px;
-  padding-top: 20px;
-  border-top: 1px solid $color-hairline;
-}
-
-.hiringText {
-  margin: 0;
-  font-size: $font-size-base;
-  line-height: 1.55;
-  color: rgba($color-fg, 0.8);
-}
-
-.link {
-  @include c.text-link;
-  margin-top: 8px;
+  display: grid;
+  gap: 4px;
+  justify-items: start;
 }
 
 .groups {
-  // The rows lay out from this column's width, not the viewport.
-  container: directory / inline-size;
-  display: grid;
-  gap: 40px;
+  border-top: 1px solid $color-ink-hairline;
 }
 
 .group {
-  scroll-margin-top: c.$anchor-offset;
+  display: grid;
+  gap: 16px;
+  padding: clamp(28px, 3.6vw, 44px) 0;
+  border-bottom: 1px solid $color-ink-hairline;
+  scroll-margin-top: calc(var(--header-height, 72px) + 24px);
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
+  }
 }
 
 .groupHead {
@@ -56,98 +33,106 @@
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 4px 16px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid $color-hairline-strong;
+  gap: 6px 16px;
+
+  @include lg {
+    display: grid;
+    align-content: start;
+    justify-content: start;
+    gap: 10px;
+  }
 }
 
 .country {
   margin: 0;
-  @include mono-label(rgba($color-fg, 0.72));
-}
-
-// The office's live local time: a readout, so the time is teal.
-.clock {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: $font-size-sm;
-  color: rgba($color-fg, 0.72);
-  @include tabular;
-}
-
-.clockTime {
-  color: $color-teal;
-}
-
-.clockDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  border: 1.5px solid rgba($color-fg, 0.55);
-
-  .clock[data-open='true'] & {
-    border-color: $color-teal;
-    background: $color-teal;
-  }
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem); // 28px -> 44px
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: $color-ink;
 }
 
 .people {
-  display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
-
-  @container directory (min-width: 560px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 32px;
-  }
 }
 
 .member {
-  display: flex;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-areas:
+    'initials name'
+    'initials role';
   align-items: center;
-  gap: 16px;
-  min-height: 72px;
-  padding: 12px 0;
-  border-bottom: 1px solid $color-hairline;
-  scroll-margin-top: c.$anchor-offset;
+  column-gap: 16px;
+  row-gap: 2px;
+  min-height: 76px;
+  padding: 14px 0;
+  border-bottom: 1px solid $color-ink-hairline;
+  scroll-margin-top: calc(var(--header-height, 72px) + 24px);
+  @include rise-in;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  @include md {
+    grid-template-columns: 52px minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-areas: 'initials name role';
+    column-gap: 24px;
+    min-height: 84px;
+  }
 
   &:target {
-    border-bottom-color: rgba($color-red, 0.6);
+    border-bottom-color: $color-red-ink;
   }
 }
 
 .initials {
+  grid-area: initials;
   display: grid;
   place-items: center;
-  flex: none;
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid $color-hairline-strong;
-  background: $color-surface-2;
+  border: 1px solid rgba(11, 11, 12, 0.22);
   font-size: 0.875rem;
   font-weight: $font-weight-semibold;
   letter-spacing: 0.04em;
-  color: rgba($color-fg, 0.86);
-}
+  color: $color-ink;
 
-.who {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
+  @include md {
+    width: 52px;
+    height: 52px;
+  }
 }
 
 .name {
+  grid-area: name;
+  align-self: end;
   font-family: $font-display;
   font-weight: $font-weight-bold;
-  font-size: 1.0625rem;
-  color: $color-fg;
+  font-size: clamp(1.25rem, 1rem + 0.9vw, 1.875rem); // 20px -> 30px
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: $color-ink;
+
+  @include md {
+    align-self: center;
+  }
 }
 
-.title {
-  font-size: $font-size-sm;
+.role {
+  grid-area: role;
+  align-self: start;
+  font-size: $font-size-base;
   line-height: 1.4;
-  color: rgba($color-fg, 0.72);
+  color: $color-ink-muted;
+
+  @include md {
+    align-self: center;
+    text-align: right;
+  }
 }

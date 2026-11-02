@@ -26,9 +26,9 @@ export default function FoundersNote({ placement }: { placement: string }) {
             key={founder.slug}
             src={founder.avatar}
             alt=""
-            width={48}
-            height={48}
-            sizes="48px"
+            width={52}
+            height={52}
+            sizes="52px"
             className={styles.face}
           />
         ))}

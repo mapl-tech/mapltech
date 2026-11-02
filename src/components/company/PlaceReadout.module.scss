@@ -1,52 +1,37 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use 'company' as c;
+@use '../../styles/editorial' as *;
 
 // The "you are here" card on a regional page: city, live local time, zone,
-// coordinates. A finished surface with the red structure frame behind it.
-
-@include c.register-keyframes;
+// coordinates. A #121214 card; on wide screens it sits on the map's foot.
 
 .readout {
   position: relative;
   z-index: 1;
-  width: min(100% - 20px, 21rem);
-  margin: -40px 0 0 20px;
-  padding: 20px 22px 18px;
+  width: min(100%, 22rem);
+  padding: 22px 24px 20px;
+  border-radius: 22px;
+  background: #121214;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 30px 60px -24px rgba(0, 0, 0, 0.85);
 
-  &::before {
-    @include c.structure-frame(10px, 16px);
-    @include c.register-on-scroll(entry 0%, cover 30%);
+  @include lg {
+    width: min(100% - 24px, 22rem);
+    margin: -56px 0 0 24px;
   }
-}
-
-.surface {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: 16px;
-  border: 1px solid $color-hairline-strong;
-  background: linear-gradient(180deg, #161518 0%, #0f0e11 100%);
-  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.85);
-}
-
-.body {
-  position: relative;
-  z-index: 1;
 }
 
 .city {
   margin: 0;
-  @include mono-label(rgba($color-fg, 0.72));
+  @include mono-label;
 }
 
 .clock {
   margin: 10px 0 0;
   font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  font-weight: 800;
+  font-size: clamp(2.75rem, 2rem + 2.4vw, 4rem);
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   color: $color-fg;
   @include tabular;
 
@@ -61,7 +46,7 @@
   gap: 8px;
   margin: 12px 0 0;
   font-size: 1rem;
-  color: rgba($color-fg, 0.86);
+  color: $color-text-body;
 }
 
 .dot {
@@ -78,16 +63,16 @@
 }
 
 .zone {
-  margin: 14px 0 0;
-  padding-top: 12px;
+  margin: 16px 0 0;
+  padding-top: 14px;
   border-top: 1px solid $color-hairline;
   font-size: 1rem;
-  color: rgba($color-fg, 0.8);
+  color: $color-text-body;
 }
 
 .coords {
   margin: 4px 0 0;
-  font-size: 0.8125rem;
-  color: rgba($color-fg, 0.66);
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
   @include tabular;
 }

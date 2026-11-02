@@ -1,10 +1,10 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use 'company' as c;
+@use '../../styles/editorial' as *;
 
-// The instrument: a framed surface (the finished face of the structure)
-// holding a 24-hour ruler. Bars and the scrub line are aria-hidden: every
-// value they draw is also in text (summary, readout, the slider's valuetext).
+// The instrument: a #121214 card holding a 24-hour ruler. Bars and the scrub
+// line are aria-hidden: every value they draw is also in text (summary,
+// readout, the slider's valuetext).
 
 $row-h: 40px;
 $axis-h: 28px;
@@ -25,13 +25,11 @@ $band-h: 64px;
   position: relative;
   display: grid;
   gap: 28px;
-  padding: clamp(18px, 3.2vw, 36px);
-  border-radius: 20px;
-  border: 1px solid $color-hairline-strong;
-  background: linear-gradient(180deg, #141316 0%, #0e0d10 100%);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 30px 80px -40px rgba(0, 0, 0, 0.9);
+  min-width: 0;
+  padding: clamp(18px, 3.2vw, 40px);
+  border-radius: clamp(22px, 2.6vw, 32px);
+  background: #121214;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), 0 40px 80px -40px rgba(0, 0, 0, 0.7);
 }
 
 // ---------------------------------------------------------------- controls
@@ -50,7 +48,7 @@ $band-h: 64px;
 .hint {
   margin: 0;
   font-size: 1rem;
-  color: rgba($color-fg, 0.68);
+  color: $color-fg-muted;
 }
 
 // ---------------------------------------------------------------- summary
@@ -62,9 +60,9 @@ $band-h: 64px;
   margin: 0;
   font-family: $font-display;
   font-weight: $font-weight-bold;
-  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
-  line-height: 1.25;
-  letter-spacing: -0.015em;
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 2rem);
+  line-height: 1.18;
+  letter-spacing: -0.02em;
   color: $color-fg;
   text-wrap: balance;
   @include tabular;
@@ -467,14 +465,16 @@ $band-h: 64px;
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
   cursor: pointer;
-  transition: border-color 160ms c.$ease-out;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 
   &:hover {
-    border-color: rgba($color-red, 0.6);
+    border-color: $color-fg;
+    background: $color-fg;
+    color: $color-ground;
   }
 
   &:active {
-    border-color: $color-red-pressed;
+    transform: scale(0.97);
   }
 
   @include focus-ring;

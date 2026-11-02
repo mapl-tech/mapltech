@@ -1,155 +1,112 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../components/company/company' as c;
+@use '../../styles/editorial' as *;
 
-// /careers page layout (flagship redesign). The board and forms style
-// themselves; this file owns the sections around them.
+// /careers page layout (Nov 2026 award pass). Section voice, surfaces and
+// cards come from company/Company.module.scss; the board and forms style
+// themselves. This file owns the arrangement around them.
 
-.section {
-  @include c.section;
-  @include c.rule-top;
+// ---------------------------------------------------------------- how hiring works (paper)
+.applyGrid {
+  display: grid;
+  gap: clamp(40px, 5vw, 56px);
+
+  @include lg {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: 48px;
+    align-items: start;
+  }
 }
 
-.split {
-  @include c.split(4fr, 7fr, 72px);
+.applyRail {
+  display: grid;
+  gap: clamp(28px, 3.4vw, 40px);
+  align-content: start;
+  min-width: 0;
+
+  @include lg {
+    position: sticky;
+    top: calc(var(--header-height, 72px) + 32px);
+  }
 }
 
-.rail {
-  @include c.sticky-rail;
-}
-
-.h2 {
-  @include c.h2;
-  max-width: 12ch;
-}
-
-.lede {
-  @include c.lede;
-}
-
-// "How applying works": three steps on the red structure line.
 .steps {
-  position: relative;
-  margin: 32px 0 0;
-  padding: 0 0 0 30px;
+  margin: 0;
+  padding: 0;
   list-style: none;
-  counter-reset: step;
-
-  // A dim track, and the red line drawing down it as the steps scroll in
-  // (static and fully drawn without scroll timelines or under reduced motion).
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    left: 5px;
-    top: 10px;
-    bottom: 10px;
-    width: 2px;
-  }
-
-  &::before {
-    background: rgba($color-fg, 0.1);
-  }
-
-  &::after {
-    background: $color-red;
-    transform-origin: top;
-
-    @supports (animation-timeline: view()) {
-      @include motion-ok {
-        animation: draw-steps linear both;
-        animation-timeline: view();
-        animation-range: entry 20% cover 55%;
-      }
-    }
-  }
-
-  li {
-    position: relative;
-    z-index: 1; // the dots sit on top of the drawn line
-    padding-bottom: 22px;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: -30px;
-      top: 0.42em;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: $color-ground;
-      border: 2px solid $color-red;
-    }
-
-    &:last-child {
-      padding-bottom: 0;
-    }
-  }
+  border-top: 1px solid $color-ink-hairline;
 }
 
-@keyframes draw-steps {
-  from {
-    transform: scaleY(0);
-  }
+.step {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  column-gap: 16px;
+  padding: 22px 0;
+  border-bottom: 1px solid $color-ink-hairline;
+}
 
-  to {
-    transform: scaleY(1);
-  }
+// Outline numerals on paper (decorative, aria-hidden). The stroke sits under
+// a paper-coloured fill so the glyphs' overlapping contours stay hidden.
+.stepNo {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: 2.75rem;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: $color-paper;
+  -webkit-text-stroke: 2.5px $color-red-ink;
+  paint-order: stroke fill;
+  @include tabular;
 }
 
 .stepName {
-  display: block;
+  margin: 0;
   font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: 1.125rem;
-  color: $color-fg;
+  font-weight: 700;
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: $color-ink;
 }
 
 .stepText {
-  display: block;
-  margin-top: 4px;
+  margin: 6px 0 0;
   font-size: $font-size-base;
   line-height: 1.5;
-  color: rgba($color-fg, 0.78);
+  color: $color-ink-muted;
 }
 
 .fallback {
-  margin: 28px 0 0;
-  padding-top: 20px;
-  border-top: 1px solid $color-hairline;
+  margin: 0;
   font-size: $font-size-base;
   line-height: 1.55;
-  color: rgba($color-fg, 0.78);
+  color: $color-ink-muted;
 
   a {
-    color: c.$link-red;
+    color: $color-red-ink; // 5.5:1 on paper
+    font-weight: $font-weight-semibold;
     text-decoration: underline;
-    text-decoration-color: rgba(c.$link-red, 0.45);
+    text-decoration-color: rgba($color-red-ink, 0.45);
     text-underline-offset: 4px;
     overflow-wrap: anywhere;
 
     &:hover {
-      text-decoration-color: c.$link-red;
+      text-decoration-color: currentColor;
     }
 
-    @include focus-ring;
+    &:focus-visible {
+      outline: $focus-ring-width solid $color-red-ink;
+      outline-offset: 2px;
+    }
   }
 }
 
-// The form sits on one finished surface (no card inside a card).
-.panel {
-  position: relative;
-  padding: clamp(20px, 3.4vw, 36px);
-  border-radius: 16px;
-  border: 1px solid $color-hairline-strong;
-  background: linear-gradient(180deg, #141316 0%, #0e0d10 100%);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 30px 80px -40px rgba(0, 0, 0, 0.9);
-  scroll-margin-top: 112px;
+// The forms sit on the dark card (the shared inputs are built for dark).
+.formCard {
+  padding: clamp(22px, 3.6vw, 44px);
+  scroll-margin-top: calc(var(--header-height, 72px) + 24px);
 }
 
-.talentSection {
-  @include c.section(c.$section-y-tight);
-  @include c.rule-top;
+.talentCard {
+  max-width: 52rem;
 }

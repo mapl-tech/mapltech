@@ -132,10 +132,14 @@
   font-size: clamp(4.5rem, 3rem + 5vw, 9rem);
   line-height: 1;
   letter-spacing: -0.04em;
-  color: transparent;
-  -webkit-text-stroke: 1.5px $color-red-ink;
+  // Outline numerals: the stroke is painted under a fill in the card colour, so
+  // overlapping glyph contours (the foot of the "1") never show as a stray box.
+  color: $color-paper-2;
+  -webkit-text-stroke: 3px $color-red-ink;
+  paint-order: stroke fill;
 
   .step:last-child & {
+    color: $color-ink;
     -webkit-text-stroke-color: $color-red;
   }
 }

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type FocusEvent, type FormEvent } from 'react';
 import { checkField, checkForm, normaliseUrl, type FieldRule } from '@/components/company/formErrors';
 import css from '@/components/company/CareersForm.module.scss';
-import Cta from './Cta';
 import { useUrlParams } from './useUrlState';
 import { RECAPTCHA_ENABLED, field, useContactSubmit } from './useContactSubmit';
 import type { BoardRole } from './CareersBoard';
@@ -275,10 +274,17 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
       ) : null}
 
       <div className={`${forms.actions} ${css.actions}`}>
-        <Cta placement="careers_apply_submit" type="submit" size="medium" disabled={status === 'sending'} wrapperClassName={css.submit}>
+        <button type="submit" className={css.submit} disabled={status === 'sending'} data-cta-placement="careers_apply_submit">
           {status === 'sending' ? 'Sending…' : 'Send application'}
-        </Cta>
-        <a className={css.mail} href={`mailto:${contactEmail}?subject=${encodeURIComponent(`Application: ${roleLabel}`)}`}>
+          <span aria-hidden="true" className={css.submitArrow}>
+            →
+          </span>
+        </button>
+        <a
+          className={css.mail}
+          href={`mailto:${contactEmail}?subject=${encodeURIComponent(`Application: ${roleLabel}`)}`}
+          data-cta-placement="careers_apply_email"
+        >
           Or apply by email
         </a>
       </div>

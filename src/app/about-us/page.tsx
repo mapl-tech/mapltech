@@ -2,13 +2,16 @@ import type { Metadata } from 'next';
 import JsonLd from '@/components/seo/JsonLd';
 import { absoluteUrl } from '@/config/routes';
 import { aboutPage, breadcrumb, graph, howTo, orgId, personRef } from '@/lib/schema';
-import Close from '@/components/company/Close';
-import { FoundersStory } from '@/components/company/Founders';
+import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
+import PageHeader from '@/components/ui/PageHeader';
+import CloseBand from '@/components/flagship/CloseBand';
+import FactsBand from '@/components/company/FactsBand';
+import { FoundersSpread } from '@/components/company/Founders';
+import HeroActions from '@/components/company/HeroActions';
 import Offices from '@/components/company/Offices';
-import PageHero from '@/components/company/PageHero';
 import Process from '@/components/company/Process';
-import ShippedWork from '@/components/company/ShippedWork';
-import { ABOUT, CALL_CTA, FOUNDERS, PRICE_CTA, TRUST_LINE } from '@/components/company/content';
+import Story from '@/components/company/Story';
+import { ABOUT, FOUNDERS } from '@/components/company/content';
 
 const URL = 'https://mapltech.com/about-us';
 
@@ -26,17 +29,18 @@ export const metadata: Metadata = {
 };
 
 /*
- * /about-us, flagship redesign (Nov 2026). The company story told founder
- * first: the claim (the team behind your agency's name) -> why it exists, in
- * the founders' voice -> how it works behind your brand, with the client's
- * words as proof -> the three offices against your working day (the page's
- * one interaction) -> the ask.
+ * /about-us, Nov 2026 award pass. The live site's purpose as the first
+ * screen (the engineering backbone behind agencies that refuse to cut
+ * corners), the answer-first facts, then: why MAPL TECH exists, in the
+ * founders' voice -> how it works behind your brand, with the client's words
+ * as proof (paper) -> the three offices against your working day -> the two
+ * founders, beside the ask (paper) -> the crimson close.
  *
- * Structured data: AboutPage (mainEntity: the Organization from the root
- * layout) + BreadcrumbList + the two founders + HowTo, from the same arrays
- * the page renders. The founders here are compact Person nodes (name, title,
- * photo, LinkedIn) because the page shows those, not the full bios; the full
- * Person nodes live on /team, where the bios are on screen.
+ * Structured data (unchanged): AboutPage (mainEntity: the Organization from
+ * the root layout) + BreadcrumbList + the two founders + HowTo, from the same
+ * arrays the page renders. The founders here are compact Person nodes (name,
+ * title, photo, LinkedIn) because the page shows those, not the full bios;
+ * the full Person nodes live on /team, where the bios are on screen.
  */
 const aboutGraph = graph([
   aboutPage({ name: ABOUT.title, description: ABOUT.description }),
@@ -54,29 +58,35 @@ const aboutGraph = graph([
 ]);
 
 export default function AboutPage() {
+  const { hero } = ABOUT;
   return (
     <>
       <JsonLd data={aboutGraph} />
 
-      <PageHero
-        eyebrow={ABOUT.hero.eyebrow}
-        titleLines={ABOUT.hero.titleLines}
-        lede={ABOUT.hero.lede}
-        primary={{ ...PRICE_CTA, placement: 'about_hero_primary' }}
-        secondary={{ ...CALL_CTA, placement: 'about_hero_call' }}
-        trust={TRUST_LINE}
-        facts={ABOUT.facts}
+      <PageHeader
+        size="l"
+        label={hero.label}
+        title={hero.title.map((run) => (run.accent ? <em key={run.text}>{run.text}</em> : run.text))}
+        lede={<p>{hero.lede}</p>}
+        actions={
+          <HeroActions
+            primary={{ label: PROJECT_LABEL, href: PROJECT_HREF, placement: 'about_hero_primary' }}
+            secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: 'about_hero_secondary' }}
+          />
+        }
       />
 
-      <FoundersStory />
+      <FactsBand facts={ABOUT.facts} label="MAPL TECH at a glance" />
+
+      <Story />
 
       <Process />
 
-      <ShippedWork title={ABOUT.work.title} lede={ABOUT.work.lede} placement="about" />
-
       <Offices />
 
-      <Close id="close-title" title={ABOUT.close.title} lede={ABOUT.close.lede} placement="about" />
+      <FoundersSpread />
+
+      <CloseBand title={ABOUT.close.title} placement="about_close" />
     </>
   );
 }

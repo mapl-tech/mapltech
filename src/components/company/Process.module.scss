@@ -1,187 +1,137 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use 'company' as c;
+@use '../../styles/editorial' as *;
 
-@include c.register-keyframes;
-
-.process {
-  @include c.section;
-  @include c.rule-top;
-}
-
-.inner {
-  @include c.split(4fr, 7fr, 80px);
-}
-
-.rail {
-  @include c.sticky-rail;
-}
-
-.h2 {
-  @include c.h2;
-  max-width: 13ch;
-}
-
-.lede {
-  @include c.lede;
-}
-
-.body {
-  min-width: 0;
-}
-
-// Stages hang off a vertical structure line that draws as you read.
+// Four stages as numbered rows on paper: the numeral in the label column,
+// the stage name and its promise in the content columns.
 .stages {
-  position: relative;
-  margin: 0;
-  padding: 4px 0 0 32px;
   list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid $color-ink-hairline;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    left: 5px;
-    top: 14px;
-    bottom: 14px;
-    width: 2px;
+.stage {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-areas:
+    'number name'
+    'number text';
+  column-gap: 16px;
+  row-gap: 10px;
+  align-items: start;
+  padding: clamp(28px, 3.6vw, 48px) 0;
+  border-bottom: 1px solid $color-ink-hairline;
+  scroll-margin-top: calc(var(--header-height, 72px) + 24px);
+  @include rise-in;
+
+  @include md {
+    grid-template-columns: 120px minmax(0, 1fr);
+    column-gap: 32px;
   }
 
-  &::before {
-    background: rgba($color-fg, 0.1);
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
+    grid-template-areas: 'number name text';
+    column-gap: 48px;
+    align-items: baseline;
   }
 
-  &::after {
-    background: $color-red;
-    transform-origin: top;
+  &:target {
+    border-bottom-color: $color-red-ink;
+  }
+}
 
-    @supports (animation-timeline: view()) {
-      @include motion-ok {
-        animation: draw-line linear both;
-        animation-timeline: view();
-        animation-range: entry 25% cover 65%;
-      }
+// Outline numerals, decorative (aria-hidden): the homepage Approach treatment.
+// The stroke is painted under a paper-coloured fill, so only its outer half
+// shows and the glyphs' overlapping contours (the foot of the 1) stay hidden.
+.number {
+  grid-area: number;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(3.25rem, 1.6rem + 5.2vw, 8rem); // 52px -> 128px
+  line-height: 0.82;
+  letter-spacing: -0.045em;
+  color: $color-paper;
+  -webkit-text-stroke: 3px $color-red-ink;
+  paint-order: stroke fill;
+  @include tabular;
+}
+
+.name {
+  grid-area: name;
+  margin: 0;
+  @include display-m;
+  font-size: clamp(1.625rem, 1.15rem + 1.5vw, 2.5rem); // 26px -> 40px
+  color: $color-ink;
+}
+
+.text {
+  grid-area: text;
+  margin: 0;
+  max-width: 34em;
+  font-size: $font-size-md;
+  line-height: 1.55;
+  color: $color-ink-muted;
+}
+
+.after {
+  margin: clamp(28px, 3.4vw, 40px) 0 0;
+  max-width: 40em;
+  font-size: $font-size-lede;
+  line-height: 1.5;
+  color: $color-ink;
+
+  @include lg {
+    margin-left: calc((100% - 48px) * 3 / 12 + 48px);
+  }
+}
+
+// ---------------------------------------------------------------- the quote
+.quote {
+  display: grid;
+  gap: 28px;
+  margin: clamp(64px, 9vw, 128px) 0 0;
+  padding-top: clamp(32px, 4vw, 48px);
+  border-top: 1px solid $color-ink-hairline;
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
+
+    > * {
+      grid-column: 2;
     }
   }
 }
 
-@keyframes draw-line {
-  from {
-    transform: scaleY(0);
-  }
-
-  to {
-    transform: scaleY(1);
-  }
-}
-
-.stage {
-  position: relative;
-  padding: 0 0 40px;
-  scroll-margin-top: c.$anchor-offset;
-
-  // The node where the stage meets the line.
-  &::before {
-    content: '';
-    position: absolute;
-    z-index: 1;
-    left: -32px;
-    top: 0.4em;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: $color-ground;
-    border: 2px solid $color-red;
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
-}
-
-.stageName {
-  margin: 0;
-  font-size: $font-size-h3;
-}
-
-.stageText {
-  margin: 10px 0 0;
-  max-width: 54ch;
-  font-size: $font-size-md;
-  line-height: 1.6;
-  color: rgba($color-fg, 0.8);
-}
-
-.after {
-  margin: 36px 0 0;
-  padding-top: 20px;
-  max-width: 54ch;
-  border-top: 1px solid $color-hairline;
-  font-size: $font-size-base;
-  line-height: 1.55;
-  color: rgba($color-fg, 0.74);
-}
-
-// ---------------------------------------------------------------- proof
-// A finished surface (the quote) with the red structure frame behind it.
-.quote {
-  position: relative;
-  margin: clamp(48px, 7vw, 72px) 12px 12px 0;
-  padding: clamp(28px, 4vw, 44px);
-
-  &::before {
-    @include c.structure-frame(12px, 20px);
-    @include c.register-on-scroll;
-  }
-}
-
-.quoteSurface {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: 20px;
-  border: 1px solid $color-hairline-strong;
-  background: linear-gradient(180deg, #16141a 0%, #0f0e12 100%);
-}
-
 .quoteText {
-  position: relative;
-  z-index: 1;
   margin: 0;
 
   p {
     margin: 0;
     font-family: $font-display;
-    font-weight: $font-weight-semibold;
-    font-size: clamp(1.375rem, 1.05rem + 1.4vw, 2rem);
-    line-height: 1.28;
+    font-weight: 600;
+    font-size: clamp(1.625rem, 1rem + 2.2vw, 3rem); // 26px -> 48px
+    line-height: 1.16;
     letter-spacing: -0.02em;
-    color: $color-fg;
+    color: $color-ink;
     text-wrap: pretty;
-
-    &::before {
-      content: '\201C';
-      color: $color-red;
-    }
-
-    &::after {
-      content: '\201D';
-      color: $color-red;
-    }
   }
 }
 
 .quoteBy {
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 28px;
+
+  > span {
+    display: grid;
+    gap: 2px;
+  }
 }
 
 .avatar {
-  flex: none;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -189,14 +139,11 @@
 }
 
 .quoteName {
-  display: block;
   font-weight: $font-weight-semibold;
-  font-size: $font-size-md;
-  color: $color-fg;
+  color: $color-ink;
 }
 
 .quoteRole {
-  display: block;
   font-size: $font-size-sm;
-  color: rgba($color-fg, 0.7);
+  color: $color-ink-muted;
 }

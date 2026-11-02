@@ -1,7 +1,7 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-// The map is a drawing: hairline graticule, red structure arcs, HTML labels.
+// The map is a drawing: hairline graticule, crimson arcs, HTML labels.
 
 .map {
   margin: 0;
@@ -12,11 +12,11 @@
 .canvas {
   position: relative;
   aspect-ratio: 2 / 1;
-  border-radius: 16px;
-  border: 1px solid $color-hairline;
+  border-radius: clamp(18px, 2vw, 26px);
   background:
-    radial-gradient(70% 90% at 50% 100%, rgba($color-red, 0.05) 0%, transparent 70%),
-    linear-gradient(180deg, rgba($color-fg, 0.018) 0%, rgba($color-fg, 0) 100%);
+    radial-gradient(70% 90% at 50% 100%, rgba($color-red, 0.07) 0%, transparent 70%),
+    #0f0f11;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07);
   overflow: hidden;
 }
 
@@ -167,11 +167,11 @@
   display: flex;
   // A knockout halo: the tight layers hide any arc that passes under a glyph.
   text-shadow:
-    0 0 1px $color-ground,
-    0 0 2px $color-ground,
-    0 0 3px $color-ground,
-    0 0 6px $color-ground,
-    0 0 12px $color-ground;
+    0 0 1px #0f0f11,
+    0 0 2px #0f0f11,
+    0 0 3px #0f0f11,
+    0 0 6px #0f0f11,
+    0 0 12px #0f0f11;
   flex-direction: column;
   gap: 2px;
   white-space: nowrap;
@@ -180,7 +180,7 @@
   // behind a glyph (measured at the lightest pixel under each label).
   padding: 4px 8px;
   border-radius: 8px;
-  background: rgba($color-ground, 0.88);
+  background: rgba(15, 15, 17, 0.9);
 
   .place[data-side='right'] & {
     left: 10px;
@@ -225,8 +225,8 @@
 }
 
 .caption {
-  margin: 12px 0 0;
+  margin: 14px 0 0;
   font-size: $font-size-sm;
   line-height: 1.45;
-  color: rgba($color-fg, 0.68);
+  color: $color-fg-muted;
 }

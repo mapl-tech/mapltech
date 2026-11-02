@@ -1,136 +1,110 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use 'company' as c;
-
-@include c.register-keyframes;
-
-.h2 {
-  @include c.h2;
-  max-width: 13ch;
-}
+@use '../../styles/editorial' as *;
 
 // ---------------------------------------------------------------- portrait (shared)
-.frame {
-  position: relative;
-  margin: 0 12px 12px 0;
-
-  // The structure behind the surface: offset red hairline, registering on scroll.
-  &::before {
-    @include c.structure-frame(12px, 16px);
-    @include c.register-on-scroll;
-  }
-}
-
-.photoWrap {
-  position: relative;
-  z-index: 1;
-  display: block;
-  overflow: hidden;
-  aspect-ratio: 4 / 5;
-  border-radius: 16px;
-  background: $color-surface-1;
-  box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.85);
-}
-
+// The photos are 400px squares: frames stay at or under ~340px wide so they
+// render at their own resolution.
 .photo {
+  position: relative;
+  overflow: hidden;
+  max-width: 340px;
+  aspect-ratio: 4 / 5;
+  border-radius: clamp(16px, 2vw, 26px);
+  background: $color-surface-1;
+}
+
+.img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  @include c.founder-photo;
+  // One treatment for two photos shot in different light (the homepage's).
+  filter: grayscale(1) contrast(1.06) brightness(0.96);
+
+  // A slow drift inside the frame, tied to scroll: transform only.
+  @include motion-ok {
+    @supports (animation-timeline: view()) {
+      animation: portrait-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+@keyframes portrait-drift {
+  from {
+    transform: scale(1.06) translate3d(0, -2.4%, 0);
+  }
+
+  to {
+    transform: scale(1.06) translate3d(0, 2.4%, 0);
+  }
 }
 
 .linkedin {
-  @include c.text-link;
-  font-size: $font-size-sm;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red, 0.8);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition: text-decoration-color 0.3s ease;
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+
+  @include focus-ring;
 }
 
 .external {
   font-size: 0.875em;
 }
 
-// ---------------------------------------------------------------- story (/about-us)
-.story {
-  @include c.section;
-  @include c.rule-top;
-}
-
-.storyInner {
-  @include container(1280px);
+// ---------------------------------------------------------------- spread (/about-us, paper)
+.spread {
   display: grid;
-  gap: 56px;
+  gap: clamp(48px, 7vw, 72px);
 
   @include lg {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-    gap: 80px;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: 72px;
     align-items: center;
   }
-}
 
-.storyText {
-  max-width: 36rem;
-}
+  .linkedin {
+    color: $color-red-ink; // 5.5:1 on paper
+    text-decoration-color: rgba($color-red-ink, 0.45);
 
-.lead {
-  margin: 28px 0 0;
-  font-size: clamp(1.3125rem, 1.15rem + 0.6vw, 1.625rem);
-  font-weight: $font-weight-medium;
-  line-height: 1.42;
-  letter-spacing: -0.01em;
-  color: $color-fg;
-  text-wrap: pretty;
-}
+    &:hover {
+      text-decoration-color: currentColor;
+    }
 
-.paragraph {
-  margin: 20px 0 0;
-  font-size: $font-size-md;
-  line-height: 1.65;
-  color: rgba($color-fg, 0.8);
-}
-
-.inline {
-  color: c.$link-red;
-  text-decoration: underline;
-  text-decoration-color: rgba(c.$link-red, 0.45);
-  text-underline-offset: 4px;
-
-  &:hover {
-    text-decoration-color: c.$link-red;
+    &:focus-visible {
+      outline-color: $color-red-ink;
+    }
   }
 
-  @include focus-ring;
+  .photo {
+    background: $color-paper-2;
+  }
 }
 
-// A sign-off, the way a founder letter ends.
-.signature {
+.spreadText {
   display: grid;
-  gap: 4px;
-  margin: 36px 0 0;
-
-  &::before {
-    content: '';
-    width: 40px;
-    height: 2px;
-    margin-bottom: 14px;
-    background: $color-red;
-  }
-}
-
-.signatureNames {
-  font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: 1.125rem;
-  color: $color-fg;
-}
-
-.signatureRole {
-  font-size: $font-size-sm;
-  color: rgba($color-fg, 0.7);
+  gap: 22px;
+  justify-items: start;
+  max-width: 38rem;
 }
 
 .people {
   display: grid;
-  gap: 40px;
+  gap: 32px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -141,20 +115,12 @@
   }
 }
 
-// Phones: portrait beside the words, so neither column is a sliver.
+// Phones: the portrait beside the words, so neither column is a sliver.
 .person {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   column-gap: 16px;
   align-items: start;
-
-  > :not(.frame) {
-    grid-column: 2;
-  }
-
-  > .frame {
-    grid-row: 1 / span 5;
-  }
 
   @include sm {
     display: block;
@@ -162,116 +128,150 @@
 
   &:nth-child(2) {
     @include lg {
-      margin-top: 72px;
+      margin-top: 88px;
     }
   }
 }
 
-.name {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: 1.25rem;
-  line-height: 1.2;
-  color: $color-fg;
+.personText {
+  min-width: 0;
 
   @include sm {
-    margin-top: 20px;
+    margin-top: 18px;
   }
 }
 
-.role {
-  margin: 4px 0 0;
-  font-size: $font-size-sm;
-  color: rgba($color-fg, 0.7);
+.personName {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.375rem, 1.15rem + 0.7vw, 1.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: $color-ink;
 }
 
-.focus {
+.personRole {
+  margin: 8px 0 0;
+  @include mono-label($color-ink-muted);
+}
+
+.personFocus {
   margin: 12px 0 0;
-  font-size: 1rem;
+  max-width: 30em;
+  font-size: $font-size-base;
   line-height: 1.55;
-  color: rgba($color-fg, 0.8);
+  color: $color-ink-muted;
 }
 
-// ---------------------------------------------------------------- profiles (/team)
-.profilesSection {
-  @include c.section;
-  @include c.rule-top;
-}
-
-.profilesInner {
-  @include container(1280px);
-  // The profile rows lay out from this column's width, not the viewport.
-  container: profiles / inline-size;
-}
-
-.profilesHead {
-  max-width: 44rem;
-  margin-bottom: clamp(48px, 7vw, 88px);
-}
-
-.profilesLede {
-  @include c.lede;
-}
-
+// ---------------------------------------------------------------- profiles (/team, dark)
 .profiles {
-  display: grid;
-  gap: clamp(72px, 10vw, 128px);
   margin: 0;
   padding: 0;
   list-style: none;
+  border-top: 1px solid $color-hairline-strong;
 }
 
 .profile {
   display: grid;
-  gap: 32px;
-  scroll-margin-top: c.$anchor-offset;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  grid-template-areas:
+    'photo no'
+    'photo head'
+    'body body';
+  grid-template-rows: auto 1fr auto;
+  gap: 12px 18px;
+  padding: clamp(32px, 4vw, 48px) 0;
+  border-bottom: 1px solid $color-hairline;
+  scroll-margin-top: calc(var(--header-height, 72px) + 24px);
 
-  > .frame {
-    max-width: 26rem;
+  @include md {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    column-gap: 40px;
   }
 
-  @container profiles (min-width: 900px) {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 80px;
-    align-items: center;
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 3fr) minmax(0, 6fr);
+    grid-template-areas:
+      'no photo head'
+      'no photo body';
+    grid-template-rows: auto 1fr;
+    column-gap: 48px;
+    row-gap: 28px;
+    padding: clamp(48px, 6vw, 88px) 0;
+  }
 
-    &[data-flip] {
-      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-
-      > .frame {
-        order: 2;
-        justify-self: end;
-        width: 100%;
-      }
-    }
+  &:target {
+    border-bottom-color: rgba($color-red, 0.6);
   }
 }
 
-.profileText {
-  max-width: 40rem;
+.profileNo {
+  grid-area: no;
+  align-self: end;
+  @include mono-label($color-red);
+
+  // Wide screens: the homepage's outline numeral, in the label column. The
+  // stroke sits under a ground-coloured fill, so only its outer half shows and
+  // the glyphs' overlapping contours (the foot of the 1) stay hidden.
+  @include lg {
+    align-self: start;
+    font-family: $font-display;
+    font-weight: 800;
+    font-size: clamp(4.5rem, 2.4rem + 4.4vw, 8rem);
+    line-height: 0.82;
+    letter-spacing: -0.045em;
+    text-transform: none;
+    color: $color-ground;
+    -webkit-text-stroke: 3px $color-red;
+    paint-order: stroke fill;
+  }
+}
+
+.profilePhoto {
+  grid-area: photo;
+  width: 100%;
+
+  @include lg {
+    max-width: 320px;
+  }
+}
+
+.profileHead {
+  grid-area: head;
+  min-width: 0;
 }
 
 .profileName {
   margin: 0;
-  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
-  font-weight: $font-weight-extrabold;
-  line-height: 1;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(1.875rem, 0.9rem + 3.4vw, 4.75rem); // 30px -> 76px
+  line-height: 0.95;
   letter-spacing: -0.035em;
+  color: $color-fg;
+  overflow-wrap: break-word;
 }
 
 .profileRole {
-  margin: 12px 0 0;
-  @include mono-label(rgba($color-fg, 0.72));
+  margin: 14px 0 0;
+  @include mono-label;
+}
+
+.profileBody {
+  grid-area: body;
+  min-width: 0;
 }
 
 .profileBio {
-  margin: 24px 0 0;
-  font-size: $font-size-md;
-  line-height: 1.65;
-  color: rgba($color-fg, 0.84);
+  margin: 0;
+  max-width: 36em;
+  font-size: $font-size-lede;
+  line-height: 1.6;
+  color: $color-text-body;
+  text-wrap: pretty;
 }
 
-.profileText .linkedin {
+.profileBody .linkedin {
   margin-top: 16px;
 }

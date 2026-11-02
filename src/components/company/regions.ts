@@ -12,6 +12,10 @@
  *
  * Jamaica gets a real local project instead: MAPL Tours, the travel company
  * MAPL TECH built and runs in Jamaica (case study in case/stories.ts).
+ *
+ * The close ledes join three published lines: the 24-hour reply (/contact-us),
+ * the fixed quote after a 20-minute scoping call (the homepage close) and the
+ * USD pricing these pages already stated.
  */
 import { careers } from '@/config/site';
 import type { Country } from '@/config/team';
@@ -42,7 +46,11 @@ export interface RegionWork {
   label: string;
   text: string;
   href: string;
+  /** The live site's address, shown in the browser frame. */
+  url: string;
   image: { src: string; alt: string; width: number; height: number };
+  /** The same site's phone capture (public/images/cases, 780x1688). */
+  mobile?: string;
 }
 
 export interface RegionConfig {
@@ -220,7 +228,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     },
     close: {
       title: 'Building something for a Nigerian client?',
-      lede: 'Pick what it is. The estimator opens with it selected, priced in USD from the same public list we use everywhere. We reply within 24 hours.',
+      lede: 'Tell us what you are building. We reply within 24 hours, and you get a fixed quote in USD after a 20-minute scoping call.',
     },
   },
 
@@ -294,12 +302,14 @@ export const regions: Record<RegionSlug, RegionConfig> = {
       label: 'Our own product, in Jamaica',
       text: 'Private airport transfers and tours in Jamaica, built and run by MAPL TECH. It is live and takes real payments, so every failure mode is a real one.',
       href: '/our-work/mapl-tours',
+      url: 'mapltours.com',
       image: {
         src: '/images/cases/tours-desktop.jpg',
         alt: 'The MAPL Tours homepage, built and run by MAPL TECH: "Discover Jamaica beyond the resort." over aerial footage of the Jamaican coast.',
         width: 1800,
         height: 1125,
       },
+      mobile: '/images/cases/tours-mobile.jpg',
     },
     faq: {
       heading: 'Questions Jamaican agencies ask first.',
@@ -336,7 +346,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     },
     close: {
       title: 'Building something for a Jamaican client?',
-      lede: 'Pick what it is. The estimator opens with it selected, priced in USD from the same public list we use everywhere. We reply within 24 hours.',
+      lede: 'Tell us what you are building. We reply within 24 hours, and you get a fixed quote in USD after a 20-minute scoping call.',
     },
   },
 };

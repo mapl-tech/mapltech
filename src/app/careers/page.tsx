@@ -3,11 +3,14 @@ import JsonLd from '@/components/seo/JsonLd';
 import { REDESIGN_DATE } from '@/config/routes';
 import { careers, siteConfig } from '@/config/site';
 import { jobPosting, pageGraph, slugify } from '@/lib/schema';
+import PageHeader from '@/components/ui/PageHeader';
+import CloseBand from '@/components/flagship/CloseBand';
+import FactsBand from '@/components/company/FactsBand';
 import FoundersNote from '@/components/company/FoundersNote';
+import HeroActions from '@/components/company/HeroActions';
 import OfficeMap from '@/components/company/OfficeMap';
-import PageHero from '@/components/company/PageHero';
-import ShippedWork from '@/components/company/ShippedWork';
-import { CAREERS } from '@/components/company/content';
+import { CAREERS, indexOf } from '@/components/company/content';
+import ed from '@/components/company/Company.module.scss';
 import CareersBoard, { type BoardRole } from '@/components/convert/CareersBoard';
 import CareersApply from '@/components/convert/CareersApply';
 import TalentListForm from '@/components/convert/TalentListForm';
@@ -30,12 +33,16 @@ export const metadata: Metadata = {
 };
 
 /*
- * /careers, flagship redesign (Nov 2026). Every role comes from `careers` in
- * site.ts and is rendered three ways from that one list: the board (server
- * HTML, URL-synced filters), the apply form's role picker, and one JobPosting
- * node per role. No role, salary or date is invented: `careers` carries no
- * posting date, so datePosted is the date the board went live in the
- * redesign (REDESIGN_DATE) and no salary is published.
+ * /careers, Nov 2026 award pass. Every role comes from `careers` in site.ts
+ * and is rendered three ways from that one list: the board (server HTML,
+ * URL-synced filters), the apply form's role picker, and one JobPosting node
+ * per role. No role, salary or date is invented: `careers` carries no posting
+ * date, so datePosted is the date the board went live in the redesign
+ * (REDESIGN_DATE) and no salary is published.
+ *
+ * Order: the hero (roles first) -> the facts -> the board -> how hiring works,
+ * with the form (paper) -> the talent list -> the close, which speaks to the
+ * agency owner who came to see who would be doing the work.
  */
 /** Display only: a spaced hyphen used as a dash in the source copy reads as a colon. */
 const tidy = (text: string) => text.replace(/\s+-\s+/, ': ');
@@ -61,78 +68,109 @@ const careersGraph = pageGraph({
 });
 
 export default function CareersPage() {
+  const { hero, roles: rolesCopy, apply, talent } = CAREERS;
   return (
     <>
       <JsonLd data={careersGraph} />
 
-      <PageHero
-        crumbs={[{ name: 'About', href: '/about-us' }, { name: 'Careers' }]}
-        eyebrow={CAREERS.hero.eyebrow}
-        titleLines={CAREERS.hero.titleLines}
-        lede={CAREERS.hero.lede}
-        primary={{ label: 'See open roles', href: '#roles', placement: 'careers_hero_primary' }}
-        secondary={{ label: 'Join the talent list', href: '#talent', placement: 'careers_hero_talent' }}
-        facts={CAREERS.facts}
-        aside={<OfficeMap notes={CAREERS.map.notes} caption={CAREERS.map.caption} draw="load" />}
-        asideOn="wide"
+      <PageHeader
+        size="l"
+        crumbs={[{ label: 'About', href: '/about-us' }, { label: 'Careers' }]}
+        label={hero.label}
+        title={hero.title.map((run) => (run.accent ? <em key={run.text}>{run.text}</em> : run.text))}
+        lede={<p>{hero.lede}</p>}
+        actions={
+          <HeroActions
+            primary={{ label: 'See open roles', href: '#roles', placement: 'careers_hero_primary' }}
+            secondary={{ label: 'Join the talent list', href: '#talent', placement: 'careers_hero_secondary' }}
+          />
+        }
+        aside={
+          <div className={ed.wideOnly}>
+            <OfficeMap notes={CAREERS.map.notes} caption={CAREERS.map.caption} draw="load" />
+          </div>
+        }
       />
 
-      <section id="roles" className={styles.section} aria-labelledby="roles-title">
-        <div className={styles.split}>
-          <div className={styles.rail}>
-            <h2 id="roles-title" className={styles.h2}>
-              {CAREERS.roles.title}
-            </h2>
-            <p className={styles.lede}>{CAREERS.roles.lede}</p>
-          </div>
-          <CareersBoard roles={roles} />
-        </div>
-      </section>
+      <FactsBand facts={CAREERS.facts} label="Hiring at a glance" />
 
-      <ShippedWork id="careers-work-title" title={CAREERS.work.title} lede={CAREERS.work.lede} placement="careers" />
-
-      <section id="apply" className={styles.section} aria-labelledby="apply-title">
-        <div className={styles.split}>
-          <div className={styles.rail}>
-            <h2 id="apply-title" className={styles.h2}>
-              {CAREERS.apply.title}
+      <section id="roles" className={ed.dark} aria-labelledby="roles-title">
+        <div className={ed.inner}>
+          <header className={ed.head}>
+            <p className={ed.label}>{rolesCopy.label}</p>
+            <h2 id="roles-title" className={ed.title}>
+              {rolesCopy.title}
             </h2>
-            <p className={styles.lede}>{CAREERS.apply.lede}</p>
-            <ol className={styles.steps} role="list">
-              {CAREERS.apply.steps.map((step) => (
-                <li key={step.name}>
-                  <span className={styles.stepName}>{step.name}</span>
-                  <span className={styles.stepText}>{step.text}</span>
-                </li>
-              ))}
-            </ol>
-            <p className={styles.fallback}>
-              Prefer email? Write to{' '}
-              <a href={`mailto:${siteConfig.email}?subject=${encodeURIComponent('Job application')}`}>{siteConfig.email}</a> with the role,
-              a link to your work and a few lines about you.
-            </p>
-            <FoundersNote placement="careers_apply" />
-          </div>
-          <div className={styles.panel}>
-            <CareersApply roles={roles} contactEmail={siteConfig.email} />
+            <p className={ed.lede}>{rolesCopy.lede}</p>
+          </header>
+          <div className={ed.offset}>
+            <CareersBoard roles={roles} />
           </div>
         </div>
       </section>
 
-      {/* data-page-close: the page ends on the candidate ask, so the footer drops its agency ask. */}
-      <section id="talent" className={styles.talentSection} aria-labelledby="talent-title" data-page-close>
-        <div className={styles.split}>
-          <div className={styles.rail}>
-            <h2 id="talent-title" className={styles.h2}>
-              {CAREERS.talent.title}
+      <section id="apply" className={ed.paper} aria-labelledby="apply-title">
+        <div className={ed.inner}>
+          <header className={ed.head}>
+            <p className={ed.label}>{apply.label}</p>
+            <h2 id="apply-title" className={ed.title}>
+              {apply.title}
             </h2>
-            <p className={styles.lede}>{CAREERS.talent.lede}</p>
-          </div>
-          <div className={styles.panel}>
-            <TalentListForm contactEmail={siteConfig.email} />
+            <p className={ed.lede}>{apply.lede}</p>
+          </header>
+
+          <div className={styles.applyGrid}>
+            <div className={styles.applyRail}>
+              <ol className={styles.steps} role="list">
+                {apply.steps.map((step, i) => (
+                  <li key={step.name} className={styles.step}>
+                    <span className={styles.stepNo} aria-hidden="true">
+                      {indexOf(i)}
+                    </span>
+                    <div>
+                      <h3 className={styles.stepName}>{step.name}</h3>
+                      <p className={styles.stepText}>{step.text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <p className={styles.fallback}>
+                Prefer email? Write to{' '}
+                <a
+                  href={`mailto:${siteConfig.email}?subject=${encodeURIComponent('Job application')}`}
+                  data-cta-placement="careers_apply_mailto"
+                >
+                  {siteConfig.email}
+                </a>{' '}
+                with the role, a link to your work and a few lines about you.
+              </p>
+              <FoundersNote placement="careers_apply" />
+            </div>
+            <div className={`${ed.card} ${styles.formCard}`}>
+              <CareersApply roles={roles} contactEmail={siteConfig.email} />
+            </div>
           </div>
         </div>
       </section>
+
+      <section id="talent" className={ed.dark} aria-labelledby="talent-title">
+        <div className={ed.inner}>
+          <header className={ed.head}>
+            <p className={ed.label}>{talent.label}</p>
+            <h2 id="talent-title" className={ed.title}>
+              {talent.title}
+            </h2>
+            <p className={ed.lede}>{talent.lede}</p>
+          </header>
+          <div className={ed.offset}>
+            <div className={`${ed.card} ${styles.formCard} ${styles.talentCard}`}>
+              <TalentListForm contactEmail={siteConfig.email} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <CloseBand title={CAREERS.close.title} placement="careers_close" />
     </>
   );
 }

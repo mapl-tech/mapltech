@@ -1,0 +1,48 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// The signal colour, deepened for paper: #0B7A67 is 4.5:1 on #F1EDE7 (teal
+// itself would vanish there). The state is also in words beside the dot.
+$signal-on-paper: #0b7a67;
+
+.clock {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 4px;
+  margin: 0;
+  font-size: $font-size-sm;
+  line-height: 1.4;
+  color: $color-ink-muted;
+  @include tabular;
+}
+
+.sep {
+  margin: 0 8px;
+  color: rgba(11, 11, 12, 0.4);
+}
+
+.time {
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(11, 11, 12, 0.45);
+
+  .clock[data-open='true'] & {
+    border-color: $signal-on-paper;
+    background: $signal-on-paper;
+  }
+}
