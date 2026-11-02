@@ -67,6 +67,7 @@
   }
 
   a {
+    @include tall-target;
     color: $color-fg;
     text-decoration: underline;
     text-decoration-color: rgba(245, 242, 238, 0.35);

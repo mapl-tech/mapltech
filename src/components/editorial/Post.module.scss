@@ -175,6 +175,7 @@ $measure: 34em;
   }
 
   a {
+    @include tall-target(1.4em);
     color: $color-fg;
     text-decoration: underline;
     text-decoration-color: rgba($color-red, 0.7);
@@ -617,7 +618,7 @@ $measure: 34em;
 .authorLinks {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 28px;
+  gap: 8px 28px;
   margin: 10px 0 0;
 
   a {
@@ -678,7 +679,7 @@ $measure: 34em;
 
 .adjacent {
   display: grid;
-  gap: 4px;
+  gap: 8px;
   margin-top: clamp(40px, 5vw, 64px);
 
   @include md {

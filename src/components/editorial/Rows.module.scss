@@ -65,7 +65,7 @@
   &::after {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: 4px 0; // neighbouring rows' hit areas stay 8px apart across the hairline
   }
 
   &:focus-visible {

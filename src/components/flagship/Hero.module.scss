@@ -180,11 +180,7 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   line-height: 1.5;
   color: $color-fg-muted;
 
-  // A full sentence, so it meets the phone body floor (globals.scss), which
-  // this class's own size would otherwise override.
-  @media (max-width: $breakpoint-sm) {
-    font-size: $font-size-base;
-  }
+  @include phone-floor;
 
   @include motion-ok {
     animation: rise 0.9s $ease-out 0.34s both;

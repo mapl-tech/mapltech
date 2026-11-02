@@ -60,6 +60,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   }
 
   a {
+    @include tall-target;
     color: $color-fg;
     text-decoration: underline;
     text-decoration-color: rgba(245, 242, 238, 0.35);
@@ -156,9 +157,11 @@ $landscape: '(min-aspect-ratio: 21/20)';
     line-height: 1.45;
     color: $color-fg;
     overflow-wrap: anywhere;
+    @include phone-floor;
   }
 
   a {
+    @include tall-target(1.45em);
     color: $color-fg;
     text-decoration: underline;
     text-decoration-color: rgba($color-red, 0.7);
@@ -655,6 +658,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   margin: 0;
   font-size: $font-size-sm;
   color: $color-fg-muted;
+  @include phone-floor;
 }
 
 .siteFrameDesktop,
@@ -834,9 +838,10 @@ $landscape: '(min-aspect-ratio: 21/20)';
   margin: 0;
   padding: 28px 0;
   border-bottom: 1px solid $color-hairline;
-  font-size: $font-size-xs;
+  font-size: $font-size-sm; // a sentence, not a label: the secondary size, not 13px
   line-height: 1.5;
   color: $color-fg-muted;
+  @include phone-floor;
 }
 
 // ===================================================================

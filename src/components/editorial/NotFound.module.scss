@@ -247,10 +247,11 @@
   transition: color 0.3s ease, transform 0.6s $ease-out-expo;
 
   // Stretched link: the whole row is the target, the name is the link's name.
+  // Inset 4px so neighbouring cards' hit areas stay 8px apart.
   &::after {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: 4px;
   }
 
   @include focus-ring;

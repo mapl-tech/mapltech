@@ -60,10 +60,7 @@
   line-height: 1.5;
   color: $color-white; // small text on crimson: solid white only (5.01:1)
 
-  // A full sentence, so it meets the phone body floor (globals.scss).
-  @media (max-width: $breakpoint-sm) {
-    font-size: $font-size-base;
-  }
+  @include phone-floor;
 }
 
 .actions {

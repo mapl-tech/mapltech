@@ -409,7 +409,9 @@
   padding: 0;
   border-top: 1px solid $color-hairline-strong;
 
+  // 4px of each row sits outside its link: neighbouring hit areas 8px apart.
   li {
+    padding: 4px 0;
     border-bottom: 1px solid $color-hairline-strong;
   }
 }
@@ -422,7 +424,7 @@
     'no price go';
   align-items: center;
   gap: 6px 16px;
-  padding: 22px 0;
+  padding: 18px 0;
   color: inherit;
   text-decoration: none;
 
@@ -430,7 +432,7 @@
     grid-template-columns: 64px minmax(0, 1fr) auto auto;
     grid-template-areas: 'no name price go';
     column-gap: 32px;
-    padding: 28px 0;
+    padding: 24px 0;
   }
 
   &:focus-visible {

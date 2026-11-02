@@ -424,10 +424,12 @@
   color: inherit;
   text-decoration: none;
 
+  // The whole row is the target, inset 4px so neighbouring rows' hit areas
+  // stay 8px apart across the hairline.
   &::after {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: 4px 0;
     z-index: 1;
     border-radius: 6px;
   }

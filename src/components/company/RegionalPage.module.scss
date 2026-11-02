@@ -363,6 +363,8 @@
     align-items: center;
     gap: 16px;
     min-height: 56px;
+    // Keeps 44px links in neighbouring rows 8px+ apart when one wraps to two lines.
+    padding-block: 4px;
     border-bottom: 1px solid $color-hairline;
   }
 

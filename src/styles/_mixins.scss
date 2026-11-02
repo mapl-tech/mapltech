@@ -276,6 +276,24 @@
   }
 }
 
+// Sentence-length copy set at a smaller module size still meets the phone body
+// floor in globals.scss (17px), which the module's own font-size would otherwise
+// override. Labels and captions keep their size.
+@mixin phone-floor {
+  @media (max-width: $breakpoint-sm) {
+    font-size: $font-size-base;
+  }
+}
+
+// A 48px-tall (and 12px wider) hit area on a short standalone link, without
+// moving anything: the padding grows the target and the negative margin gives
+// the space back. $line is the link's line height.
+@mixin tall-target($line: 16px) {
+  display: inline-block;
+  padding: calc((48px - #{$line}) / 2) 6px;
+  margin: calc((48px - #{$line}) / -2) -6px;
+}
+
 // Visually hidden (for screen readers)
 @mixin sr-only {
   position: absolute;
