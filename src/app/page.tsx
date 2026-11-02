@@ -2,20 +2,19 @@ import JsonLd from '@/components/seo/JsonLd';
 import { faqPage, itemList, pageGraph } from '@/lib/schema';
 import { FAQ_ITEMS, HOME_PAGE_DESCRIPTION, HOME_PAGE_NAME } from '@/components/home/data';
 import Hero from '@/components/flagship/Hero';
-import ProofStrip from '@/components/flagship/ProofStrip';
-import Problem from '@/components/flagship/Problem';
-import Layers from '@/components/flagship/Layers';
-import XRay from '@/components/flagship/XRay';
-import WorkStack from '@/components/flagship/WorkStack';
-import { Close, Faq, Founders, Silence, Spotlight } from '@/components/flagship/Acts';
+import Statement from '@/components/flagship/Statement';
+import ServiceIndex from '@/components/flagship/ServiceIndex';
+import Work from '@/components/flagship/Work';
+import Approach from '@/components/flagship/Approach';
+import Proof from '@/components/flagship/Proof';
+import CloseBand from '@/components/flagship/CloseBand';
+import { Faq, Founders } from '@/components/flagship/Acts';
 import { LAYERS, WORK } from '@/components/flagship/content';
-import { siteGraph } from '@/lib/schema';
 
 /*
- * Homepage, flagship redesign (Nov 2026). Grammar "Surface -> Structure":
- * every act shows a finished surface, then the structure that makes it true.
- * The brief, feeling curve and score live in the Scrollcraft BRIEF.md; the
- * Sentinel build spec in SENTINEL-SPEC.md (memory/redesign-artifacts).
+ * Homepage (Nov 2026 award pass). The live site's purpose and sections,
+ * restaged: the Backbone hero, the launch-week statement, the services index,
+ * selected work, how we embed, proof, the founders, answers, and the ask.
  *
  * Metadata: inherited from the root layout (title, description, canonical
  * https://mapltech.com). Structured data: one page graph with the services
@@ -39,39 +38,19 @@ const homeGraph = pageGraph({
   ],
 });
 
-/** Every schema.org type in the site + page graphs, most frequent first (server-side, for the X-ray). */
-function schemaTypesOf(...graphs: unknown[]): string[] {
-  const counts = new Map<string, number>();
-  const visit = (node: unknown) => {
-    if (!node || typeof node !== 'object') return;
-    if (Array.isArray(node)) return node.forEach(visit);
-    const type = (node as Record<string, unknown>)['@type'];
-    for (const t of Array.isArray(type) ? type : type ? [type] : []) {
-      if (typeof t === 'string') counts.set(t, (counts.get(t) ?? 0) + 1);
-    }
-    Object.values(node).forEach(visit);
-  };
-  graphs.forEach(visit);
-  return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
-}
-
-const XRAY_STATIC = { schemaTypes: schemaTypesOf(siteGraph(), homeGraph), faqCount: FAQ_ITEMS.length };
-
 export default function HomePage() {
   return (
     <>
       <JsonLd data={homeGraph} />
       <Hero />
-      <ProofStrip />
-      <Problem />
-      <Layers />
-      <Silence />
-      <XRay initial={XRAY_STATIC} />
-      <WorkStack />
-      <Spotlight />
+      <Statement />
+      <ServiceIndex />
+      <Work />
+      <Approach />
+      <Proof />
       <Founders />
       <Faq items={FAQ_ITEMS} />
-      <Close />
+      <CloseBand />
     </>
   );
 }

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import BottomSheet, { type SnapPoint } from '@/components/ui/BottomSheet';
 import MagneticButton from '@/components/ui/MagneticButton';
-import { ESTIMATE_HREF, ESTIMATE_LABEL, telHref } from './chrome';
+import { PROJECT_HREF, PROJECT_LABEL, telHref } from './chrome';
 import styles from './Header.module.scss';
 
 /**
@@ -116,8 +116,8 @@ export default function MobileNav({ id, open, onOpenChange, pathname, returnFocu
       </nav>
 
       <div className={styles.sheetCta} data-cta-placement="drawer_estimate">
-        <MagneticButton href={ESTIMATE_HREF} size="medium" placement="drawer_estimate" onClick={close}>
-          {ESTIMATE_LABEL}
+        <MagneticButton href={PROJECT_HREF} size="medium" placement="drawer_project" onClick={close}>
+          {PROJECT_LABEL}
         </MagneticButton>
       </div>
 

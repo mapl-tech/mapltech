@@ -18,7 +18,7 @@ import { usePathname } from 'next/navigation';
 import { siteConfig } from '@/config/site';
 import MagneticButton from '@/components/ui/MagneticButton';
 import MobileNav from './MobileNav';
-import { ESTIMATE_HREF, ESTIMATE_LABEL, ESTIMATE_LABEL_COMPACT } from './chrome';
+import { PROJECT_HREF, PROJECT_LABEL } from './chrome';
 import styles from './Header.module.scss';
 
 /**
@@ -326,20 +326,20 @@ export default function Header() {
         <DesktopNav pathname={pathname} />
 
         <div className={styles.utility}>
-          <span className={styles.cta} data-cta-placement="header_estimate">
-            <MagneticButton href={ESTIMATE_HREF} size="small" placement="header_estimate" className={styles.headerBtn}>
-              {ESTIMATE_LABEL}
+          <span className={styles.cta} data-cta-placement="header_project">
+            <MagneticButton href={PROJECT_HREF} size="small" placement="header_project" className={styles.headerBtn}>
+              {PROJECT_LABEL}
             </MagneticButton>
           </span>
 
-          <span className={styles.ctaCompact} data-cta-placement="header_estimate_compact">
+          <span className={styles.ctaCompact} data-cta-placement="header_project_compact">
             <MagneticButton
-              href={ESTIMATE_HREF}
+              href={PROJECT_HREF}
               size="small"
-              placement="header_estimate_compact"
+              placement="header_project_compact"
               className={styles.compactBtn}
             >
-              {ESTIMATE_LABEL_COMPACT}
+              {PROJECT_LABEL}
             </MagneticButton>
           </span>
 

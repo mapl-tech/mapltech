@@ -1,5 +1,6 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
 .footer {
   position: relative;
@@ -16,7 +17,7 @@
 }
 
 .inner {
-  @include container(1280px);
+  @include shell;
 }
 
 // ---------------------------------------------------------------- the ask

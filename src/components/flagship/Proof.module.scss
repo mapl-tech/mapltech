@@ -1,0 +1,182 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+.proof {
+  position: relative;
+  background: $color-ground;
+}
+
+.inner {
+  @include shell;
+  @include section-pad;
+  display: grid;
+  gap: clamp(48px, 7vw, 96px);
+}
+
+.head {
+  display: grid;
+  gap: 24px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
+  }
+}
+
+.label {
+  @include section-label;
+  align-self: start;
+
+  &::before {
+    @include section-label-rule;
+  }
+
+  @include lg {
+    padding-top: 0.9em;
+  }
+}
+
+.title {
+  @include section-title;
+  color: $color-fg;
+  max-width: 13em;
+}
+
+// Three published numbers, as big as the page allows.
+.stats {
+  display: grid;
+  margin: 0;
+  border-top: 1px solid $color-hairline-strong;
+
+  @include md {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.stat {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: clamp(24px, 3vw, 36px) 0;
+  border-bottom: 1px solid $color-hairline;
+
+  @include md {
+    padding-right: 32px;
+    border-bottom: 0;
+
+    & + & {
+      padding-left: 32px;
+      border-left: 1px solid $color-hairline;
+    }
+  }
+}
+
+.value {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(4rem, 2.4rem + 6vw, 8.5rem); // 64px -> 136px
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  color: $color-fg;
+  @include tabular;
+}
+
+.suffix {
+  color: $color-red;
+}
+
+.statLabel {
+  margin: 0;
+  max-width: 18em;
+  color: $color-fg-muted;
+  font-size: $font-size-base;
+  line-height: 1.45;
+}
+
+.quote {
+  margin: 0;
+  display: grid;
+  gap: 28px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
+
+    > * {
+      grid-column: 2;
+    }
+  }
+}
+
+.quoteText {
+  margin: 0;
+
+  p {
+    margin: 0;
+    font-family: $font-display;
+    font-weight: 600;
+    font-size: clamp(1.625rem, 1rem + 2.2vw, 3rem);
+    line-height: 1.16;
+    letter-spacing: -0.02em;
+    color: $color-fg;
+    text-wrap: pretty;
+  }
+}
+
+.by {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  > span {
+    display: grid;
+    gap: 2px;
+  }
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.name {
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.role {
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+}
+
+.logos {
+  list-style: none;
+  margin: 0;
+  padding: 28px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 28px clamp(32px, 5vw, 64px);
+  border-top: 1px solid $color-hairline;
+}
+
+.logo {
+  display: inline-flex;
+  opacity: 0.72;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  img {
+    display: block;
+  }
+}
+
+.invert {
+  filter: brightness(0) invert(1);
+}

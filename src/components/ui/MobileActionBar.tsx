@@ -4,7 +4,7 @@ import { useEffect, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { usePrefersReducedMotion } from './useMediaQuery';
-import { ESTIMATE_HREF, ESTIMATE_LABEL } from '@/components/layout/chrome';
+import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { MOBILE_BAR_CONTEXT } from '@/components/flagship/content';
 
 /**
@@ -13,8 +13,8 @@ import { MOBILE_BAR_CONTEXT } from '@/components/flagship/content';
  * It repeats the page's own hero action: the link marked `data-hero-cta` (or
  * the first link inside it) gives the label and the target, so a service page
  * opens the estimator with its service selected and /referral offers "Refer an
- * agency". Without a hero link it offers the estimator. The context line is
- * the hero CTA's `data-bar-context` if set, else the public price floor for
+ * agency". Without a hero link it offers "Start a project". The context line
+ * is the hero CTA's `data-bar-context` if set, else the public price floor for
  * pricing actions, else nothing.
  *
  * Appears once the hero CTA (fallback: the page H1) has left the viewport;
@@ -67,8 +67,8 @@ function emit(action: 'estimate' | 'hero', href: string) {
 }
 
 export default function MobileActionBar({
-  estimateHref = ESTIMATE_HREF,
-  estimateLabel = ESTIMATE_LABEL,
+  estimateHref = PROJECT_HREF,
+  estimateLabel = PROJECT_LABEL,
   context = MOBILE_BAR_CONTEXT,
 }: MobileActionBarProps) {
   const pathname = usePathname();
@@ -150,7 +150,8 @@ export default function MobileActionBar({
   const action = pageAction?.path === pathname ? pageAction : null;
   const href = action?.href ?? estimateHref;
   const label = action?.label ?? estimateLabel;
-  const line = action ? action.context : context;
+  // The price-floor line only ever sits beside a pricing action.
+  const line = action ? action.context : isEstimate(href) ? context : '';
 
   // Keep focused controls clear of the bar while it covers the bottom edge.
   // Restores whatever was there before (the pricing estimate bar sets its own).

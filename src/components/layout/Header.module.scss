@@ -1,5 +1,6 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
 $bar-mobile: 56px;
 $bar-desktop: 64px;
@@ -42,7 +43,8 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bar {
-  @include container;
+  // Same shell as the page sections (styles/_editorial.scss): 1440 max, fluid gutter.
+  @include shell;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -257,9 +259,21 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
 
 .ctaCompact {
   display: inline-block;
+  transition: opacity 0.24s ease, visibility 0s linear 0s;
 
   @include lg {
     display: none;
+  }
+}
+
+// One ask at a time on phones: while the bottom action bar is up (it carries
+// the same "Start a project"), the header's copy steps aside.
+// The bar only exists below md, so the rule does too.
+@media (max-width: #{$breakpoint-md - 1px}) {
+  :global(body:has(.mobile-action-bar[data-visible='true'])) .ctaCompact {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.24s ease, visibility 0s linear 0.24s;
   }
 }
 

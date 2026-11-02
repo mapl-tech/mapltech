@@ -7,14 +7,16 @@
 // site-header` in Header.module.scss; work-row thumbnails morph through
 // <WorkTransition share="morph">.
 //
-// Budget: opacity + translate only, nothing longer than 400ms, and every
-// duration is zeroed under prefers-reduced-motion. Emitted unlayered.
+// Budget: opacity, translate and clip only, nothing longer than 720ms, and
+// every duration is zeroed under prefers-reduced-motion. Emitted unlayered.
 // ============================================
 
 $vt-ease: cubic-bezier(0.16, 1, 0.3, 1);
-$vt-exit: 140ms;
+$vt-exit: 180ms;
 $vt-enter: 260ms;
 $vt-move: 400ms;
+$vt-reveal: 640ms;
+$vt-morph: 720ms;
 
 // The transition overlay must never swallow clicks on the live page.
 ::view-transition {
@@ -43,19 +45,17 @@ $vt-move: 400ms;
   animation-duration: $vt-enter;
 }
 
-// Page content (template.tsx). Asymmetric on purpose: the old page leaves
-// fast so it never competes for attention; the new page fades in once it is
-// gone and settles up by 12px.
+// Page content (template.tsx). Asymmetric on purpose: the old page lifts and
+// leaves fast so it never competes for attention; the new page rises in from
+// behind a clip that opens upward, once the old one is gone.
 ::view-transition-old(.page-exit),
 ::view-transition-old(.page-update) {
-  animation: $vt-exit ease-in both vt-fade reverse;
+  animation: $vt-exit cubic-bezier(0.7, 0, 0.84, 0) both vt-lift;
 }
 
 ::view-transition-new(.page-enter),
 ::view-transition-new(.page-update) {
-  animation:
-    $vt-enter $vt-ease $vt-exit both vt-fade,
-    $vt-move $vt-ease both vt-rise;
+  animation: $vt-reveal $vt-ease ($vt-exit - 40ms) both vt-reveal;
 }
 
 // Same-instance update (nested navigation inside one top-level segment): the
@@ -64,34 +64,47 @@ $vt-move: 400ms;
   animation-duration: 0s;
 }
 
-// Interaction #4: work-row thumbnail -> case-study hero morph.
+// Work card screenshot -> case-study hero morph (case-media-<slug>): one
+// object travelling, softened mid-flight so the resample never shows.
 ::view-transition-group(.morph) {
-  animation-duration: $vt-move;
+  animation-duration: $vt-morph;
   animation-timing-function: $vt-ease;
+  z-index: 10;
 }
 
 ::view-transition-old(.morph),
 ::view-transition-new(.morph) {
-  animation-duration: $vt-move;
+  animation-duration: $vt-morph;
 }
 
-@keyframes vt-fade {
+::view-transition-image-pair(.morph) {
+  animation-name: vt-via-blur;
+}
+
+@keyframes vt-lift {
+  to {
+    opacity: 0;
+    translate: 0 -14px;
+  }
+}
+
+@keyframes vt-reveal {
   from {
     opacity: 0;
+    translate: 0 28px;
+    clip-path: inset(14% 0 0 0);
   }
 
   to {
     opacity: 1;
+    translate: 0 0;
+    clip-path: inset(0);
   }
 }
 
-@keyframes vt-rise {
-  from {
-    translate: 0 12px;
-  }
-
-  to {
-    translate: 0 0;
+@keyframes vt-via-blur {
+  30% {
+    filter: blur(3px);
   }
 }
 

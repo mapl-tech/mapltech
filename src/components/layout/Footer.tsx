@@ -3,7 +3,7 @@ import { siteConfig } from '@/config/site';
 import MagneticButton from '@/components/ui/MagneticButton';
 import NewsletterForm from './NewsletterForm';
 import SocialLinks from './SocialLinks';
-import { CALL_HREF, CALL_LABEL, ESTIMATE_HREF, ESTIMATE_LABEL, FOOTER_JOIN, FOOTER_START, OFFICE_LINKS, telHref } from './chrome';
+import { FOOTER_JOIN, FOOTER_START, OFFICE_LINKS, PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from './chrome';
 import styles from './Footer.module.scss';
 
 /**
@@ -27,12 +27,12 @@ export default function Footer() {
           <p className={styles.askLine}>Have a build your clients are waiting on?</p>
           <div className={styles.askActions}>
             <span data-cta-placement="footer_estimate">
-              <MagneticButton href={ESTIMATE_HREF} size="medium" placement="footer_estimate">
-                {ESTIMATE_LABEL}
+              <MagneticButton href={PROJECT_HREF} size="medium" placement="footer_project">
+                {PROJECT_LABEL}
               </MagneticButton>
             </span>
-            <Link href={CALL_HREF} className={styles.askLink} data-cta-placement="footer_call">
-              {CALL_LABEL}
+            <Link href={PRICING_HREF} className={styles.askLink} data-cta-placement="footer_pricing">
+              {PRICING_LABEL}
             </Link>
           </div>
         </div>

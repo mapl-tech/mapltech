@@ -1,381 +1,291 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-// Act 1. Planes, back to front: light field -> browser frame -> phone frame ->
-// price check card, with the copy beside them at 1x. `--p` (scroll depth)
-// comes from DepthScene; at rest (and under reduced motion) it is 0. The
-// pointer drives only the light field's bloom.
-
-$ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+// The hero switches composition with the scene (scene.ts): landscape puts the
+// spine on the right and the copy low on the left; portrait puts the spine
+// across the top and the copy beneath it.
+$portrait: '(max-aspect-ratio: 21/20)';
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
 .hero {
-  --p: 0;
   position: relative;
   isolation: isolate;
-  overflow: hidden;
-  background: #07070a; // the light field's own ground: no flash before the first frame
+  display: flex;
+  min-height: 100svh;
+  overflow: clip;
+  background: $color-ground;
+}
 
-  // Melt into the page ground so the light never ends on a hard line.
-  // Eased (not linear) so the light thins out instead of stopping at a line.
+// The CSS light: the whole picture until the scene arrives, and without WebGL.
+.light {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(48% 62% at 74% 48%, rgba(217, 28, 63, 0.24) 0%, rgba(217, 28, 63, 0.07) 42%, transparent 72%),
+    radial-gradient(30% 40% at 92% 8%, rgba(255, 92, 115, 0.1) 0%, transparent 70%),
+    radial-gradient(60% 50% at 10% 110%, rgba(217, 28, 63, 0.08) 0%, transparent 70%);
+
+  @media #{$portrait} {
+    background:
+      radial-gradient(90% 46% at 62% 20%, rgba(217, 28, 63, 0.26) 0%, rgba(217, 28, 63, 0.06) 50%, transparent 76%),
+      radial-gradient(70% 40% at 0% 100%, rgba(217, 28, 63, 0.08) 0%, transparent 70%);
+  }
+
+  // A fine grain keeps the dark ground from banding on cheap panels.
   &::after {
     content: '';
     position: absolute;
-    inset: auto 0 0;
-    height: clamp(180px, 30%, 300px);
-    z-index: 1;
-    background: linear-gradient(
-      to bottom,
-      rgba($color-ground, 0) 0%,
-      rgba($color-ground, 0.28) 30%,
-      rgba($color-ground, 0.66) 60%,
-      rgba($color-ground, 0.92) 85%,
-      $color-ground 100%
-    );
-    pointer-events: none;
+    inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 
-.light {
-  z-index: 0;
+.stage {
+  z-index: -1;
+
+  // Portrait: the scene is a band above the copy, fading out before the text.
+  @media #{$portrait} {
+    bottom: auto;
+    height: max(41svh, 290px);
+
+    canvas {
+      -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+    }
+  }
 }
 
 .inner {
   position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-areas: 'copy' 'stage' 'next';
-  gap: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: clamp(28px, 5vh, 56px);
   width: 100%;
-  max-width: 1360px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: calc(56px + 32px) 20px 64px;
+  padding: calc(var(--header-height, 72px) + 32px) clamp(20px, 5vw, 72px) clamp(20px, 3.5vh, 36px);
 
-  @include sm {
-    padding-left: 32px;
-    padding-right: 32px;
-  }
-
-  // Desktop: copy and next steps share the left column, centred as one group
-  // against the stage (the empty rows absorb the stage's extra height).
-  @include lg {
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
-    grid-template-rows: 1fr auto auto 1fr;
-    grid-template-areas:
-      '. stage'
-      'copy stage'
-      'next stage'
-      '. stage';
-    column-gap: clamp(40px, 5vw, 88px);
-    row-gap: 0;
-    min-height: max(100svh, 760px);
-    padding: calc(72px + 32px) clamp(32px, 5vw, 80px) 72px;
+  @media #{$portrait} {
+    justify-content: flex-start;
+    gap: 40px;
+    padding-top: max(44svh, 300px);
   }
 }
 
-// ---------------------------------------------------------------- copy
 .copy {
-  grid-area: copy;
-  min-width: 0;
+  max-width: min(800px, 56vw);
+
+  @media #{$portrait} {
+    max-width: 640px;
+  }
+}
+
+.eyebrow {
+  @include mono-label($color-fg-muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 clamp(20px, 3vh, 32px);
+
+  @include motion-ok {
+    animation: rise 0.9s $ease-out 0.05s both;
+  }
+}
+
+// The bar from the wordmark, as a caret: blinks three times, then holds.
+.caret {
+  flex: none;
+  width: 2px;
+  height: 1.25em;
+  border-radius: 1px;
+  background: $color-red;
+
+  @include motion-ok {
+    animation: blink 1.05s steps(1, end) 0.6s 3;
+  }
 }
 
 .title {
   margin: 0;
-  font-size: $font-size-display;
-  font-weight: $font-weight-extrabold;
-  line-height: $line-height-display;
-  letter-spacing: $letter-spacing-display;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 0.95rem + 4.3vw, 5.75rem); // 40px at 360, 77px at 1440, 92px cap
+  line-height: 0.96;
+  letter-spacing: -0.035em;
   color: $color-fg;
   text-wrap: balance;
 
-  // Two columns: size to the column so "sells the vision." holds one line
-  // from 1024px (52px) up to the 76px cap.
-  @include lg {
-    font-size: clamp(3.25rem, 5.1vw, 4.75rem);
+  // Transform only: the H1 is painted at full opacity in the first frame (LCP).
+  @include motion-ok {
+    animation: settle 1.1s $ease-out both;
   }
 }
 
 .titleLine {
   display: block;
 
-  & + & {
-    margin-top: 0.08em;
+  @media #{$portrait} {
+    display: inline;
   }
+}
 
-  &:last-child {
-    // Large text: 5.1:1 on the field's dark side (AA needs 3:1).
-    color: $color-red;
-  }
+.accent {
+  color: $color-red; // 3.66:1 on the ground: large text only (AA 3:1), which this is
 }
 
 .lede {
-  margin: 20px 0 0;
-  max-width: 34rem;
-  font-size: $font-size-lede;
-  line-height: 1.55;
-  color: rgba($color-fg, 0.8);
-  text-wrap: pretty;
+  @include lede;
+  margin: clamp(22px, 3.2vh, 32px) 0 0;
+  max-width: 36em;
+
+  @include motion-ok {
+    animation: rise 0.9s $ease-out 0.18s both;
+  }
 }
 
-.secondary {
-  display: inline-flex;
+.actions {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  color: $color-fg;
-  text-decoration: underline;
-  text-decoration-color: rgba($color-fg, 0.35);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 6px;
-  transition: text-decoration-color 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  gap: 12px 28px;
+  margin-top: clamp(28px, 4vh, 40px);
 
-  &:hover {
-    text-decoration-color: $color-red;
+  @include motion-ok {
+    animation: rise 0.9s $ease-out 0.28s both;
   }
+}
+
+.primary {
+  @include button-primary;
+  min-height: 56px;
+  padding: 0 26px 0 30px;
+  gap: 14px;
+  font-size: 1.0625rem;
 
   @include focus-ring;
 }
 
 .arrow {
   display: inline-block;
-  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.35s $ease-out;
 
-  .secondary:hover & {
+  .primary:hover & {
     transform: translateX(4px);
   }
 }
 
-// ---------------------------------------------------------------- next steps
-.next {
-  grid-area: next;
-  display: grid;
-  justify-items: start;
-  gap: 24px;
-  min-width: 0;
-
-  @include lg {
-    gap: 40px;
-    padding-top: 20px;
-  }
-}
-
-// Avatar beside the quote and its attribution (figcaption stays the figure's last child).
-.proof {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+.secondary {
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  column-gap: 14px;
-  margin: 0;
-  max-width: 30rem;
+  min-height: 48px;
+  color: $color-fg;
+  font-weight: $font-weight-semibold;
+  font-size: 1.0625rem;
+  text-decoration: none;
 
-  @include lg {
-    padding-top: 28px;
-    border-top: 1px solid $color-hairline;
-  }
-}
-
-.avatar {
-  grid-row: span 2;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.proofQuote {
-  margin: 0;
-
-  p {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.45;
-    color: rgba($color-fg, 0.88);
-  }
-}
-
-.proofBy {
-  grid-column: 2;
-  margin-top: 2px;
-  font-size: 0.9375rem;
-  color: $color-fg-muted;
-}
-
-// ---------------------------------------------------------------- stage
-.stage {
-  grid-area: stage;
-  position: relative;
-  display: grid;
-  justify-items: center;
-  min-width: 0;
-
-  // The card's top tracks the viewport height (132px at 900px tall, 64px at
-  // 800px), so its button stays above the fold on short laptop screens.
-  @include lg {
-    justify-items: start;
-    padding: clamp(32px, 68svh - 480px, 132px) 0 24px;
-  }
-}
-
-.card {
-  position: relative;
-  z-index: 3;
-  max-width: 34rem;
-
-  @include lg {
-    max-width: 26rem;
-  }
-
-  @include motion-ok {
-    animation: card-in 900ms $ease-expo 80ms both;
-  }
-}
-
-@keyframes card-in {
-  from {
-    opacity: 0;
-    translate: 0 18px;
-  }
-}
-
-// Real work behind the card. Desktop only (the images do not even load below 1024px).
-.frames {
-  display: none;
-
-  @include lg {
-    display: block;
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-}
-
-// Both frames sit a step darker than the screenshots themselves, so the H1 and
-// the card stay the two brightest masses in the hero.
-.browser,
-.phone {
-  filter: brightness(0.86);
-}
-
-.browser {
-  position: absolute;
-  top: 0;
-  right: clamp(-240px, -14vw, -96px);
-  z-index: 1;
-  width: min(44vw, 680px);
-  overflow: hidden;
-  border-radius: 12px;
-  background: #16161a;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 50px 100px -30px rgba(0, 0, 0, 0.9);
-  transform-origin: 0% 50%;
-  // Turned toward the copy; rises a little faster than the page as you scroll.
-  transform:
-    translate3d(0, calc(var(--p) * -90px), 0)
-    perspective(2000px)
-    rotateY(-14deg)
-    rotateX(5deg);
-  will-change: transform;
-
-  @include motion-ok {
-    animation: frame-in 1400ms $ease-expo 160ms both;
-  }
-}
-
-.chrome {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 34px;
-  padding: 0 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: #1b1b20;
-}
-
-.lights {
-  display: flex;
-  gap: 6px;
-
-  i {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.16);
-  }
-}
-
-.url {
-  position: absolute;
-  left: 50%;
-  translate: -50% 0;
-  padding: 3px 14px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  font-size: 0.75rem;
-  letter-spacing: 0.01em;
-  color: rgba($color-fg, 0.62);
-}
-
-.shot {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.phone {
-  display: none;
-  position: absolute;
-  right: clamp(-80px, -4.5vw, -32px);
-  bottom: 0;
-  z-index: 2;
-  width: clamp(168px, 13vw, 204px);
-  padding: 7px;
-  border-radius: 34px;
-  background: #0c0c0f;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 40px 80px -24px rgba(0, 0, 0, 0.9);
-  transform-origin: 50% 100%;
-  transform:
-    translate3d(0, calc(var(--p) * -150px), 0)
-    perspective(1600px)
-    rotateY(-10deg)
-    rotate(3deg);
-  will-change: transform;
-
-  // The camera island.
-  &::before {
+  &::after {
     content: '';
     position: absolute;
-    top: 16px;
-    left: 50%;
-    z-index: 1;
-    width: 30%;
-    height: 14px;
-    border-radius: 7px;
-    background: #000;
-    translate: -50% 0;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    height: 1px;
+    background: currentColor;
+    transform-origin: right;
+    transition: transform 0.45s $ease-out;
   }
 
-  .shot {
-    border-radius: 27px;
+  &:hover::after {
+    transform: scaleX(0);
   }
 
-  // Narrower than this, the card leaves no room beside it.
-  @media (min-width: 1360px) {
-    display: block;
-  }
+  @include focus-ring;
+}
 
-  @include motion-ok {
-    animation: frame-in 1400ms $ease-expo 320ms both;
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid $color-hairline;
+  // Room on the right for the motion toggle, which sits in the scene layer.
+  padding-right: 168px;
+
+  @media #{$portrait} {
+    padding-right: 0;
   }
 }
 
-@keyframes frame-in {
+.clocks {
+  margin: 0;
+}
+
+// The interaction hint: landscape with a mouse only, and only while the scene can respond.
+.hint {
+  @include mono-label($color-fg-muted);
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto 0 8px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+
+  &::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  @media (min-aspect-ratio: 21/20) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    display: inline-flex;
+  }
+
+  .hero:has([data-live]) & {
+    opacity: 1;
+    transition: opacity 0.9s ease 1.4s;
+  }
+
+  .hero:has([data-touched]) & {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+}
+
+// The scene's pause button, aligned with the foot row (landscape) or tucked
+// under the header at the top right of the spine (portrait).
+.toggle {
+  right: clamp(20px, 5vw, 72px);
+  bottom: clamp(12px, 2.6vh, 26px);
+
+  // Portrait: the band's bottom-right corner, which the ribbon leaves empty.
+  @media #{$portrait} {
+    bottom: 12px;
+    right: 16px;
+  }
+}
+
+@keyframes rise {
   from {
     opacity: 0;
-    translate: 0 48px;
+    transform: translate3d(0, 18px, 0);
+  }
+}
+
+@keyframes settle {
+  from {
+    transform: translate3d(0, 0.18em, 0);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
 }

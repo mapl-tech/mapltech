@@ -1,0 +1,69 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The wall sits in a fixed-height window; the plane inside is tilted in 3D
+// and larger than the window, so its edges never show.
+.reel {
+  --p: 0.5;
+  position: relative;
+  height: clamp(420px, 62vw, 820px);
+  overflow: hidden;
+  perspective: 1600px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+}
+
+.plane {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 150%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 1.6vw, 28px);
+  transform: translate(-50%, -50%) rotateX(24deg) rotateZ(-14deg);
+  transform-style: preserve-3d;
+}
+
+// Odd columns rise and even columns fall as the section passes.
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.6vw, 28px);
+  transform: translate3d(0, calc((var(--p) - 0.5) * var(--speed) * -28%), 0);
+  will-change: transform;
+
+  &:nth-child(2) {
+    margin-top: 12%;
+  }
+
+  &:nth-child(4) {
+    margin-top: 6%;
+  }
+}
+
+.tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: clamp(10px, 1.1vw, 18px);
+  background: #121214;
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  &[data-kind='desktop'] {
+    aspect-ratio: 16 / 10;
+  }
+
+  &[data-kind='mobile'] {
+    aspect-ratio: 9 / 16;
+    width: 62%;
+    margin: 0 auto;
+  }
+}
+
+.shot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}

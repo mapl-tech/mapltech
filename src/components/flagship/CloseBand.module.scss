@@ -1,0 +1,102 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// White on #D91C3F is 5.01:1 (AA at every size); ink on paper buttons 17:1.
+.close {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: $color-red-fill;
+  color: $color-white;
+}
+
+// The wordmark's bar, enormous, drifting in from the right edge.
+.bar {
+  position: absolute;
+  z-index: -1;
+  top: -10%;
+  right: clamp(24px, 9vw, 160px);
+  width: clamp(18px, 2.2vw, 34px);
+  height: 120%;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  transform: rotate(14deg);
+}
+
+.inner {
+  @include shell;
+  padding-top: clamp(96px, 14vw, 200px);
+  padding-bottom: clamp(96px, 14vw, 200px);
+  display: grid;
+  gap: clamp(24px, 3vw, 36px);
+  justify-items: start;
+}
+
+.title {
+  margin: 0;
+  max-width: 13em;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 1rem + 5.4vw, 6.5rem); // 40px -> 104px
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.lede {
+  margin: 0;
+  max-width: 34em;
+  font-size: $font-size-lede;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  margin-top: 8px;
+}
+
+.primary {
+  @include button-base;
+  min-height: 60px;
+  padding: 0 28px 0 32px;
+  gap: 14px;
+  background: $color-paper;
+  color: $color-ink;
+  font-size: 1.125rem;
+
+  &:hover {
+    background: $color-white;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-white;
+    outline-offset: 3px;
+  }
+}
+
+.arrow {
+  transition: transform 0.4s $ease-out-expo;
+
+  .primary:hover & {
+    transform: translateX(4px);
+  }
+}
+
+.secondary {
+  @include text-action($color-white);
+  font-size: 1.0625rem;
+
+  &:focus-visible {
+    outline: 2px solid $color-white;
+    outline-offset: 3px;
+  }
+}

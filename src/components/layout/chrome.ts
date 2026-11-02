@@ -1,10 +1,23 @@
 /**
  * Shared chrome constants for Header / MobileNav / Footer.
  *
- * CTA vocabulary (flagship redesign): primary "Price your project" →
- * /pricing#estimator, secondary "Book a call" → /contact-us. Every link label below is an existing route label from
+ * CTA vocabulary (Nov 2026, the live site's purpose restored): primary
+ * "Start a project" → /contact-us; the estimator ("Price your project" →
+ * /pricing#estimator) is a secondary path for visitors who want numbers first. Every link label below is an existing route label from
  * siteConfig.nav or the current footer; nothing is invented.
  */
+
+/**
+ * The one primary action, as on the live site: start a project (the project
+ * brief on /contact-us). Same words everywhere: header, drawer, footer, the
+ * mobile bar's fallback and the homepage hero.
+ */
+export const PROJECT_HREF = '/contact-us';
+export const PROJECT_LABEL = 'Start a project';
+
+/** Secondary: the public price ranges (estimator on /pricing). */
+export const PRICING_HREF = '/pricing';
+export const PRICING_LABEL = 'See pricing';
 
 export const ESTIMATE_HREF = '/pricing#estimator';
 /** The one primary action, the same words everywhere (Sentinel copy pass, Nov 2026). */

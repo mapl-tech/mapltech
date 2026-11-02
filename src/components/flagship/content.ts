@@ -6,41 +6,33 @@
  * cited inline. Copy rules: no em dashes, no hype verbs, one label per action.
  */
 import { listedProjects, pricing, testimonials } from '@/config/site';
-import { SIZE_OPTIONS, estimate, estimateHref, formatLineRange, parsePriceLabel, type EstimateService } from '@/lib/estimate';
-import { ESTIMATE_HREF, ESTIMATE_LABEL } from '@/components/layout/chrome';
+import { parsePriceLabel, type EstimateService } from '@/lib/estimate';
+import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 
 /** The one primary action, labelled the same everywhere (header, hero, bar, close). */
-export const PRIMARY_CTA = { label: ESTIMATE_LABEL, href: ESTIMATE_HREF } as const;
+export const PRIMARY_CTA = { label: PROJECT_LABEL, href: PROJECT_HREF } as const;
 export const SECONDARY_CTA = { label: 'See the work', href: '/our-work' } as const;
 
+interface TitleRun {
+  text: string;
+  accent?: boolean;
+}
+
+/**
+ * The hero keeps the live site's purpose and words: "The engineering backbone
+ * behind agencies that refuse to cut corners." Broken into the four lines it
+ * sets at desktop widths (phones let it wrap freely).
+ */
 export const HERO = {
-  titleLines: ['Your agency sells the vision.', 'We engineer the software behind it.'],
-  lede: 'Websites, AI automation, internal tools and cloud, built by senior engineers and shipped under your brand. Our prices are public.',
-  /** Real work behind the price check (decorative; the case studies carry the detail). */
-  frames: {
-    browser: { src: '/images/cases/lro-desktop.jpg', width: 1800, height: 1125, url: 'lrostaffing.com' },
-    phone: { src: '/images/cases/tours-mobile.jpg', width: 780, height: 1688 },
-  },
+  eyebrow: 'Systems · Automation · Infrastructure',
+  titleLines: [
+    [{ text: 'The ' }, { text: 'engineering', accent: true }],
+    [{ text: 'backbone', accent: true }, { text: ' behind' }],
+    [{ text: 'agencies that refuse' }],
+    [{ text: 'to cut corners.' }],
+  ] as readonly (readonly TitleRun[])[],
+  lede: 'We partner with agencies to build, ship, and scale the systems, automation, and infrastructure their most ambitious projects demand.',
 } as const;
-
-/** The price check in the hero (HeroEstimate). Ranges come from src/lib/estimate.ts. */
-export const HERO_ESTIMATE = {
-  /** Opens on a website at the smallest size. */
-  openingService: 'web' as EstimateService,
-  title: 'What it costs',
-  meta: 'No email needed',
-  serviceLegend: 'What do you need?',
-  sizeLegend: 'How big?',
-  customLabel: 'Custom quote',
-} as const;
-
-/** The price check's opening range, for the X-ray's replica of the hero. */
-export const HERO_OPENING_RANGE = formatLineRange(
-  estimate({
-    services: [HERO_ESTIMATE.openingService],
-    size: { [HERO_ESTIMATE.openingService]: SIZE_OPTIONS[HERO_ESTIMATE.openingService][0].key },
-  }).lines[0],
-);
 
 /** Lowest public "from" price across the four service lines (site.ts `pricing`). */
 function lowestFromPrice(): number {
@@ -78,15 +70,6 @@ export const PROOF = {
   ],
 } as const;
 
-export const PROBLEM = {
-  label: 'Launch week, a familiar story',
-  lines: [
-    'The site launches on time.',
-    'Three weeks later the booking form breaks, and the developer has moved on.',
-    "Your client doesn't call the developer. They call you.",
-  ],
-} as const;
-
 export interface Layer {
   id: string;
   service: EstimateService;
@@ -104,11 +87,6 @@ function from(label: string): string {
   const low = parsePriceLabel(label).low;
   return typeof low === 'number' ? `From ${money(low)}` : label;
 }
-
-export const LAYERS_INTRO = {
-  title: 'One team behind every layer.',
-  lede: 'Most agencies stitch a different freelancer onto each of these. We own all four, so nothing falls in the gaps between them.',
-} as const;
 
 export const LAYERS: readonly Layer[] = [
   {
@@ -171,21 +149,6 @@ export const LAYERS: readonly Layer[] = [
     image: null,
   },
 ];
-
-export const SILENCE = 'Don’t take our word for any of this. Start with the page you’re reading.';
-
-export const XRAY = {
-  title: 'This page, taken apart.',
-  lede: 'What you are reading is a production build. Here is what is underneath it, measured in your browser just now.',
-  planes: [
-    { id: 'surface', name: 'Surface', note: 'What your client sees' },
-    { id: 'components', name: 'Components', note: 'What we build it from' },
-    { id: 'data', name: 'Structured data', note: 'What search engines and AI assistants read' },
-    { id: 'delivery', name: 'Delivery', note: 'How it reached you' },
-    { id: 'speed', name: 'Speed', note: 'How fast, measured on your device' },
-  ],
-  components: ['Header', 'Hero', 'HeroEstimate', 'LightField', 'ProofStrip', 'Problem', 'Layers', 'XRay', 'WorkStack', 'Spotlight', 'Founders', 'Faq', 'Close', 'Footer'],
-} as const;
 
 export interface WorkCard {
   slug: string;
@@ -254,28 +217,6 @@ export const WORK: readonly WorkCard[] = (
 /** The one approved client quote (site.ts `testimonials`, LRO Staffing). */
 export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') ?? null;
 
-/**
- * Proof beside the hero's decision: the approved quote's opening sentence,
- * verbatim and attributed. The Spotlight act quotes the rest (SPOTLIGHT_QUOTE).
- */
-const spotlightSentences = SPOTLIGHT?.quote.match(/[^.!?]+[.!?]+/g)?.map((sentence) => sentence.trim()) ?? [];
-
-export const HERO_PROOF = SPOTLIGHT
-  ? {
-      quote: spotlightSentences[0] ?? SPOTLIGHT.quote,
-      name: SPOTLIGHT.name,
-      role: `${SPOTLIGHT.role}, ${SPOTLIGHT.company}`,
-      image: SPOTLIGHT.image,
-    }
-  : null;
-
-/**
- * What the Spotlight act quotes: the rest of the same approved quote, so the
- * page never shows one sentence twice (the whole quote if it is one sentence).
- */
-export const SPOTLIGHT_QUOTE =
-  spotlightSentences.length > 1 ? spotlightSentences.slice(1).join(' ') : (SPOTLIGHT?.quote ?? '');
-
 export const FOUNDERS = {
   title: 'Two founders, three cities, your hours.',
   lede: 'Toronto is home base. Kingston works within an hour of Eastern time all year, and Lagos’s afternoon overlaps the Eastern morning, so your working day is covered by people who know your project.',
@@ -285,14 +226,71 @@ export const FOUNDERS = {
   ],
 } as const;
 
-export const CLOSE = {
-  title: 'What are we building?',
-  lede: 'Pick one. The estimator opens with it selected, and the price is on screen before we ask for anything.',
-  choices: (['web', 'automation', 'tools', 'cloud'] as const).map((service) => ({
-    service,
-    label: { web: 'Web Development', automation: 'Automation & AI', tools: 'Custom Internal Tools', cloud: 'Cloud Engineering' }[service],
-    href: estimateHref({ services: [service] }),
-  })),
+export const MOBILE_BAR_CONTEXT = `Public prices, from ${money(LOWEST_PRICE)}`;
+
+/* ------------------------------------------------------------------ */
+/* Award pass (Nov 2026): the live site's sections, restaged.           */
+/* Copy is the live homepage's own unless noted.                       */
+/* ------------------------------------------------------------------ */
+
+/** Scroll-lit statement: the launch-week story, then the answer. */
+export const STATEMENT = {
+  label: 'Why agencies call us',
+  runs: [
+    { text: 'The site launches on time. Three weeks later the booking form breaks, and the developer has moved on. ' },
+    { text: 'Your client doesn’t call the developer. They call you.', accent: true },
+  ],
+  // FAQ answers: documented code and a clean handoff; post-launch support on every plan.
+  resolve: 'So we build it to last, document it so your team can own it, and stay after launch.',
 } as const;
 
-export const MOBILE_BAR_CONTEXT = `Public prices, from ${money(LOWEST_PRICE)}`;
+export const SERVICES_INTRO = {
+  label: 'What we do',
+  title: 'The technical work agencies can’t afford to get wrong.',
+  lede: 'Systems, automation, and infrastructure, built by engineers who understand agency life.',
+} as const;
+
+/** The four service rows: names, summaries and links from LAYERS; previews are real work. */
+export const SERVICE_PREVIEWS: Record<string, { src: string; width: number; height: number } | null> = {
+  web: { src: '/images/cases/lro-desktop.jpg', width: 1800, height: 1125 },
+  automation: { src: '/images/cases/tours-desktop.jpg', width: 1800, height: 1125 },
+  tools: { src: '/images/cases/salary-desktop.jpg', width: 1800, height: 1125 },
+  cloud: null,
+};
+
+export const WORK_SECTION = {
+  label: 'Selected work',
+  title: 'Selected projects and technical deliveries.',
+  lede: WORK_INTRO.lede,
+  all: { label: 'All client work', href: '/our-work' },
+} as const;
+
+/** The scroll reel: real captures of shipped, listed projects (public/images/cases). */
+export const REEL = [
+  ['lro-desktop', 'chha-mobile', 'salary-desktop'],
+  ['tours-mobile', 'focas-desktop', 'lro-mobile'],
+  ['chha-desktop', 'salary-mobile', 'tours-desktop'],
+  ['focas-mobile', 'unsvcc-desktop', 'chha-mobile'],
+] as const;
+
+export const APPROACH = {
+  label: 'How we work',
+  title: 'We embed into your team.',
+  lede: 'Most vendors hand off a deliverable and disappear. We join your Slack, attend your standups, and ship code like we sit in your office.',
+  steps: [
+    { title: 'Discover & Scope', text: 'We learn your agency, your clients, and your pain points.' },
+    { title: 'Architect & Plan', text: 'We design systems around your workflow, not ours.' },
+    { title: 'Build & Iterate', text: 'Transparent development with weekly check-ins.' },
+    { title: 'Deploy & Support', text: 'Smooth launches with ongoing maintenance built in.' },
+  ],
+} as const;
+
+export const PROOF_SECTION = {
+  label: 'Why agencies choose us',
+  title: 'The numbers speak. The work speaks louder.',
+} as const;
+
+export const CLOSE_BAND = {
+  title: 'Have a build your clients are waiting on?',
+  lede: 'Tell us what you are building. You get a fixed quote after a 20-minute scoping call.',
+} as const;

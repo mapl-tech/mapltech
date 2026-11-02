@@ -64,13 +64,11 @@ export default async function CaseStudyPage({ params }: { params: Promise<Params
   const story = findStory(slug);
   if (!entry || !project || !story) notFound();
 
-  // Three other listed projects, in display order, starting after this one.
+  // The next listed project, in display order, wrapping at the end.
   const entries = workEntries();
   const at = entries.findIndex((e) => e.slug === slug);
-  const related = [1, 2, 3]
-    .map((offset) => entries[(at + offset) % entries.length])
-    .filter((e) => e && e.slug !== slug)
-    .map((other) => ({ entry: other, story: findStory(other.slug) }));
+  const following = entries[(at + 1) % entries.length];
+  const next = following && following.slug !== slug ? { entry: following, story: findStory(following.slug) } : undefined;
 
   const graph = pageGraph({
     path: entry.path,
@@ -89,7 +87,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<Params
   return (
     <>
       <JsonLd data={graph} />
-      <CaseStudy entry={entry} story={story} related={related} />
+      <CaseStudy entry={entry} story={story} next={next} />
     </>
   );
 }

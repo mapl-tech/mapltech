@@ -1,0 +1,176 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+.approach {
+  --p: 0;
+  --shift: 0px;
+  position: relative;
+  background: $color-paper;
+  color: $color-ink;
+  border-radius: clamp(24px, 3vw, 40px);
+
+  // Pinned (desktop, motion): tall enough to scroll the track through.
+  &[data-pinned] {
+    height: 300vh;
+  }
+}
+
+.sticky {
+  .approach[data-pinned] & {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.inner {
+  @include shell;
+  @include section-pad;
+  display: grid;
+  gap: clamp(40px, 6vw, 72px);
+
+  .approach[data-pinned] & {
+    // minmax(0, 1fr): the overflowing track must not widen the grid past the viewport.
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: calc(var(--header-height, 72px) + 16px);
+    padding-bottom: 32px;
+    gap: clamp(28px, 4vh, 48px);
+  }
+}
+
+.head {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 4fr);
+    column-gap: 48px;
+    align-items: end;
+  }
+}
+
+.label {
+  @include section-label($color-ink-muted);
+  align-self: start;
+
+  &::before {
+    @include section-label-rule($color-red-ink);
+  }
+
+  @include lg {
+    padding-top: 0.9em;
+  }
+}
+
+.title {
+  @include section-title;
+  color: $color-ink;
+}
+
+.lede {
+  @include lede;
+  margin: 0;
+  color: $color-ink-muted;
+}
+
+.track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+
+  .approach[data-pinned] & {
+    display: flex;
+    gap: 24px;
+    overflow: visible;
+    transform: translate3d(calc(var(--p) * var(--shift) * -1), 0, 0);
+    will-change: transform;
+  }
+}
+
+.step {
+  position: relative;
+  display: grid;
+  align-content: end;
+  gap: 14px;
+  min-height: 240px;
+  padding: clamp(24px, 3vw, 40px);
+  border-radius: 24px;
+  background: $color-paper-2;
+  border: 1px solid $color-ink-hairline;
+
+  .approach[data-pinned] & {
+    flex: 0 0 clamp(300px, 29vw, 420px);
+    min-height: min(46vh, 440px);
+  }
+
+  &:last-child {
+    background: $color-ink;
+    color: $color-paper;
+    border-color: $color-ink;
+
+    .stepText {
+      color: rgba(241, 237, 231, 0.74);
+    }
+  }
+}
+
+// Outline numerals, decorative (aria-hidden).
+.number {
+  position: absolute;
+  top: clamp(16px, 2vw, 28px);
+  left: clamp(20px, 2.6vw, 36px);
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(4.5rem, 3rem + 5vw, 9rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px $color-red-ink;
+
+  .step:last-child & {
+    -webkit-text-stroke-color: $color-red;
+  }
+}
+
+.stepTitle {
+  margin: 0;
+  @include display-m;
+  font-size: clamp(1.625rem, 1.2rem + 1.2vw, 2.25rem);
+  color: inherit;
+}
+
+.stepText {
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-ink-muted;
+  max-width: 24em;
+}
+
+.progress {
+  display: none;
+
+  .approach[data-pinned] & {
+    display: block;
+    height: 2px;
+    background: $color-ink-hairline;
+    border-radius: 2px;
+    overflow: hidden;
+
+    span {
+      display: block;
+      height: 100%;
+      background: $color-red-ink;
+      transform-origin: left;
+      transform: scaleX(var(--p));
+    }
+  }
+}

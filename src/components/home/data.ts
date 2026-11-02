@@ -28,21 +28,14 @@ const highOf = (label: string): string => {
   return value === null ? label : formatMoney(value);
 };
 
-/** The lowest published "from" price across the four service lines. */
-const lowestFrom = formatMoney(
-  Math.min(
-    ...[web[0], automation[0], tools[0], cloud[0]]
-      .map((tier) => parsePriceLabel(tier.price).low)
-      .filter((n): n is number => typeof n === 'number'),
-  ),
-);
 
 /* ------------------------------------------------------------------ */
 /* Page identity                                                        */
 /* ------------------------------------------------------------------ */
 
-export const HOME_PAGE_NAME = `${siteConfig.name} | White-Label Web, Automation & Cloud for Agencies`;
-export const HOME_PAGE_DESCRIPTION = `Senior engineers for agencies: websites, AI automation, internal tools and cloud, shipped under your brand. Public prices from ${lowestFrom}. Toronto, Lagos and Kingston.`;
+// The live site's title and purpose, kept: systems, automation and infrastructure for agencies.
+export const HOME_PAGE_NAME = `${siteConfig.name} | Systems, Automation & Infrastructure for Agencies`;
+export const HOME_PAGE_DESCRIPTION = `The engineering backbone behind digital agencies: websites, AI automation, internal tools and cloud, built by senior engineers in Toronto, Lagos and Kingston.`;
 
 /* ------------------------------------------------------------------ */
 /* FAQ (also the FAQPage JSON-LD source)                               */
