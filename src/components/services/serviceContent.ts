@@ -1,23 +1,24 @@
 /**
- * Services family (flagship redesign, Nov 2026): the copy and the derived
- * facts behind /services and the four /services/* pages.
+ * Services family (award pass, Nov 2026): the copy and the derived facts
+ * behind /services and the four /services/* pages.
  *
  * Sources, and the only ones:
  *  - prices, tiers, retainers, hourly rates and bundles: `pricing` in
  *    src/config/site.ts, read through src/config/services.ts and
  *    src/lib/estimate.ts, so a price change there changes every page here;
- *  - capabilities, process stages, FAQs and the web timeline: services.ts;
- *  - one-line layer summaries and deliverables: the homepage copy in
- *    src/components/flagship/content.ts (LAYERS, HERO);
+ *  - capabilities, process stages, FAQs, the live site's hero promises, its
+ *    section titles and its closing asks: services.ts;
+ *  - one-line summaries and deliverables: the homepage copy in
+ *    src/components/flagship/content.ts (LAYERS, SERVICES_INTRO, WORK_INTRO);
  *  - case facts: src/components/case/stories.ts (listed projects only).
  * Every sentence written here is cited inline. Nothing is estimated.
  *
  * Punctuation is normalised at render time by `cleanCopy` (a spaced hyphen
- * used as a dash becomes a colon or a comma, numeric ranges get an en dash),
- * because the config keeps ASCII ranges the price parser reads. Wording is
- * fixed at the source; the spec fails if banned or retired words come back.
- * FAQ JSON-LD is built from the same cleaned strings the page renders, so
- * markup and structured data cannot disagree.
+ * used as a dash becomes a colon or a comma, numeric ranges get an en dash,
+ * apostrophes curl), because the config keeps ASCII ranges the price parser
+ * reads. Wording is fixed at the source; the spec fails if banned or retired
+ * words come back. FAQ JSON-LD is built from the same cleaned strings the
+ * page renders, so markup and structured data cannot disagree.
  */
 import type { Metadata } from 'next';
 import { absoluteUrl } from '@/config/routes';
@@ -43,7 +44,6 @@ import {
   type SizeKey,
 } from '@/lib/estimate';
 import { findStory } from '@/components/case/stories';
-import { PROOF } from '@/components/flagship/content';
 
 /** The date this family was rebuilt (JSON-LD dateModified); the sitemap uses routes.ts REDESIGN_DATE. */
 export const SERVICES_REVISED = '2026-11-01';
@@ -58,16 +58,16 @@ const COMMA_AFTER = /^(so|and|all|baked|for|not)\b/;
 /**
  * Config strings → visible copy: "3-4 weeks" → "3–4 weeks", "$3,500-$5,000" →
  * "$3,500–$5,000", "from scratch - custom themes" → "from scratch: custom
- * themes", "automatically - so your team" → "automatically, so your team".
+ * themes", "automatically - so your team" → "automatically, so your team",
+ * "what's" → "what’s".
  */
 export function cleanCopy(text: string): string {
-  return (
-    text
-      .replace(/(\d)\s*-\s*(\$?\d)/g, '$1–$2')
-      .replace(/\s+-\s+(\S)/g, (_match, next: string, offset: number, whole: string) =>
-        COMMA_AFTER.test(whole.slice(offset).replace(/^\s+-\s+/, '')) ? `, ${next}` : `: ${next}`,
-      )
-  );
+  return text
+    .replace(/(\d)\s*-\s*(\$?\d)/g, '$1–$2')
+    .replace(/\s+-\s+(\S)/g, (_match, next: string, offset: number, whole: string) =>
+      COMMA_AFTER.test(whole.slice(offset).replace(/^\s+-\s+/, '')) ? `, ${next}` : `: ${next}`,
+    )
+    .replace(/(\w)'/g, '$1’');
 }
 
 const ACRONYM = /^[A-Z0-9/&+.]{2,}[,.]?$/;
@@ -89,6 +89,12 @@ export function sentenceCase(title: string): string {
     .join(' ');
 }
 
+/** A config heading as a display statement: sentence case, clean punctuation, closing full stop. */
+function statement(heading: string): string {
+  const text = cleanCopy(sentenceCase(heading));
+  return /[.?!]$/.test(text) ? text : `${text}.`;
+}
+
 /** "$750/month" → "$750 a month", "$65-$120/hour" → "$65–$120 an hour". */
 export function humanPrice(label: string): string {
   return cleanCopy(label)
@@ -99,6 +105,9 @@ export function humanPrice(label: string): string {
 function lowOf(label: string): number | null {
   return parsePriceLabel(label).low;
 }
+
+/** The scoping line every price on the site closes with (services.ts cost answers). */
+export const QUOTE_LINE = 'You get a fixed quote after a 20-minute scoping call.';
 
 /* ------------------------------------------------------------------ */
 /* Per-service copy                                                     */
@@ -111,32 +120,29 @@ export interface Exhibit {
 }
 
 interface ServiceCopy {
-  /** H1 and layer label: the service's canonical name (SERVICE_META label, the same on every page of the site). */
+  /** H1: the service's canonical name (SERVICE_META label, the same on every page of the site). */
   name: string;
-  /** What this layer does in the build, in four words (the layer stack's window title). */
+  /** What the line is in one phrase: the hero label and the index kicker. */
   role: string;
   /** Outcome-first hero lede, under 30 words. */
   lede: string;
-  /** One sentence for the index band and the ItemList description. */
+  /** One sentence for the index row and the ItemList description. */
   summary: string;
   /** The entry tier's headline inclusions, composed from its feature list. */
   entryIncludes: string;
   /** Who the line is for: the entry tier's own description (site.ts), phrased as an audience. */
   who: string;
-  /** Intro under "What you get". */
+  /** Lede under "What we build". */
   deliverIntro: string;
   /** Label for services.ts `stack` (automation's stack lists deliverables, not technologies). */
   stackLabel: string;
-  /** Intro under "How we build it". */
-  stagesIntro: string;
-  /** Case studies that prove this line, in order (stories.ts slugs). */
+  /** Case studies that prove this line, lead case first (stories.ts slugs). */
   proofSlugs: readonly string[];
   /** Cloud shows only MAPL Tours' published infrastructure facts. */
   proofFilter?: { headline: string; results: RegExp; stages: readonly string[] };
   /** Show Alita Fabiano's quote (LRO Staffing is the client behind this line's lead case). */
   quote: boolean;
-  closeHeading: string;
-  /** Index band exhibit; null draws the pipeline diagram instead (cloud has no screen). */
+  /** Real work for the index preview; null draws the pipeline diagram instead (cloud has no screen). */
   exhibit: Exhibit | null;
   meta: { title: string; description: string };
   og: { src: string; width: number; height: number; alt: string };
@@ -159,17 +165,13 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     summary: 'Custom-coded and headless sites that load fast, rank, and pass an accessibility audit on launch day.',
     // Starter features: "Custom-coded responsive website (up to 7 pages)", "Mobile-first, pixel-perfect build"
     entryIncludes: 'Up to 7 custom-coded pages, built mobile-first',
-    // Starter: "For agencies that need a sharp, fast site without the bloat of page builders"
-    who: 'Agencies that need a sharp, fast site without the bloat of page builders.',
+    // Starter: "For agencies that need a sharp, fast site with no template bloat"
+    who: 'Agencies that need a sharp, fast site with no template bloat.',
     // services.ts oneLiner
     deliverIntro: 'Custom-coded sites engineered for speed, accessibility and long-term maintainability.',
     stackLabel: 'Built with',
-    // services.ts process title "From Brief to Browser" + Phase 03 "Iterative sprints with weekly demos you can click through."
-    // The timelines themselves are drawn under this line (services.ts `typicalTimeline`).
-    stagesIntro: 'Four stages from brief to browser, with weekly demos you can click through.',
     proofSlugs: ['lro-staffing', 'chha-ncr', 'focas-canada'],
     quote: true,
-    closeHeading: 'Your website, next.',
     exhibit: {
       src: '/images/cases/lro-desktop.jpg',
       alt: 'The LRO Staffing homepage built by MAPL TECH: “Building Careers. Strengthening Organizations.” above a job search panel.',
@@ -200,11 +202,8 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     // services.ts sections.capabilities.subtitle
     deliverIntro: 'Not just Zapier connections: real engineering that connects the entire operational stack.',
     stackLabel: 'Covers',
-    // services.ts Phase 02: "You approve the system design before we build anything."
-    stagesIntro: 'Four stages from manual work to automated. You approve the system design before anything is built.',
     proofSlugs: ['mapl-tours', 'crowned-spice'],
     quote: false,
-    closeHeading: 'Your automation, next.',
     exhibit: {
       src: '/images/cases/tours-desktop.jpg',
       alt: 'The MAPL Tours homepage, “Discover Jamaica beyond the resort.”, over aerial footage of the coast.',
@@ -236,12 +235,8 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     // services.ts sections.capabilities.subtitle
     deliverIntro: 'Off-the-shelf software forces you to adapt. We build tools that adapt to you.',
     stackLabel: 'Built with',
-    // services.ts process title + Phase 02 "Your team tests the tool's flow and layout before a single line of production code."
-    stagesIntro:
-      'Built with your team, not just for them: they click through a prototype built on real data before any production code.',
     proofSlugs: ['lro-salary-guide', 'unsvcc'],
     quote: true,
-    closeHeading: 'Your tool, next.',
     exhibit: {
       src: '/images/cases/salary-desktop.jpg',
       alt: 'The LRO 2026 Interactive Salary Guide built by MAPL TECH, with its filters and charts.',
@@ -272,18 +267,17 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     // services.ts sections.capabilities.subtitle
     deliverIntro: 'Production-grade infrastructure engineering, not just spinning up servers and hoping for the best.',
     stackLabel: 'Built with',
-    // services.ts process title "From Audit to Always-On" + Phase 02 "You approve the plan before we provision a single resource."
-    stagesIntro: 'From audit to always-on. You approve the architecture before a single resource is provisioned.',
     proofSlugs: ['mapl-tours'],
-    // Only what stories.ts publishes about MAPL Tours' delivery and production: tests, CI/CD, payment guardrails.
+    // Only what stories.ts publishes about MAPL Tours' delivery and production: the tests in its CI/CD
+    // pipeline and live payments (as results), its review step and payment guardrails (as stages; the
+    // "Tests" stage would repeat the tests result).
     proofFilter: {
       // stories.ts facts: Owner MAPL TECH; Status "Live, taking real payments".
       headline: 'Our own travel company, live and taking real payments.',
       results: /tests|payments/i,
-      stages: ['Tests', 'Money'],
+      stages: ['Review', 'Money'],
     },
     quote: false,
-    closeHeading: 'Your infrastructure, next.',
     exhibit: null,
     meta: {
       title: 'Cloud Engineering for Agencies',
@@ -295,7 +289,7 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
 };
 
 /* ------------------------------------------------------------------ */
-/* Layer views                                                          */
+/* Service views                                                        */
 /* ------------------------------------------------------------------ */
 
 export interface LayerView extends ServiceCopy {
@@ -303,6 +297,16 @@ export interface LayerView extends ServiceCopy {
   service: EstimateService;
   path: string;
   record: ServiceRecord;
+  /** 1-based position in services.ts order (web, automation, tools, cloud): the index numeral. */
+  index: number;
+  /** "01" */
+  numeral: string;
+  /** The live site's hero headline for this line, as a statement ("Web development that actually performs."). */
+  promise: string;
+  /** The live site's process heading ("From brief to browser, step by step."). */
+  processTitle: string;
+  /** The live site's closing ask for this line (services.ts ctaBand), plus the quote line. */
+  close: { title: string; lede: string };
   tiers: readonly ServiceTier[];
   recurring: readonly ServiceRecurringLine[];
   /** Lowest one-time price across the line's tiers. */
@@ -337,12 +341,18 @@ function toView(record: ServiceRecord): LayerView {
   const tiers = serviceTiers(record);
   const recurring = serviceRecurringLines(record);
   const from = lowestFrom(tiers);
+  const index = services.findIndex((s) => s.slug === record.slug) + 1;
   return {
     ...copy,
     slug: record.slug,
     service: record.estimateKey,
     path: record.path,
     record,
+    index,
+    numeral: String(index).padStart(2, '0'),
+    promise: statement(record.heroTitle),
+    processTitle: statement(record.sections.process.title),
+    close: { title: cleanCopy(sentenceCase(record.ctaBand.heading)), lede: `${cleanCopy(record.ctaBand.body)} ${QUOTE_LINE}` },
     tiers,
     recurring,
     from,
@@ -354,7 +364,7 @@ function toView(record: ServiceRecord): LayerView {
   };
 }
 
-/** The four layers, from what customers see to what it all runs on (services.ts order: web, automation, tools, cloud). */
+/** The four lines in services.ts order: web, automation, tools, cloud. */
 export const LAYER_VIEWS: readonly LayerView[] = services.map(toView);
 
 export function layerView(slug: ServiceSlug): LayerView {
@@ -364,10 +374,15 @@ export function layerView(slug: ServiceSlug): LayerView {
 /** Lowest one-time price on the whole price list ($3,500 today). */
 export const LOWEST_FROM = Math.min(...LAYER_VIEWS.map((view) => view.from));
 
-/** Lowest monthly line across all four layers ($500 today, web Essential Care). */
+/** Lowest monthly line across all four lines ($500 today, web Essential Care). */
 export const LOWEST_MONTHLY = Math.min(
   ...LAYER_VIEWS.map((view) => view.lowestMonthly?.amount ?? Number.POSITIVE_INFINITY),
 );
+
+/** Post-launch support stated for web builds ("30–90 days"), without its "depending on tier" tail. */
+export function supportWindow(view: LayerView): string | null {
+  return view.record.postLaunchSupport ? cleanCopy(view.record.postLaunchSupport.replace(/ depending on tier/, '')) : null;
+}
 
 /* ------------------------------------------------------------------ */
 /* Tiers                                                                */
@@ -388,7 +403,7 @@ export interface TierView {
   features: readonly string[];
   /** Typical timeline, web only (services.ts `typicalTimeline`). */
   timeline: { label: string; min: number; max: number } | null;
-  /** Estimator deep link with this tier preselected, or the call page for Custom. */
+  /** Estimator deep link with this tier preselected, or the project brief for Custom. */
   href: string;
 }
 
@@ -459,7 +474,7 @@ export function tierViews(view: LayerView): TierView[] {
 
 /**
  * One GEO-quotable sentence naming every tier and its price, straight from the table:
- * "Web development at MAPL TECH: from $5,000 for Starter, from $8,500 for … Enterprise is priced per project."
+ * "Web Development at MAPL TECH: from $5,000 for Starter, from $8,500 for … Enterprise is priced per project."
  */
 export function tierSentence(view: LayerView): string {
   const tiers = tierViews(view);
@@ -473,7 +488,7 @@ export function tierSentence(view: LayerView): string {
 }
 
 /* ------------------------------------------------------------------ */
-/* What you get, how we build it, FAQ                                   */
+/* What we build, how we build it, FAQ                                  */
 /* ------------------------------------------------------------------ */
 
 export function capabilityViews(view: LayerView) {
@@ -559,22 +574,18 @@ export interface ProofCase {
   kind: string;
   headline: string;
   href: string;
-  media: { src: string; alt: string; caption?: string } | null;
+  /** Real captures of the live product (public/images/cases): desktop 1800x1125, phone 780x1688. */
+  media: { desktop: string; mobile?: string; alt: string; caption?: string } | null;
+  /** The live address, for the browser frame's address bar ("lrostaffing.com"). */
+  url?: string;
   results: readonly { value: string; label: string }[];
   stages: readonly { name: string; text: string }[];
   stack?: string;
   /** The line narrowed this case to specific facts (cloud: delivery and production only). */
   focused: boolean;
-  /** The client's own logo, for a case with no screenshot to show. */
-  logo?: { src: string; alt: string };
 }
 
 const listed = new Set(listedProjects().map((project) => project.slug));
-
-/** Client logos already published on the homepage proof strip (flagship content.ts PROOF). */
-const CASE_LOGOS: Record<string, { src: string; alt: string }> = {
-  'crowned-spice': { src: '/images/clients/crowned-spice.png', alt: 'Crowned Spice logo' },
-};
 
 /**
  * One-line label: the sector (stories.ts `tags[1]`). The type tag ("Website",
@@ -601,112 +612,36 @@ export function proofCases(view: LayerView): ProofCase[] {
       kind: caseKind(story.tags),
       headline: filter?.headline ?? story.headline,
       href: `/our-work/${slug}`,
-      media: story.media ? { src: story.media.desktop, alt: story.media.alt, caption: story.media.caption } : null,
+      media: story.media
+        ? { desktop: story.media.desktop, mobile: story.media.mobile, alt: story.media.alt, caption: story.media.caption }
+        : null,
+      url: story.facts.find((fact) => fact.href)?.detail,
       results,
       stages,
       stack: story.facts.find((fact) => fact.term === 'Stack')?.detail,
       focused: Boolean(filter),
-      logo: story.media ? undefined : CASE_LOGOS[slug],
     });
   }
   return out;
 }
 
-/**
- * Client logos for the index hero: the homepage proof strip's published set
- * (flagship content.ts PROOF), limited to projects listed on /our-work.
- */
-const listedTitles = new Set(listedProjects().map((project) => project.title));
-export const CLIENT_LOGOS = PROOF.logos.filter((logo) => listedTitles.has(logo.name));
+const alita = testimonials.find((t) => t.name === 'Alita Fabiano');
 
-/** The one approved client quote (site.ts testimonials). */
-export const CLIENT_QUOTE = testimonials.find((t) => t.name === 'Alita Fabiano') ?? null;
+/** The one approved client quote (site.ts testimonials), word for word; only the apostrophes curl. */
+export const CLIENT_QUOTE = alita ? { ...alita, quote: cleanCopy(alita.quote) } : null;
 
 /* ------------------------------------------------------------------ */
-/* Index: the job picker and the engagement terms                       */
+/* Index: how we work, and the partnerships                             */
 /* ------------------------------------------------------------------ */
-
-export interface JobView {
-  id: string;
-  service: EstimateService;
-  label: string;
-  serviceName: string;
-  servicePath: string;
-  tierName: string;
-  /** "$8,500" or "$3,500–$5,000" */
-  price: string;
-  low: number;
-  high: number | null;
-  openEnded: boolean;
-  priceNote: string;
-  timeline: string | null;
-  includes: readonly string[];
-  href: string;
-}
-
-/**
- * Jobs an agency is asked for, each mapped to the tier whose published
- * features describe it (site.ts `pricing`, sizes from estimate.ts):
- * Starter "up to 7 pages"; Growth "CMS integration", "E-commerce or booking";
- * Foundation "CRM setup", "Lead routing"; Advanced Automation "AI-powered
- * intake forms", "Virtual assistant setup"; Internal Dashboards "Real-time
- * reporting"; Client Portals "projects, docs, and payments"; Starter Cloud
- * "move off shared hosting"; Production "Staging, production, and preview
- * environments", "Infrastructure as Code".
- */
-const JOBS: readonly { service: EstimateService; size: SizeKey; label: string }[] = [
-  { service: 'web', size: 'starter', label: 'A fast marketing site, up to 7 pages' },
-  { service: 'web', size: 'growth', label: 'A site with a CMS, booking or a shop' },
-  { service: 'automation', size: 'foundation', label: 'CRM setup and follow-ups that run themselves' },
-  { service: 'automation', size: 'advanced', label: 'AI intake forms or an assistant, wired into every tool' },
-  { service: 'tools', size: 'dashboard', label: 'A dashboard with the team’s live numbers' },
-  { service: 'tools', size: 'portal', label: 'A client portal for projects, documents and payments' },
-  { service: 'cloud', size: 'starter', label: 'A move off shared hosting' },
-  { service: 'cloud', size: 'production', label: 'Staging, production and preview environments, as code' },
-];
-
-export function jobViews(): JobView[] {
-  return JOBS.flatMap((job) => {
-    const view = LAYER_VIEWS.find((layer) => layer.service === job.service);
-    const option = SIZE_OPTIONS[job.service].find((o) => o.key === job.size);
-    if (!view || !option) return [];
-    const tier = view.tiers[option.tierIndex];
-    const parsed = parsePriceLabel(tier.price);
-    if (parsed.low === null) return [];
-    const timeline = tierTimelines(view.record).get(tier.name);
-    return [
-      {
-        id: `${job.service}-${job.size}`,
-        service: job.service,
-        label: job.label,
-        serviceName: view.name,
-        servicePath: view.path,
-        tierName: tier.name,
-        price: cleanCopy(tier.price),
-        low: parsed.low,
-        high: parsed.high,
-        openEnded: parsed.openEnded,
-        priceNote: job.service === 'web' ? 'Starting price' : 'Published range',
-        timeline: timeline ? `${timeline.min}–${timeline.max} weeks` : null,
-        includes: tier.features
-          .filter((feature) => !/^everything in /i.test(feature))
-          .slice(0, 3)
-          .map(cleanCopy),
-        href: estimateHref({ services: [job.service], size: { [job.service]: job.size } as EstimateSize }),
-      },
-    ];
-  });
-}
 
 const web = LAYER_VIEWS.find((view) => view.service === 'web');
-const [automationPartner, fullPartner] = pricing.bundles;
 
 /**
  * How an engagement runs. Every term is stated in services.ts or site.ts:
  * the fixed quote (services.ts cost answers), the written plan before the
  * build (every line's Phase 01-02 copy), milestone payments (the shared
- * payment-plans FAQ), post-launch support (web `postLaunchSupport`, every
- * line's retainers, `hourlyRates`) and the two partner bundles.
+ * payment-plans FAQ) and post-launch support (web `postLaunchSupport`, every
+ * line's retainers, `hourlyRates`).
  */
 export const ENGAGEMENT = [
   {
@@ -723,15 +658,32 @@ export const ENGAGEMENT = [
   },
   {
     title: 'Support after launch.',
-    text: `Web builds include ${cleanCopy(web?.record.postLaunchSupport?.replace(/ depending on tier/, '') ?? '30–90 days')} of post-launch support. After that, every layer has a monthly plan from ${formatMoney(LOWEST_MONTHLY)} a month, and hourly work runs ${humanPrice(pricing.hourlyRates.standard)}.`,
-  },
-  {
-    title: 'Two or more layers, one partnership.',
-    // site.ts bundles: Agency Automation Partner ("Automation & AI workflows", "Internal tooling support");
-    // Full Systems Partner (all four, "Dedicated team liaison").
-    text: `${SERVICE_META.automation.label} with ${SERVICE_META.tools.label} support runs ${humanPrice(automationPartner.price)}. All four layers, with a dedicated team liaison, run ${humanPrice(fullPartner.price)}.`,
+    text: `Web builds include ${(web && supportWindow(web)) ?? '30–90 days'} of post-launch support. After that, every service line has a monthly plan from ${formatMoney(LOWEST_MONTHLY)} a month, and hourly work runs ${humanPrice(pricing.hourlyRates.standard)}.`,
   },
 ] as const;
+
+export interface PartnershipView {
+  name: string;
+  /** "$4,000–$7,500 a month" */
+  price: string;
+  description: string;
+  features: readonly string[];
+}
+
+/** The two monthly partnerships (site.ts `pricing.bundles`), as published. */
+export const PARTNERSHIPS: readonly PartnershipView[] = pricing.bundles.map((bundle) => ({
+  name: bundle.name,
+  price: humanPrice(bundle.price),
+  description: `${cleanCopy(bundle.description)}.`,
+  features: bundle.features.map(cleanCopy),
+}));
+
+/** The single-line floor under the partnerships: the cheapest monthly plan and the hourly rates. */
+export const RATES = {
+  monthlyFrom: `${formatMoney(LOWEST_MONTHLY)} a month`,
+  hourly: humanPrice(pricing.hourlyRates.standard),
+  emergency: humanPrice(pricing.hourlyRates.emergency),
+} as const;
 
 /* ------------------------------------------------------------------ */
 /* Metadata                                                             */

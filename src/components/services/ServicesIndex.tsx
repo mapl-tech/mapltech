@@ -1,309 +1,156 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import Cta from '@/components/home/Cta';
-import { ESTIMATE_HREF } from '@/components/layout/chrome';
-import LayerStack from './LayerStack';
-import JobPicker from './JobPicker';
-import PipelineDiagram from './PipelineDiagram';
+import CloseBand from '@/components/flagship/CloseBand';
+import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
+import PageHeader from '@/components/ui/PageHeader';
+import HeroActions from './HeroActions';
+import IndexRows from './IndexRows';
 import { keepTogether } from './keepTogether';
-import {
-  CLIENT_LOGOS,
-  CLIENT_QUOTE,
-  ENGAGEMENT,
-  LAYER_VIEWS,
-  PRICE_SUMMARY,
-  cleanCopy,
-  jobViews,
-  tierTimelines,
-  type LayerView,
-} from './serviceContent';
-import shared from './ServicePage.module.scss';
+import { CLIENT_QUOTE, ENGAGEMENT, PARTNERSHIPS, RATES } from './serviceContent';
 import styles from './ServicesIndex.module.scss';
 
 /**
- * /services, flagship redesign: the four service lines as the four layers of
- * one build, from what customers see to what it all runs on.
+ * /services (award pass, Nov 2026). The homepage's shell and voice, as a hub:
  *
- *   hero (answer first: every line and its public "from" price, the layer
- *   stack as an index) → the four layers on one red request path (what it
- *   is, who it is for, from price, what the entry tier includes, the work)
- *   → start from the job (the one interaction) → how we work with agencies
- *   → your build, next.
+ *   the statement (PageHeader) → the four service lines as a big numbered
+ *   index (each row one link, real work trailing the cursor on desktop) →
+ *   how we work with agencies, on paper, with the client in her own words →
+ *   the two monthly partnerships and the single-line rates → the crimson close.
  *
- * Server Component; the job picker is the only client island.
+ * Server Component; the index preview is the only client island. Copy is
+ * sourced in serviceContent.ts (the H1 is the live web page's capabilities
+ * heading, "Every Layer of the Stack, Done Right"; the lede opens with the
+ * homepage's services lede).
  */
 export default function ServicesIndex() {
   return (
-    <div className={shared.page}>
-      <Hero />
-      <Layers />
-      <Engagement />
-      <Jobs />
-      <Close />
-    </div>
-  );
-}
-
-function Hero() {
-  const lede = `${PRICE_SUMMARY}. One senior team engineers every layer, shipped under your brand.`;
-  return (
-    <section className={styles.hero} aria-labelledby="services-title">
-      <div className={styles.heroInner}>
-        <div>
-          <p className={styles.eyebrow}>Services for agencies</p>
-          <h1 id="services-title" className={styles.title}>
-            Four layers. <span className={styles.titleLine}>One team.</span>
-          </h1>
-          <p className={styles.lede}>{lede}</p>
-          <div className={shared.actions}>
-            <Cta placement="services_hero_primary" hero href={ESTIMATE_HREF} size="large">
-              Price your project
-            </Cta>
-            <Link href="/contact-us" className={shared.secondary} data-cta-placement="services_hero_secondary">
-              Book a call
-              <span aria-hidden="true" className={shared.arrow}>
-                →
-              </span>
-            </Link>
-          </div>
-          <p className={shared.trust}>
-            Every price on this page is public. Quotes are fixed after a{' '}
-            <span className={shared.nowrap}>20-minute</span> call.
+    <>
+      <PageHeader
+        id="services-title"
+        label="Services for agencies"
+        title={
+          <>
+            Every layer of the stack, <em>done right.</em>
+          </>
+        }
+        lede={
+          <p>
+            Systems, automation, and infrastructure, built by engineers who understand agency life. Every price is
+            public, and every quote is fixed after a <span className={styles.nowrap}>20-minute</span> call.
           </p>
-          {CLIENT_LOGOS.length ? (
-            <div className={styles.clients}>
-              <p className={styles.clientsLabel}>Shipped for</p>
-              <ul className={styles.logos} role="list">
-                {CLIENT_LOGOS.map((logo) => (
-                  <li key={logo.name}>
-                    <Image
-                      src={logo.src}
-                      alt={logo.name}
-                      width={logo.width}
-                      height={logo.height}
-                      className={logo.invert ? styles.logoInvert : styles.logoMono}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </div>
-        <LayerStack linkTo="anchor" label="The four layers of a build" className={styles.heroStack} />
-      </div>
-    </section>
-  );
-}
+        }
+        actions={<HeroActions page="services" secondary={{ label: PRICING_LABEL, href: PRICING_HREF }} />}
+      />
 
-function Layers() {
-  return (
-    <section className={styles.layers} aria-labelledby="layers-title">
-      <div className={styles.layersInner}>
-        <div className={styles.layersHead}>
-          <h2 id="layers-title" className={shared.h2}>
-            Top to bottom, one build.
+      <section className={styles.index} aria-labelledby="lines-title">
+        <div className={styles.indexInner}>
+          <h2 id="lines-title" className={styles.indexLabel}>
+            Four service lines
           </h2>
-          <p className={styles.layersLede}>
-            From what your client’s customers see down to what it all runs on. Each layer has its own page with every
-            tier, the process and the work.
-          </p>
+          <IndexRows labelId="lines-title" />
         </div>
-        <ol className={styles.bands} role="list">
-          {LAYER_VIEWS.map((layer) => (
-            <Band key={layer.slug} layer={layer} />
-          ))}
-        </ol>
-      </div>
-    </section>
+      </section>
+
+      <HowWeWork />
+      <Partnerships />
+
+      <CloseBand placement="services_close" />
+    </>
   );
 }
 
-function Band({ layer }: { layer: LayerView }) {
-  const timeline = tierTimelines(layer.record).get(layer.entryTier.name);
-  const includes = layer.entryTier.features
-    .filter((f) => !/^everything in /i.test(f))
-    .slice(0, 3)
-    .map(cleanCopy);
-  const nameId = `layer-${layer.service}-name`;
+function HowWeWork() {
   return (
-    <li id={`layer-${layer.service}`} className={styles.band}>
-      <article className={styles.bandGrid} aria-labelledby={nameId}>
-        <div>
-          <p className={styles.role}>{layer.role}</p>
-          <h3 id={nameId} className={styles.bandName}>
-            {layer.name}
-          </h3>
-          <p className={styles.bandSummary}>{layer.summary}</p>
-          <p className={styles.bandFrom}>
-            <span className={styles.fromLabel}>From</span>
-            <span className={styles.fromValue}>{layer.fromMoney}</span>
-            <span className={styles.fromNote}>
-              {keepTogether(
-                timeline
-                  ? `for ${layer.entryTier.name}, typically ${timeline.min}–${timeline.max} weeks.`
-                  : `for ${layer.entryTier.name}, the entry tier.`,
-              )}
-            </span>
-          </p>
-          <dl className={styles.bandFacts}>
-            <div>
-              <dt>Who it’s for</dt>
-              <dd>{layer.who}</dd>
-            </div>
-            <div>
-              <dt>{layer.entryTier.name} includes</dt>
-              <dd>
-                <ul className={styles.included} role="list">
-                  {includes.map((item) => (
-                    <li key={item}>{keepTogether(item)}</li>
-                  ))}
-                </ul>
-              </dd>
-            </div>
-          </dl>
-          <Link
-            href={layer.path}
-            className={`${shared.textLink} ${styles.bandMore}`}
-            data-cta-placement={`services_band_${layer.service}`}
-          >
-            {layer.name}: every tier, the process and the work
-            <span aria-hidden="true" className={shared.arrow}>
-              &nbsp;→
-            </span>
-          </Link>
-        </div>
-        <figure className={styles.bandMedia}>
-          <div className={styles.mediaBox}>
-            <div className={styles.frame}>
-              {layer.exhibit ? (
-                <Image
-                  src={layer.exhibit.src}
-                  alt={layer.exhibit.alt}
-                  width={1800}
-                  height={1125}
-                  sizes="(min-width: 1280px) 680px, (min-width: 1024px) 54vw, 92vw"
-                  className={styles.shot}
-                />
-              ) : (
-                <PipelineDiagram className={styles.diagram} />
-              )}
-            </div>
-            <span className={styles.structure} aria-hidden="true" />
-          </div>
-          <figcaption className={styles.caption}>
-            {layer.exhibit?.caption ?? 'A diagram, not a screenshot: how a change ships on infrastructure we set up.'}
-          </figcaption>
-        </figure>
-      </article>
-    </li>
-  );
-}
-
-function Jobs() {
-  const jobs = jobViews();
-  return (
-    <section id="start" className={styles.jobs} aria-labelledby="jobs-title">
-      <div className={styles.jobsInner}>
-        <JobPicker
-          jobs={jobs}
-          groups={LAYER_VIEWS.map((layer) => ({
-            service: layer.service,
-            name: layer.name,
-          }))}
-          head={
-            <>
-              <h2 id="jobs-title" className={shared.h2}>
-                Start from the job.
-              </h2>
-              <p className={styles.jobsLede}>
-                Pick the closest match. You get the layer, the tier and its public price, and the estimator opens with
-                that layer and tier already selected.
-              </p>
-            </>
-          }
-        />
-      </div>
-    </section>
-  );
-}
-
-function Engagement() {
-  return (
-    <section className={styles.engage} aria-labelledby="engage-title">
-      <div className={styles.engageInner}>
-        <div className={styles.engageHead}>
-          <h2 id="engage-title" className={shared.h2}>
+    <section className={styles.how} aria-labelledby="how-title">
+      <div className={styles.howInner}>
+        <header className={styles.head}>
+          <p className={styles.label}>Working together</p>
+          <h2 id="how-title" className={styles.title}>
             How we work with agencies.
           </h2>
-          <p className={styles.engageLede}>The same terms on every layer, stated before you ask.</p>
-          {CLIENT_QUOTE ? (
-            <figure className={styles.quoteWrap}>
-              <span className={styles.quoteStructure} aria-hidden="true" />
-              <div className={styles.quoteCard}>
-                <blockquote className={styles.quoteText}>
-                  <p>“{CLIENT_QUOTE.quote}”</p>
-                </blockquote>
-                <figcaption className={shared.quoteBy}>
-                  {CLIENT_QUOTE.image ? (
-                    <Image src={CLIENT_QUOTE.image} alt="" width={48} height={48} className={shared.avatar} />
-                  ) : null}
-                  <span>
-                    <span className={shared.quoteName}>{CLIENT_QUOTE.name}</span>
-                    <span className={shared.quoteRole}>
-                      {CLIENT_QUOTE.role}, {CLIENT_QUOTE.company}
-                    </span>
-                  </span>
-                </figcaption>
-              </div>
-            </figure>
-          ) : null}
-        </div>
-        <ul className={styles.terms} role="list">
-          {ENGAGEMENT.map((term) => (
+          <p className={styles.lede}>The same terms on every service line, stated before you ask.</p>
+        </header>
+
+        <ol className={styles.terms}>
+          {ENGAGEMENT.map((term, i) => (
             <li key={term.title} className={styles.term}>
+              <span className={styles.termNo} aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
               <h3 className={styles.termTitle}>{term.title}</h3>
               <p className={styles.termText}>{keepTogether(term.text)}</p>
             </li>
           ))}
-        </ul>
+        </ol>
+
+        {CLIENT_QUOTE ? (
+          <figure className={styles.quote}>
+            <blockquote className={styles.quoteText}>
+              <p>“{CLIENT_QUOTE.quote}”</p>
+            </blockquote>
+            <figcaption className={styles.by}>
+              {CLIENT_QUOTE.image ? (
+                <Image src={CLIENT_QUOTE.image} alt="" width={56} height={56} className={styles.avatar} />
+              ) : null}
+              <span>
+                <span className={styles.byName}>{CLIENT_QUOTE.name}</span>
+                <span className={styles.byRole}>
+                  {CLIENT_QUOTE.role}, {CLIENT_QUOTE.company}
+                </span>
+              </span>
+            </figcaption>
+          </figure>
+        ) : null}
       </div>
     </section>
   );
 }
 
-function Close() {
+function Partnerships() {
   return (
-    <section className={shared.close} aria-labelledby="index-close-title" data-page-close>
-      <div className={shared.inner}>
-        <div className={shared.slot}>
-          <div>
-            <h2 id="index-close-title" className={shared.closeTitle}>
-              Your build, next.
-            </h2>
-            <p className={shared.closeText}>
-              Price it from the public list, with every layer you need. Then we scope it with you on a{' '}
-              <span className={shared.nowrap}>20-minute</span> call and the quote is fixed.
-            </p>
-            <div className={shared.actions}>
-              <Cta placement="services_close_primary" href={ESTIMATE_HREF} size="large">
-                Price your project
-              </Cta>
-              <Link href="/contact-us" className={shared.secondary} data-cta-placement="services_close_secondary">
-                Book a call
-                <span aria-hidden="true" className={shared.arrow}>
-                  →
-                </span>
-              </Link>
-            </div>
-          </div>
-          <dl className={shared.closeFacts}>
-            {LAYER_VIEWS.map((layer) => (
-              <div key={layer.slug}>
-                <dt>{layer.name}</dt>
-                <dd>{layer.fromLabel}</dd>
-              </div>
-            ))}
-          </dl>
+    <section className={styles.partner} aria-labelledby="partner-title">
+      <div className={styles.partnerInner}>
+        <header className={styles.head}>
+          <p className={styles.label}>Partnerships</p>
+          <h2 id="partner-title" className={styles.title}>
+            Two or more lines, one partnership.
+          </h2>
+          <p className={styles.lede}>A monthly engagement with one team, priced in the open like everything else.</p>
+        </header>
+
+        <ul className={styles.plans} role="list">
+          {PARTNERSHIPS.map((plan) => {
+            const range = plan.price.replace(/ a month$/, '');
+            return (
+              <li key={plan.name} className={styles.plan}>
+                <h3 className={styles.planName}>{plan.name}</h3>
+                <p className={styles.planPrice}>
+                  {range}
+                  <span className={styles.planUnit}> a month</span>
+                </p>
+                <p className={styles.planWhat}>{plan.description}</p>
+                <ul className={styles.planFeatures} role="list">
+                  {plan.features.map((feature) => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className={styles.rates}>
+          <p className={styles.ratesText}>
+            {keepTogether(
+              `One line on its own? Monthly plans start at ${RATES.monthlyFrom}. Hourly work runs ${RATES.hourly}, and emergency work ${RATES.emergency}.`,
+            )}
+          </p>
+          <Link href={PRICING_HREF} className={styles.textLink} data-cta-placement="services_partner_pricing">
+            Every price we publish, on one page
+            <span aria-hidden="true" className={styles.arrow}>
+              →
+            </span>
+          </Link>
         </div>
       </div>
     </section>

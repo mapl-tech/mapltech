@@ -1,8 +1,9 @@
-import { Fragment, type ReactNode } from 'react';
-import styles from './ServicePage.module.scss';
+import { Fragment, type CSSProperties, type ReactNode } from 'react';
 
 /** Number-word compounds ("20-minute", "5-year-old") and en-dash ranges ("3–4", "$3,500–$5,000+"). */
 const UNBREAKABLE = /(\d+-[A-Za-z]+(?:-[A-Za-z]+)*|\$?\d[\d,]*–\$?\d[\d,]*\+?)/g;
+
+const NOWRAP: CSSProperties = { whiteSpace: 'nowrap' };
 
 /**
  * Typography for prices and timelines in running text: wraps the pieces a
@@ -14,7 +15,7 @@ export function keepTogether(text: string): ReactNode {
   if (parts.length === 1) return text;
   return parts.map((part, i) =>
     i % 2 === 1 ? (
-      <span key={i} className={styles.nowrap}>
+      <span key={i} style={NOWRAP}>
         {part}
       </span>
     ) : (

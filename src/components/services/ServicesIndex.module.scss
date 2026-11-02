@@ -1,506 +1,177 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
-// /services: the hero's layer stack is the index; below it the four layers sit
-// on one red request path that draws as you scroll, from what customers see
-// down to what it all runs on.
+// /services rhythm: dark statement → dark index → paper terms → dark partnerships → crimson close.
 
-$ease-ui: cubic-bezier(0.23, 1, 0.32, 1);
-
-// ---------------------------------------------------------------- hero
-.hero {
-  padding: calc(72px + clamp(28px, 6vw, 88px)) 0 clamp(48px, 6vw, 72px);
-  background: radial-gradient(55% 60% at 90% 10%, rgba($color-red, 0.1) 0%, transparent 62%), $color-ground;
+.nowrap {
+  white-space: nowrap;
 }
 
-.heroInner {
-  @include container(1280px);
+// ---------------------------------------------------------------- shared section voice
+.head {
   display: grid;
-  gap: 56px;
+  gap: 24px;
 
   @include lg {
-    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-    gap: 72px;
-    align-items: center;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
   }
 }
 
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 24px;
-  @include mono-label(rgba($color-fg, 0.64));
+.label {
+  @include section-label;
+  align-self: start;
 
   &::before {
-    content: '';
-    width: 28px;
-    height: 2px;
-    background: $color-red;
+    @include section-label-rule;
+  }
+
+  @include lg {
+    grid-row: span 2;
+    padding-top: 0.9em;
   }
 }
 
 .title {
-  margin: 0;
-  font-size: $font-size-display;
-  font-weight: $font-weight-extrabold;
-  line-height: $line-height-display;
-  letter-spacing: $letter-spacing-display;
+  @include section-title;
+  max-width: 15em;
   color: $color-fg;
-  text-wrap: balance;
-}
-
-// The second line in brand red: large display text, 3.7:1 on the page background (AA large needs 3:1).
-.titleLine {
-  display: block;
-  color: $color-red;
 }
 
 .lede {
-  margin: 24px 0 0;
-  max-width: 38ch;
-  font-size: $font-size-lede;
-  line-height: 1.55;
-  color: rgba($color-fg, 0.86);
-}
-
-// Published client logos beside the hero action: monochrome, never chroma that competes with the CTA.
-.clients {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 24px;
-  margin: 32px 0 0;
-  padding-top: 24px;
-  border-top: 1px solid $color-hairline;
-}
-
-.clientsLabel {
+  @include lede;
   margin: 0;
-  @include mono-label(rgba($color-fg, 0.64));
-}
-
-.logos {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px 32px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  li {
-    display: flex;
-    align-items: center;
-    min-height: 40px;
-  }
-}
-
-.logoInvert {
-  filter: grayscale(1) invert(1) brightness(1.05);
-  opacity: 0.72;
-}
-
-.logoMono {
-  filter: grayscale(1);
-  opacity: 0.8;
-}
-
-.heroStack {
-  width: 100%;
-
-  // Wide screens: a little narrower than the copy column so the H1 leads the first view.
-  @include lg {
-    justify-self: end;
-    max-width: 31rem;
-  }
-}
-
-// ---------------------------------------------------------------- the four layers
-.layers {
-  padding: clamp(56px, 8vw, 104px) 0 clamp(64px, 9vw, 120px);
-  border-top: 1px solid $color-hairline;
-}
-
-.layersInner {
-  @include container(1280px);
-}
-
-.layersHead {
-  display: grid;
-  gap: 16px;
 
   @include lg {
-    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-    gap: 64px;
-    align-items: end;
+    grid-column: 2;
   }
 }
 
-.layersLede {
-  margin: 0;
-  max-width: 40ch;
-  font-size: $font-size-md;
-  line-height: 1.6;
-  color: rgba($color-fg, 0.78);
-}
-
-// One red request path through all four layers, drawn as you read down the page.
-.bands {
+// ---------------------------------------------------------------- the index
+// PageHeader's light fades out before its edge, so the index sits on plain ground.
+.index {
   position: relative;
-  margin: clamp(48px, 6vw, 80px) 0 0;
-  padding: 0 0 0 34px;
-  list-style: none;
+  background: $color-ground;
+}
 
-  @include lg {
-    padding-left: 64px;
-  }
+.indexInner {
+  @include shell;
+  padding-bottom: clamp(88px, 11vw, 160px);
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 6px;
-    bottom: 0;
-    width: 2px;
-
-    @include lg {
-      left: 16px;
-    }
-  }
+.indexLabel {
+  @include section-label;
+  margin-bottom: clamp(20px, 2.4vw, 28px);
 
   &::before {
-    background: rgba($color-fg, 0.1);
-  }
-
-  &::after {
-    background: $color-red;
-    transform-origin: top;
+    @include section-label-rule;
   }
 }
 
-@supports (animation-timeline: view()) {
-  @include motion-ok {
-    .bands::after {
-      animation: draw-path linear both;
-      animation-timeline: view();
-      animation-range: cover 5% cover 75%;
-    }
-  }
-}
+// ---------------------------------------------------------------- how we work (paper)
+.how {
+  background: $color-paper;
+  color: $color-ink;
+  border-radius: clamp(24px, 3vw, 40px);
 
-@keyframes draw-path {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
-.band {
-  position: relative;
-  padding: clamp(48px, 7vw, 96px) 0;
-  border-top: 1px solid $color-hairline-strong;
-  scroll-margin-top: 72px;
-
-  // A hop where the request path enters each layer.
-  &::before {
-    content: '';
-    position: absolute;
-    left: -32px;
-    top: -7px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: $color-ground;
-    border: 2px solid $color-red;
-
-    @include lg {
-      left: -54px;
-    }
-  }
-
-  &:first-child {
-    padding-top: 0;
-    border-top: 0;
+  .label {
+    color: $color-ink-muted;
 
     &::before {
-      top: 2px;
+      background: $color-red-ink;
     }
   }
 
-  &:last-child {
-    padding-bottom: 0;
+  .title {
+    color: $color-ink;
+  }
+
+  .lede {
+    color: $color-ink-muted;
   }
 }
 
-.bandGrid {
+.howInner {
+  @include shell;
+  @include section-pad;
+  display: grid;
+  gap: clamp(48px, 7vw, 96px);
+}
+
+.terms {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid $color-ink-hairline;
+}
+
+.term {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 10px 16px;
+  padding: 28px 0 30px;
+  border-bottom: 1px solid $color-ink-hairline;
+
+  @include lg {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
+    column-gap: 48px;
+    align-items: start;
+    padding: 44px 0;
+  }
+
+  @include rise-in;
+}
+
+// Outline numerals, decorative (the list is an <ol>).
+.termNo {
+  grid-row: span 2;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(2.75rem, 1.6rem + 3.4vw, 5rem);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px $color-red-ink;
+  @include tabular;
+
+  @include lg {
+    grid-row: auto;
+  }
+}
+
+.termTitle {
+  margin: 0;
+  @include display-m;
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.375rem);
+  color: $color-ink;
+}
+
+.termText {
+  margin: 0;
+  max-width: 34em;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  color: $color-ink-muted;
+
+  @include lg {
+    padding-top: 0.35em;
+  }
+}
+
+.quote {
+  margin: 0;
   display: grid;
   gap: 28px;
 
   @include lg {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 64px;
-    align-items: center;
-  }
-}
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
 
-.role {
-  margin: 0;
-  @include mono-label(rgba($color-fg, 0.64));
-}
-
-.bandName {
-  margin: 12px 0 0;
-  font-size: clamp(2.125rem, 1.4rem + 2.6vw, 3.5rem);
-  font-weight: $font-weight-extrabold;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  text-wrap: balance;
-}
-
-.bandSummary {
-  margin: 16px 0 0;
-  max-width: 40ch;
-  font-size: $font-size-md;
-  line-height: 1.6;
-  color: rgba($color-fg, 0.84);
-}
-
-.bandFrom {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: 12px;
-  row-gap: 6px;
-  margin: 28px 0 0;
-  padding-top: 22px;
-  border-top: 1px solid $color-hairline;
-}
-
-.fromLabel {
-  @include mono-label(rgba($color-fg, 0.64));
-}
-
-.fromValue {
-  font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: clamp(2.25rem, 1.8rem + 1.6vw, 3rem);
-  line-height: 1;
-  letter-spacing: -0.035em;
-  color: $color-fg;
-  @include tabular;
-}
-
-.fromNote {
-  flex-basis: 100%;
-  font-size: $font-size-base;
-  line-height: 1.5;
-  color: rgba($color-fg, 0.8);
-  @include tabular;
-}
-
-// Who it is for and what the entry tier includes: labelled facts, not more prose.
-.bandFacts {
-  display: grid;
-  gap: 18px;
-  margin: 20px 0 0;
-
-  dt {
-    @include mono-label(rgba($color-fg, 0.64));
-  }
-
-  dd {
-    margin: 8px 0 0;
-    max-width: 44ch;
-    font-size: $font-size-base;
-    line-height: 1.55;
-    color: rgba($color-fg, 0.88);
-  }
-}
-
-.included {
-  display: grid;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  li {
-    position: relative;
-    padding-left: 22px;
-    font-size: $font-size-base;
-    line-height: 1.5;
-    color: rgba($color-fg, 0.82);
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.7em;
-      width: 10px;
-      height: 2px;
-      background: $color-red;
+    > * {
+      grid-column: 2;
     }
   }
-}
-
-.bandMore {
-  margin-top: 20px;
-}
-
-.bandMedia {
-  margin: 0;
-}
-
-// The surface and its offset frame; the caption sits outside it.
-.mediaBox {
-  position: relative;
-  margin: 0 12px 12px 0;
-}
-
-.frame {
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-  aspect-ratio: 16 / 9; // phones: a shorter crop keeps each layer near one screen
-
-  @include lg {
-    aspect-ratio: 16 / 10;
-  }
-
-  border-radius: 14px;
-  background: #111111;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.06) inset,
-    0 30px 60px -30px rgba(0, 0, 0, 0.9);
-}
-
-.shot,
-.diagram {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.shot {
-  object-fit: cover;
-  object-position: top center;
-}
-
-.structure {
-  position: absolute;
-  inset: 12px -12px -12px 12px;
-  z-index: 0;
-  border: 1px solid rgba($color-red, 0.6);
-  border-radius: 14px;
-  pointer-events: none;
-}
-
-@supports (animation-timeline: view()) {
-  @include motion-ok {
-    .structure {
-      animation: register linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 50%;
-    }
-  }
-}
-
-@keyframes register {
-  from {
-    transform: translate(18px, 22px);
-    opacity: 0.2;
-  }
-  to {
-    transform: none;
-    opacity: 1;
-  }
-}
-
-.caption {
-  margin: 16px 0 0;
-  font-size: $font-size-sm;
-  line-height: 1.5;
-  color: rgba($color-fg, 0.72);
-}
-
-// ---------------------------------------------------------------- start from the job
-.jobs {
-  padding: clamp(56px, 9vw, 120px) 0;
-  border-top: 1px solid $color-hairline;
-  background: linear-gradient(180deg, #0d0c0f 0%, $color-ground 100%);
-  scroll-margin-top: 64px;
-}
-
-.jobsInner {
-  @include container(1280px);
-}
-
-.jobsLede {
-  margin: 20px 0 0;
-  max-width: 40ch;
-  font-size: $font-size-md;
-  line-height: 1.6;
-  color: rgba($color-fg, 0.8);
-}
-
-// ---------------------------------------------------------------- how we work
-.engage {
-  padding: clamp(56px, 9vw, 120px) 0;
-  border-top: 1px solid $color-hairline;
-}
-
-.engageInner {
-  @include container(1280px);
-  display: grid;
-  gap: 40px;
-
-  @include lg {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 72px;
-    align-items: start;
-  }
-}
-
-.engageHead {
-  @include lg {
-    position: sticky;
-    top: 112px;
-  }
-}
-
-.engageLede {
-  margin: 20px 0 0;
-  max-width: 36ch;
-  font-size: $font-size-md;
-  line-height: 1.6;
-  color: rgba($color-fg, 0.8);
-}
-
-.quoteWrap {
-  position: relative;
-  margin: 40px 14px 14px 0;
-}
-
-.quoteCard {
-  position: relative;
-  z-index: 1;
-  padding: 26px 26px 24px;
-  border: 1px solid $color-hairline-strong;
-  border-radius: 16px;
-  background: $color-surface-1;
-}
-
-.quoteStructure {
-  position: absolute;
-  inset: 14px -14px -14px 14px;
-  z-index: 0;
-  border: 1px solid rgba($color-red, 0.55);
-  border-radius: 16px;
-  pointer-events: none;
 }
 
 .quoteText {
@@ -509,45 +180,181 @@ $ease-ui: cubic-bezier(0.23, 1, 0.32, 1);
   p {
     margin: 0;
     font-family: $font-display;
-    font-weight: $font-weight-semibold;
-    font-size: clamp(1.25rem, 1.08rem + 0.6vw, 1.5rem);
-    line-height: 1.35;
-    letter-spacing: -0.015em;
-    color: $color-fg;
+    font-weight: 600;
+    font-size: clamp(1.625rem, 1rem + 2.2vw, 3rem);
+    line-height: 1.16;
+    letter-spacing: -0.02em;
+    color: $color-ink;
     text-wrap: pretty;
   }
 }
 
-.terms {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid $color-hairline-strong;
-}
+.by {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 
-.term {
-  display: grid;
-  gap: 10px;
-  padding: 28px 0;
-  border-bottom: 1px solid $color-hairline-strong;
-
-  @include md {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 32px;
+  > span {
+    display: grid;
+    gap: 2px;
   }
 }
 
-.termTitle {
-  margin: 0;
-  font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem);
-  line-height: 1.25;
-  letter-spacing: -0.015em;
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-.termText {
+.byName {
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+}
+
+.byRole {
+  font-size: $font-size-sm;
+  color: $color-ink-muted;
+}
+
+// ---------------------------------------------------------------- partnerships
+.partner {
+  background: $color-ground;
+}
+
+.partnerInner {
+  @include shell;
+  @include section-pad;
+  display: grid;
+  gap: clamp(48px, 7vw, 88px);
+}
+
+.plans {
+  list-style: none;
   margin: 0;
+  padding: 0;
+  display: grid;
+  border-top: 1px solid $color-hairline-strong;
+
+  @include lg {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.plan {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 36px 0 40px;
+  border-bottom: 1px solid $color-hairline;
+
+  @include lg {
+    padding: 48px 48px 8px 0;
+    border-bottom: 0;
+
+    & + & {
+      padding-left: 48px;
+      padding-right: 0;
+      border-left: 1px solid $color-hairline-strong;
+    }
+  }
+
+  // Name, price, description and features line up across the two plans.
+  @supports (grid-template-rows: subgrid) {
+    @include lg {
+      grid-row: span 4;
+      grid-template-rows: subgrid;
+    }
+  }
+}
+
+.planName {
+  margin: 0;
+  @include display-m;
+  font-size: clamp(1.625rem, 1.2rem + 1.4vw, 2.5rem);
+  color: $color-fg;
+}
+
+.planPrice {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 1.5rem + 3.2vw, 4.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: $color-fg;
+  @include tabular;
+}
+
+.planUnit {
+  font-family: $font-body;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-lede;
+  letter-spacing: 0;
+  color: $color-fg-muted;
+  white-space: nowrap;
+}
+
+.planWhat {
+  margin: 0;
+  max-width: 30em;
+  font-size: $font-size-lede;
+  line-height: 1.5;
+  color: $color-text-body;
+}
+
+.planFeatures {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  border-top: 1px solid $color-hairline-strong;
+
+  li {
+    position: relative;
+    padding: 14px 0 14px 28px;
+    border-bottom: 1px solid $color-hairline;
+    font-size: $font-size-base;
+    line-height: 1.5;
+    color: $color-text-body;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 1.45em;
+      width: 14px;
+      height: 2px;
+      background: $color-red;
+    }
+  }
+}
+
+.rates {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 40px;
+  padding-top: 28px;
+  border-top: 1px solid $color-hairline;
+}
+
+.ratesText {
+  margin: 0;
+  max-width: 44em;
   font-size: $font-size-base;
   line-height: 1.6;
-  color: rgba($color-fg, 0.82);
-  @include tabular;
+  color: $color-text-body;
+}
+
+.textLink {
+  @include text-action($color-fg);
+}
+
+.arrow {
+  transition: transform 0.4s $ease-out-expo;
+
+  .textLink:hover & {
+    transform: translateX(4px);
+  }
 }

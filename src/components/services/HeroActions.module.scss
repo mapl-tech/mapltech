@@ -1,0 +1,28 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// The homepage hero's pair (flagship/Hero.module.scss): white on #D91C3F is 5.01:1.
+.primary {
+  @include button-primary;
+  min-height: 56px;
+  padding: 0 26px 0 30px;
+  gap: 14px;
+  font-size: 1.0625rem;
+
+  @include focus-ring;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.35s $ease-out-expo;
+
+  .primary:hover & {
+    transform: translateX(4px);
+  }
+}
+
+.secondary {
+  @include text-action($color-fg);
+  font-size: 1.0625rem;
+}

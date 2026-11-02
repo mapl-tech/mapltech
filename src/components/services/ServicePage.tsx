@@ -1,28 +1,29 @@
-import type { CSSProperties } from 'react';
 import Link from 'next/link';
-import Cta from '@/components/home/Cta';
+import CloseBand from '@/components/flagship/CloseBand';
 import JsonLd from '@/components/seo/JsonLd';
+import PageHeader from '@/components/ui/PageHeader';
+import { estimateLinkFor } from '@/components/work/work-data';
 import type { ServiceSlug } from '@/config/services';
 import { formatMoney } from '@/lib/estimate';
 import { faqPage, itemList, pageGraph, service as serviceNode } from '@/lib/schema';
-import LayerStack from './LayerStack';
 import FaqList from './FaqList';
+import HeroActions from './HeroActions';
 import { keepTogether } from './keepTogether';
-import ProofCases from './ProofCases';
+import ProofBlock from './ProofBlock';
 import TierSchedule from './TierSchedule';
 import {
   LAYER_VIEWS,
   SERVICES_REVISED,
   capabilityViews,
-  cleanCopy,
   faqItems,
   layerView,
   proofCases,
   stackLine,
   stageViews,
+  supportWindow,
   tierViews,
+  type FaqView,
   type LayerView,
-  type TierView,
 } from './serviceContent';
 import styles from './ServicePage.module.scss';
 
@@ -30,33 +31,34 @@ export interface ServicePageProps {
   slug: ServiceSlug;
 }
 
+/** The secondary ask on every service page (award guide §2). */
+const ESTIMATE_LABEL = 'Price a build like this';
+
 /**
- * The one template behind all four /services/* pages (flagship redesign).
- * Answer first, then the structure under it:
+ * The one template behind all four /services/* pages (award pass, Nov 2026),
+ * in the homepage's shell and voice:
  *
- *   hero (the service, outcome, public "from" price, one action, the layer
- *   stack with this layer lit) → what you get → how we build it (stages on
- *   the red line) → tiers and prices → the work that proves it →
- *   questions → your project in the empty slot → the other three layers.
+ *   the service and its promise, with the answer beside it (from price,
+ *   what the entry tier includes, support, the quote) → what we build
+ *   (paper, numbered) → the work that proves it (real captures) → how we
+ *   build it → tiers and prices (paper) → questions → the other services →
+ *   the crimson close.
  *
- * Server Component, all copy in the HTML. No client island: the motion is CSS
- * (scroll-driven where supported, static otherwise and under reduced motion).
- * JSON-LD is one page graph built from the same arrays the page renders.
+ * Server Component, all copy in the HTML, no client island. JSON-LD is one
+ * page graph built from the same arrays the page renders.
  */
 export default function ServicePage({ slug }: ServicePageProps) {
   const view = layerView(slug);
-  const tiers = tierViews(view);
   const faqs = faqItems(view);
   const cases = proofCases(view);
-  const isWeb = view.service === 'web';
-  const entryTimeline = tiers[0]?.timeline?.label;
+  const estimate = estimateLinkFor(view.service);
 
   const graph = pageGraph({
     path: view.path,
     name: view.meta.title,
     description: view.meta.description,
     dateModified: SERVICES_REVISED,
-    image: cases.find((c) => c.media)?.media?.src,
+    image: cases.find((c) => c.media)?.media?.desktop,
     breadcrumbs: [
       { name: 'Services', path: '/services' },
       { name: view.name, path: view.path },
@@ -72,275 +74,201 @@ export default function ServicePage({ slug }: ServicePageProps) {
   });
 
   return (
-    <div className={styles.page}>
+    <>
       <JsonLd data={graph} />
 
-      {/* ---------------------------------------------------------- hero */}
-      <section className={styles.hero} aria-labelledby="service-title">
-        <div className={styles.heroInner}>
-          <div>
-            <nav aria-label="Breadcrumb" className={styles.crumbs}>
-              <ol role="list">
-                <li>
-                  <Link href="/services">Services</Link>
-                </li>
-                <li aria-current="page">{view.name}</li>
-              </ol>
-            </nav>
-            <h1 id="service-title" className={styles.title}>
-              {view.name}
-            </h1>
-            <p className={styles.heroLede}>{view.lede}</p>
+      <PageHeader
+        id="service-title"
+        size="l"
+        crumbs={[{ label: 'Services', href: '/services' }, { label: view.name }]}
+        label={view.role}
+        title={view.name}
+        lede={<p>{view.lede}</p>}
+        actions={<HeroActions page={view.slug} secondary={{ label: ESTIMATE_LABEL, href: estimate }} />}
+        aside={<HeroFacts view={view} />}
+      />
 
-            <p className={styles.answer}>
-              <span className={styles.answerFrom}>From</span>
-              <span className={styles.answerPrice}>{view.fromMoney}</span>
-              <span className={styles.answerNote}>
-                {keepTogether(
-                  isWeb && entryTimeline
-                    ? `for the ${view.entryTier.name} tier, which typically ships in ${entryTimeline}.`
-                    : `for ${view.entryTier.name}, the entry tier.`,
-                )}
+      <WhatWeBuild view={view} />
+      <ProofBlock view={view} />
+      <Process view={view} />
+      <TierSchedule view={view} />
+      <Questions view={view} faqs={faqs} />
+      <OtherServices current={view} />
+
+      <CloseBand
+        id="service-close-title"
+        title={view.close.title}
+        lede={view.close.lede}
+        secondary={{ label: ESTIMATE_LABEL, href: estimate }}
+        placement={`${view.slug}_close`}
+      />
+    </>
+  );
+}
+
+/** The answer, beside the promise: the public "from" price and the three facts an agency asks first. */
+function HeroFacts({ view }: { view: LayerView }) {
+  const entryTimeline = tierViews(view)[0]?.timeline?.label;
+  const support = supportWindow(view);
+  const monthly = view.lowestMonthly ? formatMoney(view.lowestMonthly.amount) : null;
+  return (
+    <dl className={styles.facts}>
+      <div className={styles.factLead}>
+        <dt className={styles.factTerm}>From</dt>
+        <dd className={styles.factPrice}>{view.fromMoney}</dd>
+        <dd className={styles.factNote}>
+          {keepTogether(
+            entryTimeline
+              ? `for ${view.entryTier.name}, typically live in ${entryTimeline}.`
+              : `for ${view.entryTier.name}, the entry tier.`,
+          )}
+        </dd>
+      </div>
+      <div className={styles.fact}>
+        <dt className={styles.factTerm}>{view.entryTier.name} includes</dt>
+        <dd>{keepTogether(view.entryIncludes)}</dd>
+      </div>
+      <div className={styles.fact}>
+        <dt className={styles.factTerm}>After launch</dt>
+        <dd>
+          {keepTogether(
+            support
+              ? `${support} of support included, then plans from ${monthly} a month`
+              : `Monthly plans from ${monthly} a month`,
+          )}
+        </dd>
+      </div>
+      <div className={styles.fact}>
+        <dt className={styles.factTerm}>Your quote</dt>
+        <dd>{keepTogether('Fixed, after a 20-minute call')}</dd>
+      </div>
+    </dl>
+  );
+}
+
+/** What the line delivers: the six capabilities as numbered rows, on paper, then the stack. */
+function WhatWeBuild({ view }: { view: LayerView }) {
+  return (
+    <section id="what-we-build" className={styles.build} aria-labelledby="build-title">
+      <div className={styles.buildInner}>
+        <header className={styles.head}>
+          <p className={styles.label}>What we build</p>
+          <h2 id="build-title" className={styles.title}>
+            {view.promise}
+          </h2>
+          <p className={styles.lede}>{view.deliverIntro}</p>
+        </header>
+
+        <ol className={styles.caps}>
+          {capabilityViews(view).map((capability, i) => (
+            <li key={capability.title} className={styles.cap}>
+              <span className={styles.capNo} aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
               </span>
-            </p>
+              <h3 className={styles.capTitle}>{capability.title}</h3>
+              <p className={styles.capText}>{keepTogether(capability.text)}</p>
+            </li>
+          ))}
+        </ol>
 
-            <div className={styles.actions}>
-              <Cta placement={`${slug}_hero_primary`} hero href={view.estimate} size="large">
-                Price your project
-              </Cta>
-              <Link href="/contact-us" className={styles.secondary} data-cta-placement={`${slug}_hero_secondary`}>
-                Book a call
-                <span aria-hidden="true" className={styles.arrow}>
-                  →
-                </span>
-              </Link>
-            </div>
-            <p className={styles.trust}>
-              The estimator opens with {view.name} selected. You see the range before we ask for anything.
-            </p>
-          </div>
-
-          <dl className={styles.facts}>
-            <div>
-              <dt>{view.entryTier.name} includes</dt>
-              <dd>{keepTogether(view.entryIncludes)}</dd>
-            </div>
-            <div>
-              <dt>After launch</dt>
-              <dd>
-                {keepTogether(
-                  isWeb && view.record.postLaunchSupport
-                    ? `${cleanCopy(view.record.postLaunchSupport.replace(/ depending on tier/, ''))} of support included, then from ${money(view.lowestMonthly?.amount)} a month`
-                    : `Retainers from ${money(view.lowestMonthly?.amount)} a month`,
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>Your quote</dt>
-              <dd>
-                Fixed, after a <span className={styles.nowrap}>20-minute</span> call
-              </dd>
-            </div>
-          </dl>
-
-          <LayerStack current={view.service} label="The four layers of a build" className={styles.heroStack} />
-        </div>
-      </section>
-
-      {/* ---------------------------------------------------------- what you get */}
-      <section id="what-you-get" className={styles.section} aria-labelledby="get-title">
-        <div className={styles.split}>
-          <div className={styles.splitHead}>
-            <h2 id="get-title" className={styles.h2}>
-              What you get
-            </h2>
-            <p className={styles.sectionLede}>{view.deliverIntro}</p>
-            <div className={styles.stack}>
-              <p className={styles.label}>{view.stackLabel}</p>
-              <ul className={styles.stackList} role="list">
-                {stackLine(view).map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <ul className={styles.capabilities} role="list">
-            {capabilityViews(view).map((capability) => (
-              <li key={capability.title} className={styles.capability}>
-                <h3 className={styles.capabilityTitle}>{capability.title}</h3>
-                <p className={styles.capabilityText}>{keepTogether(capability.text)}</p>
-              </li>
+        <div className={styles.stack}>
+          <p className={styles.stackLabel}>{view.stackLabel}</p>
+          <ul className={styles.stackList} role="list">
+            {stackLine(view).map((item) => (
+              <li key={item}>{item}</li>
             ))}
           </ul>
-        </div>
-      </section>
-
-      {/* ---------------------------------------------------------- how we build it */}
-      <section id="process" className={styles.section} aria-labelledby="process-title">
-        <div className={styles.split}>
-          <div className={styles.splitHead}>
-            <h2 id="process-title" className={styles.h2}>
-              How we build it
-            </h2>
-            <p className={styles.sectionLede}>{view.stagesIntro}</p>
-            <TimelineChart tiers={tiers} />
-          </div>
-          <ol className={styles.stages} role="list">
-            {stageViews(view).map((stage) => (
-              <li key={stage.name} className={styles.stage}>
-                <h3 className={styles.stageName}>{stage.name}</h3>
-                <p className={styles.stageText}>{keepTogether(stage.text)}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <TierSchedule view={view} />
-
-      <ProofCases view={view} />
-
-      {/* ---------------------------------------------------------- questions */}
-      <section id="questions" className={styles.section} aria-labelledby="faq-title">
-        <div className={styles.split}>
-          <div className={styles.splitHead}>
-            <h2 id="faq-title" className={styles.h2}>
-              Questions about {view.name}
-            </h2>
-            <p className={styles.sectionLede}>Straight answers, from our price list and our process.</p>
-          </div>
-          <FaqList items={faqs} name={`${view.service}-faq`} />
-        </div>
-      </section>
-
-      <Close view={view} entryTimeline={entryTimeline} />
-
-      <OtherLayers current={view} />
-    </div>
-  );
-}
-
-function money(amount: number | undefined): string {
-  return typeof amount === 'number' ? formatMoney(amount) : '';
-}
-
-/** Web only: the timelines services.ts publishes, drawn to scale. Renders nothing for lines without one. */
-function TimelineChart({ tiers }: { tiers: readonly TierView[] }) {
-  const rows = tiers.filter((tier) => tier.timeline);
-  if (!rows.length) return null;
-  const max = Math.max(...rows.map((tier) => tier.timeline?.max ?? 0));
-  return (
-    <figure className={styles.timeline}>
-      <figcaption className={styles.label}>Typical timeline by tier</figcaption>
-      <ul className={styles.timelineRows} role="list">
-        {rows.map((tier) => (
-          <li key={tier.id} className={styles.timelineRow}>
-            <span className={styles.timelineName}>{tier.name}</span>
-            <span className={styles.timelineWeeks}>{tier.timeline?.label}</span>
-            <span className={styles.timelineTrack} aria-hidden="true">
-              <span
-                className={styles.timelineBar}
-                style={{ '--from': tier.timeline?.min, '--to': tier.timeline?.max, '--max': max } as CSSProperties}
-              />
-            </span>
-          </li>
-        ))}
-      </ul>
-      <p className={styles.timelineAxis} aria-hidden="true">
-        <span>Week 0</span>
-        <span>Week {max}</span>
-      </p>
-    </figure>
-  );
-}
-
-/** The empty slot: the reader's project, with the price restated at the action. */
-function Close({ view, entryTimeline }: { view: LayerView; entryTimeline?: string }) {
-  return (
-    <section className={styles.close} aria-labelledby="close-title" data-page-close>
-      <div className={styles.inner}>
-        <div className={styles.slot}>
-          <div>
-            <h2 id="close-title" className={styles.closeTitle}>
-              {view.closeHeading}
-            </h2>
-            <p className={styles.closeText}>
-              The estimator opens with {view.name} selected and the range is on screen before we ask for anything. Then
-              we scope it with you on a <span className={styles.nowrap}>20-minute</span> call.
-            </p>
-            <div className={styles.actions}>
-              <Cta placement={`${view.slug}_close_primary`} href={view.estimate} size="large">
-                Price your project
-              </Cta>
-              <Link href="/contact-us" className={styles.secondary} data-cta-placement={`${view.slug}_close_secondary`}>
-                Book a call
-                <span aria-hidden="true" className={styles.arrow}>
-                  →
-                </span>
-              </Link>
-            </div>
-          </div>
-          <dl className={styles.closeFacts}>
-            <div>
-              <dt>From</dt>
-              <dd>{view.fromMoney}</dd>
-            </div>
-            <div>
-              <dt>{entryTimeline ? `${view.entryTier.name} timeline` : 'Entry tier'}</dt>
-              <dd>{entryTimeline ?? view.entryTier.name}</dd>
-            </div>
-            <div>
-              <dt>Quote</dt>
-              <dd>
-                Fixed, after a <span className={styles.nowrap}>20-minute</span> call
-              </dd>
-            </div>
-          </dl>
         </div>
       </div>
     </section>
   );
 }
 
-/** Service ↔ service links at the end of the page, with the public "from" prices. */
-function OtherLayers({ current }: { current: LayerView }) {
+/** The four stages, as published for this line (services.ts processSteps). */
+function Process({ view }: { view: LayerView }) {
+  return (
+    <section id="process" className={styles.process} aria-labelledby="process-title">
+      <div className={styles.processInner}>
+        <header className={styles.head}>
+          <p className={styles.label}>How we build it</p>
+          <h2 id="process-title" className={styles.title}>
+            {view.processTitle}
+          </h2>
+        </header>
+        <ol className={styles.stages}>
+          {stageViews(view).map((stage, i) => (
+            <li key={stage.name} className={styles.stage}>
+              <span className={styles.stageNo} aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 className={styles.stageName}>{stage.name}</h3>
+              <p className={styles.stageText}>{keepTogether(stage.text)}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/** The service FAQ, laid out as the homepage's diligence answers; the same array the FAQPage JSON-LD is built from. */
+function Questions({ view, faqs }: { view: LayerView; faqs: readonly FaqView[] }) {
+  return (
+    <section id="questions" className={styles.faq} aria-labelledby="faq-title">
+      <div className={styles.faqInner}>
+        <div className={styles.faqHead}>
+          <p className={styles.label}>Before you sign</p>
+          <h2 id="faq-title" className={styles.faqTitle}>
+            Questions agencies ask.
+          </h2>
+          <p className={styles.faqLede}>Straight answers about {view.name}, from our price list and our process.</p>
+        </div>
+        <FaqList items={faqs} name={`${view.service}-faq`} />
+      </div>
+    </section>
+  );
+}
+
+/** Service to service, with the public "from" prices. */
+function OtherServices({ current }: { current: LayerView }) {
   return (
     <nav className={styles.others} aria-labelledby="others-title">
-      <h2 id="others-title" className={styles.othersTitle}>
-        The other three layers
-      </h2>
-      <ul className={styles.othersList} role="list">
-        {LAYER_VIEWS.filter((layer) => layer.slug !== current.slug).map((layer) => (
-          <li key={layer.slug}>
-            <Link
-              href={layer.path}
-              className={styles.otherLink}
-              data-cta-placement={`${current.slug}_other_${layer.service}`}
-            >
-              <span className={styles.otherRole}>
-                {layer.role}
-                <span className="visually-hidden">: </span>
-              </span>
-              <span className={styles.otherName}>
-                {layer.name}
-                <span className="visually-hidden">, </span>
-              </span>
-              <span className={styles.otherPrice}>{layer.fromLabel}</span>
-              <span className={styles.otherArrow} aria-hidden="true">
-                →
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <p className={styles.allLayers}>
-        <Link href="/services" className={styles.textLink}>
-          All four layers, side by side
-          <span aria-hidden="true" className={styles.arrow}>
-            &nbsp;→
-          </span>
-        </Link>
-      </p>
+      <div className={styles.othersInner}>
+        <h2 id="others-title" className={styles.othersLabel}>
+          Other services
+        </h2>
+        <ul className={styles.othersList} role="list">
+          {LAYER_VIEWS.filter((layer) => layer.slug !== current.slug).map((layer) => (
+            <li key={layer.slug}>
+              <Link
+                href={layer.path}
+                className={styles.other}
+                data-cta-placement={`${current.slug}_other_${layer.service}`}
+              >
+                <span className={styles.otherNo} aria-hidden="true">
+                  {layer.numeral}
+                </span>
+                <span className={styles.otherName}>
+                  {layer.name}
+                  <span className="visually-hidden">, </span>
+                </span>
+                <span className={styles.otherPrice}>{layer.fromLabel}</span>
+                <span className={styles.otherGo} aria-hidden="true">
+                  →
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <p className={styles.allServices}>
+          <Link href="/services" className={styles.textLink} data-cta-placement={`${current.slug}_other_all`}>
+            All services, side by side
+            <span aria-hidden="true" className={styles.arrow}>
+              →
+            </span>
+          </Link>
+        </p>
+      </div>
     </nav>
   );
 }

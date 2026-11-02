@@ -5,14 +5,15 @@ import { INDEX_META, LAYER_VIEWS, SERVICES_REVISED, indexMetadata } from '@/comp
 import { itemList, pageGraph, serviceId } from '@/lib/schema';
 
 /*
- * /services (flagship redesign, Nov 2026): the four service lines as the four
- * layers of one build. Copy, prices and sources live in
+ * /services (award pass, Nov 2026): the four service lines as a numbered
+ * index, how we work, the partnerships. Copy, prices and sources live in
  * src/components/services/serviceContent.ts.
  *
  * Metadata: unique title, a 140-160 character description that answers "what
  * and how much", self-canonical, full Open Graph. Structured data: the page,
- * its breadcrumb and an ItemList of the four lines, each pointing at the
- * Service entity its own page defines (prices live there, beside the tiers).
+ * its breadcrumb and an ItemList of the four lines (the rows the page shows),
+ * each pointing at the Service entity its own page defines (prices live
+ * there, beside the tiers).
  */
 export const metadata: Metadata = {
   ...indexMetadata(),
@@ -42,7 +43,7 @@ const graph = pageGraph({
         description: layer.summary,
         item: { '@id': serviceId(layer.slug) },
       })),
-      { path: '/services', name: 'The four layers of a build' },
+      { path: '/services', name: 'Four service lines' },
     ),
   ],
 });

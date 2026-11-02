@@ -186,11 +186,8 @@
 // an assistant quoting the page needs first. Read as the hero's foot.
 .facts {
   position: relative;
-  // The PageHeader's bottom-left glow (50% x 50% at 0% 100%, 0.07, gone at
-  // 70%) carried on past its edge, mirrored, so the hero has no seam.
-  background:
-    radial-gradient(50vw 440px at 0% 0%, rgba(217, 28, 63, 0.07) 0%, transparent 70%),
-    $color-ground;
+  // PageHeader's light fades out before its edge, so the band sits on plain ground.
+  background: $color-ground;
 }
 
 .factsInner {
