@@ -1,19 +1,24 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
 // ============================================
-// The Scope Estimator: five questions left, the readout right (sticky on
-// wide screens), a one-line live bar on phones. Red marks choice and
-// emphasis; teal marks the live output and nothing else.
+// The Scope Estimator (Nov 2026 award pass): five numbered questions on
+// hairlines (7fr), the readout card beside them (5fr, sticky on wide
+// screens), a one-line live bar on phones. Red marks choice and emphasis;
+// teal marks the live output and nothing else.
 // ============================================
 
 $ease: cubic-bezier(0.23, 1, 0.32, 1);
 $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-$label-muted: rgba($color-fg, 0.68);
+$label-muted: $color-fg-muted;
+$tile: rgba(255, 255, 255, 0.025);
+$tile-ring: rgba(255, 255, 255, 0.12);
+$card: #121214;
 
 .estimator {
   display: grid;
-  gap: 48px;
+  gap: 56px;
   align-items: start;
 
   @include lg {
@@ -22,29 +27,25 @@ $label-muted: rgba($color-fg, 0.68);
   }
 
   @include xl {
-    gap: 80px;
+    gap: 88px;
   }
 }
 
 // ---------------------------------------------------------------- questions
 .controls {
   min-width: 0;
+  border-top: 1px solid $color-hairline-strong;
 }
 
 .step {
   min-width: 0;
   margin: 0;
-  padding: 32px 0;
+  padding: clamp(28px, 3.4vw, 44px) 0;
   border: 0;
-  border-top: 1px solid $color-hairline;
+  border-bottom: 1px solid $color-hairline;
 
-  &:first-child {
-    padding-top: 0;
-    border-top: 0;
-  }
-
-  &:last-child {
-    padding-bottom: 0;
+  &:last-of-type {
+    border-bottom: 0;
   }
 }
 
@@ -53,43 +54,41 @@ $label-muted: rgba($color-fg, 0.68);
   float: left;
   width: 100%;
   display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 0 0 16px;
+  align-items: baseline;
+  gap: 16px;
+  margin: 0 0 18px;
   padding: 0;
-  font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: 1.25rem;
-  line-height: 1.25;
-  letter-spacing: -0.015em;
-  color: $color-fg;
 
   + * {
     clear: both;
   }
 }
 
-// Step number with a short red tick after it.
+// Outline numeral, decorative (aria-hidden): the legend's name is the question alone.
 .index {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
+  flex: none;
+  min-width: 2.2ch;
   font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: 1rem;
-  color: $color-red;
+  font-weight: 800;
+  font-size: clamp(2rem, 1.5rem + 1.6vw, 3rem);
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  color: transparent;
+  -webkit-text-stroke: 1.25px $color-red;
   @include tabular;
+}
 
-  &::after {
-    content: '';
-    width: 18px;
-    height: 1px;
-    background: rgba($color-red, 0.7);
-  }
+.legendText {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+  color: $color-fg;
 }
 
 .hint {
-  margin: 0 0 16px;
+  margin: 0 0 18px;
   max-width: 56ch;
   font-size: 1rem;
   line-height: 1.5;
@@ -150,7 +149,7 @@ $label-muted: rgba($color-fg, 0.68);
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 16px;
-  padding-top: 16px;
+  padding-top: 20px;
   border-top: 1px solid $color-hairline;
 }
 
@@ -161,7 +160,7 @@ $label-muted: rgba($color-fg, 0.68);
   font-weight: $font-weight-semibold;
   color: $color-fg;
   text-decoration: underline;
-  text-decoration-color: rgba($color-fg, 0.35);
+  text-decoration-color: rgba(245, 242, 238, 0.35);
   text-underline-offset: 5px;
   cursor: pointer;
 
@@ -197,9 +196,9 @@ $label-muted: rgba($color-fg, 0.68);
   row-gap: 2px;
   min-height: 68px;
   padding: 14px 16px;
-  border: 1px solid $color-hairline-strong;
-  border-radius: 12px;
-  background: $color-surface-1;
+  border-radius: 16px;
+  background: $tile;
+  box-shadow: inset 0 0 0 1px $tile-ring;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -207,26 +206,24 @@ $label-muted: rgba($color-fg, 0.68);
   touch-action: manipulation;
   scroll-margin: 96px 0;
   transition:
-    border-color 150ms $ease,
-    background-color 150ms $ease,
-    box-shadow 150ms $ease;
+    box-shadow 160ms $ease,
+    background-color 160ms $ease;
 
   @include pointer-fine {
     &:hover {
-      border-color: rgba($color-red, 0.55);
-      background: $color-surface-2;
+      background: rgba(255, 255, 255, 0.045);
+      box-shadow: inset 0 0 0 1px rgba($color-red, 0.55);
     }
   }
 
   &:active {
-    background: $color-surface-2;
+    background: rgba(255, 255, 255, 0.05);
   }
 
   // Selected: a 2px red edge drawn inside (no layout shift) and a faint red wash.
   &[data-checked] {
-    border-color: $color-red;
-    background: rgba($color-red, 0.08);
-    box-shadow: inset 0 0 0 1px $color-red;
+    background: rgba($color-red-fill, 0.1);
+    box-shadow: inset 0 0 0 2px $color-red;
   }
 
   &[data-locked] {
@@ -292,7 +289,7 @@ $label-muted: rgba($color-fg, 0.68);
   @include tabular;
 
   .tile[data-checked] & {
-    color: rgba($color-fg, 0.84);
+    color: rgba(245, 242, 238, 0.84);
   }
 }
 
@@ -302,8 +299,8 @@ $label-muted: rgba($color-fg, 0.68);
   padding-left: 8px;
   font-family: $font-display;
   font-weight: $font-weight-bold;
-  font-size: 1.0625rem;
-  letter-spacing: -0.01em;
+  font-size: 1.125rem;
+  letter-spacing: -0.015em;
   white-space: nowrap;
   color: $color-fg;
   @include tabular;
@@ -318,7 +315,7 @@ $label-muted: rgba($color-fg, 0.68);
   width: 20px;
   height: 20px;
   margin-top: 1px;
-  border: 1.5px solid rgba($color-fg, 0.5);
+  border: 1.5px solid rgba(245, 242, 238, 0.55);
   transition:
     background-color 150ms $ease,
     border-color 150ms $ease;
@@ -391,9 +388,9 @@ $label-muted: rgba($color-fg, 0.68);
   gap: 20px;
   min-height: 68px;
   padding: 14px 16px;
-  border: 1px solid $color-hairline-strong;
-  border-radius: 12px;
-  background: $color-surface-1;
+  border-radius: 16px;
+  background: $tile;
+  box-shadow: inset 0 0 0 1px $tile-ring;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -401,19 +398,19 @@ $label-muted: rgba($color-fg, 0.68);
   touch-action: manipulation;
   scroll-margin: 96px 0;
   transition:
-    border-color 150ms $ease,
-    background-color 150ms $ease;
+    box-shadow 160ms $ease,
+    background-color 160ms $ease;
 
   @include pointer-fine {
     &:hover {
-      border-color: rgba($color-red, 0.55);
-      background: $color-surface-2;
+      background: rgba(255, 255, 255, 0.045);
+      box-shadow: inset 0 0 0 1px rgba($color-red, 0.55);
     }
   }
 
   &[data-checked] {
-    border-color: rgba($color-red, 0.7);
-    background: rgba($color-red, 0.06);
+    background: rgba($color-red-fill, 0.08);
+    box-shadow: inset 0 0 0 1px rgba($color-red, 0.75);
   }
 
   &:has(.native:focus-visible) {
@@ -432,7 +429,7 @@ $label-muted: rgba($color-fg, 0.68);
   font-size: 1rem;
   font-weight: $font-weight-medium;
   line-height: 1.35;
-  color: rgba($color-fg, 0.88);
+  color: rgba(245, 242, 238, 0.9);
 
   .switch[data-checked] & {
     color: $color-fg;
@@ -451,7 +448,7 @@ $label-muted: rgba($color-fg, 0.68);
   flex-shrink: 0;
   width: 46px;
   height: 28px;
-  border: 1.5px solid rgba($color-fg, 0.5);
+  border: 1.5px solid rgba(245, 242, 238, 0.55);
   border-radius: $radius-pill;
   background: $color-surface-3;
   transition:
@@ -483,17 +480,13 @@ $label-muted: rgba($color-fg, 0.68);
 .rail {
   min-width: 0;
 
-  // Sticky beside the questions; scrolls inside itself only if it ever
-  // outgrows the viewport. The right/bottom padding leaves room for the frame.
+  // Sticky beside the questions. The live total, the breakdown and the
+  // primary action sit in its top 700px; the rest (proof, "in writing", what
+  // is included) runs past the fold and scrolls into view with the end of
+  // the questions, instead of hiding behind an inner scroll box.
   @include lg {
     position: sticky;
-    top: 96px;
-    max-height: calc(100svh - 112px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding: 0 14px 14px 0;
-    scrollbar-width: thin;
-    scrollbar-color: rgba($color-fg, 0.2) transparent;
+    top: calc(var(--header-height, 72px) + 24px);
   }
 }
 
@@ -502,57 +495,23 @@ $label-muted: rgba($color-fg, 0.68);
   scroll-margin-top: 72px;
 }
 
-// The site signature: the readout's red hairline frame, offset behind it.
-.frame {
-  // The offset the frame registers from, and rests at (bottom-right).
-  --frame-x: 16px;
-  position: absolute;
-  inset: 12px -12px -12px 12px;
-  border: 1px solid rgba($color-red, 0.6);
-  border-radius: 20px;
-  pointer-events: none;
-
-  // Phones: offset straight down, so the frame never crosses the 16px gutter.
-  @media (max-width: #{$breakpoint-sm - 1px}) {
-    --frame-x: 0px;
-    inset: 10px 0 -10px 0;
-  }
-}
-
-@supports (animation-timeline: view()) {
-  @include motion-ok {
-    .frame {
-      animation: register linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 35%;
-    }
-  }
-}
-
-@keyframes register {
-  from {
-    transform: translate(var(--frame-x, 16px), 20px);
-    opacity: 0.25;
-  }
-  to {
-    transform: none;
-    opacity: 1;
-  }
-}
-
 .card {
   position: relative;
-  z-index: 1;
+  isolation: isolate;
+  overflow: hidden;
   padding: 24px 20px;
-  border-radius: 20px;
-  border: 1px solid $color-hairline-strong;
-  background: linear-gradient(180deg, #17151a 0%, #111013 100%);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.06) inset,
-    0 32px 80px -40px rgba(0, 0, 0, 0.9);
+  border-radius: clamp(22px, 2.4vw, 32px);
+  background:
+    radial-gradient(80% 60% at 100% 0%, rgba(217, 28, 63, 0.18) 0%, transparent 65%),
+    $card;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07);
 
   @include sm {
     padding: 32px;
+  }
+
+  @include xl {
+    padding: 36px;
   }
 }
 
@@ -564,9 +523,11 @@ $label-muted: rgba($color-fg, 0.68);
 }
 
 .readoutLabel {
-  margin: 0;
-  @include mono-label($label-muted);
-  font-family: $font-body;
+  @include section-label;
+
+  &::before {
+    @include section-label-rule;
+  }
 }
 
 // Teal = live: the only teal outside the numbers themselves.
@@ -589,7 +550,7 @@ $label-muted: rgba($color-fg, 0.68);
 // The number. Sized to its own container so the longest range never overflows.
 .totalBox {
   container-type: inline-size;
-  margin-top: 16px;
+  margin-top: 22px;
 }
 
 .total {
@@ -609,10 +570,10 @@ $label-muted: rgba($color-fg, 0.68);
   align-items: baseline;
   column-gap: 0.06em;
   font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: clamp(2rem, 12cqi, 3.75rem);
-  line-height: 1;
-  letter-spacing: -0.035em;
+  font-weight: 800;
+  font-size: clamp(2.25rem, 13cqi, 4.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
   color: $color-signal;
   @include tabular;
 }
@@ -627,10 +588,10 @@ $label-muted: rgba($color-fg, 0.68);
 }
 
 .unit {
-  margin: 8px 0 0;
+  margin: 12px 0 0;
   font-size: 1rem;
   line-height: 1.5;
-  color: rgba($color-fg, 0.86);
+  color: rgba(245, 242, 238, 0.86);
 }
 
 .unitNote {
@@ -651,12 +612,12 @@ $label-muted: rgba($color-fg, 0.68);
 }
 
 .monthlyName {
-  color: rgba($color-fg, 0.86);
+  color: rgba(245, 242, 238, 0.86);
 }
 
 // ---------------------------------------------------------------- breakdown
 .breakdown {
-  margin-top: 24px;
+  margin-top: 26px;
   padding-top: 24px;
   border-top: 1px solid $color-hairline;
 }
@@ -664,61 +625,38 @@ $label-muted: rgba($color-fg, 0.68);
 .subhead {
   margin: 0 0 16px;
   @include mono-label($label-muted);
-  font-family: $font-body;
 }
 
-// A red timeline with one node per driver.
+// One row per driver, on hairlines; a red node marks each service line.
 .drivers {
-  position: relative;
   display: grid;
-  gap: 16px;
   margin: 0;
-  padding: 0 0 0 24px;
+  padding: 0;
   list-style: none;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 8px;
-    bottom: 8px;
-    width: 1px;
-    background: rgba($color-red, 0.55);
-    transform-origin: top;
-  }
-}
-
-@supports (animation-timeline: view()) {
-  @include motion-ok {
-    .drivers::before {
-      animation: draw-line linear both;
-      animation-timeline: view();
-      animation-range: entry 10% cover 45%;
-    }
-  }
-}
-
-@keyframes draw-line {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
 }
 
 .driver {
   position: relative;
+  padding: 12px 0 12px 20px;
+  border-top: 1px solid $color-hairline;
+
+  &:first-child {
+    border-top: 0;
+    padding-top: 0;
+
+    &::before {
+      top: 6px;
+    }
+  }
 
   &::before {
     content: '';
     position: absolute;
-    left: -24px;
-    top: 6px;
-    width: 9px;
-    height: 9px;
+    left: 0;
+    top: 18px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: #141216;
     border: 1.5px solid $color-red;
   }
 
@@ -726,20 +664,15 @@ $label-muted: rgba($color-fg, 0.68);
     background: $color-red;
   }
 
-  // New drivers settle in; existing ones never re-animate (stable keys).
+  // New drivers settle in; existing ones never re-animate (stable keys). Transform only.
   @include motion-ok {
-    animation: driver-in 220ms $ease-out both;
+    animation: driver-in 320ms $ease-out both;
   }
 }
 
 @keyframes driver-in {
   from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: translate3d(0, 6px, 0);
   }
 }
 
@@ -819,29 +752,40 @@ $label-muted: rgba($color-fg, 0.68);
   display: grid;
   gap: 4px;
   margin: 16px 0 0;
-  padding: 12px 0 0 12px;
+  padding: 12px 0 0 14px;
   border-left: 2px solid $color-red;
   list-style: none;
 
   li {
     font-size: 1rem;
     line-height: 1.5;
-    color: rgba($color-fg, 0.86);
+    color: rgba(245, 242, 238, 0.86);
   }
 }
 
 // ---------------------------------------------------------------- next steps
 .next {
   display: grid;
-  gap: 8px;
-  margin-top: 24px;
+  gap: 10px;
+  margin-top: 26px;
 }
 
 .primary {
   @include button-primary;
   width: 100%;
-  min-height: 52px;
+  min-height: 56px;
+  gap: 14px;
+  font-size: 1.0625rem;
   @include focus-ring;
+}
+
+.primaryArrow {
+  display: inline-block;
+  transition: transform 0.4s $ease-out-expo;
+
+  .primary:hover & {
+    transform: translateX(4px);
+  }
 }
 
 .nextNote {
@@ -853,8 +797,8 @@ $label-muted: rgba($color-fg, 0.68);
 
 // One attributed line of client proof under the action it supports.
 .proof {
-  margin: 8px 0 0;
-  padding: 8px 0 0 16px;
+  margin: 10px 0 0;
+  padding: 10px 0 0 16px;
   border-left: 2px solid $color-red;
 }
 
@@ -865,7 +809,7 @@ $label-muted: rgba($color-fg, 0.68);
     margin: 0;
     font-family: $font-display;
     font-weight: $font-weight-semibold;
-    font-size: 1.0625rem;
+    font-size: 1.125rem;
     line-height: 1.35;
     letter-spacing: -0.01em;
     color: $color-fg;
@@ -901,7 +845,7 @@ $label-muted: rgba($color-fg, 0.68);
 .send {
   display: grid;
   gap: 8px;
-  margin-top: 24px;
+  margin-top: 26px;
   padding-top: 24px;
   border-top: 1px solid $color-hairline;
 }
@@ -916,7 +860,7 @@ $label-muted: rgba($color-fg, 0.68);
 .sendLabel {
   font-size: 1rem;
   line-height: 1.4;
-  color: rgba($color-fg, 0.86);
+  color: rgba(245, 242, 238, 0.86);
 }
 
 .optional {
@@ -938,15 +882,15 @@ $label-muted: rgba($color-fg, 0.68);
   min-height: 48px;
   padding: 0 14px;
   // Boundary at 3:1+ against the card (1.4.11).
-  border: 1px solid rgba($color-fg, 0.44);
-  border-radius: 10px;
+  border: 1px solid rgba(245, 242, 238, 0.44);
+  border-radius: 12px;
   background: $color-surface-3;
   color: $color-fg;
   font-size: 1rem; // 16px: no iOS zoom
   line-height: 1.2;
 
   &::placeholder {
-    color: rgba($color-fg, 0.52);
+    color: rgba(245, 242, 238, 0.52);
   }
 
   &:focus-visible {
@@ -977,10 +921,10 @@ $label-muted: rgba($color-fg, 0.68);
 
 .sent {
   display: block;
-  margin-top: 24px;
+  margin-top: 26px;
   padding: 16px;
-  border: 1px solid rgba($color-signal, 0.4);
-  border-radius: 12px;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba($color-signal, 0.4);
   font-size: 1rem;
   line-height: 1.5;
   color: $color-fg;
@@ -988,7 +932,7 @@ $label-muted: rgba($color-fg, 0.68);
 
 // ---------------------------------------------------------------- what's included
 .included {
-  margin-top: 24px;
+  margin-top: 26px;
   border-top: 1px solid $color-hairline;
 }
 
@@ -999,7 +943,7 @@ $label-muted: rgba($color-fg, 0.68);
   gap: 12px;
   min-height: 52px;
   cursor: pointer;
-  @include mono-label(rgba($color-fg, 0.86));
+  @include mono-label(rgba(245, 242, 238, 0.86));
   -webkit-tap-highlight-color: transparent;
 
   &::after {
@@ -1039,7 +983,7 @@ $label-muted: rgba($color-fg, 0.68);
     padding-left: 20px;
     font-size: 1rem;
     line-height: 1.5;
-    color: rgba($color-fg, 0.82);
+    color: rgba(245, 242, 238, 0.82);
 
     &::before {
       content: '';
@@ -1109,9 +1053,9 @@ $label-muted: rgba($color-fg, 0.68);
   width: 100%;
   min-height: 52px;
   padding: 6px 8px 6px 16px;
-  border: 1px solid $color-hairline-strong;
-  border-radius: 14px;
-  background: $color-surface-2;
+  border-radius: 16px;
+  background: $card;
+  box-shadow: inset 0 0 0 1px $color-hairline-strong;
   text-align: left;
   cursor: pointer;
   touch-action: manipulation;
@@ -1130,7 +1074,7 @@ $label-muted: rgba($color-fg, 0.68);
 }
 
 .barLabel {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: $font-weight-medium;
   letter-spacing: $letter-spacing-label;
   text-transform: uppercase;
@@ -1155,11 +1099,11 @@ $label-muted: rgba($color-fg, 0.68);
   flex-shrink: 0;
   min-height: 40px;
   padding: 0 12px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: $font-weight-semibold;
   color: $color-fg;
-  background: rgba($color-fg, 0.06);
+  background: rgba(245, 242, 238, 0.06);
 }
 
 .barArrow {

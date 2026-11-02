@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { SERVICE_META, SIZE_OPTIONS, parsePriceLabel, recurringLinesFor, tiersFor } from '@/lib/estimate';
 import { cleanDash, priceText, type ServiceFacts } from './content';
 import LoadIntoEstimator from './LoadIntoEstimator';
@@ -24,7 +25,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
           {facts.name}
         </h3>
         <p className={styles.groupAnswer}>{facts.answer}</p>
-        <Link href={facts.href} className={styles.textLink}>
+        <Link href={facts.href} className={styles.textLink} data-cta-placement={`pricing_service_${facts.service}`}>
           {facts.linkLabel}
           <span aria-hidden="true"> →</span>
         </Link>
@@ -68,8 +69,10 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
                   </ul>
                 </TierDetails>
                 {parsed.isCustom || !size ? (
-                  <Link href="/contact-us" className={styles.tierAction} data-cta-placement={`pricing_tier_${facts.service}_call`}>
-                    Book a call<span aria-hidden="true"> →</span>
+                  <Link href={PROJECT_HREF} className={styles.tierAction} data-cta-placement={`pricing_tier_${facts.service}_call`}>
+                    {PROJECT_LABEL}
+                    <span className="visually-hidden">: {tier.name}</span>
+                    <span aria-hidden="true"> →</span>
                   </Link>
                 ) : (
                   <LoadIntoEstimator service={facts.service} size={size.key} className={styles.tierAction}>

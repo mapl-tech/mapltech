@@ -39,6 +39,7 @@ export const REFERRAL_STEPS = [
 ] as const;
 
 export const REFERRAL_ESTIMATOR = {
+  label: 'Calculator',
   title: 'Put a number on your introductions.',
   lede: 'Pick how many agencies you might introduce in a year and what they mostly need. The figure is project value at our public prices, not your bonus.',
 } as const;
@@ -50,6 +51,7 @@ const toolsAndCloud =
     : `${tools.name} at ${tools.fromLabel} and ${cloud.name} at ${cloud.fromLabel}`;
 
 export const REFERRAL_THEY_GET = {
+  label: 'For the agency you introduce',
   title: 'What the agency you introduce gets.',
   // Answer-first: what your contact is offered, with the real starting prices.
   answer: `Public prices, a 20-minute scoping call and a fixed quote after it. ${web.name} starts at ${web.fromLabel}, ${automation.name} at ${automation.fromLabel}, ${toolsAndCloud}.`,
@@ -58,6 +60,7 @@ export const REFERRAL_THEY_GET = {
 } as const;
 
 export const REFERRAL_FORM = {
+  label: 'Your referral',
   title: 'Refer an agency.',
   lede: 'Tell us about the agency and how to reach them. We will contact them and mention that you introduced them.',
   // What the form asks of you, answered beside it (the fields in ReferralSignup).
@@ -99,6 +102,17 @@ export const REFERRAL_TERMS: FaqItem[] = [
 ];
 
 export const REFERRAL_TERMS_COPY = {
+  label: 'Terms',
+  /** Also the FAQPage JSON-LD name. */
   title: 'Referral questions, answered plainly.',
   lede: 'How the program works, in the same words we use on every page.',
+} as const;
+
+/**
+ * The close band, for the visitor who is an agency with a build of its own.
+ * Lede: the homepage close's own words (flagship content.ts CLOSE_BAND).
+ */
+export const REFERRAL_CLOSE = {
+  title: 'Have a build of your own in mind?',
+  lede: 'Tell us what you are building. You get a fixed quote after a 20-minute scoping call.',
 } as const;

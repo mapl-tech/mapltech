@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { pricing } from '@/config/site';
+import { PROJECT_LABEL } from '@/components/layout/chrome';
 import { slugify } from '@/lib/schema';
 import { BUNDLES_ANSWER, canonicalCopy, priceText } from './content';
 import TierDetails from './TierDetails';
@@ -8,7 +9,8 @@ import styles from './PriceList.module.scss';
 /**
  * Partner bundles from `pricing.bundles`: one monthly partnership across
  * several service lines. The estimator surfaces the matching bundle whenever
- * two or more lines are priced together (`bundleFor` in estimate.ts).
+ * two or more lines are priced together (`bundleFor` in estimate.ts). Each
+ * bundle's "Start a project" opens the brief with that bundle already chosen.
  */
 export default function BundleTiers() {
   return (
@@ -58,7 +60,8 @@ export default function BundleTiers() {
                   className={styles.tierAction}
                   data-cta-placement={`pricing_bundle_${slug.replace(/-/g, '_')}`}
                 >
-                  Book a call<span className="visually-hidden"> about the {bundle.name} bundle</span>
+                  {PROJECT_LABEL}
+                  <span className="visually-hidden"> with the {bundle.name} bundle</span>
                   <span aria-hidden="true"> →</span>
                 </Link>
               </div>

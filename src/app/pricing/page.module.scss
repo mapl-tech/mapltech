@@ -1,54 +1,189 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
-// ============================================
-// /pricing: the estimator section shell. The hero, the estimator island and
-// the static sections style themselves in src/components/pricing/*.
-// ============================================
+// /pricing (Nov 2026 award pass): the hero's actions, the starting-price
+// ledger and the estimator's section. The estimator island, the price list
+// and the shared section grammar style themselves in src/components/pricing/*.
 
-// A quieter, cooler ground than the page: the instrument, lit by its readout.
-.estimator {
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+
+// ---------------------------------------------------------------- hero actions
+.primary {
+  @include button-primary;
+  min-height: 56px;
+  gap: 14px;
+  font-size: 1.0625rem;
+  @include focus-ring;
+
+  // The arrow lives in CSS: the mobile bar repeats this link's text.
+  &::after {
+    content: '\2193';
+    display: inline-block;
+    transition: transform 0.4s $ease-out-expo;
+  }
+
+  &:hover::after {
+    transform: translateY(3px);
+  }
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    width: 100%;
+  }
+}
+
+.secondary {
+  @include text-action($color-fg);
+  font-size: 1.0625rem;
+}
+
+// Its own line under the buttons (a basis of 100% with no max-width, so it always wraps).
+.trust {
+  flex: 0 0 100%;
+  margin: 4px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $color-fg-muted;
+}
+
+// ---------------------------------------------------------------- starting prices
+// PageHeader's light fades out before its edge, so this band sits on plain ground.
+.starting {
   position: relative;
-  padding: clamp(64px, 11vw, 144px) 0;
-  border-top: 1px solid $color-hairline;
-  border-bottom: 1px solid $color-hairline;
-  background:
-    radial-gradient(70% 55% at 88% 12%, rgba($color-signal, 0.05) 0%, transparent 60%),
-    linear-gradient(180deg, #0d0c10 0%, $color-ground 100%);
+  background: $color-ground;
+
 }
 
-.inner {
-  @include container(1280px);
+.startingInner {
+  @include shell;
+  padding-bottom: clamp(56px, 7vw, 104px);
 }
 
-// Same 7/5 split as the estimator below, so the lede sits over the readout.
-.head {
+.startingLabel {
+  @include section-label;
+  margin-bottom: clamp(20px, 2.4vw, 28px);
+
+  &::before {
+    @include section-label-rule;
+  }
+}
+
+// Four published numbers, as big as the column allows (the homepage's proof idiom).
+.ledger {
   display: grid;
-  gap: 16px;
-  margin-bottom: clamp(40px, 5vw, 64px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid $color-hairline-strong;
 
   @include lg {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    column-gap: 56px;
-    align-items: end;
-  }
-
-  @include xl {
-    column-gap: 80px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-.title {
-  margin: 0;
-  font-size: $font-size-h2;
+.cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 14px 20px 0;
+  border-bottom: 1px solid $color-hairline;
+
+  &:nth-child(2n) {
+    padding-left: 16px;
+    border-left: 1px solid $color-hairline;
+  }
+
+  @include lg {
+    padding: 32px 28px 28px 0;
+    border-bottom: 0;
+
+    &:nth-child(n) {
+      padding-left: 28px;
+      border-left: 1px solid $color-hairline;
+    }
+
+    &:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
 }
 
-.lede {
-  margin: 0;
-  max-width: 32rem;
-  font-size: $font-size-lede;
-  line-height: 1.55;
-  color: rgba($color-fg, 0.78);
+.cellName {
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1.3;
+  color: $color-fg;
+}
+
+.cellPrice {
+  display: grid;
+  gap: 6px;
+  margin: 18px 0 0;
+}
+
+.from {
+  @include mono-label;
+}
+
+.amount {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(2.25rem, 1.2rem + 3.4vw, 4.75rem); // 36px -> 76px
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  color: $color-fg;
+  @include tabular;
+}
+
+.cellNote {
+  margin: 14px 0 0;
+  max-width: 24ch;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: $color-fg-muted;
+}
+
+.cellLink {
+  margin: auto 0 0;
+  padding-top: 10px;
+
+  a {
+    @include text-action($color-fg);
+    font-size: 1rem;
+
+    // A down arrow after the words, in CSS (::after is the underline).
+    &::before {
+      content: '\2193';
+      order: 2;
+      color: $color-red;
+    }
+  }
+}
+
+.asOf {
+  margin: 24px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $color-fg-muted;
+
+  time {
+    color: $color-fg;
+  }
+}
+
+// ---------------------------------------------------------------- estimator section
+.estimator {
+  position: relative;
+  background:
+    radial-gradient(60% 40% at 92% 6%, rgba(217, 28, 63, 0.1) 0%, transparent 70%),
+    $color-ground;
+  border-top: 1px solid $color-hairline;
+  scroll-margin-top: 72px;
+}
+
+.estimatorInner {
+  @include shell;
+  @include section-pad;
 }
 
 // Focus is never hidden under the fixed header (WCAG 2.4.11).

@@ -19,6 +19,7 @@ import {
   type EstimateLine,
   type EstimateResult,
 } from '@/lib/estimate';
+import { PROJECT_LABEL } from '@/components/layout/chrome';
 import SendEstimateForm from './SendEstimateForm';
 import { PROOF, keepHyphens } from './content';
 import styles from './ScopeEstimator.module.scss';
@@ -31,7 +32,8 @@ const PROOF_EXCERPT = PROOF ? `${PROOF.quote.split('. ')[0].replace(/\.$/, '')}.
  * between values), then the breakdown behind it, line by line from the
  * engine's own drivers, then the two next steps. The number is on screen
  * before any contact field exists (reciprocity); the email ask comes last
- * and is optional.
+ * and is optional. The primary action is "Start a project", and it opens the
+ * brief already filled in from these answers.
  */
 
 interface SummaryProps {
@@ -98,9 +100,6 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
 
   return (
     <section id="estimate-readout" className={styles.readout} aria-labelledby="estimate-readout-title">
-      {/* The site's signature frame: an offset red hairline that slides into register. */}
-      <span className={styles.frame} aria-hidden="true" />
-
       <div className={styles.card}>
         <div className={styles.readoutTop}>
           <h3 id="estimate-readout-title" className={styles.readoutLabel}>
@@ -227,10 +226,14 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
         </div>
 
         <div className={styles.next}>
+          {/* The site's one primary ask, carrying this estimate into the brief on /contact-us. */}
           <Link href={callHref} className={styles.primary} data-cta-placement="pricing_estimate_call">
-            Book a call
+            {PROJECT_LABEL}
+            <span className={styles.primaryArrow} aria-hidden="true">
+              →
+            </span>
           </Link>
-          <p className={styles.nextNote}>Your answers come with you, so the call starts from this estimate.</p>
+          <p className={styles.nextNote}>Your answers come with you, so the brief starts from this estimate.</p>
           {/* Social proof beside the decision: an attributed excerpt of the real quote. */}
           {PROOF && PROOF_EXCERPT ? (
             <figure className={styles.proof}>

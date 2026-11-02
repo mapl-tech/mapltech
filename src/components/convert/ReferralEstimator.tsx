@@ -187,7 +187,6 @@ export default function ReferralEstimator({ signupId = 'signup' }: { signupId?: 
       </div>
 
       <div className={styles.output}>
-        <span className={styles.frame} aria-hidden="true" />
         <div className={styles.card}>
           <label htmlFor={outputId} className={styles.outputLabel}>
             Project value you would introduce, per year
@@ -212,6 +211,9 @@ export default function ReferralEstimator({ signupId = 'signup' }: { signupId?: 
           </div>
           <a href={`#${signupId}`} className={styles.primary} data-cta-placement="referral_estimator_cta">
             Refer an agency
+            <span className={styles.primaryArrow} aria-hidden="true">
+              ↓
+            </span>
           </a>
         </div>
       </div>

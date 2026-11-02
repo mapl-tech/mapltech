@@ -211,9 +211,14 @@ export function briefLines(answers: BriefAnswers, prefill: BriefPrefill | null):
   if (!kind) return lines;
   const estimateApplies = prefill?.source === 'estimate' && prefill.kind === kind && prefill.size === answers.size;
 
+  // The canonical service name is added in brackets only when the answer's own
+  // label differs from it (they are the same today, which read "Web Development (Web Development)").
   lines.push({
     label: 'Building',
-    value: isEstimateService(kind) ? `${KIND_LABEL[kind]} (${SERVICE_META[kind].label})` : KIND_LABEL[kind],
+    value:
+      isEstimateService(kind) && KIND_LABEL[kind] !== SERVICE_META[kind].label
+        ? `${KIND_LABEL[kind]} (${SERVICE_META[kind].label})`
+        : KIND_LABEL[kind],
   });
   const size = sizeLine(kind, answers.size, prefill);
   if (size) lines.push({ label: kind === 'partner' ? 'Arrangement' : 'Size', value: size });

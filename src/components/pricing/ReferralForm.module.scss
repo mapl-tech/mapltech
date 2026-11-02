@@ -1,15 +1,17 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
-// The referral form: single column on phones, paired fields from 640px,
-// labels above inputs, 52px fields, errors under the field they belong to.
+// The referral form (Nov 2026 award pass), inside the dark form card: single
+// column on phones, paired fields from 640px, labels above inputs, 56px
+// fields with 16px+ text, errors under the field they belong to.
 
 $ease: cubic-bezier(0.23, 1, 0.32, 1);
-$muted: rgba($color-fg, 0.7);
+$muted: $color-fg-muted;
 
 .form {
   display: grid;
-  gap: 32px;
+  gap: 36px;
 }
 
 .fieldset {
@@ -22,13 +24,16 @@ $muted: rgba($color-fg, 0.7);
 .legend {
   float: left;
   width: 100%;
-  margin: 0 0 16px;
-  padding: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 20px;
+  padding: 0 0 14px;
   border-bottom: 1px solid $color-hairline;
   font-family: $font-display;
   font-weight: $font-weight-bold;
-  font-size: 1.25rem;
-  letter-spacing: -0.015em;
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  letter-spacing: -0.02em;
   color: $color-fg;
 
   + * {
@@ -76,24 +81,24 @@ $muted: rgba($color-fg, 0.7);
 .textarea {
   width: 100%;
   min-width: 0;
-  min-height: 52px;
+  min-height: 56px;
   padding: 0 16px;
   // Boundary at 3:1+ against the card (1.4.11); 0.28 measured 2.35:1.
-  border: 1px solid rgba($color-fg, 0.44);
-  border-radius: 12px;
+  border: 1px solid rgba(245, 242, 238, 0.44);
+  border-radius: 14px;
   background-color: $color-surface-3;
   color: $color-fg;
-  font-size: 1rem; // 16px: no iOS zoom
+  font-size: 1.0625rem; // 17px: no iOS zoom
   line-height: 1.4;
   transition: border-color 150ms $ease;
 
   &::placeholder {
-    color: rgba($color-fg, 0.52);
+    color: rgba(245, 242, 238, 0.52);
   }
 
   @include pointer-fine {
     &:hover {
-      border-color: rgba($color-fg, 0.62);
+      border-color: rgba(245, 242, 238, 0.62);
     }
   }
 
@@ -105,6 +110,7 @@ $muted: rgba($color-fg, 0.7);
 
   &[aria-invalid='true'] {
     border-color: $color-red-text;
+    box-shadow: inset 0 0 0 1px $color-red-text;
   }
 }
 
@@ -118,7 +124,7 @@ $muted: rgba($color-fg, 0.7);
 }
 
 .textarea {
-  min-height: 128px;
+  min-height: 132px;
   padding: 14px 16px;
   resize: vertical;
 }
@@ -130,11 +136,13 @@ $muted: rgba($color-fg, 0.7);
   color: $muted;
 }
 
+// #ff5c73 on the card: 5.5:1+.
 .fieldError {
   display: flex;
   gap: 8px;
   margin: 0;
   font-size: 1rem;
+  font-weight: $font-weight-medium;
   line-height: 1.5;
   color: $color-red-text;
 
@@ -152,8 +160,8 @@ $muted: rgba($color-fg, 0.7);
 .formError {
   margin: 0;
   padding: 14px 16px;
-  border: 1px solid rgba($color-red-text, 0.5);
-  border-radius: 12px;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba($color-red-text, 0.5);
   font-size: 1rem;
   line-height: 1.5;
   color: $color-fg;
@@ -171,11 +179,14 @@ $muted: rgba($color-fg, 0.7);
   display: grid;
   gap: 12px;
   justify-items: start;
+  padding-top: 24px;
+  border-top: 1px solid $color-hairline;
 }
 
 .primary {
   @include button-primary;
-  min-height: 52px;
+  min-height: 56px;
+  font-size: 1.0625rem;
   @include focus-ring;
 
   @media (max-width: #{$breakpoint-sm - 1px}) {
@@ -198,7 +209,7 @@ $muted: rgba($color-fg, 0.7);
   a {
     display: inline-block;
     padding: 10px 0;
-    color: rgba($color-fg, 0.86);
+    color: rgba(245, 242, 238, 0.86);
     text-decoration: underline;
     text-underline-offset: 3px;
 
@@ -217,26 +228,33 @@ $muted: rgba($color-fg, 0.7);
 // ---------------------------------------------------------------- sent
 .success {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   justify-items: start;
-  padding: 32px 24px;
-  border-left: 2px solid $color-red;
-  background: rgba($color-fg, 0.03);
-  border-radius: 0 12px 12px 0;
+  padding: 8px 0;
   outline: none;
 
   &:focus-visible {
     outline: $focus-ring;
-    outline-offset: 4px;
+    outline-offset: 6px;
+    border-radius: 8px;
+  }
+
+  &::before {
+    content: '';
+    width: 40px;
+    height: 2px;
+    margin-bottom: 8px;
+    background: $color-red;
   }
 }
 
 .successTitle {
   margin: 0;
   font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: 1.5rem;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  font-size: clamp(2rem, 1.5rem + 1.6vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
   color: $color-fg;
 }
 
@@ -245,12 +263,12 @@ $muted: rgba($color-fg, 0.7);
   max-width: 44ch;
   font-size: 1.0625rem;
   line-height: 1.6;
-  color: rgba($color-fg, 0.86);
+  color: $color-text-body;
 }
 
 .secondary {
   @include button-secondary;
-  min-height: 48px;
-  margin-top: 4px;
+  min-height: 52px;
+  margin-top: 6px;
   @include focus-ring;
 }

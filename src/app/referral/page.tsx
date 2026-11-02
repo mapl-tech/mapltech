@@ -2,12 +2,15 @@ import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Accordion from '@/components/ui/Accordion';
+import PageHeader from '@/components/ui/PageHeader';
+import CloseBand from '@/components/flagship/CloseBand';
 import JsonLd from '@/components/seo/JsonLd';
 import { faqPage, howTo, pageGraph } from '@/lib/schema';
 import ReferralEstimator from '@/components/convert/ReferralEstimator';
 import ReferralSignup from '@/components/convert/ReferralSignup';
 import { PROOF } from '@/components/pricing/content';
 import {
+  REFERRAL_CLOSE,
   REFERRAL_DESCRIPTION,
   REFERRAL_ESTIMATOR,
   REFERRAL_FORM,
@@ -19,17 +22,17 @@ import {
   REFERRAL_THEY_GET,
   REFERRAL_TITLE,
 } from '@/components/pricing/referralContent';
-import hero from '@/components/pricing/PricingHero.module.scss';
 import sections from '@/components/pricing/PricingSections.module.scss';
 import styles from '@/components/pricing/ReferralPage.module.scss';
 
 /*
- * /referral, flagship redesign (Nov 2026). What it is and how the bonus
- * works in the first screen (the live page's three steps, drawn as a
- * timeline), the calculator as the page's one interaction, what the agency
- * you introduce gets with the one approved client quote beside it, the terms
- * as FAQ, and the form. Metadata (title, description, canonical, Open Graph)
- * lives in ./layout.tsx. No bonus amount is published, so none is stated.
+ * /referral (Nov 2026 award pass). What it is and how the bonus works first
+ * (the live page's three steps, as numbered columns), the calculator as the
+ * page's one interaction, what the agency you introduce gets on paper with
+ * the one approved client quote, the terms as FAQ, the form, and the crimson
+ * close for visitors with a build of their own. Metadata (title, description,
+ * canonical, Open Graph) lives in ./layout.tsx. No bonus amount is published,
+ * so none is stated.
  */
 
 const referralGraph = pageGraph({
@@ -46,79 +49,85 @@ const referralGraph = pageGraph({
 });
 
 export default function ReferralPage() {
+  const [titleLead, titleCondition] = REFERRAL_HERO.titleLines;
+
   return (
     <>
       <JsonLd data={referralGraph} />
 
-      {/* What it is, and how the bonus works, before the first scroll. */}
-      <section className={hero.hero} aria-labelledby="referral-title">
-        <div className={hero.inner}>
-          <div className={hero.head}>
-            <div className={hero.eyebrowRow}>
-              <span className={hero.tick} aria-hidden="true" />
-              <p className={hero.eyebrow}>{REFERRAL_HERO.eyebrow}</p>
-            </div>
-            <h1 id="referral-title" className={styles.title}>
-              {REFERRAL_HERO.titleLines.map((line) => (
-                <span key={line} className={styles.titleLine}>
-                  {line}
+      <PageHeader
+        id="referral-title"
+        size="l"
+        crumbs={[{ label: 'Home', href: '/' }, { label: 'Referral program' }]}
+        label={REFERRAL_HERO.eyebrow}
+        title={
+          <>
+            <span className={styles.titleLine}>{titleLead}</span> <em className={styles.titleLine}>{titleCondition}</em>
+          </>
+        }
+        lede={<p>{REFERRAL_HERO.lede}</p>}
+        actions={
+          <>
+            {/* The page's own action; the mobile bar repeats it (data-hero-cta). */}
+            <a href="#signup" className={styles.primary} data-hero-cta="" data-cta-placement="referral_hero_primary">
+              Refer an agency
+            </a>
+            <p className={styles.trust}>{REFERRAL_HERO.trust}</p>
+          </>
+        }
+      />
+
+      {/* How the bonus works, before the first scroll: three numbered columns. */}
+      <section id="how" className={styles.how} aria-labelledby="how-title">
+        <div className={styles.howInner}>
+          <h2 id="how-title" className={styles.howLabel}>
+            How the referral bonus works
+          </h2>
+          <ol className={sections.steps} style={{ '--cols': 3 } as CSSProperties} role="list">
+            {REFERRAL_STEPS.map((step, index) => (
+              <li key={step.name} className={sections.step}>
+                <span className={sections.stepNo} aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
                 </span>
-              ))}
-            </h1>
-          </div>
-
-          <div className={hero.intro}>
-            <p className={hero.lede}>{REFERRAL_HERO.lede}</p>
-            <div className={hero.actions}>
-              <a href="#signup" className={hero.primary} data-hero-cta="" data-cta-placement="referral_hero_primary">
-                Refer an agency
-              </a>
-            </div>
-            <p className={hero.trust}>{REFERRAL_HERO.trust}</p>
-          </div>
-
-          <div id="how" className={hero.schedule}>
-            <h2 className={hero.scheduleTitle}>How the referral bonus works</h2>
-            <ol className={styles.steps} role="list">
-              {REFERRAL_STEPS.map((step, index) => (
-                <li key={step.name} className={styles.step} style={{ '--i': index } as CSSProperties}>
-                  <p className={styles.stepIndex}>Step {index + 1}</p>
-                  <h3 className={styles.stepName}>{step.name}</h3>
-                  <p className={styles.stepText}>{step.text}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
+                <div>
+                  <h3 className={sections.stepName}>{step.name}</h3>
+                  <p className={sections.stepText}>{step.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
       {/* The one interaction. */}
       <section id="estimator" className={styles.estimator} aria-labelledby="estimator-title">
-        <div className={styles.inner}>
-          <div className={styles.head}>
-            <h2 id="estimator-title" className={styles.h2}>
+        <div className={styles.estimatorInner}>
+          <header className={sections.head}>
+            <p className={sections.label}>{REFERRAL_ESTIMATOR.label}</p>
+            <h2 id="estimator-title" className={sections.title}>
               {REFERRAL_ESTIMATOR.title}
             </h2>
-            <p className={styles.lede}>{REFERRAL_ESTIMATOR.lede}</p>
-          </div>
+            <p className={sections.lede}>{REFERRAL_ESTIMATOR.lede}</p>
+          </header>
           <ReferralEstimator signupId="signup" />
         </div>
       </section>
 
-      {/* What your contact is offered, with the one approved client quote beside it. */}
+      {/* Paper: what your contact is offered, with the one approved client quote beside it. */}
       <section id="what-they-get" className={styles.theyGet} aria-labelledby="they-get-title">
-        <div className={styles.split}>
-          <div className={styles.splitHead}>
-            <h2 id="they-get-title" className={styles.h2}>
+        <div className={styles.theyGetInner}>
+          <div className={styles.theyGetHead}>
+            <p className={styles.paperLabel}>{REFERRAL_THEY_GET.label}</p>
+            <h2 id="they-get-title" className={styles.paperTitle}>
               {REFERRAL_THEY_GET.title}
             </h2>
             <p className={styles.answer}>{REFERRAL_THEY_GET.answer}</p>
             <p className={styles.note}>{REFERRAL_THEY_GET.note}</p>
             <p className={styles.links}>
-              <Link href="/pricing" className={styles.textLink}>
+              <Link href="/pricing" className={styles.paperLink} data-cta-placement="referral_theyget_pricing">
                 See the full price list<span aria-hidden="true"> →</span>
               </Link>
-              <Link href="/our-work" className={styles.textLink}>
+              <Link href="/our-work" className={styles.paperLink} data-cta-placement="referral_theyget_work">
                 See the work<span aria-hidden="true"> →</span>
               </Link>
             </p>
@@ -143,14 +152,15 @@ export default function ReferralPage() {
         </div>
       </section>
 
-      {/* Terms as FAQ: native accordion in the /pricing FAQ's hairline rows, FAQPage JSON-LD from the same array. */}
-      <section id="terms" className={styles.terms} aria-labelledby="terms-title">
-        <div className={styles.split}>
-          <div className={styles.splitHead}>
-            <h2 id="terms-title" className={styles.h2}>
+      {/* Terms as FAQ: the homepage's accordion; FAQPage JSON-LD from the same array. */}
+      <section id="terms" className={sections.faq} aria-labelledby="terms-title">
+        <div className={sections.faqInner}>
+          <div className={sections.faqHead}>
+            <p className={sections.label}>{REFERRAL_TERMS_COPY.label}</p>
+            <h2 id="terms-title" className={sections.title}>
               {REFERRAL_TERMS_COPY.title}
             </h2>
-            <p className={styles.lede}>{REFERRAL_TERMS_COPY.lede}</p>
+            <p className={sections.lede}>{REFERRAL_TERMS_COPY.lede}</p>
           </div>
           <Accordion
             name="referral-terms"
@@ -161,14 +171,15 @@ export default function ReferralPage() {
         </div>
       </section>
 
-      {/* The close: the form itself (data-page-close hides the footer's pricing ask). */}
-      <section id="signup" className={styles.signup} aria-labelledby="signup-title" data-page-close="">
-        <div className={styles.split}>
-          <div className={styles.splitHead}>
-            <h2 id="signup-title" className={styles.h2}>
+      {/* The form. */}
+      <section id="signup" className={styles.signup} aria-labelledby="signup-title">
+        <div className={styles.signupInner}>
+          <div className={styles.signupHead}>
+            <p className={styles.signupLabel}>{REFERRAL_FORM.label}</p>
+            <h2 id="signup-title" className={sections.title}>
               {REFERRAL_FORM.title}
             </h2>
-            <p className={styles.lede}>{REFERRAL_FORM.lede}</p>
+            <p className={sections.lede}>{REFERRAL_FORM.lede}</p>
             {/* What the form asks for, beside it: the effort question answered before the first field. */}
             <dl className={styles.needs}>
               {REFERRAL_FORM.needs.map((row) => (
@@ -184,6 +195,8 @@ export default function ReferralPage() {
           </div>
         </div>
       </section>
+
+      <CloseBand id="referral-close-title" placement="referral_close" title={REFERRAL_CLOSE.title} lede={REFERRAL_CLOSE.lede} />
     </>
   );
 }

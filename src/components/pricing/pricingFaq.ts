@@ -56,7 +56,8 @@ export const pricingFaq: FaqItem[] = [
   {
     question: 'What technologies do you build with?',
     answer:
-      'We use the right tool for each project: React, Next.js, WordPress (custom themes, not page builders), Node.js, Python and more. Every decision is based on your project’s requirements, not our preferences.',
+      // No "not page builders": CHHA-NCR, shown as proof, runs on Elementor (see services.ts).
+      'We use the right tool for each project: React, Next.js, WordPress, Node.js, Python and more. Every decision is based on your project’s requirements, not our preferences.',
   },
   {
     question: 'Can you rebuild our existing site without downtime?',

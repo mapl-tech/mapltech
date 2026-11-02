@@ -8,10 +8,10 @@ import { BUNDLES_FROM, HOURLY_FROM, PRICE_LIST, SERVICES } from './content';
 import styles from './PriceList.module.scss';
 
 /**
- * The full price list: the crawlable price statements, every tier, monthly
- * line, bundle and rate as plain HTML. The heading holds still on wide
- * screens with an index beside it (the homepage's Layers idiom); the rows
- * sit on a red timeline rule that draws as you read.
+ * The full price list, on paper (the page's light section): the crawlable
+ * price statements, every tier, monthly line, bundle and rate as plain HTML.
+ * The heading and an index hold still on wide screens; every tier is a row on
+ * an ink hairline with its price set large, as on a printed price sheet.
  */
 export default function PriceList() {
   const index = [
@@ -24,6 +24,7 @@ export default function PriceList() {
     <section id="price-list" className={styles.list} aria-labelledby="price-list-title">
       <div className={styles.inner}>
         <div className={styles.rail}>
+          <p className={styles.label}>{PRICE_LIST.label}</p>
           <h2 id="price-list-title" className={styles.title}>
             {PRICE_LIST.title}
           </h2>

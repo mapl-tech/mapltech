@@ -92,7 +92,9 @@ export function useContactSubmit() {
       return true;
     } catch (err) {
       setStatus('error');
-      setError(err instanceof Error ? err.message : GENERIC_ERROR);
+      // The API's own messages pass through; a network failure (fetch rejects
+      // with a TypeError: "Failed to fetch", "Load failed") gets the plain one.
+      setError(err instanceof Error && !(err instanceof TypeError) ? err.message : GENERIC_ERROR);
       return false;
     }
   }, []);

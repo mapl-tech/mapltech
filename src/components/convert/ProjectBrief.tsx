@@ -24,7 +24,10 @@ import {
 import styles from './ProjectBrief.module.scss';
 
 /**
- * The contact brief (flagship redesign): one question at a time, in one form.
+ * The contact brief: one question at a time, in one form. Since the Nov 2026
+ * award pass it is set in ink on the paper sheet of /contact-us: a large step
+ * counter over a four-part progress track, the open question in display type,
+ * answers as 64px+ rows, and a drawn tick on "Brief sent.".
  *
  * 1 What are we building? (each answer shows its public floor price)
  * 2 How big is it? (sizes with the tier and price they map to; skipped for "Not sure yet")
@@ -282,41 +285,49 @@ export default function ProjectBrief() {
   };
 
   if (sent) {
+    // The same <form> element stays mounted around the confirmation (React keeps
+    // the node), so the mobile action bar still treats the brief as an on-screen
+    // form and does not offer "Back to the brief" over "Brief sent.".
     return (
-      <div className={styles.done}>
-        <span className={styles.doneMark} aria-hidden="true" />
-        <h2 ref={doneRef} tabIndex={-1} className={styles.doneTitle}>
-          Brief sent.
-        </h2>
-        <p className={styles.doneText}>
-          It is in our inbox at {siteConfig.email}. We will reply{' '}
-          {sent.reply === 'phone' ? (
-            <>
-              with a call to <strong>{sent.phone}</strong>
-            </>
-          ) : (
-            <>
-              by email to <strong>{sent.email}</strong>
-            </>
-          )}
-          .
-        </p>
-        <dl className={styles.doneList}>
-          {sent.lines.map((line) => (
-            <div key={line.label}>
-              <dt>{line.label}</dt>
-              <dd>{line.value}</dd>
-            </div>
-          ))}
-        </dl>
-        <p className={styles.doneNext}>
-          While you wait:{' '}
-          <Link href={sent.href} data-cta-placement="contact_brief_sent_estimate">
-            Price your project
-          </Link>{' '}
-          or <Link href="/our-work">see the work</Link>.
-        </p>
-      </div>
+      <form ref={formRef} className={styles.brief} onSubmit={(event) => event.preventDefault()} noValidate>
+        <div className={styles.done}>
+          <svg className={styles.doneMark} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <circle className={styles.doneRing} cx="32" cy="32" r="30" pathLength={1} />
+            <path className={styles.doneTick} d="M20 33.5 28.5 42 45 24" pathLength={1} />
+          </svg>
+          <h2 ref={doneRef} tabIndex={-1} className={styles.doneTitle}>
+            Brief sent.
+          </h2>
+          <p className={styles.doneText}>
+            It is in our inbox at {siteConfig.email}. We will reply{' '}
+            {sent.reply === 'phone' ? (
+              <>
+                with a call to <strong>{sent.phone}</strong>
+              </>
+            ) : (
+              <>
+                by email to <strong>{sent.email}</strong>
+              </>
+            )}
+            .
+          </p>
+          <dl className={styles.doneList}>
+            {sent.lines.map((line) => (
+              <div key={line.label}>
+                <dt>{line.label}</dt>
+                <dd>{line.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className={styles.doneNext}>
+            While you wait:{' '}
+            <Link href={sent.href} data-cta-placement="contact_brief_sent_estimate">
+              Price your project
+            </Link>{' '}
+            or <Link href="/our-work">see the work</Link>.
+          </p>
+        </div>
+      </form>
     );
   }
 
@@ -361,8 +372,11 @@ export default function ProjectBrief() {
         <h2 id="brief-title" className={styles.title}>
           Your brief
         </h2>
+        {/* Visual only: the progress list below carries "step 2 of 4" for assistive tech. */}
         <p className={styles.count} aria-hidden="true">
-          Step {step} of 4
+          <span className={styles.countLabel}>Step</span>
+          <span className={styles.countNow}>{String(step).padStart(2, '0')}</span>
+          <span className={styles.countOf}>/ 04</span>
         </p>
       </div>
 
@@ -586,6 +600,11 @@ export default function ProjectBrief() {
           data-cta-placement={step < 4 ? `contact_brief_step${step}` : 'contact_brief_send'}
         >
           {step < 4 ? 'Continue' : status === 'sending' ? 'Sending…' : 'Send the brief'}
+          {status === 'sending' && step === 4 ? null : (
+            <span className={styles.arrow} aria-hidden="true">
+              →
+            </span>
+          )}
         </button>
         {step === 4 ? (
           <p className={styles.trust}>

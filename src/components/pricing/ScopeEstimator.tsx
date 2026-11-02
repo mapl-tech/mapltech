@@ -44,7 +44,8 @@ import styles from './ScopeEstimator.module.scss';
  *
  * Below 1024px the readout sits under the questions; a one-line bar keeps the
  * live range on screen while the questions are in view and hands over to the
- * readout once it scrolls in.
+ * readout once it scrolls in. The five questions are numbered rows on
+ * hairlines (the numerals are decorative; each legend is the question alone).
  */
 
 const TIMELINE_COPY: Record<EstimateTimeline, { label: string; effect: string }> = {
@@ -187,7 +188,8 @@ export default function ScopeEstimator() {
         {/* 1 · Service lines (checkboxes: several lines can be priced together) */}
         <fieldset className={styles.step} aria-describedby={`${uid}-svc-hint`}>
           <legend className={styles.legend}>
-            <span className={styles.index}>1</span> What are we building?
+            <span className={styles.index} aria-hidden="true">01</span>
+            <span className={styles.legendText}>What are we building?</span>
           </legend>
           <p id={`${uid}-svc-hint`} className={styles.hint}>
             Pick one or more. Two or more lines also show the partner bundle that covers them.
@@ -223,7 +225,8 @@ export default function ScopeEstimator() {
         {/* 2 · Size: one radio group per selected line */}
         <fieldset className={styles.step}>
           <legend className={styles.legend}>
-            <span className={styles.index}>2</span> How big is it?
+            <span className={styles.index} aria-hidden="true">02</span>
+            <span className={styles.legendText}>How big is it?</span>
           </legend>
           {input.services.map((service) => {
             const tiers = tiersFor(service);
@@ -269,7 +272,8 @@ export default function ScopeEstimator() {
         {/* 3 · Add-ons: switches that say what they cost before they are flipped */}
         <fieldset className={styles.step} aria-describedby={`${uid}-addon-hint`}>
           <legend className={styles.legend}>
-            <span className={styles.index}>3</span> What does it need?
+            <span className={styles.index} aria-hidden="true">03</span>
+            <span className={styles.legendText}>What does it need?</span>
           </legend>
           <p id={`${uid}-addon-hint`} className={styles.hint}>
             Each add-on says what it does to the price before you turn it on.
@@ -307,7 +311,8 @@ export default function ScopeEstimator() {
         {/* 4 · Ongoing support, mapped to the published monthly lines */}
         <fieldset className={styles.step} aria-describedby={`${uid}-support-hint`}>
           <legend className={styles.legend}>
-            <span className={styles.index}>4</span> Support after launch
+            <span className={styles.index} aria-hidden="true">04</span>
+            <span className={styles.legendText}>Support after launch</span>
           </legend>
           <p id={`${uid}-support-hint`} className={styles.hint}>
             Optional and monthly. Each level maps to a published {multi ? 'maintenance or retainer' : SERVICE_META[input.services[0]].recurringLabel.toLowerCase()} line.
@@ -339,7 +344,8 @@ export default function ScopeEstimator() {
         {/* 5 · Timeline */}
         <fieldset className={styles.step}>
           <legend className={styles.legend}>
-            <span className={styles.index}>5</span> When do you need it?
+            <span className={styles.index} aria-hidden="true">05</span>
+            <span className={styles.legendText}>When do you need it?</span>
           </legend>
           <div className={styles.options}>
             {TIMELINES.map((timeline) => {

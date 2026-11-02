@@ -1,22 +1,33 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
-// The full price list: a sticky heading and index on wide screens, every tier
-// as a row on a red timeline rule (no card grid), monthly lines as a ledger.
+// The full price list on paper (Nov 2026 award pass): a sticky heading and
+// index on wide screens, every tier a row on an ink hairline with its price
+// set large, monthly lines as a ledger on a slightly deeper sheet.
+//
+// On paper #F1EDE7: ink 17.6:1, ink-muted 6.4:1, crimson-ink #B81D38 5.5:1.
+// Headings set their colour here (the global h2-h6 rule paints them light).
 
 $ease: cubic-bezier(0.23, 1, 0.32, 1);
-$muted: rgba($color-fg, 0.7);
+$ink: $color-ink;
+$muted: $color-ink-muted;
+$hair: $color-ink-hairline;
+$accent: $color-red-ink;
 
 .list {
-  padding: clamp(64px, 11vw, 144px) 0;
-  border-top: 1px solid $color-hairline;
+  position: relative;
+  background: $color-paper;
+  color: $ink;
+  border-radius: clamp(24px, 3vw, 40px);
   scroll-margin-top: 72px;
 }
 
 .inner {
-  @include container(1280px);
+  @include shell;
+  @include section-pad;
   display: grid;
-  gap: 48px;
+  gap: 56px;
 
   @include lg {
     grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
@@ -30,22 +41,30 @@ $muted: rgba($color-fg, 0.7);
 
   @include lg {
     position: sticky;
-    top: 112px;
+    top: calc(var(--header-height, 72px) + 40px);
+  }
+}
+
+.label {
+  @include section-label($muted);
+
+  &::before {
+    @include section-label-rule($accent);
   }
 }
 
 .title {
-  margin: 0;
-  max-width: 12ch;
-  font-size: $font-size-h2;
+  @include section-title;
+  margin-top: 22px;
+  max-width: 9em;
+  color: $ink;
 }
 
 .lede {
-  margin: 20px 0 0;
+  @include lede;
+  margin: 24px 0 0;
   max-width: 30rem;
-  font-size: $font-size-lede;
-  line-height: 1.55;
-  color: rgba($color-fg, 0.78);
+  color: $muted;
 }
 
 // ---------------------------------------------------------------- index (wide screens)
@@ -61,13 +80,13 @@ $muted: rgba($color-fg, 0.7);
     margin: 0;
     padding: 0;
     list-style: none;
-    border-top: 1px solid $color-hairline;
+    border-top: 1px solid $hair;
   }
 
   // The hairline sits between targets, with air either side of it.
   li {
     padding: 3px 0;
-    border-bottom: 1px solid $color-hairline;
+    border-bottom: 1px solid $hair;
   }
 }
 
@@ -78,20 +97,20 @@ $muted: rgba($color-fg, 0.7);
   justify-content: space-between;
   gap: 16px;
   min-height: 48px;
-  padding: 12px 0;
-  color: rgba($color-fg, 0.68);
+  padding: 12px 0 12px 20px;
+  color: $muted;
   transition: color 160ms $ease;
 
   &::before {
     content: '';
     position: absolute;
-    left: -20px;
+    left: 0;
     top: 50%;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: $color-red;
-    transform: translateY(-50%) scale(0.6);
+    background: $accent;
+    transform: translateY(-50%) scale(0.5);
     opacity: 0;
     transition:
       opacity 160ms ease-out,
@@ -100,12 +119,12 @@ $muted: rgba($color-fg, 0.7);
 
   @include pointer-fine {
     &:hover {
-      color: $color-fg;
+      color: $ink;
     }
   }
 
   &[aria-current='location'] {
-    color: $color-fg;
+    color: $ink;
 
     &::before {
       opacity: 1;
@@ -113,7 +132,10 @@ $muted: rgba($color-fg, 0.7);
     }
   }
 
-  @include focus-ring;
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
 }
 
 .indexName {
@@ -132,7 +154,7 @@ $muted: rgba($color-fg, 0.7);
 // ---------------------------------------------------------------- groups
 .groups {
   display: grid;
-  gap: clamp(72px, 9vw, 120px);
+  gap: clamp(80px, 10vw, 144px);
   min-width: 0;
 }
 
@@ -142,21 +164,25 @@ $muted: rgba($color-fg, 0.7);
 }
 
 .groupHead {
-  max-width: 44rem;
-  margin-bottom: 32px;
+  max-width: 46rem;
+  margin-bottom: 28px;
 }
 
 .groupTitle {
   margin: 0;
-  font-size: clamp(1.625rem, 1.3rem + 1vw, 2.125rem);
-  letter-spacing: -0.025em;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(2.25rem, 1.3rem + 3vw, 4rem); // 36px -> 64px
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: $ink;
 }
 
 .groupAnswer {
-  margin: 12px 0 0;
+  margin: 16px 0 0;
   font-size: $font-size-md;
   line-height: 1.6;
-  color: rgba($color-fg, 0.86);
+  color: $muted;
 }
 
 .groupNote {
@@ -171,93 +197,45 @@ $muted: rgba($color-fg, 0.7);
 .textLink {
   display: inline-block;
   min-height: 44px;
+  margin-top: 6px;
   padding: 10px 0;
   line-height: 24px;
-  margin-top: 4px;
   font-weight: $font-weight-semibold;
-  color: $color-red-text;
+  color: $ink;
   text-decoration: underline;
-  text-decoration-color: rgba($color-red-text, 0.4);
+  text-decoration-color: rgba(11, 11, 12, 0.35);
   text-underline-offset: 5px;
+  transition: text-decoration-color 160ms $ease;
 
   @include pointer-fine {
     &:hover {
-      text-decoration-color: $color-red-text;
+      text-decoration-color: $accent;
     }
   }
 
-  @include focus-ring;
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
 }
 
-// ---------------------------------------------------------------- tiers on the timeline rule
+// ---------------------------------------------------------------- tiers
 .tiers {
-  position: relative;
   display: grid;
   margin: 0;
-  padding: 0 0 0 32px;
+  padding: 0;
   list-style: none;
-
-  // The track, then the red line that draws over it as the list is read.
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 38px;
-    bottom: 38px;
-    width: 2px;
-  }
-
-  &::before {
-    background: rgba($color-fg, 0.1);
-  }
-
-  &::after {
-    background: $color-red;
-    transform-origin: top;
-  }
-}
-
-@supports (animation-timeline: view()) {
-  @include motion-ok {
-    .tiers::after {
-      animation: draw-line linear both;
-      animation-timeline: view();
-      animation-range: entry 20% cover 70%;
-    }
-  }
-}
-
-@keyframes draw-line {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
+  border-top: 1px solid rgba(11, 11, 12, 0.24);
 }
 
 // A schedule row: name left, price right on the same line (it wraps under
 // the name only when the two cannot share a line), the detail underneath.
 .tier {
-  position: relative;
+  @include rise-in;
   display: grid;
-  gap: 14px;
-  padding: 32px 0;
-  border-top: 1px solid $color-hairline;
-
-  // The node where this tier meets the line.
-  &::before {
-    content: '';
-    position: absolute;
-    left: -37px;
-    top: 38px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: $color-ground;
-    border: 2px solid $color-red;
-  }
+  gap: 16px;
+  padding: clamp(28px, 3vw, 40px) 0;
+  border-bottom: 1px solid $hair;
 }
 
 .tierHead {
@@ -272,15 +250,18 @@ $muted: rgba($color-fg, 0.7);
 .tierName {
   flex: 1 1 12rem;
   margin: 0;
-  font-size: 1.375rem;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: $ink;
 }
 
 .tierPrice {
   display: grid;
   justify-items: start;
-  gap: 6px;
+  gap: 8px;
   margin: 0;
 
   @include sm {
@@ -302,7 +283,7 @@ $muted: rgba($color-fg, 0.7);
 }
 
 .tierUnit {
-  @include mono-label(rgba($color-fg, 0.68));
+  @include mono-label($muted);
 }
 
 // The number leads visually, its unit sits under it; the DOM still reads
@@ -310,33 +291,33 @@ $muted: rgba($color-fg, 0.7);
 .priceValue {
   order: -1;
   font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: clamp(1.75rem, 1.4rem + 1.1vw, 2.375rem);
-  line-height: 1;
-  letter-spacing: -0.035em;
+  font-weight: 800;
+  font-size: clamp(2rem, 1.3rem + 2.2vw, 3.25rem); // 32px -> 52px
+  line-height: 0.95;
+  letter-spacing: -0.04em;
   white-space: nowrap;
-  color: $color-fg;
+  color: $ink;
   @include tabular;
 }
 
 .perLarge {
   margin-left: 2px;
   font-family: $font-body;
-  font-size: 0.45em;
+  font-size: 0.4em;
   font-weight: $font-weight-semibold;
   letter-spacing: 0;
   color: $muted;
 }
 
-// The row the visitor's estimate landed on (teal: a live readout).
+// The row the visitor's estimate landed on: an ink tag with the live (teal) dot.
 .matched {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 8px;
-  border: 1px solid rgba($color-signal, 0.45);
+  gap: 7px;
+  padding: 4px 10px;
   border-radius: $radius-pill;
-  @include mono-label($color-signal);
+  background: $ink;
+  @include mono-label($color-paper);
   font-size: 0.75rem;
 
   &::before {
@@ -354,18 +335,13 @@ $muted: rgba($color-fg, 0.7);
 
   // Revealing it (display none -> inline-flex) restarts this, so it settles in.
   @include motion-ok {
-    animation: tag-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: tag-in 320ms $ease-out-expo both;
   }
 }
 
 @keyframes tag-in {
   from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: scale(0.9);
   }
 }
 
@@ -381,13 +357,13 @@ $muted: rgba($color-fg, 0.7);
   max-width: 60ch;
   font-size: $font-size-base;
   line-height: 1.6;
-  color: rgba($color-fg, 0.82);
+  color: $muted;
 }
 
 // Feature list: open on tablets and up, a tap away on phones (TierDetails).
 .details {
-  border-top: 1px solid $color-hairline;
-  border-bottom: 1px solid $color-hairline;
+  border-top: 1px solid $hair;
+  border-bottom: 1px solid $hair;
 }
 
 .detailsSummary {
@@ -398,7 +374,7 @@ $muted: rgba($color-fg, 0.7);
   gap: 12px;
   min-height: 48px;
   cursor: pointer;
-  @include mono-label(rgba($color-fg, 0.86));
+  @include mono-label($ink);
   -webkit-tap-highlight-color: transparent;
 
   // ::after belongs to the global accordion rule (the red line that draws on open).
@@ -407,7 +383,7 @@ $muted: rgba($color-fg, 0.7);
     order: 2;
     font-size: 1.25rem;
     line-height: 1;
-    color: $color-red;
+    color: $accent;
   }
 
   .details[open] > &::before {
@@ -415,25 +391,26 @@ $muted: rgba($color-fg, 0.7);
   }
 
   &:focus-visible {
-    outline: $focus-ring;
+    outline: 2px solid $accent;
     outline-offset: 2px;
   }
 }
 
-// Span the global red rule across this summary (it is inset for padded accordions).
+// Span the global red rule across this summary, in crimson-ink on paper.
 .details.details > .detailsSummary::after {
   left: 0;
   right: 0;
+  background: $accent;
 }
 
 .count {
-  color: rgba($color-fg, 0.68);
+  color: $muted;
 }
 
 .features {
   display: grid;
   gap: 8px;
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   padding: 0 0 18px;
   list-style: none;
 
@@ -447,7 +424,7 @@ $muted: rgba($color-fg, 0.7);
     padding-left: 20px;
     font-size: 1rem;
     line-height: 1.5;
-    color: rgba($color-fg, 0.82);
+    color: $ink;
 
     &::before {
       content: '';
@@ -456,7 +433,7 @@ $muted: rgba($color-fg, 0.7);
       top: 0.7em;
       width: 10px;
       height: 2px;
-      background: $color-red;
+      background: $accent;
     }
   }
 }
@@ -469,28 +446,30 @@ $muted: rgba($color-fg, 0.7);
   line-height: 24px;
   font-size: $font-size-base;
   font-weight: $font-weight-semibold;
-  color: $color-fg;
+  color: $ink;
   text-decoration: underline;
-  text-decoration-color: rgba($color-fg, 0.35);
+  text-decoration-color: rgba(11, 11, 12, 0.35);
   text-underline-offset: 5px;
   transition: text-decoration-color 160ms $ease;
 
   @include pointer-fine {
     &:hover {
-      text-decoration-color: $color-red;
+      text-decoration-color: $accent;
     }
   }
 
-  @include focus-ring;
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
 }
 
 // ---------------------------------------------------------------- monthly lines (ledger)
 .monthly {
   margin-top: 32px;
   padding: 8px 20px;
-  border: 1px solid $color-hairline;
-  border-radius: 16px;
-  background: $color-surface-1;
+  border-radius: 20px;
+  background: $color-paper-2;
 
   @include md {
     padding: 8px 32px;
@@ -499,9 +478,8 @@ $muted: rgba($color-fg, 0.7);
 
 .monthlyTitle {
   margin: 0;
-  padding: 16px 0 6px;
-  font-family: $font-body;
-  @include mono-label(rgba($color-fg, 0.68));
+  padding: 18px 0 6px;
+  @include mono-label($muted);
 }
 
 .monthlyList {
@@ -517,7 +495,7 @@ $muted: rgba($color-fg, 0.7);
   align-items: baseline;
   gap: 4px 16px;
   padding: 16px 0;
-  border-top: 1px solid $color-hairline;
+  border-top: 1px solid $hair;
 
   &:first-child {
     border-top: 0;
@@ -527,17 +505,17 @@ $muted: rgba($color-fg, 0.7);
 .monthlyName {
   font-size: $font-size-base;
   font-weight: $font-weight-semibold;
-  color: $color-fg;
+  color: $ink;
 }
 
 .monthlyPrice {
   font-family: $font-display;
   font-weight: $font-weight-bold;
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
+  font-size: 1.25rem;
+  letter-spacing: -0.015em;
   white-space: nowrap;
   text-align: right;
-  color: $color-fg;
+  color: $ink;
   @include tabular;
 }
 

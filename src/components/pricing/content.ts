@@ -5,7 +5,9 @@
  * the estimator engine, so the hero, the estimator, the price list and the
  * OfferCatalog JSON-LD can never disagree. Hand-written lines are grounded in
  * a tier's own feature list (cited inline). Copy rules: no em dashes, no hype
- * verbs, "Price your project" and "Book a call" are the only CTA labels.
+ * verbs. CTA labels (Nov 2026 award pass): "Start a project" is the page's
+ * primary ask (header, estimate readout, tiers, close band); the estimator
+ * keeps "Price your project" as the hero's way into it.
  */
 import { pricing, testimonials } from '@/config/site';
 import {
@@ -192,6 +194,7 @@ export function longDate(iso: string): string {
 /* ------------------------------------------------------------------ */
 
 export const ESTIMATOR = {
+  label: 'Estimator',
   title: 'Price your project.',
   lede: 'Each answer maps to a published tier, so the range moves as you go. You see it before we ask for an email.',
 } as const;
@@ -203,6 +206,7 @@ export const ESTIMATOR = {
  * from the pricing FAQ and the web tier feature lists in site.ts.
  */
 export const QUOTE_STEPS = {
+  label: 'After the estimate',
   title: 'From a range to a fixed quote.',
   lede: 'The estimate is where the conversation starts. Here is everything that happens after it.',
   steps: [
@@ -223,18 +227,26 @@ export const QUOTE_STEPS = {
 } as const;
 
 export const PRICE_LIST = {
+  label: 'Price list',
   title: 'The full price list.',
   lede: 'Every package, retainer and rate, in plain text. The estimator reads from this same list.',
 } as const;
 
 export const FAQ_COPY = {
+  label: 'Answers',
+  /** Also the FAQPage JSON-LD name. */
   title: 'Pricing questions, answered plainly.',
   lede: 'What agency owners ask us about cost, timelines and payment before they book a call.',
 } as const;
 
+/**
+ * The close band. Sources: the 20-minute scoping call and the fixed quote
+ * (FIXED_QUOTE_NOTE), one price for the agreed scope (QUOTE_STEPS), white
+ * label (the previous close: "the work ships under your brand").
+ */
 export const CLOSE = {
-  title: 'Take your number to a 20-minute call.',
-  lede: 'We turn the range into a fixed quote for your scope, and the work ships under your brand.',
+  title: 'Turn your range into a fixed quote.',
+  lede: 'We scope it with you on a 20-minute call and quote one fixed price. The work ships under your brand.',
 } as const;
 
 /** The one approved client quote (site.ts `testimonials`, LRO Staffing). */

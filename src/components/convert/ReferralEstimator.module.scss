@@ -1,41 +1,52 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
-// Referral calculator: inputs left, the framed readout right (stacked below
-// 1024px, readout after the inputs). Red marks choice, teal the live figure.
+// Referral calculator (Nov 2026 award pass): two inputs on hairlines (6fr),
+// the readout card beside them (5fr, sticky on wide screens; after the inputs
+// on phones). Red marks choice, teal the live figure.
 
 $ease: cubic-bezier(0.23, 1, 0.32, 1);
-$muted: rgba($color-fg, 0.7);
+$muted: $color-fg-muted;
+$tile: rgba(255, 255, 255, 0.025);
+$tile-ring: rgba(255, 255, 255, 0.12);
 
 .instrument {
   display: grid;
-  gap: 40px;
+  gap: 48px;
   align-items: start;
 
   @include lg {
     grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-    gap: 64px;
+    gap: 72px;
   }
 }
 
 .inputs {
   display: grid;
-  gap: 40px;
   min-width: 0;
+  border-top: 1px solid $color-hairline-strong;
   // The service choices respond to this column, not the viewport.
   container: referral-inputs / inline-size;
+
+  > * {
+    padding: clamp(28px, 3.4vw, 40px) 0;
+  }
+
+  > * + * {
+    border-top: 1px solid $color-hairline;
+  }
 }
 
 .field {
   display: grid;
   justify-items: start;
-  gap: 12px;
+  gap: 14px;
 }
 
 .fieldset {
   min-width: 0;
   margin: 0;
-  padding: 0;
   border: 0;
 }
 
@@ -43,7 +54,7 @@ $muted: rgba($color-fg, 0.7);
 .fieldset > .label {
   float: left;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   padding: 0;
 
   + * {
@@ -54,9 +65,9 @@ $muted: rgba($color-fg, 0.7);
 .label {
   font-family: $font-display;
   font-weight: $font-weight-bold;
-  font-size: 1.25rem;
-  line-height: 1.25;
-  letter-spacing: -0.015em;
+  font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
+  line-height: 1.15;
+  letter-spacing: -0.022em;
   color: $color-fg;
 }
 
@@ -70,13 +81,13 @@ $muted: rgba($color-fg, 0.7);
 
 // Under the choices, as "Between 1 and 12." sits under the stepper.
 .servicesHint {
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 // ---------------------------------------------------------------- stepper
 .stepper {
   display: inline-grid;
-  grid-template-columns: 56px 104px 56px;
+  grid-template-columns: 56px 112px 56px;
   align-items: center;
   gap: 12px;
 }
@@ -86,9 +97,9 @@ $muted: rgba($color-fg, 0.7);
   place-items: center;
   width: 56px;
   height: 56px;
-  border: 1px solid rgba($color-fg, 0.4);
   border-radius: 50%;
-  background: $color-surface-1;
+  background: $tile;
+  box-shadow: inset 0 0 0 1px rgba(245, 242, 238, 0.4);
   color: $color-fg;
   font-size: 1.5rem;
   line-height: 1;
@@ -96,13 +107,13 @@ $muted: rgba($color-fg, 0.7);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   transition:
-    border-color 150ms $ease,
-    background-color 150ms $ease;
+    box-shadow 160ms $ease,
+    background-color 160ms $ease;
 
   @include pointer-fine {
     &:hover:not([aria-disabled='true']) {
-      border-color: $color-red;
-      background: $color-surface-2;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: inset 0 0 0 1px $color-red;
     }
   }
 
@@ -114,27 +125,27 @@ $muted: rgba($color-fg, 0.7);
   // keyboard focus never drops to the page; still legible, 3:1 on the ground.
   &[aria-disabled='true'] {
     cursor: not-allowed;
-    color: rgba($color-fg, 0.5);
-    border-color: rgba($color-fg, 0.25);
+    color: rgba(245, 242, 238, 0.5);
+    box-shadow: inset 0 0 0 1px rgba(245, 242, 238, 0.25);
   }
 
   @include focus-ring;
 }
 
 .count {
-  width: 104px;
-  height: 64px;
+  width: 112px;
+  height: 68px;
   padding: 0;
   // Boundary at 3:1+ against the ground (1.4.11).
-  border: 1px solid rgba($color-fg, 0.44);
-  border-radius: 14px;
+  border: 1px solid rgba(245, 242, 238, 0.44);
+  border-radius: 16px;
   background: $color-surface-3;
   color: $color-fg;
   text-align: center;
   font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: 2rem;
-  letter-spacing: -0.03em;
+  font-weight: 800;
+  font-size: 2.25rem;
+  letter-spacing: -0.035em;
   @include tabular;
   appearance: textfield;
   -moz-appearance: textfield;
@@ -173,32 +184,30 @@ $muted: rgba($color-fg, 0.7);
   align-items: center;
   column-gap: 12px;
   row-gap: 2px;
-  min-height: 56px;
+  min-height: 60px;
   padding: 14px 16px;
-  border: 1px solid $color-hairline-strong;
-  border-radius: 12px;
-  background: $color-surface-1;
+  border-radius: 16px;
+  background: $tile;
+  box-shadow: inset 0 0 0 1px $tile-ring;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   transition:
-    border-color 150ms $ease,
-    background-color 150ms $ease,
-    box-shadow 150ms $ease;
+    box-shadow 160ms $ease,
+    background-color 160ms $ease;
 
   @include pointer-fine {
     &:hover {
-      border-color: rgba($color-red, 0.55);
-      background: $color-surface-2;
+      background: rgba(255, 255, 255, 0.045);
+      box-shadow: inset 0 0 0 1px rgba($color-red, 0.55);
     }
   }
 
   &[data-checked] {
-    border-color: $color-red;
-    background: rgba($color-red, 0.08);
-    box-shadow: inset 0 0 0 1px $color-red;
+    background: rgba($color-red-fill, 0.1);
+    box-shadow: inset 0 0 0 2px $color-red;
   }
 
   &:has(.native:focus-visible) {
@@ -212,7 +221,7 @@ $muted: rgba($color-fg, 0.7);
   position: relative;
   width: 20px;
   height: 20px;
-  border: 1.5px solid rgba($color-fg, 0.5);
+  border: 1.5px solid rgba(245, 242, 238, 0.55);
   border-radius: 50%;
   transition: border-color 150ms $ease;
 
@@ -266,7 +275,7 @@ $muted: rgba($color-fg, 0.7);
       'mark meta';
     align-items: start;
     align-content: center;
-    min-height: 72px;
+    min-height: 76px;
   }
 
   .radio {
@@ -285,76 +294,47 @@ $muted: rgba($color-fg, 0.7);
 
   @include lg {
     position: sticky;
-    top: 112px;
-  }
-}
-
-.frame {
-  // The offset the frame registers from, and rests at (bottom-right).
-  --frame-x: 16px;
-  position: absolute;
-  inset: 12px -12px -12px 12px;
-  border: 1px solid rgba($color-red, 0.6);
-  border-radius: 20px;
-  pointer-events: none;
-
-  // Phones: offset straight down, so the frame never crosses the 16px gutter.
-  @media (max-width: #{$breakpoint-sm - 1px}) {
-    --frame-x: 0px;
-    inset: 10px 0 -10px 0;
-  }
-}
-
-@supports (animation-timeline: view()) {
-  @include motion-ok {
-    .frame {
-      animation: register linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 35%;
-    }
-  }
-}
-
-@keyframes register {
-  from {
-    transform: translate(var(--frame-x, 16px), 20px);
-    opacity: 0.25;
-  }
-  to {
-    transform: none;
-    opacity: 1;
+    top: calc(var(--header-height, 72px) + 24px);
   }
 }
 
 .card {
   position: relative;
-  z-index: 1;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
-  gap: 14px;
+  gap: 16px;
   padding: 24px 20px;
-  border-radius: 20px;
-  border: 1px solid $color-hairline-strong;
-  background: linear-gradient(180deg, #17151a 0%, #111013 100%);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.06) inset,
-    0 32px 80px -40px rgba(0, 0, 0, 0.9);
+  border-radius: clamp(22px, 2.4vw, 32px);
+  background:
+    radial-gradient(80% 70% at 100% 0%, rgba(217, 28, 63, 0.18) 0%, transparent 65%),
+    #121214;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07);
 
   @include sm {
     padding: 32px;
   }
+
+  @include xl {
+    padding: 40px;
+  }
 }
 
 .outputLabel {
-  @include mono-label(rgba($color-fg, 0.72));
+  @include section-label;
+
+  &::before {
+    @include section-label-rule;
+  }
 }
 
 .total {
   display: block;
   font-family: $font-display;
-  font-weight: $font-weight-extrabold;
-  font-size: clamp(2.75rem, 2rem + 3.6vw, 4.5rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
+  font-weight: 800;
+  font-size: clamp(3rem, 2rem + 4vw, 5.5rem); // 48px -> 88px
+  line-height: 0.92;
+  letter-spacing: -0.045em;
   color: $color-signal;
   @include tabular;
 }
@@ -363,7 +343,7 @@ $muted: rgba($color-fg, 0.7);
   margin: 0;
   font-size: 1rem;
   line-height: 1.55;
-  color: rgba($color-fg, 0.78);
+  color: $color-text-body;
   @include tabular;
 }
 
@@ -371,18 +351,18 @@ $muted: rgba($color-fg, 0.7);
   display: grid;
   gap: 4px;
   margin-top: 4px;
-  padding: 14px 0 2px 16px;
-  border-left: 2px solid $color-red;
+  padding: 18px 0 0;
+  border-top: 1px solid $color-hairline;
 }
 
 .bonusLabel {
   margin: 0;
-  @include mono-label(rgba($color-fg, 0.72));
+  @include mono-label;
 }
 
 .bonusText {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.0625rem;
   line-height: 1.55;
   color: $color-fg;
 }
@@ -390,11 +370,22 @@ $muted: rgba($color-fg, 0.7);
 .primary {
   @include button-primary;
   justify-self: start;
-  min-height: 52px;
+  min-height: 56px;
   margin-top: 8px;
+  gap: 14px;
+  font-size: 1.0625rem;
   @include focus-ring;
 
   @media (max-width: #{$breakpoint-sm - 1px}) {
     justify-self: stretch;
+  }
+}
+
+.primaryArrow {
+  display: inline-block;
+  transition: transform 0.4s $ease-out-expo;
+
+  .primary:hover & {
+    transform: translateY(3px);
   }
 }
