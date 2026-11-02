@@ -68,7 +68,10 @@ $rows-wide: 920px;
   border-top: 1px solid $color-ink-hairline;
 }
 
+// 4px of each row's space sits outside its link, so neighbouring rows' hit
+// areas are 8px apart across the hairline; the rows look the same.
 .row {
+  padding: 4px 0;
   border-bottom: 1px solid $color-ink-hairline;
 }
 
@@ -82,7 +85,7 @@ $rows-wide: 920px;
     '. meta meta';
   align-items: baseline;
   row-gap: 10px;
-  padding: 28px 0 30px;
+  padding: 24px 0 26px;
   color: inherit;
   text-decoration: none;
 
@@ -91,7 +94,7 @@ $rows-wide: 920px;
     grid-template-areas: 'index name summary meta go';
     column-gap: 32px;
     align-items: center;
-    padding: 36px 0;
+    padding: 32px 0;
   }
 
   &:focus-visible {
