@@ -89,6 +89,9 @@ const SHOCK_RADIUS = 3.4;
 const SHOCK = 10;
 
 const INTRO_MS = 1900;
+const STILL = 1e-8; // squared movement per frame (world units) that counts as rest: far under a pixel
+const QUIET_FRAMES = 30; // consecutive frames (or settle steps) at rest before stopping
+const SETTLE_STEPS = 600; // reduced motion: at most 5s of simulation before the one frame
 const WAVE = 0.2; // idle undulation amplitude
 const WAVE_SPEED = 0.85;
 const TWIST_SPEED = 0.32; // radians per second, the slow turn of the whole spine
@@ -261,6 +264,8 @@ export async function createBackbone({ canvas, still, narrow, onReady }: Backbon
   let accumulator = 0;
   let disposed = false;
   let readySent = false;
+  let quiet = 0; // consecutive frames in which nothing moved
+  let pose = new Float64Array(0); // last frame's positions and axes, for moved()
 
   const pointerWorld = new Vector3();
   const pointerPrev = new Vector3();
@@ -523,12 +528,51 @@ export async function createBackbone({ canvas, still, narrow, onReady }: Backbon
     }
   }
 
-  function energy() {
+  /**
+   * How far the spine moved since the last call: the largest squared change
+   * of any position or axis. Rest is judged on this, on what reaches the
+   * screen, not on distance from home or on speed: the copy's soft wall and
+   * the contacts can hold a rod off its home for good, while the solver keeps
+   * trading velocity with it and the rod itself never moves.
+   */
+  function moved() {
+    const fresh = pose.length !== bodies.length * 6;
+    if (fresh) pose = new Float64Array(bodies.length * 6);
     let max = 0;
-    for (const body of bodies) {
-      max = Math.max(max, body.v.lengthSq(), body.w.lengthSq() * 0.25, body.p.distanceToSquared(body.home) * 4);
+    for (let i = 0; i < bodies.length; i++) {
+      const { p, a } = bodies[i];
+      const o = i * 6;
+      const d =
+        (p.x - pose[o]) ** 2 + (p.y - pose[o + 1]) ** 2 + (p.z - pose[o + 2]) ** 2 +
+        (a.x - pose[o + 3]) ** 2 + (a.y - pose[o + 4]) ** 2 + (a.z - pose[o + 5]) ** 2;
+      if (d > max) max = d;
+      pose[o] = p.x;
+      pose[o + 1] = p.y;
+      pose[o + 2] = p.z;
+      pose[o + 3] = a.x;
+      pose[o + 4] = a.y;
+      pose[o + 5] = a.z;
     }
-    return max;
+    return fresh ? Infinity : max;
+  }
+
+  /**
+   * Reduced motion: run the springs, the wall and the contacts to rest off
+   * screen, so the one frame shows the settled pose and nothing moves after it.
+   */
+  function settle() {
+    for (const body of bodies) {
+      body.p.copy(body.home);
+      body.a.copy(body.homeAxis);
+      body.v.set(0, 0, 0);
+      body.w.set(0, 0, 0);
+    }
+    const now = performance.now();
+    let calm = 0;
+    for (let i = 0; i < SETTLE_STEPS && calm < QUIET_FRAMES; i++) {
+      step(STEP, now);
+      calm = moved() < STILL ? calm + 1 : 0;
+    }
   }
 
   function writeInstances() {
@@ -580,15 +624,16 @@ export async function createBackbone({ canvas, still, narrow, onReady }: Backbon
 
     writeInstances();
     render();
+    quiet = moved() < STILL ? quiet + 1 : 0;
     schedule(now);
   }
 
-  /** Keep the loop alive only while something can move. */
+  /** Keep the loop alive only while something can move. Reduced motion never loops. */
   function schedule(now = performance.now()) {
-    if (frame || disposed || !visible) return;
+    if (frame || disposed || !visible || still) return;
     const introRunning = introStart >= 0 && now - introStart < INTRO_MS + 400;
     const interacting = now - lastInteraction < 2200;
-    if (!paused || introRunning || interacting || energy() > 1e-5) {
+    if (!paused || introRunning || interacting || quiet < QUIET_FRAMES) {
       frame = requestAnimationFrame(tick);
     } else {
       last = 0;
@@ -612,10 +657,7 @@ export async function createBackbone({ canvas, still, narrow, onReady }: Backbon
     camera.updateProjectionMatrix();
     buildSpine(bodies.length > 0);
     if (still) {
-      for (const body of bodies) {
-        body.p.copy(body.home);
-        body.a.copy(body.homeAxis);
-      }
+      settle();
       writeInstances();
       if (started) render();
       return;
