@@ -32,6 +32,7 @@ export const executives: Executive[] = [
     title: 'Co-Founder & Director',
     bio: 'Mercy Akuma is Co-Founder and Director at MAPL TECH, overseeing international growth, strategic partnerships, and operational expansion. She plays a key role in aligning cross-border execution with long-term company vision, ensuring MAPL TECH operates with precision, discipline, and global scalability.',
     linkedin: 'https://www.linkedin.com/in/mercyakuma/',
+    image: '/images/team/mercy-akuma.jpg',
   },
 ];
 

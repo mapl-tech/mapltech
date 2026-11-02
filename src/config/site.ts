@@ -510,7 +510,7 @@ export const careers = [
     type: 'Contract',
     location: 'Kingston / Montego Bay',
     country: 'Jamaica',
-    description: 'Own client relationships for our Jamaica branch - onboarding, ongoing support, and ensuring project success across the Caribbean.',
+    description: 'Own client relationships for our Jamaica branch: onboarding, ongoing support, and ensuring project success across the Caribbean.',
   },
 ];
 
