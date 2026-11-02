@@ -15,6 +15,8 @@ export default function CloseBand({
   secondary = { label: PRICING_LABEL, href: PRICING_HREF },
   placement = 'home_close',
   id = 'close-title',
+  note,
+  hero = false,
 }: {
   title?: string;
   lede?: string;
@@ -22,6 +24,10 @@ export default function CloseBand({
   /** Prefix for data-cta-placement ("<page>_close"). */
   placement?: string;
   id?: string;
+  /** One line under the buttons answering the risk (sourced copy only). */
+  note?: string;
+  /** Mark the primary as the page's hero CTA (pages whose only ask is this band). */
+  hero?: boolean;
 }) {
   return (
     <section className={styles.close} aria-labelledby={id} data-page-close="">
@@ -32,7 +38,12 @@ export default function CloseBand({
         </h2>
         {lede ? <p className={styles.lede}>{lede}</p> : null}
         <div className={styles.actions}>
-          <Link href={PRIMARY_CTA.href} className={styles.primary} data-cta-placement={`${placement}_primary`}>
+          <Link
+            href={PRIMARY_CTA.href}
+            className={styles.primary}
+            data-cta-placement={`${placement}_primary`}
+            data-hero-cta={hero ? '' : undefined}
+          >
             {PRIMARY_CTA.label}
             <span aria-hidden="true" className={styles.arrow}>
               →
@@ -44,6 +55,7 @@ export default function CloseBand({
             </Link>
           ) : null}
         </div>
+        {note ? <p className={styles.note}>{note}</p> : null}
       </div>
     </section>
   );

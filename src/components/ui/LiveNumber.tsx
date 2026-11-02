@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { useMotionValue, useMotionValueEvent, useSpring, type SpringOptions } from 'framer-motion';
+import { createSpring, type Spring, type SpringOptions } from './spring';
 import { usePrefersReducedMotion } from './useMediaQuery';
 
 /**
  * Interaction #7: a number that springs to its new value.
  *
- * The animated digits are written straight to the DOM from a MotionValue
+ * The animated digits are written straight to the DOM from a spring
  * (no React state per frame). SSR renders the final formatted value as text,
  * and a visually hidden copy carries the final value to `aria-live`, so screen
  * readers hear one announcement per change instead of every frame.
@@ -45,6 +45,11 @@ const VISUALLY_HIDDEN: CSSProperties = {
   border: 0,
 };
 
+/** Accepts the framer-motion-shaped options callers already pass. */
+function springOptions({ stiffness, damping, mass }: SpringOptions): SpringOptions {
+  return { stiffness, damping, mass };
+}
+
 export const formatInteger = (n: number) => Math.round(n).toLocaleString('en-CA');
 
 export const formatCad = (n: number) =>
@@ -64,27 +69,35 @@ export default function LiveNumber({
   decorative = false,
 }: LiveNumberProps) {
   const reduceMotion = usePrefersReducedMotion();
-  const source = useMotionValue(value);
-  const animated = useSpring(source, spring);
   const digits = useRef<HTMLSpanElement>(null);
+  const animated = useRef<Spring | null>(null);
 
   // Captured once so React never rewrites the animated span after mount;
-  // from then on the MotionValue owns its text.
+  // from then on the spring owns its text.
   const [initialText] = useState(() => `${prefix}${format(value)}${suffix}`);
   const finalText = `${prefix}${format(value)}${suffix}`;
 
+  // Latest formatting, read by the spring callback without re-creating the spring.
+  const view = useRef({ prefix, suffix, format });
   useEffect(() => {
-    if (reduceMotion) {
-      source.jump(value);
-      animated.jump(value);
-    } else {
-      source.set(value);
-    }
-  }, [value, reduceMotion, source, animated]);
-
-  useMotionValueEvent(animated, 'change', (v) => {
-    if (digits.current) digits.current.textContent = `${prefix}${format(v)}${suffix}`;
+    view.current = { prefix, suffix, format };
   });
+
+  useEffect(() => {
+    const instance = createSpring(value, { restDelta: 0.5, ...springOptions(spring) }, (v) => {
+      const { prefix: p, suffix: s, format: f } = view.current;
+      if (digits.current) digits.current.textContent = `${p}${f(v)}${s}`;
+    });
+    animated.current = instance;
+    return () => instance.stop();
+    // The spring is created once; its options are fixed for the component's life.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion) animated.current?.jump(value);
+    else animated.current?.set(value);
+  }, [value, reduceMotion]);
 
   if (decorative) {
     return (

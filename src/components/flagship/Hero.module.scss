@@ -275,8 +275,9 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   // Room on the right for the motion toggle, which sits in the scene layer.
   padding-right: 168px;
 
+  // Portrait: the clocks return in the founders section; the hero stays short.
   @media #{$portrait} {
-    padding-right: 0;
+    display: none;
   }
 }
 

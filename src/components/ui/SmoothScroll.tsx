@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { ReactLenis, type LenisRef } from 'lenis/react';
 import type { LenisOptions } from 'lenis';
-import { frame, cancelFrame } from 'framer-motion';
 import { useFinePointer, usePrefersReducedMotion } from './useMediaQuery';
 
 /**
@@ -31,15 +30,13 @@ const LENIS_OPTIONS: LenisOptions = {
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   smoothWheel: true,
   syncTouch: false,
-  autoRaf: false,
+  autoRaf: true,
   // In-page anchors are handled in LenisSingleton, not by Lenis's `anchors`
   // option: that scrolls with offset 0 and ignores scroll-margin-top, which
   // parked headings under the fixed header.
   // data-lenis-prevent, data-lenis-prevent-wheel and data-lenis-prevent-touch are
   // honoured by Lenis on every node in the event path; no custom `prevent` needed.
 };
-
-type FrameProcess = Parameters<typeof frame.update>[0];
 
 export default function SmoothScroll() {
   const finePointer = useFinePointer();
@@ -53,15 +50,6 @@ export default function SmoothScroll() {
 function LenisSingleton() {
   const ref = useRef<LenisRef>(null);
   const pathname = usePathname();
-
-  // Tick Lenis from Framer's frameloop so the site runs a single RAF.
-  useEffect(() => {
-    const tick: FrameProcess = (data) => {
-      ref.current?.lenis?.raf(data.timestamp);
-    };
-    frame.update(tick, true);
-    return () => cancelFrame(tick);
-  }, []);
 
   // In-page anchors glide through Lenis but land where the browser would put
   // them: below the target's own scroll-margin-top, with the URL hash updated

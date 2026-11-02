@@ -106,7 +106,7 @@ export const metadata: Metadata = {
         url: '/images/og-flagship.jpg',
         width: 1200,
         height: 630,
-        alt: 'MAPL TECH: Your agency sells the vision. We engineer the software behind it.',
+        alt: 'MAPL TECH: The engineering backbone behind agencies that refuse to cut corners. A spine of crimson, graphite and chrome rods beside the headline.',
       },
     ],
   },

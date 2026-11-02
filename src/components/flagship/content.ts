@@ -307,7 +307,8 @@ export const PROOF_SECTION = {
   title: 'The numbers speak. The work speaks louder.',
 } as const;
 
+/** The close adds what the hero's reassurance does not: what the call is for (the contact page's own steps). */
 export const CLOSE_BAND = {
   title: 'Have a build your clients are waiting on?',
-  lede: 'Tell us what you are building. You get a fixed quote after a 20-minute scoping call.',
+  lede: 'Four short questions, then a 20-minute call where we agree what is in scope and what is not, so your fixed quote describes the real job.',
 } as const;

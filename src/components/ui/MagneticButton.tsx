@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 import Link from 'next/link';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { createSpring, type Spring } from './spring';
 import { useFinePointer, usePrefersReducedMotion } from './useMediaQuery';
 
 export type CursorLabel = 'view' | 'drag' | 'play' | 'external' | 'estimate';
@@ -69,10 +69,26 @@ export default function MagneticButton({
   placement,
   'aria-label': ariaLabel,
 }: MagneticButtonProps) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, SPRING);
-  const springY = useSpring(y, SPRING);
+  // The magnetic lean: two springs writing one transform to the surface span.
+  const surfaceRef = useRef<HTMLSpanElement>(null);
+  const springs = useRef<{ x: Spring; y: Spring } | null>(null);
+  useEffect(() => {
+    let x = 0;
+    let y = 0;
+    const write = () => {
+      if (surfaceRef.current) surfaceRef.current.style.transform = x || y ? `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)` : '';
+    };
+    const pair = {
+      x: createSpring(0, SPRING, (v) => ((x = v), write())),
+      y: createSpring(0, SPRING, (v) => ((y = v), write())),
+    };
+    springs.current = pair;
+    return () => {
+      pair.x.stop();
+      pair.y.stop();
+      springs.current = null;
+    };
+  }, []);
 
   const finePointer = useFinePointer();
   const reduceMotion = usePrefersReducedMotion();
@@ -88,16 +104,16 @@ export default function MagneticButton({
       surface?.style.setProperty('--mx', `${e.clientX - rect.left}px`);
       surface?.style.setProperty('--my', `${e.clientY - rect.top}px`);
       if (!magnetic) return;
-      x.set(clamp((e.clientX - (rect.left + rect.width / 2)) * PULL));
-      y.set(clamp((e.clientY - (rect.top + rect.height / 2)) * PULL));
+      springs.current?.x.set(clamp((e.clientX - (rect.left + rect.width / 2)) * PULL));
+      springs.current?.y.set(clamp((e.clientY - (rect.top + rect.height / 2)) * PULL));
     },
-    [magnetic, x, y],
+    [magnetic],
   );
 
   const handlePointerLeave = useCallback(() => {
-    x.set(0);
-    y.set(0);
-  }, [x, y]);
+    springs.current?.x.set(0);
+    springs.current?.y.set(0);
+  }, []);
 
   const handleClick = () => {
     if (placement) emitCtaClick(placement, href);
@@ -107,16 +123,16 @@ export default function MagneticButton({
   // The transform lives on this inner surface; the <a>/<button> box never moves,
   // so the hit area and layout stay stable while the label leans toward the pointer.
   const surface = (
-    // No `whileTap`: framer-motion adds tabIndex=0 to a tappable span, which put a
-    // second tab stop inside every button. Press feedback is CSS (`scale` on
-    // :active in globals.scss), which composes with the magnetic transform.
-    <motion.span
+    // Press feedback is CSS (`scale` on :active in globals.scss), which composes
+    // with the magnetic transform written by the springs above.
+    <span
+      ref={surfaceRef}
       className={`magnetic-btn magnetic-btn--${variant} ${SIZE_CLASS[size]} ${className}`.trim()}
-      style={{ x: springX, y: springY, touchAction: 'manipulation' }}
+      style={{ touchAction: 'manipulation' }}
     >
       <span className="magnetic-btn__text">{children}</span>
       <span className="magnetic-btn__glow" aria-hidden="true" />
-    </motion.span>
+    </span>
   );
 
   const shared = {

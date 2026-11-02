@@ -52,6 +52,13 @@
   color: $color-white; // 5.01:1 on the crimson; any transparency drops it under 4.5
 }
 
+.note {
+  margin: 0;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  color: $color-white; // small text on crimson: solid white only (5.01:1)
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

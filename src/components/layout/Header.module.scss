@@ -352,15 +352,31 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
   list-style: none;
 }
 
+// Rows rise in, one after another, when the sheet opens.
+.sheetList > li {
+  @include motion-ok {
+    animation: sheet-row-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(80ms + var(--i, 0) * 45ms);
+  }
+}
+
+@keyframes sheet-row-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+}
+
 .row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: $space-md;
-  min-height: 48px;
+  gap: 16px;
+  min-height: 64px;
   padding: 0 $space-4;
-  font-size: $font-size-base;
-  font-weight: $font-weight-medium;
+  font-family: $font-display;
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.25rem); // 28 -> 36px
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: $color-fg;
   border-bottom: 1px solid $color-hairline;
   cursor: pointer;
@@ -370,10 +386,18 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
     display: none;
   }
 
-  &[aria-current='page'] {
-    box-shadow: inset 2px 0 0 $color-red;
-    padding-left: $space-12;
+  &[aria-current='page'] .rowLabel {
+    color: $color-red;
   }
+}
+
+.rowIndex {
+  @include mono-label($color-fg-dim);
+  min-width: 22px;
+}
+
+.rowLabel {
+  flex: 1;
 }
 
 .group {
@@ -389,7 +413,7 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .subList {
-  padding: $space-4 0 $space-8 $space-md;
+  padding: $space-4 0 $space-8 calc(#{$space-4} + 38px);
   border-bottom: 1px solid $color-hairline;
 }
 
@@ -398,7 +422,7 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
   align-items: center;
   min-height: 48px;
   padding: 0 $space-4;
-  font-size: $font-size-base;
+  font-size: 1.0625rem;
   color: $color-text-body;
 
   &[aria-current='page'] {
@@ -434,13 +458,15 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     align-items: center;
     min-height: 44px;
-    font-family: $font-mono;
-    font-size: $font-size-xs;
-    letter-spacing: 0.02em;
+    font-size: $font-size-sm;
     color: $color-fg-muted;
 
     &:hover {
       color: $color-fg;
     }
   }
+}
+
+.sheetClocks {
+  margin-top: $space-md;
 }

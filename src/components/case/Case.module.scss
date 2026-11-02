@@ -328,6 +328,17 @@ $landscape: '(min-aspect-ratio: 21/20)';
   color: $color-ink-muted;
 }
 
+// A soft action for readers the numbers have already convinced.
+.resultsAction {
+  @include text-action($color-ink);
+  margin-top: clamp(24px, 3vw, 36px);
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 4px;
+  }
+}
+
 // ===================================================================
 // The story, in chapters
 // ===================================================================
@@ -595,7 +606,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   background: $color-ground;
 
   @media #{$portrait} {
-    height: 260vh;
+    height: 200vh;
   }
 
   &[data-still] {
@@ -817,78 +828,6 @@ $landscape: '(min-aspect-ratio: 21/20)';
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-// ===================================================================
-// Why it matters to you: the ask, in crimson
-// ===================================================================
-.matters {
-  position: relative;
-  overflow: hidden;
-  background: $color-red-fill; // white 5.01:1
-  color: $color-white;
-}
-
-.mattersInner {
-  @include shell;
-  display: grid;
-  gap: clamp(20px, 2.6vw, 32px);
-  justify-items: start;
-  padding-top: clamp(88px, 12vw, 168px);
-  padding-bottom: clamp(88px, 12vw, 168px);
-}
-
-.mattersTitle {
-  margin: 0;
-  max-width: 14em;
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2.25rem, 1rem + 4.4vw, 5.5rem);
-  line-height: 0.96;
-  letter-spacing: -0.035em;
-  text-wrap: balance;
-}
-
-.mattersText {
-  margin: 0;
-  max-width: 36em;
-  font-size: $font-size-lede;
-  line-height: 1.55;
-  color: $color-white; // 5.01:1 on the crimson; any transparency drops it under 4.5
-}
-
-.mattersActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 28px;
-  margin-top: 8px;
-}
-
-.mattersPrimary {
-  @include button-base;
-  min-height: 58px;
-  padding: 0 30px;
-  background: $color-paper;
-  color: $color-ink;
-
-  &:hover {
-    background: $color-white;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-white;
-    outline-offset: 3px;
-  }
-}
-
-.mattersSecondary {
-  @include text-action($color-white);
-
-  &:focus-visible {
-    outline: 2px solid $color-white;
-    outline-offset: 3px;
-  }
 }
 
 .sources {

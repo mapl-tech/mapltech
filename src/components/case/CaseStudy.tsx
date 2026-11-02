@@ -2,8 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { WorkEntry } from '@/components/work/work-types';
 import { estimateLinkFor } from '@/components/work/work-data';
-import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import ScrollLit from '@/components/ui/ScrollLit';
+import CloseBand from '@/components/flagship/CloseBand';
+import { HERO_REASSURE } from '@/components/flagship/content';
 import CaseStage from './CaseStage';
 import ChapterNav from './ChapterNav';
 import PhoneRow from './PhoneRow';
@@ -121,6 +122,9 @@ export default function CaseStudy({
                 </div>
               ))}
             </dl>
+            <Link href={estimateHref} className={styles.resultsAction} data-cta-placement={`case_${entry.slug}_results`}>
+              Price a build like this<span aria-hidden="true"> →</span>
+            </Link>
           </div>
         </section>
       ) : null}
@@ -234,23 +238,15 @@ export default function CaseStudy({
 
       {/* ---------------------------------------------------------- matters */}
       {story.matters ? (
-        <section className={styles.matters} aria-labelledby="case-matters" data-page-close="">
-          <div className={styles.mattersInner}>
-            <h2 id="case-matters" className={styles.mattersTitle}>
-              {story.matters.heading}
-            </h2>
-            <p className={styles.mattersText}>{story.matters.text}</p>
-            <div className={styles.mattersActions}>
-              <Link href={PROJECT_HREF} className={styles.mattersPrimary} data-cta-placement={`case_${entry.slug}_project`} data-hero-cta="">
-                {PROJECT_LABEL}
-                <span aria-hidden="true"> →</span>
-              </Link>
-              <Link href={estimateHref} className={styles.mattersSecondary} data-cta-placement={`case_${entry.slug}_estimate`}>
-                Price a build like this
-              </Link>
-            </div>
-          </div>
-        </section>
+        <CloseBand
+          id="case-matters"
+          title={story.matters.heading}
+          lede={story.matters.text}
+          secondary={{ label: 'Price a build like this', href: estimateHref }}
+          placement={`case_${entry.slug}`}
+          note={HERO_REASSURE}
+          hero
+        />
       ) : null}
 
       {story.sources ? (
@@ -261,7 +257,13 @@ export default function CaseStudy({
 
       {/* ---------------------------------------------------------- next */}
       {next ? (
-        <Link href={next.entry.path} className={styles.next} data-cta-placement={`case_${entry.slug}_next`}>
+        <Link
+          href={next.entry.path}
+          className={styles.next}
+          aria-label={`Next project: ${next.story?.client ?? next.entry.title}`}
+          aria-describedby="case-next-line"
+          data-cta-placement={`case_${entry.slug}_next`}
+        >
           <span className={styles.nextMedia} aria-hidden="true">
             <Image
               src={next.story?.media?.desktop ?? next.entry.image}
@@ -275,7 +277,9 @@ export default function CaseStudy({
           <span className={styles.nextInner}>
             <span className={styles.nextLabel}>Next project</span>
             <span className={styles.nextName}>{next.story?.client ?? next.entry.title}</span>
-            <span className={styles.nextLine}>{next.story?.headline ?? next.entry.description}</span>
+            <span id="case-next-line" className={styles.nextLine}>
+              {next.story?.headline ?? next.entry.description}
+            </span>
             <span className={styles.nextGo} aria-hidden="true">
               →
             </span>
