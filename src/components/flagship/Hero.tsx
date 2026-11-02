@@ -11,9 +11,9 @@ import styles from './Hero.module.scss';
  * Act 1, Recognition. The promise on the left; on the right, the proof that
  * this is a software studio: a working price check in front of real work
  * (the LRO Staffing site in a browser, MAPL Tours on a phone), over a live
- * light field. The frames lean with the pointer and drift on scroll through
- * DepthScene's CSS variables; the card stays still so it reads and clicks
- * cleanly.
+ * light field. The frames drift on scroll through DepthScene's `--p`, the
+ * pointer drives only the light's bloom, and the card stays still so it reads
+ * and clicks cleanly.
  *
  * Reading order is copy, price check, then the next steps (the work and one
  * attributed client line), which desktop places under the copy, beside the card.

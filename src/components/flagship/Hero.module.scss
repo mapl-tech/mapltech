@@ -2,15 +2,14 @@
 @use '../../styles/mixins' as *;
 
 // Act 1. Planes, back to front: light field -> browser frame -> phone frame ->
-// price check card, with the copy beside them at 1x. `--p`, `--mx`, `--my`
-// come from DepthScene; at rest (and under reduced motion) they are 0.
+// price check card, with the copy beside them at 1x. `--p` (scroll depth)
+// comes from DepthScene; at rest (and under reduced motion) it is 0. The
+// pointer drives only the light field's bloom.
 
 $ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
 .hero {
   --p: 0;
-  --mx: 0;
-  --my: 0;
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -271,12 +270,12 @@ $ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
     0 0 0 1px rgba(255, 255, 255, 0.08),
     0 50px 100px -30px rgba(0, 0, 0, 0.9);
   transform-origin: 0% 50%;
-  // Turned toward the copy; leans with the pointer, rises a little faster than the page.
+  // Turned toward the copy; rises a little faster than the page as you scroll.
   transform:
-    translate3d(calc(var(--mx) * -12px), calc(var(--my) * -8px - var(--p) * 90px), 0)
+    translate3d(0, calc(var(--p) * -90px), 0)
     perspective(2000px)
-    rotateY(calc(-14deg + var(--mx) * 3deg))
-    rotateX(calc(5deg - var(--my) * 2deg));
+    rotateY(-14deg)
+    rotateX(5deg);
   will-change: transform;
 
   @include motion-ok {
@@ -340,9 +339,9 @@ $ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
     0 40px 80px -24px rgba(0, 0, 0, 0.9);
   transform-origin: 50% 100%;
   transform:
-    translate3d(calc(var(--mx) * -22px), calc(var(--my) * -14px - var(--p) * 150px), 0)
+    translate3d(0, calc(var(--p) * -150px), 0)
     perspective(1600px)
-    rotateY(calc(-10deg + var(--mx) * 4deg))
+    rotateY(-10deg)
     rotate(3deg);
   will-change: transform;
 
