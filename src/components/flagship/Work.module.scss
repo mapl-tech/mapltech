@@ -68,8 +68,13 @@
 // ---------------------------------------------------------------
 // The stack: each card sticks a little lower than the last, so they pile up.
 // ---------------------------------------------------------------
+// Cards split into copy and media by the stack's own width. 920px is the
+// shell's content width at the lg breakpoint (1024px less its gutters).
+$card-wide: 920px;
+
 .stack {
   @include shell;
+  container: work-stack / inline-size;
   list-style: none;
   margin-top: clamp(8px, 2vw, 24px);
   margin-bottom: 0;
@@ -97,7 +102,7 @@
     #121214;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), 0 -24px 60px -30px rgba(0, 0, 0, 0.9);
 
-  @include lg {
+  @container work-stack (min-width: #{$card-wide}) {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     align-items: center;
     min-height: min(76vh, 760px);
