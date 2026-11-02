@@ -1,0 +1,90 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use 'company' as c;
+
+.offices {
+  @include c.section;
+  @include c.rule-top;
+  background:
+    radial-gradient(60% 50% at 80% 30%, rgba($color-teal, 0.035) 0%, transparent 65%),
+    linear-gradient(180deg, #0c0b0e 0%, $color-ground 100%);
+}
+
+.inner {
+  @include c.split(5fr, 7fr, 64px);
+}
+
+.rail {
+  min-width: 0;
+}
+
+.h2 {
+  @include c.h2;
+  max-width: 12ch;
+}
+
+.lede {
+  @include c.lede;
+}
+
+.map {
+  margin-top: 32px;
+}
+
+.footnote {
+  margin: 20px 0 0;
+  max-width: 34rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.7);
+}
+
+.branches {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid $color-hairline;
+
+  li + li {
+    margin-top: 8px;
+  }
+}
+
+.branch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  border-bottom: 1px solid $color-hairline;
+  color: $color-fg;
+  transition: border-color 160ms c.$ease-out;
+
+  &:hover {
+    border-bottom-color: rgba($color-red, 0.55);
+  }
+
+  @include focus-ring;
+}
+
+.branchName {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.125rem;
+}
+
+.branchNote {
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.7);
+}
+
+.branchArrow {
+  margin-left: auto;
+  color: $color-red;
+  transition: transform 160ms c.$ease-out;
+
+  @include pointer-fine-motion {
+    .branch:hover & {
+      transform: translateX(4px);
+    }
+  }
+}

@@ -1,0 +1,153 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use 'company' as c;
+
+// A quiet, ruled directory: deliberately smaller than the founders above it.
+
+.directory {
+  @include c.section(c.$section-y-tight);
+  @include c.rule-top;
+}
+
+.inner {
+  @include c.split(4fr, 7fr, 72px);
+}
+
+.rail {
+  @include c.sticky-rail;
+}
+
+.h2 {
+  @include c.h2;
+  max-width: 11ch;
+}
+
+.hiring {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid $color-hairline;
+}
+
+.hiringText {
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.8);
+}
+
+.link {
+  @include c.text-link;
+  margin-top: 8px;
+}
+
+.groups {
+  // The rows lay out from this column's width, not the viewport.
+  container: directory / inline-size;
+  display: grid;
+  gap: 40px;
+}
+
+.group {
+  scroll-margin-top: c.$anchor-offset;
+}
+
+.groupHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid $color-hairline-strong;
+}
+
+.country {
+  margin: 0;
+  @include mono-label(rgba($color-fg, 0.72));
+}
+
+// The office's live local time: a readout, so the time is teal.
+.clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.72);
+  @include tabular;
+}
+
+.clockTime {
+  color: $color-teal;
+}
+
+.clockDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid rgba($color-fg, 0.55);
+
+  .clock[data-open='true'] & {
+    border-color: $color-teal;
+    background: $color-teal;
+  }
+}
+
+.people {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @container directory (min-width: 560px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 32px;
+  }
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 72px;
+  padding: 12px 0;
+  border-bottom: 1px solid $color-hairline;
+  scroll-margin-top: c.$anchor-offset;
+
+  &:target {
+    border-bottom-color: rgba($color-red, 0.6);
+  }
+}
+
+.initials {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid $color-hairline-strong;
+  background: $color-surface-2;
+  font-size: 0.875rem;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.04em;
+  color: rgba($color-fg, 0.86);
+}
+
+.who {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.name {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.0625rem;
+  color: $color-fg;
+}
+
+.title {
+  font-size: $font-size-sm;
+  line-height: 1.4;
+  color: rgba($color-fg, 0.72);
+}

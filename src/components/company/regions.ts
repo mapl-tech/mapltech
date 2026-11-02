@@ -1,28 +1,29 @@
 /**
- * Per-country configuration for the regional "market homepage" template
- * (`/nigeria`, `/jamaica`). Every string is existing copy from the current
- * nigeria/jamaica pages, `site.ts` or the pricing tables. Nothing is invented:
- * where a fact is not stated anywhere in the repo (local phone number,
- * WhatsApp line, invoicing currency, opening hours, FX rates) the field is
- * simply absent and listed in the build report.
+ * Per-country data for the regional template (`/nigeria`, `/jamaica`).
+ *
+ * Every sentence is existing copy from the previous nigeria/jamaica pages,
+ * `site.ts` or the pricing tables, edited only for the copy rules (no em
+ * dashes, no hype verbs). Removed on purpose, and listed in the build report:
+ *
+ * - The two "local case studies" (Crowngate Business Enterprises, "Caribbean
+ *   Digital Agency"). Crowngate is hidden from /our-work at the owner's
+ *   request (site.ts, 2026-10-16) and neither study's numbers can be sourced.
+ * - "80%+ of users browse on mobile": a market statistic with no source.
+ *
+ * Jamaica gets a real local project instead: MAPL Tours, the travel company
+ * MAPL TECH built and runs in Jamaica (case study in case/stories.ts).
  */
+import { careers } from '@/config/site';
 import type { Country } from '@/config/team';
 import type { ServiceSlug } from '@/lib/schema';
 import { ESTIMATE_SERVICES, SERVICE_META, formatMoney, parsePriceLabel, tiersFor, type EstimateService } from '@/lib/estimate';
+import type { OfficeCity } from './OfficeMap';
 
 export type RegionSlug = 'nigeria' | 'jamaica';
 
 export interface RegionFact {
   term: string;
   detail: string;
-}
-
-export interface RegionCaseStudy {
-  company: string;
-  location: string;
-  challenge: string;
-  solution: string;
-  results: string[];
 }
 
 export interface RegionFaq {
@@ -32,31 +33,42 @@ export interface RegionFaq {
 
 export interface RegionServiceRow {
   slug: ServiceSlug;
+  service: EstimateService;
   description: string;
+}
+
+export interface RegionWork {
+  client: string;
+  label: string;
+  text: string;
+  href: string;
+  image: { src: string; alt: string; width: number; height: number };
 }
 
 export interface RegionConfig {
   slug: RegionSlug;
   path: string;
   country: Country;
-  /** "MAPL TECH Nigeria" - the branch name used in H1, NAP and breadcrumb. */
+  /** "MAPL TECH Nigeria": eyebrow, breadcrumb, close. */
   brandName: string;
   /** IANA zone of the branch office (matches TimezoneOverlap OFFICES). */
   timeZone: string;
-  officeCity: string;
-  h1: string;
-  lede: string;
-  /** Market-specific key facts. Starting price, timeline and "Last reviewed" are computed. */
-  keyFacts: RegionFact[];
+  officeCity: OfficeCity;
+  /** Plain-language zone name and its fixed UTC offset (neither country observes daylight saving). */
+  zoneName: string;
+  utcLabel: string;
+  /** Office city coordinates, for the place readout (public geographic fact). */
+  coordinates: string;
+  serves: readonly string[];
+  hero: { titleLines: readonly [string, string]; lede: string };
+  /** Market facts for the hero row. Starting price and reply time are added by the template. */
+  facts: readonly RegionFact[];
+  team: { heading: string; body: readonly string[]; realitiesHeading: string; realities: readonly string[] };
+  services: { heading: string; rows: readonly RegionServiceRow[] };
   overlap: { heading: string; body: string; footnote: string };
-  team: { heading: string; body: string };
-  caseStudy: RegionCaseStudy;
-  services: { heading: string; intro: string; rows: RegionServiceRow[] };
-  scoper: { defaultService: EstimateService };
-  careers: { heading: string; linkLabel: string };
-  faq: { heading: string; items: RegionFaq[] };
-  nap: { branchLine: string; serves: string };
-  cta: { heading: string; body: string };
+  work?: RegionWork;
+  faq: { heading: string; items: readonly RegionFaq[] };
+  close: { title: string; lede: string };
 }
 
 /* ------------------------------------------------------------------ */
@@ -81,19 +93,32 @@ export function lowestStartingPrice(): string {
   return formatMoney(Math.min(...lows));
 }
 
+/** "Web Development from $5,000, Automation & AI from $3,500, ..." */
+function priceList(): string {
+  return ESTIMATE_SERVICES.map((service) => `${SERVICE_META[service].label} from ${startingFrom(service)}`).join(', ');
+}
+
+/** "Web Development, Automation & AI, Custom Internal Tools and Cloud Engineering": the canonical names from SERVICE_META, never retyped. */
+export const SERVICE_NAMES = (() => {
+  const labels = ESTIMATE_SERVICES.map((service) => SERVICE_META[service].label);
+  return `${labels.slice(0, -1).join(', ')} and ${labels[labels.length - 1]}`;
+})();
+
 function costAnswer(country: string): string {
-  const list = ESTIMATE_SERVICES.map((service) => `${SERVICE_META[service].label} from ${startingFrom(service)}`).join(', ');
-  return `The same tiers as everywhere else: ${list}. Every quote is fixed after a 20-min scoping call, and the full tier tables are on the pricing page.`.replace(
-    'everywhere else',
-    `everywhere else MAPL TECH works, priced in USD for ${country}`,
-  );
+  return `The same public tiers MAPL TECH quotes everywhere, priced in USD for ${country}: ${priceList()}. Every quote is fixed after a 20-minute scoping call, and the full tier tables are on the pricing page.`;
+}
+
+/** Published on /contact-us ("We respond within 24 hours"). */
+export const REPLY_TIME = 'Within 24 hours';
+
+/** Open roles in one country, straight from `careers` in site.ts. */
+export function rolesIn(country: Country) {
+  return careers.filter((role) => role.country === country);
 }
 
 /* ------------------------------------------------------------------ */
 /* Regions                                                              */
 /* ------------------------------------------------------------------ */
-
-const REPLY_TIME = 'Within 24 hours';
 
 export const regions: Record<RegionSlug, RegionConfig> = {
   nigeria: {
@@ -103,89 +128,85 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     brandName: 'MAPL TECH Nigeria',
     timeZone: 'Africa/Lagos',
     officeCity: 'Lagos',
-    h1: 'MAPL TECH Nigeria — engineering partner for agencies in Lagos and Abuja',
-    lede:
-      'From Lagos to Abuja to Port Harcourt, MAPL TECH Nigeria gives agencies the systems, automation and infrastructure they need to compete on a global stage — Canadian engineering standards, a team that works in West Africa Time, and the full depth of 25+ years of combined engineering experience behind every build.',
-    keyFacts: [
-      { term: 'Working hours', detail: 'West Africa Time (UTC+1) · 5–6 h ahead of Toronto HQ' },
-      { term: 'Payments we integrate', detail: 'Paystack · Flutterwave · multi-currency support' },
-      { term: 'Compliance', detail: 'NDPR compliance scoped into every build' },
-      { term: 'Reply time', detail: REPLY_TIME },
+    zoneName: 'West Africa Time',
+    utcLabel: 'UTC+1',
+    coordinates: '6.52° N, 3.38° E',
+    serves: ['Lagos', 'Abuja', 'Port Harcourt'],
+    hero: {
+      titleLines: ['Engineering for', 'Nigerian agencies.'],
+      lede: `${SERVICE_NAMES} for agencies in Lagos, Abuja and Port Harcourt, delivered in West Africa Time.`,
+    },
+    facts: [
+      { term: 'Branch', detail: 'Lagos, Nigeria' },
+      { term: 'Serves', detail: 'Lagos, Abuja and Port Harcourt' },
+      { term: 'Working hours', detail: '09:00–18:00 West Africa Time (UTC+1)' },
+      { term: 'Payments we integrate', detail: 'Paystack and Flutterwave' },
     ],
-    overlap: {
-      heading: 'Real-time collaboration in West Africa Time.',
-      body:
-        'Our Nigeria team works in West Africa Time, ensuring real-time collaboration, quick turnarounds, and no overnight communication delays. Toronto HQ comes online every weekday afternoon in Lagos — the teal band is the shared window.',
-      footnote: 'Lagos is 5 hours ahead of Toronto in summer and 6 in winter; Kingston sits within an hour of Toronto all year.',
-    },
     team: {
-      heading: 'Dedicated Nigeria branch',
-      body:
-        "MAPL TECH's Nigeria branch is staffed with engineers and project managers who live and work in Nigeria. They understand the local business landscape, infrastructure realities, and what it takes to build technology that works reliably in this market. Backed by our Canadian headquarters, the team has access to the full depth of MAPL TECH's 25+ years of combined engineering experience.",
-    },
-    caseStudy: {
-      company: 'Crowngate Business Enterprises',
-      location: 'Lagos, Nigeria',
-      challenge:
-        'Manual client onboarding process taking 3–5 business days with frequent data entry errors and lost documents.',
-      solution:
-        'Automated the entire onboarding pipeline — from intake form to CRM entry to document management — with AI-powered data extraction and validation.',
-      results: [
-        'Onboarding time reduced from 5 days to under 4 hours',
-        '95% reduction in data entry errors',
-        'Client satisfaction scores increased by 40%',
-        'Freed up 20+ hours/week of staff time',
+      heading: 'What MAPL TECH Nigeria builds.',
+      body: [
+        "Engineers and project managers who live and work in Nigeria, backed by our Toronto headquarters and MAPL TECH's 25+ years of combined engineering experience.",
+      ],
+      realitiesHeading: 'Built for local realities',
+      realities: [
+        'Mobile-first builds for variable bandwidth',
+        'Paystack and Flutterwave integrations',
+        'Multi-currency support in portals and dashboards',
+        'NDPR compliance scoped into every build',
       ],
     },
     services: {
-      heading: 'What we build for Nigerian agencies',
-      intro: 'Every solution is tailored for local infrastructure, mobile-first audiences, and Nigerian payment ecosystems.',
+      heading: 'Four services, one public price list.',
       rows: [
         {
           slug: 'web-development',
-          description:
-            'Custom-coded sites optimized for Nigerian network conditions — fast load times, minimal data usage, and mobile-first design for a market where 80%+ of users browse on mobile.',
+          service: 'web',
+          description: 'Custom-coded sites built for Nigerian network conditions: fast loads, light data use and mobile-first design.',
         },
         {
           slug: 'automation-ai-workflow-setup',
-          description:
-            'Automate lead capture, CRM routing, invoicing, and client onboarding. AI-powered workflows that handle repetitive tasks so your team can focus on high-value work.',
+          service: 'automation',
+          description: 'Lead capture, CRM routing, invoicing and client onboarding, automated, with AI workflows that take the repetitive work off your team.',
         },
         {
           slug: 'custom-internal-tools',
-          description:
-            'Dashboards, client portals, and reporting systems tailored for Nigerian agencies — with local payment integrations, multi-currency support, and offline-capable features.',
+          service: 'tools',
+          description: 'Dashboards, client portals and reporting systems with local payment integrations, multi-currency support and offline-capable features.',
         },
         {
           slug: 'cloud-engineering',
-          description: 'Cloud infrastructure, CI/CD pipelines, and monitoring systems for agency clients across Africa.',
+          service: 'cloud',
+          description: 'Cloud infrastructure, CI/CD pipelines and monitoring systems for agency clients across Africa.',
         },
       ],
     },
-    scoper: { defaultService: 'automation' },
-    careers: { heading: 'Open roles in Nigeria', linkLabel: 'All roles in Lagos and Abuja' },
+    overlap: {
+      heading: 'Real-time collaboration in West Africa Time.',
+      body: 'Our Nigeria team works in West Africa Time, so you get quick turnarounds and no overnight delays. Toronto headquarters comes online every weekday afternoon in Lagos.',
+      footnote: 'Lagos does not change its clocks: it is 5 hours ahead of Toronto in summer and 6 in winter.',
+    },
     faq: {
-      heading: 'Questions Nigerian agencies ask first',
+      heading: 'Questions Nigerian agencies ask first.',
       items: [
         {
           question: 'Do you work in Nigerian business hours?',
           answer:
-            'Yes. Our Nigeria team works in West Africa Time, ensuring real-time collaboration, quick turnarounds, and no overnight communication delays. Toronto HQ overlaps every weekday afternoon.',
+            'Yes. Our Nigeria team works in West Africa Time (UTC+1), so you get real-time collaboration, quick turnarounds and no overnight delays. Toronto headquarters overlaps every weekday afternoon.',
         },
         {
           question: 'Can you integrate Paystack or Flutterwave?',
           answer:
-            'Yes. We optimize for local realities — variable bandwidth, mobile-first audiences, Paystack/Flutterwave integrations, and NDPR compliance. Dashboards, client portals, and reporting systems ship with local payment integrations and multi-currency support.',
+            'Yes. Dashboards, client portals and reporting systems ship with local payment integrations, including Paystack and Flutterwave, and multi-currency support.',
         },
         {
           question: 'Is the work NDPR compliant?',
           answer:
-            'NDPR compliance is part of how we scope every Nigerian build, alongside the same engineering standards our Canadian headquarters applies.',
+            'NDPR compliance is part of how we scope every Nigerian build, alongside the same engineering standards our Toronto headquarters applies.',
         },
         {
-          question: 'Who actually does the work — Canada or Nigeria?',
+          question: 'Who actually does the work, Canada or Nigeria?',
           answer:
-            "Engineers and project managers who live and work in Nigeria, backed by our Canadian headquarters and the full depth of MAPL TECH's 25+ years of combined engineering experience.",
+            "Engineers and project managers who live and work in Nigeria, backed by our Toronto headquarters and MAPL TECH's 25+ years of combined engineering experience.",
         },
         {
           question: 'What does a project cost in Nigeria?',
@@ -193,14 +214,13 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         },
         {
           question: 'How quickly do you reply?',
-          answer: "Within 24 hours, whether you're in Lagos, Abuja, Port Harcourt, or anywhere in Nigeria.",
+          answer: 'Within 24 hours, whether you are in Lagos, Abuja, Port Harcourt or anywhere else in Nigeria.',
         },
       ],
     },
-    nap: { branchLine: 'Regional branch · Lagos, Nigeria', serves: 'Lagos · Abuja · Port Harcourt' },
-    cta: {
-      heading: 'Ready to build with MAPL TECH Nigeria?',
-      body: "Tell us about your project. Whether you're in Lagos, Abuja, Port Harcourt, or anywhere in Nigeria — we'll respond within 24 hours.",
+    close: {
+      title: 'Building something for a Nigerian client?',
+      lede: 'Pick what it is. The estimator opens with it selected, priced in USD from the same public list we use everywhere. We reply within 24 hours.',
     },
   },
 
@@ -211,85 +231,93 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     brandName: 'MAPL TECH Jamaica',
     timeZone: 'America/Jamaica',
     officeCity: 'Kingston',
-    h1: 'MAPL TECH Jamaica — engineering partner for agencies in Kingston and Montego Bay',
-    lede:
-      'From Kingston to Montego Bay, MAPL TECH Jamaica gives agencies the systems, automation and infrastructure they need to compete regionally and globally — Canadian engineering standards, a team working in Eastern Standard Time within an hour of Toronto all year, and 25+ years of combined engineering experience behind every build.',
-    keyFacts: [
-      { term: 'Working hours', detail: 'Eastern Standard Time (UTC−5) · within 1 h of Toronto HQ all year' },
-      { term: 'Built for', detail: 'Mobile-heavy audiences · Caribbean payment gateways · regional SEO' },
-      { term: 'How we deliver', detail: 'Weekly project updates · documented decisions · clean handoffs' },
-      { term: 'Reply time', detail: REPLY_TIME },
+    zoneName: 'Eastern Standard Time',
+    utcLabel: 'UTC−5',
+    coordinates: '17.97° N, 76.79° W',
+    serves: ['Kingston', 'Montego Bay'],
+    hero: {
+      titleLines: ['Engineering for', 'Jamaican agencies.'],
+      lede: `${SERVICE_NAMES} for agencies in Kingston and Montego Bay, within an hour of our Toronto headquarters all year.`,
+    },
+    facts: [
+      { term: 'Branch', detail: 'Kingston, Jamaica' },
+      { term: 'Serves', detail: 'Kingston and Montego Bay' },
+      { term: 'Working hours', detail: '09:00–18:00 Eastern Standard Time (UTC−5)' },
+      { term: 'How we deliver', detail: 'Weekly updates and documented decisions' },
     ],
-    overlap: {
-      heading: 'Same-day collaboration, one time zone apart at most.',
-      body:
-        'Our Jamaica team works in Eastern Standard Time — within an hour of Toronto all year — so you get real-time collaboration, fast responses, and no overnight delays. The teal band shows how much of your working day has a MAPL TECH office open.',
-      footnote: 'Kingston does not observe daylight saving, so it matches Toronto in winter and sits one hour behind in summer. Lagos is 5–6 hours ahead.',
-    },
     team: {
-      heading: 'Dedicated Jamaica branch',
-      body:
-        "MAPL TECH's Jamaica branch brings together engineers and project managers with deep Caribbean roots. We understand the local business culture, infrastructure landscape, and what it takes to deliver technology that works for this market. Backed by our Canadian headquarters with 25+ years of combined engineering experience, the team delivers international-grade systems built with a Caribbean perspective — from tourism tech to financial services to creative agency workflows.",
-    },
-    caseStudy: {
-      company: 'Caribbean Digital Agency',
-      location: 'Kingston, Jamaica',
-      challenge:
-        'Outdated WordPress sites for multiple clients running on slow shared hosting, resulting in poor page speeds and high bounce rates across the Caribbean market.',
-      solution:
-        "Rebuilt the agency's client portfolio on custom-coded, performance-optimized architecture with CDN distribution, mobile-first design, and automated deployment pipelines.",
-      results: [
-        'Average page load time reduced from 8s to under 2s',
-        'Mobile bounce rate decreased by 55%',
-        'Client satisfaction scores improved across the board',
-        'Agency won 3 new retainer clients within 90 days of launch',
+      heading: 'What MAPL TECH Jamaica builds.',
+      body: [
+        "Engineers and project managers with Caribbean roots, backed by our Toronto headquarters and MAPL TECH's 25+ years of combined engineering experience.",
+      ],
+      realitiesHeading: 'Built for local realities',
+      realities: [
+        'Mobile-heavy audiences',
+        'Caribbean payment gateways',
+        'SEO for regional search',
+        'Performance tuned for island connectivity',
       ],
     },
     services: {
-      heading: 'What we build for Jamaican agencies',
-      intro: 'Solutions tailored for Caribbean audiences, local infrastructure, and island connectivity.',
+      heading: 'Four services, one public price list.',
       rows: [
         {
           slug: 'web-development',
-          description:
-            'Custom-coded sites built for Caribbean audiences — fast load times optimized for local network conditions, mobile-first design, and SEO tailored for regional search.',
+          service: 'web',
+          description: 'Custom-coded sites built for Caribbean audiences: fast loads on local networks, mobile-first design and SEO for regional search.',
         },
         {
           slug: 'automation-ai-workflow-setup',
-          description:
-            'Eliminate manual processes across your agency. Automated CRM pipelines, AI-powered client intake, and smart workflows that connect every tool your team uses.',
+          service: 'automation',
+          description: 'Automated CRM pipelines, AI-assisted client intake and workflows that connect every tool your team uses.',
         },
         {
           slug: 'custom-internal-tools',
-          description:
-            'Client portals, project dashboards, and reporting systems designed for Caribbean agencies — with integrations for local payment providers and business tools.',
+          service: 'tools',
+          description: 'Client portals, project dashboards and reporting systems with integrations for local payment providers and business tools.',
         },
         {
           slug: 'cloud-engineering',
-          description:
-            'Scalable cloud infrastructure designed, deployed, and managed for agencies. CI/CD pipelines, IaC, monitoring, and security.',
+          service: 'cloud',
+          description: 'Cloud infrastructure designed, deployed and managed for agencies: CI/CD pipelines, infrastructure as code, monitoring and security.',
         },
       ],
     },
-    scoper: { defaultService: 'web' },
-    careers: { heading: 'Open roles in Jamaica', linkLabel: 'All roles in Kingston and Montego Bay' },
+    overlap: {
+      heading: 'Same-day collaboration, an hour from Toronto at most.',
+      body: 'Our Jamaica team works in Eastern Standard Time, within an hour of Toronto all year, so you get real-time collaboration, fast responses and no overnight delays.',
+      footnote:
+        'Kingston does not observe daylight saving time, so it matches Toronto in winter and sits one hour behind in summer. Lagos is 5 to 6 hours ahead.',
+    },
+    work: {
+      client: 'MAPL Tours',
+      label: 'Our own product, in Jamaica',
+      text: 'Private airport transfers and tours in Jamaica, built and run by MAPL TECH. It is live and takes real payments, so every failure mode is a real one.',
+      href: '/our-work/mapl-tours',
+      image: {
+        src: '/images/cases/tours-desktop.jpg',
+        alt: 'The MAPL Tours homepage, built and run by MAPL TECH: "Discover Jamaica beyond the resort." over aerial footage of the Jamaican coast.',
+        width: 1800,
+        height: 1125,
+      },
+    },
     faq: {
-      heading: 'Questions Caribbean agencies ask first',
+      heading: 'Questions Jamaican agencies ask first.',
       items: [
         {
           question: 'Do you work in Jamaican business hours?',
           answer:
-            'Yes. Our Jamaica team works in Eastern Standard Time — within an hour of Toronto all year — so you get real-time collaboration, fast responses, and no overnight delays.',
+            'Yes. Our Jamaica team works in Eastern Standard Time (UTC−5), within an hour of Toronto all year, so you get real-time collaboration, fast responses and no overnight delays.',
         },
         {
           question: 'Do you build for Caribbean payment gateways and island connectivity?',
           answer:
-            'Yes. We build for local realities — mobile-heavy audiences, Caribbean payment gateways, regional SEO, and performance optimization for island connectivity. Client portals, project dashboards, and reporting systems ship with integrations for local payment providers and business tools.',
+            'Yes. We build for mobile-heavy audiences, Caribbean payment gateways, regional search and island connectivity. Client portals, project dashboards and reporting systems ship with integrations for local payment providers and business tools.',
         },
         {
-          question: 'Who actually does the work — Canada or Jamaica?',
+          question: 'Who actually does the work, Canada or Jamaica?',
           answer:
-            "Engineers and project managers with deep Caribbean roots, backed by our Canadian headquarters and MAPL TECH's 25+ years of combined engineering experience.",
+            "Engineers and project managers with deep Caribbean roots, backed by our Toronto headquarters and MAPL TECH's 25+ years of combined engineering experience.",
         },
         {
           question: 'What does a project cost in Jamaica?',
@@ -298,18 +326,17 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         {
           question: 'How do you keep our team informed?',
           answer:
-            'Weekly project updates, documented decisions, and clean handoffs. We communicate clearly so your team always knows where things stand.',
+            'Weekly project updates, documented decisions and clean handoffs, so your team always knows where things stand.',
         },
         {
           question: 'How quickly do you reply?',
-          answer: "Within 24 hours, whether you're in Kingston, Montego Bay, or anywhere in Jamaica.",
+          answer: 'Within 24 hours, whether you are in Kingston, Montego Bay or anywhere else in Jamaica.',
         },
       ],
     },
-    nap: { branchLine: 'Regional branch · Kingston, Jamaica', serves: 'Kingston · Montego Bay' },
-    cta: {
-      heading: 'Ready to build with MAPL TECH Jamaica?',
-      body: "Tell us about your project. Whether you're in Kingston, Montego Bay, or anywhere in Jamaica — we'll respond within 24 hours.",
+    close: {
+      title: 'Building something for a Jamaican client?',
+      lede: 'Pick what it is. The estimator opens with it selected, priced in USD from the same public list we use everywhere. We reply within 24 hours.',
     },
   },
 };

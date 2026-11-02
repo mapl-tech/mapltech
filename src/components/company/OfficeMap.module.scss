@@ -1,0 +1,232 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The map is a drawing: hairline graticule, red structure arcs, HTML labels.
+
+.map {
+  margin: 0;
+  view-timeline-name: --office-map;
+  view-timeline-axis: block;
+}
+
+.canvas {
+  position: relative;
+  aspect-ratio: 2 / 1;
+  border-radius: 16px;
+  border: 1px solid $color-hairline;
+  background:
+    radial-gradient(70% 90% at 50% 100%, rgba($color-red, 0.05) 0%, transparent 70%),
+    linear-gradient(180deg, rgba($color-fg, 0.018) 0%, rgba($color-fg, 0) 100%);
+  overflow: hidden;
+}
+
+.lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.grid line {
+  stroke: rgba($color-fg, 0.07);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+
+  &[data-major] {
+    stroke: rgba($color-fg, 0.16);
+    stroke-dasharray: 3 5;
+  }
+}
+
+.arc {
+  fill: none;
+  stroke: rgba($color-fg, 0.26);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+
+  &[data-lit] {
+    stroke: $color-red;
+    stroke-width: 2;
+  }
+}
+
+// The arcs wipe in, in sequence, as the figure scrolls into view (clip-path,
+// the one non-transform property the motion rules allow). Without scroll
+// timelines, or with reduced motion, they are simply there.
+@supports (animation-timeline: view()) {
+  @include motion-ok {
+    .arc {
+      animation: wipe-right linear both;
+      animation-timeline: --office-map;
+
+      &[data-id='toronto-kingston'] {
+        animation-name: wipe-down;
+        animation-range: entry 10% cover 32%;
+      }
+
+      &[data-id='toronto-lagos'] {
+        animation-range: entry 30% cover 46%;
+      }
+
+      &[data-id='kingston-lagos'] {
+        animation-range: entry 50% cover 56%;
+      }
+    }
+  }
+}
+
+// In a hero the figure is already on screen at load, so a scroll timeline
+// would have nothing to draw: there the arcs draw once on load instead, in the
+// same order. Reduced motion: drawn from the start.
+@include motion-ok {
+  .map[data-draw='load'] .arc {
+    animation: wipe-right 900ms cubic-bezier(0.23, 1, 0.32, 1) 250ms both;
+    animation-timeline: auto;
+    animation-range: normal;
+
+    &[data-id='toronto-kingston'] {
+      animation-name: wipe-down;
+    }
+
+    &[data-id='toronto-lagos'] {
+      animation-delay: 650ms;
+    }
+
+    &[data-id='kingston-lagos'] {
+      animation-delay: 1050ms;
+    }
+  }
+}
+
+@keyframes wipe-right {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes wipe-down {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+// ---------------------------------------------------------------- places
+.places {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.place {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.node {
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: $color-ground;
+  border: 2px solid rgba($color-fg, 0.72);
+
+  .place[data-current] & {
+    left: -8px;
+    top: -8px;
+    width: 16px;
+    height: 16px;
+    background: $color-red;
+    border-color: $color-red;
+    box-shadow: 0 0 0 6px rgba($color-red, 0.16);
+  }
+
+  .map:not([data-focus]) .place:first-child & {
+    border-color: $color-red;
+  }
+}
+
+.label {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  // A knockout halo: the tight layers hide any arc that passes under a glyph.
+  text-shadow:
+    0 0 1px $color-ground,
+    0 0 2px $color-ground,
+    0 0 3px $color-ground,
+    0 0 6px $color-ground,
+    0 0 12px $color-ground;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+  transform: translateY(-50%);
+  // A dark tag under the text, so no arc, grid line or hero light ever sits
+  // behind a glyph (measured at the lightest pixel under each label).
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba($color-ground, 0.88);
+
+  .place[data-side='right'] & {
+    left: 10px;
+  }
+
+  .place[data-side='left'] & {
+    right: 10px;
+    text-align: right;
+  }
+}
+
+.city {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.125rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: $color-fg;
+}
+
+.note {
+  font-size: $font-size-xs;
+  line-height: 1.2;
+  color: rgba($color-fg, 0.7);
+}
+
+.axis {
+  position: absolute;
+  @include mono-label(rgba($color-fg, 0.62));
+  font-size: 0.6875rem;
+  pointer-events: none;
+}
+
+.axisEquator {
+  left: 12px;
+  bottom: calc(3.33% + 6px);
+}
+
+.axisMeridian {
+  top: 10px;
+  left: calc(83.333% + 6px);
+}
+
+.caption {
+  margin: 12px 0 0;
+  font-size: $font-size-sm;
+  line-height: 1.45;
+  color: rgba($color-fg, 0.68);
+}

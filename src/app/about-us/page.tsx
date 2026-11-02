@@ -1,138 +1,82 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
-import { executives, teamMembers } from '@/config/team';
-import { getService } from '@/config/services';
-import { aboutPage, breadcrumb, howTo, person } from '@/lib/schema';
-import Arrow from '@/components/company/Arrow';
-import Cta from '@/components/company/Cta';
-import ExecutiveCard from '@/components/company/ExecutiveCard';
-import FounderStory from '@/components/company/FounderStory';
-import HeroBlock, { ReviewedOn, type HeroFact } from '@/components/company/HeroBlock';
-import HowWeWork, { HOW_WE_WORK_NAME, HOW_WE_WORK_STEPS } from '@/components/company/HowWeWork';
-import OverlapSection from '@/components/company/OverlapSection';
-import SectionHead from '@/components/company/SectionHead';
-import ValuesEditorial from '@/components/company/ValuesEditorial';
-import { lowestStartingPrice } from '@/components/company/regions';
-import styles from '../company.module.scss';
+import { absoluteUrl } from '@/config/routes';
+import { aboutPage, breadcrumb, graph, howTo, orgId, personRef } from '@/lib/schema';
+import Close from '@/components/company/Close';
+import { FoundersStory } from '@/components/company/Founders';
+import Offices from '@/components/company/Offices';
+import PageHero from '@/components/company/PageHero';
+import Process from '@/components/company/Process';
+import ShippedWork from '@/components/company/ShippedWork';
+import { ABOUT, CALL_CTA, FOUNDERS, PRICE_CTA, TRUST_LINE } from '@/components/company/content';
 
-const DESCRIPTION =
-  'MAPL TECH is the engineering partner agencies call when projects demand real systems, automation, and infrastructure - not another marketing vendor.';
+const URL = 'https://mapltech.com/about-us';
 
 export const metadata: Metadata = {
-  title: 'About Us',
-  alternates: { canonical: 'https://mapltech.com/about-us' },
-  description: DESCRIPTION,
+  title: ABOUT.title,
+  description: ABOUT.description,
+  alternates: { canonical: URL },
   openGraph: {
-    title: 'About Us | MAPL TECH',
-    description:
-      'The engineering backbone behind agencies that refuse to cut corners on technology.',
+    type: 'website',
+    url: URL,
+    title: 'About MAPL TECH',
+    description: ABOUT.description,
   },
+  twitter: { card: 'summary_large_image', title: 'About MAPL TECH', description: ABOUT.description },
 };
 
-const H1 = "We're not another agency. We're the team behind them.";
-
-const LEDE =
-  'When your project outgrows templates and plugins, MAPL TECH steps in. We give agencies the systems, automation and infrastructure that turn ambitious projects into production-ready reality — 25+ years of combined engineering experience across Toronto, Lagos and Kingston, without hiring a full engineering department.';
-
-const OVERLAP = {
-  heading: 'Awake in your timezone.',
-  body:
-    'Toronto, Lagos and Kingston working windows plotted against your local day. Every office keeps 09:00–18:00 local hours, Monday to Friday; the teal band is the part of your day with at least one MAPL TECH office open.',
-  footnote: 'Lagos is 5 hours ahead of Toronto in summer and 6 in winter; Kingston sits within an hour of Toronto all year.',
-};
-
-const CTA_BAND = {
-  heading: 'Ready to stop duct-taping your tech stack?',
-  body: "Let's talk about what your agency actually needs — and build it right.",
-};
+/*
+ * /about-us, flagship redesign (Nov 2026). The company story told founder
+ * first: the claim (the team behind your agency's name) -> why it exists, in
+ * the founders' voice -> how it works behind your brand, with the client's
+ * words as proof -> the three offices against your working day (the page's
+ * one interaction) -> the ask.
+ *
+ * Structured data: AboutPage (mainEntity: the Organization from the root
+ * layout) + BreadcrumbList + the two founders + HowTo, from the same arrays
+ * the page renders. The founders here are compact Person nodes (name, title,
+ * photo, LinkedIn) because the page shows those, not the full bios; the full
+ * Person nodes live on /team, where the bios are on screen.
+ */
+const aboutGraph = graph([
+  aboutPage({ name: ABOUT.title, description: ABOUT.description }),
+  breadcrumb([{ name: ABOUT.title, path: '/about-us' }]),
+  ...FOUNDERS.map((founder) => ({
+    ...personRef(founder),
+    image: absoluteUrl(founder.image),
+    sameAs: [founder.linkedin],
+    worksFor: orgId(),
+  })),
+  howTo(
+    ABOUT.howWeWork.stages.map((stage) => ({ name: stage.name, text: stage.text, url: `/about-us#${stage.id}` })),
+    { name: ABOUT.howWeWork.title.replace(/\.$/, ''), description: ABOUT.howWeWork.lede, path: '/about-us' },
+  ),
+]);
 
 export default function AboutPage() {
-  const webTimeline = getService('web-development').typicalTimeline;
-
-  const facts: HeroFact[] = [
-    { term: 'Offices', detail: 'Toronto (HQ) · Lagos · Kingston' },
-    {
-      term: 'Team',
-      detail: `${executives.length} co-founders · ${teamMembers.length} named engineers, strategists and operators`,
-    },
-    { term: 'Experience', detail: '25+ years combined' },
-    { term: 'Starting price', detail: `From ${lowestStartingPrice()} (USD)` },
-    ...(webTimeline ? [{ term: 'Typical timeline', detail: `${webTimeline} (web builds)` }] : []),
-    { term: 'Last reviewed', detail: <ReviewedOn path="/about-us" /> },
-  ];
-
   return (
-    <div className={styles.page}>
-      <JsonLd
-        data={[
-          aboutPage({ name: 'About Us', description: DESCRIPTION }),
-          breadcrumb([{ name: 'About Us', path: '/about-us' }]),
-          howTo(
-            HOW_WE_WORK_STEPS.map((step) => ({ name: step.name, text: step.text })),
-            { name: HOW_WE_WORK_NAME, path: '/about-us' },
-          ),
-          ...executives.map(person),
-        ]}
+    <>
+      <JsonLd data={aboutGraph} />
+
+      <PageHero
+        eyebrow={ABOUT.hero.eyebrow}
+        titleLines={ABOUT.hero.titleLines}
+        lede={ABOUT.hero.lede}
+        primary={{ ...PRICE_CTA, placement: 'about_hero_primary' }}
+        secondary={{ ...CALL_CTA, placement: 'about_hero_call' }}
+        trust={TRUST_LINE}
+        facts={ABOUT.facts}
       />
 
-      <HeroBlock eyebrow="About MAPL TECH" title={H1} lede={LEDE} facts={facts} placementPrefix="about" />
+      <FoundersStory />
 
-      <FounderStory />
+      <Process />
 
-      <HowWeWork />
+      <ShippedWork title={ABOUT.work.title} lede={ABOUT.work.lede} placement="about" />
 
-      {/* PEAK */}
-      <OverlapSection
-        id="overlap"
-        eyebrow="04 · Timezone overlap"
-        heading={OVERLAP.heading}
-        body={OVERLAP.body}
-        footnote={OVERLAP.footnote}
-      />
+      <Offices />
 
-      <ValuesEditorial />
-
-      {/* Team preview: the two executives from team.ts */}
-      <section id="leadership" className={`${styles.section} reveal`} aria-labelledby="leadership-title">
-        <div className={styles.sectionInner}>
-          <SectionHead
-            eyebrow="06 · Leadership"
-            title="Led by named people, not a bench"
-            id="leadership-title"
-            action={
-              <Link href="/team" className={styles.inlineLink} data-cta-placement="about_team_link">
-                Meet the whole team <Arrow />
-              </Link>
-            }
-          />
-          <div className={styles.execGrid}>
-            {executives.map((exec) => (
-              <ExecutiveCard key={exec.name} exec={exec} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA band */}
-      <section className={`${styles.ctaBand} reveal`} aria-labelledby="cta-title">
-        <div className={`${styles.sectionInner} ${styles.ctaBandInner}`}>
-          <div>
-            <h2 id="cta-title" className={styles.ctaBandTitle}>
-              {CTA_BAND.heading}
-            </h2>
-            <p className={styles.ctaBandBody}>{CTA_BAND.body}</p>
-          </div>
-          <div className={styles.ctaBandActions}>
-            <Cta placement="about_band_primary" href="/pricing#estimator" size="large">
-              Get a 60-second estimate
-            </Cta>
-            <Cta placement="about_band_secondary" href="/contact-us" variant="secondary" size="large">
-              Book a 20-min scoping call
-            </Cta>
-          </div>
-        </div>
-      </section>
-    </div>
+      <Close id="close-title" title={ABOUT.close.title} lede={ABOUT.close.lede} placement="about" />
+    </>
   );
 }

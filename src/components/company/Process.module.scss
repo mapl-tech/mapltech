@@ -1,0 +1,202 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use 'company' as c;
+
+@include c.register-keyframes;
+
+.process {
+  @include c.section;
+  @include c.rule-top;
+}
+
+.inner {
+  @include c.split(4fr, 7fr, 80px);
+}
+
+.rail {
+  @include c.sticky-rail;
+}
+
+.h2 {
+  @include c.h2;
+  max-width: 13ch;
+}
+
+.lede {
+  @include c.lede;
+}
+
+.body {
+  min-width: 0;
+}
+
+// Stages hang off a vertical structure line that draws as you read.
+.stages {
+  position: relative;
+  margin: 0;
+  padding: 4px 0 0 32px;
+  list-style: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 14px;
+    bottom: 14px;
+    width: 2px;
+  }
+
+  &::before {
+    background: rgba($color-fg, 0.1);
+  }
+
+  &::after {
+    background: $color-red;
+    transform-origin: top;
+
+    @supports (animation-timeline: view()) {
+      @include motion-ok {
+        animation: draw-line linear both;
+        animation-timeline: view();
+        animation-range: entry 25% cover 65%;
+      }
+    }
+  }
+}
+
+@keyframes draw-line {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.stage {
+  position: relative;
+  padding: 0 0 40px;
+  scroll-margin-top: c.$anchor-offset;
+
+  // The node where the stage meets the line.
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    left: -32px;
+    top: 0.4em;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: $color-ground;
+    border: 2px solid $color-red;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.stageName {
+  margin: 0;
+  font-size: $font-size-h3;
+}
+
+.stageText {
+  margin: 10px 0 0;
+  max-width: 54ch;
+  font-size: $font-size-md;
+  line-height: 1.6;
+  color: rgba($color-fg, 0.8);
+}
+
+.after {
+  margin: 36px 0 0;
+  padding-top: 20px;
+  max-width: 54ch;
+  border-top: 1px solid $color-hairline;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.74);
+}
+
+// ---------------------------------------------------------------- proof
+// A finished surface (the quote) with the red structure frame behind it.
+.quote {
+  position: relative;
+  margin: clamp(48px, 7vw, 72px) 12px 12px 0;
+  padding: clamp(28px, 4vw, 44px);
+
+  &::before {
+    @include c.structure-frame(12px, 20px);
+    @include c.register-on-scroll;
+  }
+}
+
+.quoteSurface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 20px;
+  border: 1px solid $color-hairline-strong;
+  background: linear-gradient(180deg, #16141a 0%, #0f0e12 100%);
+}
+
+.quoteText {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+
+  p {
+    margin: 0;
+    font-family: $font-display;
+    font-weight: $font-weight-semibold;
+    font-size: clamp(1.375rem, 1.05rem + 1.4vw, 2rem);
+    line-height: 1.28;
+    letter-spacing: -0.02em;
+    color: $color-fg;
+    text-wrap: pretty;
+
+    &::before {
+      content: '\201C';
+      color: $color-red;
+    }
+
+    &::after {
+      content: '\201D';
+      color: $color-red;
+    }
+  }
+}
+
+.quoteBy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.avatar {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.quoteName {
+  display: block;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+  color: $color-fg;
+}
+
+.quoteRole {
+  display: block;
+  font-size: $font-size-sm;
+  color: rgba($color-fg, 0.7);
+}

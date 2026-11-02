@@ -1,49 +1,155 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../components/company/company' as c;
 
-.emailFallback {
-  display: grid;
-  gap: $space-12;
-  padding-top: $space-24;
-  border-top: $border-hairline;
+// /careers page layout (flagship redesign). The board and forms style
+// themselves; this file owns the sections around them.
+
+.section {
+  @include c.section;
+  @include c.rule-top;
 }
 
-// Team snap-row cards (plain links, source order)
-.teamCard {
-  display: grid;
-  gap: $space-8;
-  min-height: 160px;
-  height: 100%;
-  padding: $space-24;
-  @include surface(1);
-  color: $color-fg;
-  transition: border-color $transition-fast;
+.split {
+  @include c.split(4fr, 7fr, 72px);
+}
 
-  @include pointer-fine {
-    &:hover {
-      border-color: rgba($color-red, 0.5);
+.rail {
+  @include c.sticky-rail;
+}
+
+.h2 {
+  @include c.h2;
+  max-width: 12ch;
+}
+
+.lede {
+  @include c.lede;
+}
+
+// "How applying works": three steps on the red structure line.
+.steps {
+  position: relative;
+  margin: 32px 0 0;
+  padding: 0 0 0 30px;
+  list-style: none;
+  counter-reset: step;
+
+  // A dim track, and the red line drawing down it as the steps scroll in
+  // (static and fully drawn without scroll timelines or under reduced motion).
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+  }
+
+  &::before {
+    background: rgba($color-fg, 0.1);
+  }
+
+  &::after {
+    background: $color-red;
+    transform-origin: top;
+
+    @supports (animation-timeline: view()) {
+      @include motion-ok {
+        animation: draw-steps linear both;
+        animation-timeline: view();
+        animation-range: entry 20% cover 55%;
+      }
     }
   }
 
-  &:active {
-    border-color: $color-red-pressed;
+  li {
+    position: relative;
+    z-index: 1; // the dots sit on top of the drawn line
+    padding-bottom: 22px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 0.42em;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: $color-ground;
+      border: 2px solid $color-red;
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+    }
   }
 }
 
-.teamName {
+@keyframes draw-steps {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.stepName {
+  display: block;
   font-family: $font-display;
-  font-weight: $font-weight-display;
-  font-size: $font-size-xl;
-  line-height: $line-height-snug;
-  letter-spacing: $letter-spacing-display;
+  font-weight: $font-weight-bold;
+  font-size: 1.125rem;
+  color: $color-fg;
 }
 
-.teamTitle {
-  color: $color-fg-muted;
-  font-size: $font-size-sm;
+.stepText {
+  display: block;
+  margin-top: 4px;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: rgba($color-fg, 0.78);
 }
 
-.teamMeta {
-  @include mono-label($color-fg-dim);
-  margin-top: auto;
+.fallback {
+  margin: 28px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid $color-hairline;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.78);
+
+  a {
+    color: c.$link-red;
+    text-decoration: underline;
+    text-decoration-color: rgba(c.$link-red, 0.45);
+    text-underline-offset: 4px;
+    overflow-wrap: anywhere;
+
+    &:hover {
+      text-decoration-color: c.$link-red;
+    }
+
+    @include focus-ring;
+  }
+}
+
+// The form sits on one finished surface (no card inside a card).
+.panel {
+  position: relative;
+  padding: clamp(20px, 3.4vw, 36px);
+  border-radius: 16px;
+  border: 1px solid $color-hairline-strong;
+  background: linear-gradient(180deg, #141316 0%, #0e0d10 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 30px 80px -40px rgba(0, 0, 0, 0.9);
+  scroll-margin-top: 112px;
+}
+
+.talentSection {
+  @include c.section(c.$section-y-tight);
+  @include c.rule-top;
 }

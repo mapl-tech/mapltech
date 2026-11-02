@@ -1,23 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
+import { placeWords } from '@/components/company/places';
 import { usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
-import Cta from './Cta';
 import { useUrlParams } from './useUrlState';
-import forms from './forms.module.scss';
 import styles from './CareersBoard.module.scss';
 
 /**
- * Careers §2.8: URL-synced filters (?loc=&type=) over roles rendered from
- * `careers` in site.ts. Every role is in the SSR HTML as a native
- * <details name="role"> (interaction #11, one open at a time); filtering
- * toggles the `hidden` attribute and never unmounts. "Apply for this role"
- * writes ?role= to the URL (shared with CareersApply) and moves focus to the
- * apply form.
+ * The open roles from `careers` in site.ts, every one in the server HTML.
+ * Filters are native radio chips synced to the URL (?loc=, plus ?type= when
+ * the roles have more than one type), so a filtered view is shareable and
+ * filtering only toggles `hidden`, never unmounts. "Apply" is a real link
+ * (?role=slug#apply, works without JavaScript); with JavaScript it selects
+ * the role in the apply form in place and moves focus to it.
  */
 
 export interface BoardRole {
-  /** Matches the JobPosting @id anchor (slugify(`${title} ${country}`)). */
+  /** Matches the JobPosting @id fragment: slugify(`${title} ${country}`). */
   slug: string;
   title: string;
   type: string;
@@ -28,100 +27,92 @@ export interface BoardRole {
 
 export interface CareersBoardProps {
   roles: BoardRole[];
-  /** id of the apply section (default "apply"). */
+  /** id of the apply section. */
   applyId?: string;
-  /** id of the first field in the apply form, focused after "Apply for this role". */
+  /** id of the role field in the apply form; it receives focus after "Apply". */
   applyFieldId?: string;
+  /** id of the talent-list section, offered when a filter matches nothing. */
+  talentId?: string;
 }
 
 const ALL = 'all';
 
-function isRemote(role: BoardRole): boolean {
-  return /remote/i.test(role.location);
-}
+const isRemote = (role: BoardRole) => /remote/i.test(role.location);
 
-function PlusIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false">
-      <path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-    </svg>
-  );
-}
 
-export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 'apply-role' }: CareersBoardProps) {
+export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 'apply-role', talentId = 'talent' }: CareersBoardProps) {
   const [params, setParams] = useUrlParams();
   const reduceMotion = usePrefersReducedMotion();
-  const [query, setQuery] = useState('');
-
-  const loc = (params.get('loc') ?? ALL).toLowerCase();
-  const type = (params.get('type') ?? ALL).toLowerCase();
+  // Counts filter changes made here; its parity swaps the rows' entrance
+  // animation name, which restarts it, so a filter change is visible.
+  const [changes, setChanges] = useState(0);
 
   const countries = Array.from(new Set(roles.map((role) => role.country)));
   const types = Array.from(new Set(roles.map((role) => role.type)));
   const remoteCount = roles.filter(isRemote).length;
 
-  const locationOptions = [
+  const locOptions = [
     { key: ALL, label: 'All', count: roles.length },
-    ...countries.map((country) => ({
-      key: country.toLowerCase(),
-      label: country,
-      count: roles.filter((role) => role.country === country).length,
-    })),
-    ...(remoteCount > 0 ? [{ key: 'remote', label: 'Remote', count: remoteCount }] : []),
+    ...countries.map((country) => ({ key: country.toLowerCase(), label: country, count: roles.filter((r) => r.country === country).length })),
+    ...(remoteCount ? [{ key: 'remote', label: 'Remote', count: remoteCount }] : []),
   ];
+  const typeOptions =
+    types.length > 1
+      ? [
+          { key: ALL, label: 'All types', count: roles.length },
+          ...types.map((type) => ({ key: type.toLowerCase(), label: type, count: roles.filter((r) => r.type === type).length })),
+        ]
+      : [];
 
-  const typeOptions = [
-    { key: ALL, label: 'All types', count: roles.length },
-    ...types.map((entry) => ({
-      key: entry.toLowerCase(),
-      label: entry,
-      count: roles.filter((role) => role.type === entry).length,
-    })),
-  ];
+  const rawLoc = (params.get('loc') ?? ALL).toLowerCase();
+  const loc = locOptions.some((o) => o.key === rawLoc) ? rawLoc : ALL;
+  const rawType = (params.get('type') ?? ALL).toLowerCase();
+  const type = typeOptions.some((o) => o.key === rawType) ? rawType : ALL;
 
-  const q = query.trim().toLowerCase();
   const matches = (role: BoardRole) => {
     if (loc !== ALL && (loc === 'remote' ? !isRemote(role) : role.country.toLowerCase() !== loc)) return false;
     if (type !== ALL && role.type.toLowerCase() !== type) return false;
-    if (q && ![role.title, role.location, role.country].some((value) => value.toLowerCase().includes(q))) return false;
     return true;
   };
-
   const visible = roles.filter(matches).length;
+  const locLabel = locOptions.find((o) => o.key === loc)?.label ?? 'All';
 
-  const setFilter = (key: 'loc' | 'type', value: string) =>
+  const setFilter = (key: 'loc' | 'type', value: string) => {
+    setChanges((n) => n + 1);
     setParams((next) => {
       if (value === ALL) next.delete(key);
       else next.set(key, value);
     });
-
-  const clearFilters = () => {
-    setQuery('');
-    setParams((next) => {
-      next.delete('loc');
-      next.delete('type');
-    });
   };
 
-  const apply = (role: BoardRole) => {
+  // The link keeps the current filter, so "open in new tab" lands on the same view.
+  const applyHref = (role: BoardRole) => {
+    const next = new URLSearchParams(params);
+    next.set('role', role.slug);
+    return `?${next.toString()}#${applyId}`;
+  };
+
+  const apply = (event: MouseEvent<HTMLAnchorElement>, role: BoardRole) => {
+    event.preventDefault();
     setParams((next) => next.set('role', role.slug), { hash: applyId });
-    const target = document.getElementById(applyId);
+    // Land on the form itself: on phones the section's rail stacks above it.
+    const field = document.getElementById(applyFieldId);
+    const target = (field instanceof HTMLSelectElement && field.form) || document.getElementById(applyId);
     target?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-    const fieldEl = document.getElementById(applyFieldId);
-    fieldEl?.focus({ preventScroll: true });
+    field?.focus({ preventScroll: true });
   };
 
   return (
     <div className={styles.board}>
       <div className={styles.filters}>
-        <fieldset className={styles.filterGroup}>
-          <legend className={forms.legend}>Location</legend>
-          <div className={styles.chipRow}>
-            {locationOptions.map((option) => (
-              <label key={option.key} className={`${forms.chip} ${styles.filterChip}`}>
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Show roles in</legend>
+          <div className={styles.chips}>
+            {locOptions.map((option) => (
+              <label key={option.key} className={styles.chip}>
                 <input
                   type="radio"
-                  name="loc"
+                  name="careers-loc"
                   value={option.key}
                   className="visually-hidden"
                   checked={loc === option.key}
@@ -134,96 +125,77 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
           </div>
         </fieldset>
 
-        <fieldset className={styles.filterGroup}>
-          <legend className={forms.legend}>Type</legend>
-          <div className={styles.chipRow}>
-            {typeOptions.map((option) => (
-              <label key={option.key} className={`${forms.chip} ${styles.filterChip}`}>
-                <input
-                  type="radio"
-                  name="type"
-                  value={option.key}
-                  className="visually-hidden"
-                  checked={type === option.key}
-                  onChange={() => setFilter('type', option.key)}
-                />
-                {option.label}
-                <span className={styles.count}>{option.count}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
+        {typeOptions.length ? (
+          <fieldset className={styles.group}>
+            <legend className={styles.legend}>Type</legend>
+            <div className={styles.chips}>
+              {typeOptions.map((option) => (
+                <label key={option.key} className={styles.chip}>
+                  <input
+                    type="radio"
+                    name="careers-type"
+                    value={option.key}
+                    className="visually-hidden"
+                    checked={type === option.key}
+                    onChange={() => setFilter('type', option.key)}
+                  />
+                  {option.label}
+                  <span className={styles.count}>{option.count}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ) : null}
 
-        <div className={styles.searchRow}>
-          <label className="visually-hidden" htmlFor="careers-search">
-            Search by title or location
-          </label>
-          <input
-            id="careers-search"
-            type="search"
-            className={`${forms.input} ${styles.search}`}
-            placeholder="Search by title or location"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            autoComplete="off"
-          />
-          <p className={styles.showing} aria-live="polite" aria-atomic="true">
-            Showing {visible} of {roles.length}
-          </p>
-        </div>
+        <p className={styles.showing} aria-live="polite" aria-atomic="true">
+          {visible === roles.length ? `All ${roles.length} open roles` : `${visible} of ${roles.length} roles: ${locLabel}`}
+        </p>
       </div>
 
-      <ul className={styles.list}>
-        {roles.map((role) => {
-          const shown = matches(role);
-          return (
-            <li key={role.slug} hidden={!shown}>
-              <details id={role.slug} name="role" className={`${styles.role} accordion-item`}>
-                <summary className={`${styles.summary} accordion-summary`} data-cursor="view">
-                  <span className={styles.roleTitle}>{role.title}</span>
-                  <span className={styles.metaGroup}>
-                    <span className={`${styles.meta} ${styles.metaLocation}`}>{role.location}</span>
-                    <span className={`${styles.meta} ${styles.metaCountry}`}>{role.country}</span>
-                    <span className={`${styles.meta} ${styles.metaType}`}>{role.type}</span>
-                  </span>
-                  <span className={styles.icon} aria-hidden="true">
-                    <PlusIcon />
-                  </span>
-                </summary>
-                <div className={`${styles.body} accordion-content`}>
-                  <p className={styles.description}>{role.description}</p>
-                  <dl className={`kv kv--stack ${styles.roleFacts}`}>
-                    <div>
-                      <dt>Location</dt>
-                      <dd>{role.location}</dd>
-                    </div>
-                    <div>
-                      <dt>Country</dt>
-                      <dd>{role.country}</dd>
-                    </div>
-                    <div>
-                      <dt>Type</dt>
-                      <dd>{role.type}</dd>
-                    </div>
-                  </dl>
-                  <div className={styles.roleActions}>
-                    <Cta placement="careers_role_apply" size="small" onClick={() => apply(role)}>
-                      Apply for this role
-                    </Cta>
-                  </div>
-                </div>
-              </details>
-            </li>
-          );
-        })}
+      <ul className={styles.list} role="list" data-flip={changes === 0 ? undefined : changes % 2 ? 'a' : 'b'}>
+        {roles.map((role) => (
+          <li key={role.slug} id={role.slug} className={styles.role} hidden={!matches(role)}>
+            <div className={styles.roleMain}>
+              <h3 className={styles.roleTitle}>{role.title}</h3>
+              <p className={styles.roleMeta}>
+                <span>{role.country}</span>
+                <span aria-hidden="true" className={styles.sep}>
+                  ·
+                </span>
+                <span>{placeWords(role.location)}</span>
+                <span aria-hidden="true" className={styles.sep}>
+                  ·
+                </span>
+                <span>{role.type}</span>
+                <span className="visually-hidden">.</span>
+              </p>
+              <p className={styles.roleText}>{role.description}</p>
+            </div>
+            <a
+              href={applyHref(role)}
+              className={styles.apply}
+              aria-label={`Apply for ${role.title}, ${role.country}`}
+              onClick={(event) => apply(event, role)}
+              data-cta-placement="careers_role_apply"
+            >
+              Apply
+              <span aria-hidden="true" className={styles.applyArrow}>
+                →
+              </span>
+            </a>
+          </li>
+        ))}
       </ul>
 
-      <p className={styles.empty} hidden={visible > 0}>
-        No positions match your filters.{' '}
-        <button type="button" className={forms.textButton} onClick={clearFilters}>
-          Clear filters
-        </button>
-      </p>
+      <div className={styles.empty} hidden={visible > 0}>
+        <p>No open roles match this filter right now.</p>
+        <p>
+          <button type="button" className={styles.reset} onClick={() => setFilter('loc', ALL)}>
+            Show all roles
+          </button>{' '}
+          or <a href={`#${talentId}`}>join the talent list</a> and we&apos;ll write when one opens.
+        </p>
+      </div>
     </div>
   );
 }

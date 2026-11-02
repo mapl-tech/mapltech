@@ -1,117 +1,70 @@
 import type { Metadata } from 'next';
 import JsonLd from '@/components/seo/JsonLd';
-import { countries, departments, executives, teamMembers } from '@/config/team';
-import { pageGraph, person, slugify } from '@/lib/schema';
-import Cta from '@/components/company/Cta';
-import ExecutiveCard from '@/components/company/ExecutiveCard';
-import HeroBlock, { ReviewedOn, type HeroFact } from '@/components/company/HeroBlock';
-import SectionHead from '@/components/company/SectionHead';
-import TeamGrid from '@/components/company/TeamGrid';
-import shared from '../company.module.scss';
-import styles from './page.module.scss';
+import { pageGraph, person } from '@/lib/schema';
+import Close from '@/components/company/Close';
+import { FounderProfiles } from '@/components/company/Founders';
+import PageHero from '@/components/company/PageHero';
+import ShippedWork from '@/components/company/ShippedWork';
+import TeamDirectory from '@/components/company/TeamDirectory';
+import { CALL_CTA, FOUNDERS, PRICE_CTA, TEAM, TRUST_LINE } from '@/components/company/content';
 
-const TITLE = 'Leadership & Global Team';
-const DESCRIPTION =
-  'Meet the executive leadership and global team behind MAPL TECH. Operating across Canada, Nigeria, and Jamaica, we build scalable web infrastructure and AI-powered digital systems.';
+const URL = 'https://mapltech.com/team';
 
 export const metadata: Metadata = {
-  title: TITLE,
-  alternates: { canonical: 'https://mapltech.com/team' },
-  description: DESCRIPTION,
+  title: TEAM.title,
+  description: TEAM.description,
+  alternates: { canonical: URL },
   openGraph: {
+    type: 'website',
+    url: URL,
     title: 'Leadership & Global Team | MAPL TECH',
-    description:
-      'Meet the executive leadership and global team behind MAPL TECH. Operating across Canada, Nigeria, and Jamaica.',
+    description: TEAM.description,
   },
+  twitter: { card: 'summary_large_image', title: 'Leadership & Global Team | MAPL TECH', description: TEAM.description },
 };
 
-const H1 = 'Global leadership. Engineered execution.';
-
-const CTA_HEADING = 'Put senior engineers behind your next client project.';
-
-function ledeFor(memberCount: number): string {
-  return `MAPL TECH is led by a cross-border executive team and staffed by ${memberCount} named engineers, strategists and operators across Canada, Nigeria and Jamaica — building scalable digital infrastructure, AI-powered systems and enterprise-grade web platforms for agencies in North America, Africa and the Caribbean.`;
-}
+/*
+ * /team, flagship redesign (Nov 2026). Founders first and large: real photos,
+ * full bios from team.ts, LinkedIn, and the `/team#slug` anchors their Person
+ * nodes point at. Then the wider team exactly as team.ts lists it, names and
+ * titles only, with initials (those records are unconfirmed and carry
+ * placeholder photos, so they get no photos, no bios and no Person nodes).
+ */
+const teamGraph = pageGraph({
+  path: '/team',
+  name: TEAM.title,
+  description: TEAM.description,
+  type: 'AboutPage',
+  breadcrumbs: [
+    { name: 'About Us', path: '/about-us' },
+    { name: 'Team', path: '/team' },
+  ],
+  nodes: FOUNDERS.map((founder) => person(founder)),
+});
 
 export default function TeamPage() {
-  const members = teamMembers.map((member) => ({ ...member, slug: slugify(member.name) }));
-  const perCountry = countries.map((country) => ({
-    country,
-    count: teamMembers.filter((member) => member.country === country).length,
-  }));
-
-  const facts: HeroFact[] = [
-    { term: 'Leadership', detail: `${executives.length} Co-Founders & Directors` },
-    {
-      term: 'Team',
-      detail: `${teamMembers.length} named members — ${perCountry.map(({ country, count }) => `${count} in ${country}`).join(', ')}`,
-    },
-    { term: 'Departments', detail: departments.join(' · ') },
-    { term: 'Offices', detail: 'Toronto (HQ) · Lagos · Kingston' },
-    { term: 'Last reviewed', detail: <ReviewedOn path="/team" /> },
-  ];
-
   return (
-    <div className={shared.page}>
-      <JsonLd
-        data={pageGraph({
-          path: '/team',
-          name: TITLE,
-          description: DESCRIPTION,
-          type: 'AboutPage',
-          breadcrumbs: [
-            { name: 'About Us', path: '/about-us' },
-            { name: 'Team', path: '/team' },
-          ],
-          nodes: executives.map(person),
-        })}
+    <>
+      <JsonLd data={teamGraph} />
+
+      <PageHero
+        crumbs={[{ name: 'About', href: '/about-us' }, { name: 'Team' }]}
+        eyebrow={TEAM.hero.eyebrow}
+        titleLines={TEAM.hero.titleLines}
+        lede={TEAM.hero.lede}
+        primary={{ ...PRICE_CTA, placement: 'team_hero_primary' }}
+        secondary={{ ...CALL_CTA, placement: 'team_hero_call' }}
+        trust={TRUST_LINE}
+        facts={TEAM.facts}
       />
 
-      <HeroBlock eyebrow="Leadership & team" title={H1} lede={ledeFor(teamMembers.length)} facts={facts} placementPrefix="team" />
+      <FounderProfiles />
 
-      {/* Executive leadership: Person JSON-LD anchors (/team#leshan-patterson) */}
-      <section id="leadership" className={`${shared.section} ${styles.leadership} reveal`} aria-labelledby="leadership-title">
-        <div className={shared.sectionInner}>
-          <SectionHead eyebrow="Executive leadership" title="The people behind the platform" id="leadership-title" />
-          <div className={shared.execGrid}>
-            {executives.map((exec) => (
-              <ExecutiveCard key={exec.name} exec={exec} anchor />
-            ))}
-          </div>
-        </div>
-      </section>
+      <ShippedWork id="team-work-title" title={TEAM.work.title} lede={TEAM.work.lede} placement="team" />
 
-      {/* Global team: country tabs are anchors, every panel is in the HTML */}
-      <section id="global-team" className={`${shared.section} ${styles.team} reveal`} aria-labelledby="team-title">
-        <div className={shared.sectionInner}>
-          <SectionHead
-            eyebrow="Global team"
-            title="The engineers, strategists, and operators"
-            id="team-title"
-            intro="Our team spans three continents, delivering technical excellence and operational precision across every engagement."
-          />
-          <TeamGrid members={members} />
-        </div>
-      </section>
+      <TeamDirectory />
 
-      {/* CTA band */}
-      <section className={`${shared.ctaBand} reveal`} aria-labelledby="cta-title">
-        <div className={`${shared.sectionInner} ${shared.ctaBandInner}`}>
-          <div>
-            <h2 id="cta-title" className={shared.ctaBandTitle}>
-              {CTA_HEADING}
-            </h2>
-          </div>
-          <div className={shared.ctaBandActions}>
-            <Cta placement="team_band_primary" href="/pricing#estimator" size="large">
-              Get a 60-second estimate
-            </Cta>
-            <Cta placement="team_band_secondary" href="/contact-us" variant="secondary" size="large">
-              Book a 20-min scoping call
-            </Cta>
-          </div>
-        </div>
-      </section>
-    </div>
+      <Close id="close-title" title={TEAM.close.title} lede={TEAM.close.lede} placement="team" />
+    </>
   );
 }

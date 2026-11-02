@@ -1,0 +1,51 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use './company' as c;
+
+// Who is behind the company, next to the apply form: the two founders' own
+// photos (one grayscale treatment), their names and titles, and the team link.
+
+.note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  margin: 28px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid $color-hairline;
+}
+
+.faces {
+  display: flex;
+}
+
+.face {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px $color-ground;
+  @include c.founder-photo;
+
+  & + & {
+    margin-left: -12px;
+  }
+}
+
+.text {
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: rgba($color-fg, 0.78);
+}
+
+.names {
+  color: $color-fg;
+  font-weight: $font-weight-semibold;
+}
+
+.link {
+  grid-column: 1 / -1;
+  justify-self: start;
+  @include c.text-link;
+}

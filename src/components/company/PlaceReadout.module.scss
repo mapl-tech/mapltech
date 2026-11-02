@@ -1,0 +1,93 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use 'company' as c;
+
+// The "you are here" card on a regional page: city, live local time, zone,
+// coordinates. A finished surface with the red structure frame behind it.
+
+@include c.register-keyframes;
+
+.readout {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 20px, 21rem);
+  margin: -40px 0 0 20px;
+  padding: 20px 22px 18px;
+
+  &::before {
+    @include c.structure-frame(10px, 16px);
+    @include c.register-on-scroll(entry 0%, cover 30%);
+  }
+}
+
+.surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 16px;
+  border: 1px solid $color-hairline-strong;
+  background: linear-gradient(180deg, #161518 0%, #0f0e11 100%);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.85);
+}
+
+.body {
+  position: relative;
+  z-index: 1;
+}
+
+.city {
+  margin: 0;
+  @include mono-label(rgba($color-fg, 0.72));
+}
+
+.clock {
+  margin: 10px 0 0;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: $color-fg;
+  @include tabular;
+
+  time {
+    color: $color-teal; // a live readout: the one place teal belongs
+  }
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0;
+  font-size: 1rem;
+  color: rgba($color-fg, 0.86);
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba($color-fg, 0.55);
+
+  .status[data-open='true'] & {
+    border-color: $color-teal;
+    background: $color-teal;
+  }
+}
+
+.zone {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid $color-hairline;
+  font-size: 1rem;
+  color: rgba($color-fg, 0.8);
+}
+
+.coords {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  color: rgba($color-fg, 0.66);
+  @include tabular;
+}

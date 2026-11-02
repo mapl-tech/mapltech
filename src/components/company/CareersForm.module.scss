@@ -1,0 +1,109 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use 'company' as c;
+
+// Additions on top of the shared convert form primitives (forms.module.scss):
+// the "Applying for" echo, the error summary, the send row.
+
+.form {
+  gap: 22px;
+  // "Apply" scrolls here: clear the fixed header and show the panel's edge.
+  scroll-margin-top: 136px;
+}
+
+.head {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid $color-hairline;
+}
+
+.applying {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.applyingLabel {
+  @include mono-label(rgba($color-fg, 0.7));
+}
+
+.applyingRole {
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: $color-fg;
+}
+
+.note {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba($color-fg, 0.7);
+}
+
+.summary {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba($color-red, 0.55);
+  background: rgba($color-red, 0.08);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.failed {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba($color-red, 0.55);
+  font-size: $font-size-sm;
+  line-height: 1.55;
+  color: $color-fg;
+
+  a {
+    color: c.$link-red;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    @include focus-ring;
+  }
+}
+
+.actions {
+  gap: 12px 24px;
+}
+
+// Full-width send button on phones, the thumb's biggest target.
+.submit {
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    width: 100%;
+
+    :global(.magnetic-btn-box),
+    :global(.magnetic-btn) {
+      width: 100%;
+    }
+  }
+}
+
+.mail {
+  @include c.text-link;
+  font-size: $font-size-sm;
+}
+
+// Beats the shared 15px hint regardless of stylesheet order.
+.form .hint {
+  font-size: 1rem;
+}
+
+.done {
+  display: grid;
+  gap: 4px;
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+}

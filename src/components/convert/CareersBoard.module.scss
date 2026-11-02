@@ -1,273 +1,293 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
+// Careers board (flagship redesign): radio chips over a ruled list of roles.
+// Only class rules that set `display` must re-assert [hidden].
+
+$ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+$link-red: #ff5c73;
+
 .board {
-  display: grid;
-  gap: $space-32;
+  min-width: 0;
 }
 
 .filters {
   display: grid;
-  gap: $space-16;
+  gap: 16px;
+  margin-bottom: 8px;
 }
 
-.filterGroup {
-  display: grid;
-  gap: $space-8;
+.group {
   margin: 0;
   padding: 0;
   border: 0;
   min-width: 0;
 }
 
-// Chip row: wraps on desktop, scroll-snaps horizontally on phones.
-.chipRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-8;
-
-  @media (max-width: #{$breakpoint-md - 1px}) {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scroll-padding-inline: 0;
-    padding-bottom: $space-4;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    > * {
-      flex: 0 0 auto;
-      scroll-snap-align: start;
-    }
-  }
+.legend {
+  margin-bottom: 12px;
+  padding: 0;
+  @include mono-label(rgba($color-fg, 0.7));
 }
 
-.filterChip {
-  gap: $space-8;
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid $color-hairline-strong;
+  color: $color-fg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    border-color 160ms $ease-out,
+    background-color 160ms $ease-out;
+
+  @include pointer-fine {
+    &:hover {
+      border-color: rgba($color-red, 0.6);
+    }
+  }
+
+  &:has(input:checked) {
+    border-color: $color-red;
+    background: rgba($color-red, 0.12);
+  }
+
+  &:has(input:focus-visible) {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
 }
 
 .count {
-  @include mono-label($color-fg-muted);
-  letter-spacing: 0.04em;
-}
-
-.searchRow {
-  display: grid;
-  gap: $space-8;
-  align-items: center;
-
-  @include sm {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: $space-16;
-  }
-}
-
-.search {
-  max-width: 420px;
+  font-size: 0.8125rem;
+  color: rgba($color-fg, 0.7);
+  @include tabular;
 }
 
 .showing {
-  @include mono-label($color-fg-muted);
   margin: 0;
+  font-size: 1rem;
+  color: rgba($color-fg, 0.72);
+  @include tabular;
 }
 
-// ---- Roles as native <details> --------------------------------------------
+// ---------------------------------------------------------------- roles
 .list {
-  display: grid;
-  margin: 0;
+  margin: 16px 0 0;
   padding: 0;
   list-style: none;
-  border-top: $border-hairline-strong;
+  border-top: 1px solid $color-hairline-strong;
 }
 
 .role {
-  border-bottom: $border-hairline;
-}
-
-.summary {
-  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    'title icon'
-    'meta icon';
-  align-items: center;
-  gap: $space-4 $space-16;
-  min-height: 64px;
-  padding: $space-16 0;
-  cursor: pointer;
-  list-style: none;
-  -webkit-tap-highlight-color: transparent;
-
-  &::-webkit-details-marker {
-    display: none;
-  }
-
-  &::marker {
-    content: '';
-  }
-
-  &:focus-visible {
-    outline: $focus-ring;
-    outline-offset: 2px;
-    border-radius: 2px;
-  }
-
-  @include pointer-fine {
-    &:hover .roleTitle {
-      color: $color-red-hover;
-    }
-  }
-
-  @include md {
-    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.7fr) auto;
-    grid-template-areas: 'title loc country type icon';
-    gap: $space-24;
-  }
-
-  // The red rule (styles/_motion.scss) spans the row edges here.
-  &::after {
-    left: 0 !important;
-    right: 0 !important;
-  }
-}
-
-.roleTitle {
-  grid-area: title;
-  font-family: $font-display;
-  font-weight: $font-weight-display;
-  font-size: $font-size-xl;
-  line-height: $line-height-snug;
-  letter-spacing: $letter-spacing-display;
-  color: $color-fg;
-  transition: color $transition-fast;
-
-  @include md {
-    font-size: $font-size-2xl;
-  }
-}
-
-// Phones: one block under the title holding the three meta values inline;
-// desktop: the wrapper dissolves (display: contents) so each value takes its
-// own grid area.
-.metaGroup {
-  grid-area: meta;
-  display: block;
-  min-width: 0;
-
-  @include md {
-    display: contents;
-  }
-}
-
-.meta {
-  @include mono-label($color-fg-muted);
-  letter-spacing: 0.06em;
-  text-transform: none;
-  display: inline;
-
-  & + &::before {
-    content: ' · ';
-    color: $color-fg-dim;
-  }
-
-  @include md {
-    display: block;
-
-    & + &::before {
-      content: none;
-    }
-  }
-}
-
-.metaLocation {
-  @include md {
-    grid-area: loc;
-  }
-}
-
-.metaCountry {
-  @include md {
-    grid-area: country;
-  }
-}
-
-.metaType {
-  @include md {
-    grid-area: type;
-  }
-}
-
-.icon {
-  grid-area: icon;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid $color-hairline-strong;
-  border-radius: 50%;
-  color: $color-fg-muted;
-  transition: transform $transition-base, color $transition-fast, border-color $transition-fast;
-
-  .role[open] & {
-    transform: rotate(45deg);
-    color: $color-red;
-    border-color: rgba($color-red, 0.5);
-  }
-}
-
-.body {
-  display: grid;
-  gap: $space-24;
-  padding: $space-8 0 $space-32;
-
-  @include md {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    gap: $space-48;
-  }
-}
-
-.description {
-  margin: 0;
-  color: $color-text-body;
-  font-size: $font-size-md;
-  line-height: $line-height-relaxed;
-  max-width: 62ch;
-}
-
-.roleFacts {
-  align-self: start;
-
-  @include md {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-  }
-}
-
-.roleActions {
-  @include md {
-    grid-column: 1;
-  }
-}
-
-.empty {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: $space-8;
-  margin: 0;
-  color: $color-fg-muted;
+  gap: 12px 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid $color-hairline-strong;
+  scroll-margin-top: 112px;
 
   &[hidden] {
     display: none;
   }
+
+  @include md {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  &:target {
+    border-bottom-color: rgba($color-red, 0.6);
+  }
+
+  // Each row rises into place as it enters (transform and opacity only).
+  @supports (animation-timeline: view()) {
+    @include motion-ok {
+      animation: role-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
 }
 
-.filterGroup[hidden],
-.list > li[hidden] {
-  display: none;
+// After a filter change: the rows that remain fade up (children only, so it
+// composes with the row's own scroll entrance). Two names, so each change
+// restarts it.
+.list[data-flip='a'] .role > *,
+.list[data-flip='b'] .role > * {
+  @include motion-ok {
+    animation: role-show-a 280ms $ease-out both;
+  }
+}
+
+.list[data-flip='b'] .role > * {
+  @include motion-ok {
+    animation-name: role-show-b;
+  }
+}
+
+@keyframes role-show-a {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes role-show-b {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes role-in {
+  from {
+    opacity: 0.25;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.roleMain {
+  min-width: 0;
+}
+
+.roleTitle {
+  margin: 0;
+  font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem);
+  line-height: 1.15;
+}
+
+.roleMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin: 10px 0 0;
+  font-size: 1rem;
+  color: rgba($color-fg, 0.76);
+
+}
+
+.sep {
+  margin: 0 10px;
+  color: rgba($color-fg, 0.4);
+}
+
+.roleText {
+  margin: 12px 0 0;
+  max-width: 58ch;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: rgba($color-fg, 0.8);
+}
+
+.apply {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1px solid rgba($color-fg, 0.22);
+  color: $color-fg;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+  transition:
+    border-color 160ms $ease-out,
+    background-color 160ms $ease-out;
+  justify-self: start;
+
+  &:hover {
+    border-color: $color-red;
+    background: rgba($color-red-fill, 0.14);
+  }
+
+  &:active {
+    border-color: $color-red-pressed;
+  }
+
+  @include focus-ring;
+}
+
+.applyArrow {
+  color: $color-red;
+  transition: transform 160ms $ease-out;
+
+  @include pointer-fine-motion {
+    .apply:hover & {
+      transform: translateX(4px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- empty
+.empty {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px dashed rgba($color-red, 0.5);
+  color: rgba($color-fg, 0.84);
+
+  &[hidden] {
+    display: none;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  p + p {
+    margin-top: 8px;
+  }
+
+  a {
+    color: $link-red;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+
+    @include focus-ring;
+  }
+}
+
+.reset {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $link-red;
+  font: inherit;
+  font-weight: $font-weight-semibold;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+
+  @include focus-ring;
 }

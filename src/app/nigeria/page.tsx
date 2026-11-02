@@ -4,10 +4,11 @@ import { getRegion } from '@/components/company/regions';
 
 const TITLE = 'MAPL TECH Nigeria | Systems, Automation & Web Development for Nigerian Agencies';
 const DESCRIPTION =
-  'MAPL TECH Nigeria delivers systems, automation, AI workflows, web development, and custom internal tools for agencies in Lagos, Abuja, Port Harcourt, and across Nigeria. Canadian engineering standards, local expertise.';
+  'MAPL TECH Nigeria builds websites, automation, AI workflows and internal tools for agencies in Lagos, Abuja and Port Harcourt, in West Africa Time.';
 
 export const metadata: Metadata = {
-  title: TITLE,
+  // The title already carries the brand, so it bypasses the root template's "| MAPL TECH" suffix.
+  title: { absolute: TITLE },
   alternates: { canonical: 'https://mapltech.com/nigeria' },
   description: DESCRIPTION,
   keywords: 'MAPL TECH Nigeria, web development Nigeria, automation Nigeria, AI workflows Lagos, agency infrastructure Abuja, custom tools Nigeria',
