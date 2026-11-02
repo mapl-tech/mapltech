@@ -74,6 +74,15 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   max-width: 1440px;
   margin: 0 auto;
   padding: calc(var(--header-height, 72px) + 32px) clamp(20px, 5vw, 72px) clamp(20px, 3.5vh, 36px);
+  // This layer covers the whole hero, above the scene and its pause button.
+  // Only the content takes the pointer, so the button stays clickable (the
+  // scene itself reads the pointer from window).
+  pointer-events: none;
+
+  > .copy,
+  > .foot > * {
+    pointer-events: auto;
+  }
 
   @media #{$portrait} {
     justify-content: flex-start;
