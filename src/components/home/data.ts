@@ -8,7 +8,7 @@
  * typed in by hand. Server-safe: no client imports.
  */
 import { pricing, siteConfig } from '@/config/site';
-import { formatMoney, parsePriceLabel } from '@/lib/estimate';
+import { SERVICE_META, formatMoney, parsePriceLabel } from '@/lib/estimate';
 
 /** "$3,500-$5,000" → "$3,500": the low end of a published range, as written. */
 const fromOf = (label: string): string => label.split('-')[0].trim();
@@ -59,6 +59,32 @@ export interface FaqEntry {
 const bundleLow = lowOf(pricing.bundles[0].price);
 const bundleHigh = highOf(pricing.bundles[pricing.bundles.length - 1].price);
 
+/**
+ * The pricing answer: the list is what the page shows, and the JSON-LD text is
+ * built from the same words, so the two can never drift. List items are labels,
+ * so they use the canonical service names.
+ */
+function pricingFaq(): FaqEntry {
+  const list = {
+    lead: 'Every price is public, and the pricing page lists every tier.',
+    points: [
+      `${SERVICE_META.web.label} from ${fromOf(web[0].price)}`,
+      `${SERVICE_META.automation.label} from ${fromOf(automation[0].price)}`,
+      `${SERVICE_META.tools.label} from ${fromOf(tools[0].price)}`,
+      `${SERVICE_META.cloud.label} from ${fromOf(cloud[0].price)}`,
+      `Partner retainers: ${bundleLow} to ${bundleHigh} a month`,
+      // "$65-$120/hour" in site.ts reads as "$65–$120 an hour" here, like every other range.
+      `Hourly work: ${pricing.hourlyRates.standard.replace(/^(\$[\d,]+)-(\$[\d,]+)\/hour$/, '$1–$2 an hour')}`,
+    ],
+    close: 'You get a fixed quote after a 20-minute scoping call.',
+  };
+  return {
+    question: 'How do you price white-label work?',
+    answer: [list.lead, ...list.points.map((point) => `${point}.`), list.close].join(' '),
+    list,
+  };
+}
+
 export const FAQ_ITEMS: readonly FaqEntry[] = [
   {
     question: 'Will my client ever know MAPL TECH was involved?',
@@ -70,23 +96,7 @@ export const FAQ_ITEMS: readonly FaqEntry[] = [
     answer:
       'You and your client do. Every project ships with documented code and a clean handoff, so your team can pick up right where we left off.',
   },
-  {
-    question: 'How do you price white-label work?',
-    answer: `Every price is public. Web development starts at ${fromOf(web[0].price)}, automation at ${fromOf(automation[0].price)}, internal tools at ${fromOf(tools[0].price)} and cloud engineering at ${fromOf(cloud[0].price)}; the pricing page lists every tier. Partner retainers run ${bundleLow} to ${bundleHigh} a month, and hourly work is ${pricing.hourlyRates.standard}. You get a fixed quote after a 20-minute scoping call.`,
-    list: {
-      lead: 'Every price is public, and the pricing page lists every tier.',
-      points: [
-        `Web development from ${fromOf(web[0].price)}`,
-        `Automation and AI from ${fromOf(automation[0].price)}`,
-        `Internal tools from ${fromOf(tools[0].price)}`,
-        `Cloud engineering from ${fromOf(cloud[0].price)}`,
-        `Partner retainers: ${bundleLow} to ${bundleHigh} a month`,
-        // "$65-$120/hour" in site.ts reads as "$65–$120 an hour" here, like every other range.
-        `Hourly work: ${pricing.hourlyRates.standard.replace(/^(\$[\d,]+)-(\$[\d,]+)\/hour$/, '$1–$2 an hour')}`,
-      ],
-      close: 'You get a fixed quote after a 20-minute scoping call.',
-    },
-  },
+  pricingFaq(),
   {
     question: "Can you work in our client's timezone?",
     answer:
