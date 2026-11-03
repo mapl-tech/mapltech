@@ -17,6 +17,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { siteConfig } from '@/config/site';
 import MagneticButton from '@/components/ui/MagneticButton';
+import { useEstimateBriefHref } from '@/components/ui/useEstimateBriefHref';
 import MobileNav from './MobileNav';
 import { PROJECT_HREF, PROJECT_LABEL } from './chrome';
 import styles from './Header.module.scss';
@@ -292,12 +293,19 @@ function DesktopNav({ pathname }: { pathname: string }) {
 function useHeroCtaView(pathname: string): 'in' | 'out' | undefined {
   const [seen, setSeen] = useState<{ path: string; view: 'in' | 'out' } | null>(null);
   useEffect(() => {
-    const target = document.querySelector('[data-hero-cta]');
-    if (!target) return;
-    const observer = new IntersectionObserver(([entry]) =>
-      setSeen({ path: pathname, view: entry.isIntersecting ? 'in' : 'out' }),
-    );
-    observer.observe(target);
+    // The hero's CTA, and any other filled ask that should have the stage to
+    // itself while it is on screen (the pricing readout, `data-header-quiet`).
+    const targets = Array.from(document.querySelectorAll('[data-hero-cta], [data-header-quiet]'));
+    if (targets.length === 0) return;
+    const onScreen = new Set<Element>();
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) onScreen.add(entry.target);
+        else onScreen.delete(entry.target);
+      }
+      setSeen({ path: pathname, view: onScreen.size > 0 ? 'in' : 'out' });
+    });
+    targets.forEach((target) => observer.observe(target));
     return () => observer.disconnect();
   }, [pathname]);
   return seen?.path === pathname ? seen.view : undefined;
@@ -310,6 +318,8 @@ export default function Header() {
   const quietCta = pathname.startsWith('/careers') || pathname.startsWith('/referral');
   const compact = useCompact();
   const heroCtaView = useHeroCtaView(pathname);
+  // On /pricing, once there is an estimate, the header's ask carries it into the brief.
+  const projectHref = useEstimateBriefHref(pathname) ?? PROJECT_HREF;
   const [menuOpen, setMenuOpen] = useState(false);
   const sheetId = useId();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -334,14 +344,14 @@ export default function Header() {
           {onProjectPage ? null : (
             <>
               <span className={styles.cta} data-cta-placement="header_project">
-                <MagneticButton href={PROJECT_HREF} size="small" placement="header_project" className={styles.headerBtn}>
+                <MagneticButton href={projectHref} size="small" placement="header_project" className={styles.headerBtn}>
                   {PROJECT_LABEL}
                 </MagneticButton>
               </span>
 
               <span className={styles.ctaCompact} data-cta-placement="header_project_compact">
                 <MagneticButton
-                  href={PROJECT_HREF}
+                  href={projectHref}
                   size="small"
                   placement="header_project_compact"
                   className={styles.compactBtn}

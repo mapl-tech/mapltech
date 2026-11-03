@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEstimateBriefHref } from './useEstimateBriefHref';
 import { useMediaQuery, usePrefersReducedMotion } from './useMediaQuery';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { MOBILE_BAR_CONTEXT } from '@/components/flagship/content';
@@ -65,6 +66,8 @@ export default function MobileActionBar({
   const reduceMotion = usePrefersReducedMotion();
   // The bar is display:none from md (768px), so wider screens reserve no room for it.
   const onPhone = useMediaQuery('(max-width: 767.98px)');
+  // On /pricing, once there is an estimate, the bar's next step carries it.
+  const briefWithEstimate = useEstimateBriefHref(pathname);
   const [heroGone, setHeroGone] = useState(false);
   const [formInView, setFormInView] = useState(false);
   const [keyboardUp, setKeyboardUp] = useState(false);
@@ -154,10 +157,12 @@ export default function MobileActionBar({
 
   const visible = heroGone && !formInView && !keyboardUp;
   const action = pageAction?.path === pathname ? pageAction : null;
-  const href = action?.href ?? estimateHref;
-  const label = action?.label ?? estimateLabel;
+  // With an estimate on /pricing the bar stops looping back to the estimator and
+  // offers the brief with that estimate in it.
+  const href = briefWithEstimate ?? action?.href ?? estimateHref;
+  const label = briefWithEstimate ? PROJECT_LABEL : (action?.label ?? estimateLabel);
   // The price-floor line only ever sits beside a pricing action.
-  const line = action ? action.context : isEstimate(href) ? context : '';
+  const line = briefWithEstimate ? '' : action ? action.context : isEstimate(href) ? context : '';
 
   // Keep focused controls clear of the bar while it covers the bottom edge.
   // Restores whatever was there before (the pricing estimate bar sets its own).

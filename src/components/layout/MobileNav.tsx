@@ -6,6 +6,7 @@ import { siteConfig } from '@/config/site';
 import BottomSheet, { type SnapPoint } from '@/components/ui/BottomSheet';
 import MagneticButton from '@/components/ui/MagneticButton';
 import { PROJECT_HREF, PROJECT_LABEL, telHref } from './chrome';
+import { useEstimateBriefHref } from '@/components/ui/useEstimateBriefHref';
 import styles from './Header.module.scss';
 
 /**
@@ -51,6 +52,8 @@ export interface MobileNavProps {
 }
 
 export default function MobileNav({ id, open, onOpenChange, pathname, returnFocusRef }: MobileNavProps) {
+  // On /pricing with an estimate, the sheet's ask carries it like the header's.
+  const projectHref = useEstimateBriefHref(pathname) ?? PROJECT_HREF;
   const [snap, setSnap] = useState<SnapPoint | null>(SNAP_POINTS[0]);
 
   const close = () => onOpenChange(false);
@@ -118,7 +121,7 @@ export default function MobileNav({ id, open, onOpenChange, pathname, returnFocu
 
       <div className={styles.sheetCta} data-cta-placement="drawer_project">
         <MagneticButton
-          href={PROJECT_HREF}
+          href={projectHref}
           size="medium"
           placement="drawer_project"
           onClick={close}

@@ -37,7 +37,24 @@ export default function ClientsMarquee({ label, logos }: { label: string; logos:
     if (!loop) return;
     const io = new IntersectionObserver(([entry]) => setOffScreen(!entry.isIntersecting));
     io.observe(loop);
-    return () => io.disconnect();
+    // Lazy loading never starts the copies (they sit outside the clipped row),
+    // so once the row is near the screen every image is asked for at once; the
+    // copies share the first list's files, so that is five small requests.
+    const near = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        near.disconnect();
+        loop.querySelectorAll('img').forEach((img) => {
+          img.loading = 'eager';
+        });
+      },
+      { rootMargin: '800px 0px' },
+    );
+    near.observe(loop);
+    return () => {
+      io.disconnect();
+      near.disconnect();
+    };
   }, []);
 
   return (
@@ -70,13 +87,13 @@ export default function ClientsMarquee({ label, logos }: { label: string; logos:
               const height = Math.round(MARK_MAX * logo.scale);
               return (
                 <li key={logo.name} className={styles.logo} style={{ '--scale': logo.scale } as CSSProperties}>
-                  {/* Eager: copies slide in from outside the clipped row, where lazy images may never start loading. */}
+                  {/* Lazy in the HTML (eager would preload all fifteen in the head, ahead of
+                      the hero); the effect above starts them all once the row is near. */}
                   <Image
                     src={logo.src}
                     alt={copy === 0 ? logo.name : ''}
                     width={Math.round((height * logo.width) / logo.height)}
                     height={height}
-                    loading="eager"
                   />
                 </li>
               );

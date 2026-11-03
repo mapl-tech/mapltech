@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import MagneticButton from '@/components/ui/MagneticButton';
+import FooterLink from './FooterLink';
 import NewsletterForm from './NewsletterForm';
 import SocialLinks from './SocialLinks';
 import { FOOTER_COMPANY, FOOTER_SERVICES, OFFICE_LINKS, PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from './chrome';
@@ -45,7 +46,7 @@ export default function Footer() {
             <ul role="list">
               {FOOTER_SERVICES.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}>{link.label}</Link>
+                  <FooterLink href={link.href}>{link.label}</FooterLink>
                 </li>
               ))}
             </ul>
@@ -58,7 +59,7 @@ export default function Footer() {
             <ul role="list">
               {FOOTER_COMPANY.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}>{link.label}</Link>
+                  <FooterLink href={link.href}>{link.label}</FooterLink>
                 </li>
               ))}
             </ul>
@@ -71,7 +72,7 @@ export default function Footer() {
             <ul role="list">
               {OFFICE_LINKS.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href}>{link.label}</Link>
+                  <FooterLink href={link.href}>{link.label}</FooterLink>
                 </li>
               ))}
             </ul>
@@ -91,7 +92,7 @@ export default function Footer() {
                 <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>
               </li>
               <li>
-                <Link href="/contact-us">Contact form</Link>
+                <FooterLink href="/contact-us">Contact form</FooterLink>
               </li>
             </ul>
             <SocialLinks links={siteConfig.social} className={styles.social} />
@@ -112,10 +113,10 @@ export default function Footer() {
           </p>
           <ul role="list">
             <li>
-              <Link href="/privacy">Privacy</Link>
+              <FooterLink href="/privacy">Privacy</FooterLink>
             </li>
             <li>
-              <Link href="/terms">Terms</Link>
+              <FooterLink href="/terms">Terms</FooterLink>
             </li>
           </ul>
         </div>
