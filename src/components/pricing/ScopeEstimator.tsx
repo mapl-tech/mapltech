@@ -414,9 +414,10 @@ export default function ScopeEstimator() {
         ) : null}
       </form>
 
-      {/* data-header-quiet: the header's own "Start a project" stays an outline while the
-          readout, which carries the same ask with this estimate, is on screen. */}
-      <div ref={readoutRef} className={styles.rail} data-header-quiet="">
+      {/* One filled "Start a project" on screen at a time: while the readout, which carries the
+          ask with this estimate, is in view the header's stays an outline (data-header-quiet) and
+          the phone bar steps aside (data-bar-stand-down). */}
+      <div ref={readoutRef} className={styles.rail} data-header-quiet="" data-bar-stand-down="">
         <EstimateSummary input={input} result={result} />
       </div>
 

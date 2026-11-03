@@ -10,7 +10,6 @@ import {
   SUPPORT_LEVELS,
   TOGGLE_OPTIONS,
   estimateHref,
-  formatEstimateRange,
   formatLineRange,
   formatMoney,
   formatRange,
@@ -24,7 +23,17 @@ import QuoteLine from '@/components/flagship/QuoteLine';
 import { PROJECT_LABEL } from '@/components/layout/chrome';
 import { keepTogether } from '@/components/services/keepTogether';
 import SendEstimateForm from './SendEstimateForm';
-import { QUOTE_NOTE, TOGGLE_LABELS, TOTAL_SPRING, addOnsMoving, keepHyphens, listWords, priceText } from './content';
+import {
+  QUOTE_NOTE,
+  TOGGLE_LABELS,
+  TOTAL_SPRING,
+  addOnsMoving,
+  estimateHeadline,
+  headlineRange,
+  keepHyphens,
+  listWords,
+  priceText,
+} from './content';
 import styles from './ScopeEstimator.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -130,11 +139,16 @@ function rangeBasis(result: EstimateResult): string | null {
   return `${starts} The range ends at ${formatMoney(line.high)}, where ${keepHyphens(next.name)} starts.`;
 }
 
-/** "$5,000 to $8,500 one-time, plus $500 to $1,000 a month": what the live region reads out. */
+/**
+ * "$5,000 to $8,500 one-time, plus $500 to $1,000 a month": what the live region reads out, the
+ * words on screen ("$3,500 to $5,000 one-time, and a custom quote for Enterprise").
+ */
 function spoken(result: EstimateResult): string {
-  const range = formatEstimateRange(result).replace('–', ' to ');
+  const headline = estimateHeadline(result);
+  const range = headlineRange(headline).replace('–', ' to ');
+  const custom = headline.customNote ? `, ${headline.customNote}` : '';
   const monthly = result.monthly.length > 0 ? `, plus ${formatRange(result.monthlyLow, result.monthlyHigh).replace('–', ' to ')} a month` : '';
-  return range === 'Custom' ? `Estimate: custom quote${monthly}.` : `Estimate: ${range} one-time${monthly}.`;
+  return headline.allCustom ? `Estimate: custom quote${monthly}.` : `Estimate: ${range} one-time${custom}${monthly}.`;
 }
 
 /** Spoken updates wait for the visitor to pause, so rapid clicking yields one announcement. */
@@ -148,7 +162,8 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
     return () => window.clearTimeout(timer);
   }, [latest]);
 
-  const allCustom = result.lines.length > 0 && result.lines.every((line) => line.isCustom);
+  const headline = estimateHeadline(result);
+  const { allCustom } = headline;
   const basis = rangeBasis(result);
   const monthly = result.monthly.length > 0 ? `${formatRange(result.monthlyLow, result.monthlyHigh)} a month` : null;
   const multi = result.lines.length > 1;
@@ -166,16 +181,17 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
 
         {/* The total is the live region and the focus target of the package hand-off: one polite
             announcement in words once the visitor pauses, while the springing digits stay silent
-            (decorative: no live regions of their own nested inside this one). */}
+            (decorative: no live regions of their own nested inside this one). A package quoted
+            after a call is named under the priced range, never folded into a "+" floor. */}
         <div className={styles.totalBox}>
           <p className={styles.total} id="estimate-total" tabIndex={-1} aria-live="polite" aria-atomic="true">
             <span className="visually-hidden">{announced}</span>
             <span className={styles.digits} aria-hidden="true">
               {allCustom ? (
                 <span className={styles.live}>Custom</span>
-              ) : result.oneTimeHigh === null ? (
+              ) : headline.high === null ? (
                 <LiveNumber
-                  value={result.oneTimeLow}
+                  value={headline.low}
                   format={formatMoney}
                   suffix="+"
                   className={styles.live}
@@ -184,18 +200,12 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
                 />
               ) : (
                 <>
-                  <LiveNumber
-                    value={result.oneTimeLow}
-                    format={formatMoney}
-                    className={styles.live}
-                    spring={TOTAL_SPRING}
-                    decorative
-                  />
+                  <LiveNumber value={headline.low} format={formatMoney} className={styles.live} spring={TOTAL_SPRING} decorative />
                   <span className={styles.dash}>–</span>
                   <LiveNumber
-                    value={result.oneTimeHigh}
+                    value={headline.high}
                     format={formatMoney}
-                    suffix={result.isOpenEnded ? '+' : ''}
+                    suffix={headline.openEnded ? '+' : ''}
                     className={styles.live}
                     spring={TOTAL_SPRING}
                     decorative
@@ -203,6 +213,11 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
                 </>
               )}
             </span>
+            {headline.customNote ? (
+              <span className={styles.totalCustom} aria-hidden="true">
+                {headline.customNote}
+              </span>
+            ) : null}
           </p>
         </div>
 

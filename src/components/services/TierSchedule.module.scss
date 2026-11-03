@@ -420,12 +420,6 @@
   }
 }
 
-// Inline, so the no-break space before it keeps it on the label's last line (an inline-block
-// starts a new line on its own); the underline's colour is the hover cue here.
-.tierLink .arrow {
-  display: inline;
-}
-
 .arrow {
   display: inline-block;
   transition: transform 0.4s $ease-out-expo;

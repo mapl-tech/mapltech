@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import { pricing } from '@/config/site';
 import { formatMoney } from '@/lib/estimate';
-import { keepTogether } from './keepTogether';
+import { keepTogether, withLastWord } from './keepTogether';
 import {
   QUOTE_LINE,
   TIER_HIGHLIGHTS,
@@ -57,7 +57,7 @@ export default function TierSchedule({ view }: { view: LayerView }) {
   const monthly = view.lowestMonthly ? `${formatMoney(view.lowestMonthly.amount)} a month` : null;
   const hourly = humanPrice(pricing.hourlyRates.standard);
   const afterIntro = [
-    support ? `Every tier includes ${support} of support after launch.` : 'Once it is live, we can keep looking after it.',
+    support ? `Every package includes ${support} of support after launch.` : 'Once it is live, we can keep looking after it.',
     monthly ? (support ? `After that, plans cost from ${monthly}.` : `Plans cost from ${monthly}.`) : null,
     `Hourly work is ${hourly}.`,
   ]
@@ -72,7 +72,7 @@ export default function TierSchedule({ view }: { view: LayerView }) {
           <h2 id="tiers-title" className={styles.title}>
             {costTitle(view)}
           </h2>
-          <p className={styles.lede}>{keepTogether(`Every price is public. Pick the tier closest to your project. ${QUOTE_LINE}`)}</p>
+          <p className={styles.lede}>{keepTogether(`Every price is public. Pick the package closest to your project. ${QUOTE_LINE}`)}</p>
         </header>
 
         <ol className={styles.grid} data-count={tiers.length}>
@@ -180,11 +180,17 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
       </div>
       <div className={styles.actions}>
         <Link href={tier.brief} className={styles.tierLink} data-cta-placement={`${slug}_${tier.id}_start`}>
-          {/* No-break hyphens and space: "AI‑Powered" never splits, and the arrow stays on its line. */}
-          Choose {tier.name.replace(/-/g, '\u2011')}{'\u00a0'}
-          <span aria-hidden="true" className={styles.arrow}>
-            <Arrow />
-          </span>
+          {/* No-break hyphens ("AI‑Powered" never splits), and the last word and the arrow in one
+              no-wrap span, so a long name wraps without leaving the arrow alone on a line. */}
+          {withLastWord(
+            `Choose ${tier.name.replace(/-/g, '\u2011')}`,
+            <>
+              {'\u00a0'}
+              <span aria-hidden="true" className={styles.arrow}>
+                <Arrow />
+              </span>
+            </>,
+          )}
         </Link>
         {tier.isCustom ? null : (
           <Link href={tier.href} className={styles.priceLink} data-cta-placement={`${slug}_${tier.id}`}>

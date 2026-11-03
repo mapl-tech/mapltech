@@ -1,6 +1,7 @@
 import { ViewTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { keepTogether } from '@/components/services/keepTogether';
 import { HERO_REASSURE, PRIMARY_CTA, WORK, WORK_SECTION } from './content';
 import styles from './Work.module.scss';
 import Arrow from '@/components/ui/Arrow';
@@ -116,7 +117,7 @@ export default function Work() {
               <Arrow />
             </span>
           </Link>
-          <p className={styles.askNote}>{HERO_REASSURE}</p>
+          <p className={styles.askNote}>{keepTogether(HERO_REASSURE)}</p>
         </div>
       </div>
     </section>

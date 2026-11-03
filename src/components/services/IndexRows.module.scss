@@ -160,7 +160,7 @@
 
 // ---------------------------------------------------------------- the row's foot
 // One real project per service with one of its published results beside it, then the row's actions
-// (an outlined "Start a … project" and a quiet "See pricing"), each its own link under the row's link:
+// (an outlined "Start a … project" and a quiet "Price your project"), each its own link under the row's link:
 // never inside it (nested links are invalid) and 8px clear of its hit area (the margin). The row's
 // bottom space moves under the foot.
 .link {
@@ -202,6 +202,13 @@
 .exampleLabel {
   font-weight: $font-weight-medium;
   color: $color-fg-muted;
+}
+
+// Inside the label's one flex item (after its last word, never at the row's far edge), so the
+// flex gap becomes its margin; inline-block, so the hover nudge still moves it.
+.exampleArrow {
+  display: inline-block;
+  margin-left: 8px;
 }
 
 .exampleArrow,
@@ -273,7 +280,7 @@
   }
 }
 
-// The secondary beside it, as in the hero's pair: the estimator with this service selected.
+// The secondary beside it, as in the hero's pair: "Price your project", the estimator with this service selected.
 .priceLink {
   @include text-action($color-fg);
   font-size: $font-size-base;
@@ -297,6 +304,78 @@
 
     @include motion-ok {
       transform: rotate(-45deg);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- an example without a screen
+// Crowned Spice's automations run behind its store: its logo and the three stages we automated, on
+// the release diagram's board, at the captures' 16:10 inside the same browser frame (decoration).
+.board {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  // Percentages here (a container's own box cannot use its cq units); cqi inside it.
+  column-gap: 7%;
+  aspect-ratio: 1800 / 1125;
+  padding: 0 9%;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 22px 22px,
+    #101012;
+}
+
+.boardMark {
+  display: block;
+  width: 32cqi;
+  height: auto;
+}
+
+.boardText {
+  display: grid;
+  gap: 4.5cqi;
+  justify-items: start;
+}
+
+.boardClient {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: clamp(1rem, 5cqi, 1.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: $color-fg;
+}
+
+// The stages in order, joined by the diagram's red connector.
+.boardStages {
+  list-style: none;
+  display: grid;
+  row-gap: 3.5cqi;
+  margin: 0;
+  padding: 0;
+
+  li {
+    position: relative;
+    padding: 1.6cqi 3.2cqi;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: #17171a;
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: clamp(0.8125rem, 3.4cqi, 1rem);
+    line-height: 1.15;
+    white-space: nowrap;
+    color: $color-fg;
+
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 5cqi;
+      width: 2px;
+      height: 3.5cqi;
+      background: $color-red;
     }
   }
 }

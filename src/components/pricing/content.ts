@@ -20,6 +20,7 @@ import {
   recurringLinesFor,
   resolveTier,
   tiersFor,
+  type EstimateResult,
   type EstimateService,
   type EstimateToggles,
   type SizeKey,
@@ -44,12 +45,8 @@ export function priceText(label: string): string {
 /** Tier names with non-breaking hyphens, so "E-Commerce" and "AI-Powered" never split across lines. */
 export const keepHyphens = (text: string): string => text.replace(/-/g, '‑');
 
-/**
- * Number-word compounds with a non-breaking hyphen ("20‑minute"), for plain
- * string props that cannot carry a no-wrap span (the close band's lede).
- * Display only: structured data keeps the plain hyphen.
- */
-export const keepNumberWords = (text: string): string => text.replace(/(\d)-(?=[A-Za-z])/g, '$1\u2011');
+/** "20‑minute" for plain string props (the close band's lede): one rule, shared with the service pages. */
+export { keepNumberWords } from '@/components/services/keepTogether';
 
 /**
  * site.ts descriptions use a spaced hyphen as a dash ("a brochure site - they
@@ -250,6 +247,43 @@ export function listWords(items: readonly string[]): string {
 
 /** An add-on's name inside a sentence: "content editing (CMS)" (acronyms such as "AI features" keep their capitals). */
 export const inSentence = (name: string): string => (/^[A-Z][a-z]/.test(name) ? name[0].toLowerCase() + name.slice(1) : name);
+
+/**
+ * The total the readout and the phone bar show. The engine leaves a total
+ * with a package quoted after a call open ("$3,500+" for Web Development's
+ * Enterprise plus Automation's Foundation), which reads as a floor for the
+ * whole project; here the priced packages keep their own range
+ * ("$3,500–$5,000") and the quoted ones are named beside it ("and a custom
+ * quote for Enterprise"). Without such a package it is the engine's total.
+ */
+export interface EstimateHeadline {
+  low: number;
+  /** null when a priced package has no top ("$12,000+"). */
+  high: number | null;
+  /** A trailing "+" on a full range ("$12,000–$25,000+"). */
+  openEnded: boolean;
+  /** Every package is quoted after the call: the total reads "Custom". */
+  allCustom: boolean;
+  /** "and a custom quote for Enterprise" beside a priced range; null when every package has a price. */
+  customNote: string | null;
+}
+
+export function estimateHeadline(result: EstimateResult): EstimateHeadline {
+  const priced = result.lines.filter((line) => !line.isCustom);
+  const custom = result.lines.filter((line) => line.isCustom).map((line) => keepHyphens(line.tierName));
+  const allCustom = result.lines.length > 0 && priced.length === 0;
+  return {
+    low: priced.reduce((sum, line) => sum + (line.low ?? 0), 0),
+    high: priced.some((line) => line.high === null) ? null : priced.reduce((sum, line) => sum + (line.high ?? 0), 0),
+    openEnded: priced.some((line) => line.isOpenEnded),
+    allCustom,
+    customNote: custom.length > 0 && !allCustom ? `and a custom quote for ${listWords(custom)}` : null,
+  };
+}
+
+/** The headline as text: "$3,500–$5,000", "$12,000+", "$12,000–$25,000+", "Custom". */
+export const headlineRange = (headline: EstimateHeadline): string =>
+  headline.allCustom ? 'Custom' : formatRange(headline.low, headline.high, { openEnded: headline.openEnded });
 
 /**
  * The estimate's springing digits (ui/LiveNumber): critically damped and

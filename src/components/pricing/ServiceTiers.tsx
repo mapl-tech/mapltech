@@ -4,10 +4,9 @@ import { SERVICE_META, SIZE_OPTIONS, parsePriceLabel, recurringLinesFor, tiersFo
 import { cleanDash, priceText, type ServiceFacts } from './content';
 import EstimateBriefLink from './EstimateBriefLink';
 import LoadIntoEstimator from './LoadIntoEstimator';
-import PriceGroup from './PriceGroup';
+import PriceGroup, { ActionLabel } from './PriceGroup';
 import TierDetails from './TierDetails';
 import styles from './PriceList.module.scss';
-import Arrow from '@/components/ui/Arrow';
 
 /**
  * One service in the price list, collapsed to its row (PriceGroup): opened,
@@ -28,8 +27,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
       <div className={styles.groupHead}>
         <p className={styles.groupAnswer}>{facts.answer}</p>
         <Link href={facts.href} className={styles.textLink} data-cta-placement={`pricing_service_${facts.service}`}>
-          {facts.linkLabel}
-           <Arrow />
+          <ActionLabel label={facts.linkLabel} />
         </Link>
       </div>
 
@@ -72,9 +70,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
                 </TierDetails>
                 {!size ? (
                   <Link href={PROJECT_HREF} className={styles.tierAction} data-cta-placement={`pricing_tier_${facts.service}_call`}>
-                    {PROJECT_LABEL}
-                    <span className="visually-hidden">: {tier.name}</span>
-                     <Arrow />
+                    <ActionLabel label={PROJECT_LABEL} hidden={`: ${tier.name}`} />
                   </Link>
                 ) : parsed.isCustom ? (
                   <EstimateBriefLink
@@ -83,14 +79,11 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
                     className={styles.tierAction}
                     placement={`pricing_tier_${facts.service}_call`}
                   >
-                    {PROJECT_LABEL}
-                    <span className="visually-hidden">: {tier.name}</span>
-                     <Arrow />
+                    <ActionLabel label={PROJECT_LABEL} hidden={`: ${tier.name}`} />
                   </EstimateBriefLink>
                 ) : (
                   <LoadIntoEstimator service={facts.service} size={size.key} className={styles.tierAction}>
-                    Price this package<span className="visually-hidden">: {facts.name}, {tier.name}</span>{' '}
-                    <Arrow direction="up" />
+                    <ActionLabel label="Price this package" hidden={`: ${facts.name}, ${tier.name}`} direction="up" />
                   </LoadIntoEstimator>
                 )}
               </div>

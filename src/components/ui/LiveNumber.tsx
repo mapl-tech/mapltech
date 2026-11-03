@@ -73,19 +73,27 @@ export default function LiveNumber({
   const animated = useRef<Spring | null>(null);
 
   // Captured once so React never rewrites the animated span after mount;
-  // from then on the spring owns its text.
+  // from then on the spring (and a change of format, below) owns its text.
   const [initialText] = useState(() => `${prefix}${format(value)}${suffix}`);
   const finalText = `${prefix}${format(value)}${suffix}`;
 
-  // Latest formatting, read by the spring callback without re-creating the spring.
+  // Latest formatting, read by the spring callback without re-creating the spring,
+  // and the value the digits show right now (mid-spring included).
   const view = useRef({ prefix, suffix, format });
+  const shown = useRef(value);
+
+  // The spring only writes when the value moves, so a new prefix, suffix or format at
+  // the same value ("$3,500+" becoming the "$3,500" of "$3,500–$5,000", the same
+  // instance reused by the parent) is written here: the digits always match the props.
   useEffect(() => {
     view.current = { prefix, suffix, format };
-  });
+    if (digits.current) digits.current.textContent = `${prefix}${format(shown.current)}${suffix}`;
+  }, [prefix, suffix, format]);
 
   useEffect(() => {
     const instance = createSpring(value, { restDelta: 0.5, ...springOptions(spring) }, (v) => {
       const { prefix: p, suffix: s, format: f } = view.current;
+      shown.current = v;
       if (digits.current) digits.current.textContent = `${p}${f(v)}${s}`;
     });
     animated.current = instance;

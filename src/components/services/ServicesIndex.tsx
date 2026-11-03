@@ -7,7 +7,7 @@ import PageHeader from '@/components/ui/PageHeader';
 import HeroActions from './HeroActions';
 import IndexRows from './IndexRows';
 import Steps from './Steps';
-import { keepTogether } from './keepTogether';
+import { keepNumberWords, keepTogether, withLastWord } from './keepTogether';
 import { INDEX_FAQ, INDEX_STEPS, PARTNERSHIPS_HREF, PARTNERSHIP_FROM } from './serviceContent';
 import styles from './ServicesIndex.module.scss';
 import Arrow from '@/components/ui/Arrow';
@@ -62,9 +62,14 @@ export default function ServicesIndex() {
             </p>
             {/* The partnerships row of the price list (it opens on arrival). */}
             <Link href={PARTNERSHIPS_HREF} className={styles.textLink} data-cta-placement="services_partner_pricing">
-              Compare monthly partnerships
-              <span aria-hidden="true" className={styles.arrow}>
-                <Arrow />
+              {/* One flex item, so a wrapped label keeps the arrow after its last word. */}
+              <span>
+                {withLastWord(
+                  'Compare monthly partnerships',
+                  <span aria-hidden="true" className={styles.arrow}>
+                    <Arrow />
+                  </span>,
+                )}
               </span>
             </Link>
           </div>
@@ -89,7 +94,7 @@ export default function ServicesIndex() {
         id="services-close-title"
         title="Not sure which service fits?"
         lede="Tell us about the project, and we will help you pick the right service."
-        note={HERO_REASSURE}
+        note={keepNumberWords(HERO_REASSURE)}
         placement="services_close"
         proofLine={CLIENTS_LINE}
       />

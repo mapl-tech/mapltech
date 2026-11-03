@@ -6,7 +6,9 @@ import styles from './ScopeEstimator.module.scss';
 import RecaptchaNotice from '@/components/convert/RecaptchaNotice';
 
 /**
- * "Get it in writing": one optional field, after the number (reciprocity).
+ * "Get it in writing": an optional step after the number (reciprocity), with
+ * one field, the email, which it needs (so the field is required, not
+ * labelled optional).
  * It posts the engine's plain-text summary plus the shareable URL to
  * /api/contact, which emails MAPL TECH with the visitor as Reply-To, so the
  * copy promises a reply in writing, not an automatic email. The form is
@@ -116,7 +118,7 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
       </summary>
       <form action={formAction} className={styles.send} noValidate aria-labelledby={`${id}-title`}>
         <label htmlFor={`${id}-email`} className={styles.sendLabel}>
-          Your email <span className={styles.optional}>(optional)</span>
+          Your email
         </label>
         <div className={styles.sendRow}>
           <input
@@ -127,6 +129,7 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
             inputMode="email"
             autoComplete="email"
             placeholder="you@agency.com"
+            required
             aria-describedby={state.status === 'error' ? errorId : undefined}
             aria-invalid={state.status === 'error' || undefined}
           />

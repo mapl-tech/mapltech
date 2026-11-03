@@ -247,7 +247,7 @@ describe('service pages', () => {
     // The white-label answer is the homepage's, word for word (the NDA, never approaching the client).
     expect(whiteLabel).toEqual({ question: FAQ_ITEMS[0].question, answer: FAQ_ITEMS[0].answer });
     expect(whiteLabel.answer).toMatch(/\bNDA\b/);
-    expect(cost.list?.lead).toBe('From $3,500, across three tiers.');
+    expect(cost.list?.lead).toBe('From $3,500, across three packages.');
     expect(cost.list?.points).toEqual(pricing.automation.tiers.map((t) => `${t.name}: ${cleanCopy(t.price)}`));
     expect(cost.list?.close).toBe(QUOTE_LINE);
     expect(cost.answer).toBe(
@@ -257,7 +257,7 @@ describe('service pages', () => {
     expect(support.list?.points[0]).toBe('Light Monitoring & Tweaks: $750 a month');
     // Web prices are starting prices; the custom tier is priced per project.
     const [webCost] = faqItems(LAYER_VIEWS[0]);
-    expect(webCost.list?.lead).toBe('From $5,000, across four tiers.');
+    expect(webCost.list?.lead).toBe('From $5,000, across four packages.');
     expect(webCost.list?.points).toEqual([
       'Starter: from $5,000',
       'Growth / E-Commerce: from $8,500',
@@ -320,13 +320,17 @@ describe('services index', () => {
     ]);
     // Cloud keeps to delivery facts, as its page does.
     expect(examples[3]?.metric?.label).toMatch(/tests/);
+    // The preview beside each row shows that row's example: Automation's is Crowned Spice's own logo
+    // and the stages its case study names (it has no screen to capture), never another project.
+    expect(LAYER_VIEWS[1].exhibit).toMatchObject({ src: '/images/clients/crowned-spice.png', board: true });
+    expect(examples[1]?.stages).toEqual(['Stock', 'Shipping', 'After the sale']);
   });
 
   it('ends each price answer on the estimator and the brief, with the service chosen', () => {
     for (const view of LAYER_VIEWS) {
       const [price, ...rest] = faqItems(view);
       expect(price.actions).toEqual([
-        { label: 'Price this service', href: `/pricing?svc=${view.service}#estimator` },
+        { label: 'Price your project', href: `/pricing?svc=${view.service}#estimator` },
         { label: 'Start a project', href: `/contact-us?svc=${view.service}` },
       ]);
       for (const item of rest) expect(item.actions).toBeUndefined();

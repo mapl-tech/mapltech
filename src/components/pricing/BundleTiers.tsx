@@ -3,10 +3,9 @@ import { pricing } from '@/config/site';
 import { PROJECT_LABEL } from '@/components/layout/chrome';
 import { slugify } from '@/lib/schema';
 import { BUNDLES_ANSWER, BUNDLES_FROM, canonicalCopy, priceText } from './content';
-import PriceGroup from './PriceGroup';
+import PriceGroup, { ActionLabel } from './PriceGroup';
 import TierDetails from './TierDetails';
 import styles from './PriceList.module.scss';
-import Arrow from '@/components/ui/Arrow';
 
 /**
  * Monthly partnerships from `pricing.bundles`: several services for one
@@ -64,9 +63,7 @@ export default function BundleTiers() {
                   className={styles.tierAction}
                   data-cta-placement={`pricing_bundle_${slug.replace(/-/g, '_')}`}
                 >
-                  {PROJECT_LABEL}
-                  <span className="visually-hidden">: {bundle.name}</span>
-                   <Arrow />
+                  <ActionLabel label={PROJECT_LABEL} hidden={`: ${bundle.name}`} />
                 </Link>
               </div>
             </li>

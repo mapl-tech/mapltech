@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import LiveNumber from '@/components/ui/LiveNumber';
-import { formatEstimateMonthly, formatEstimateRange, formatMoney, type EstimateResult } from '@/lib/estimate';
-import { TOTAL_SPRING } from './content';
+import { formatMoney, type EstimateResult } from '@/lib/estimate';
+import { TOTAL_SPRING, estimateHeadline, headlineRange } from './content';
 import styles from './ScopeEstimator.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -15,27 +15,29 @@ interface EstimateBarProps {
 }
 
 /**
- * The bar's range springs exactly like the readout's (same LiveNumber), but
- * stays silent: the readout's live region is the one announcement (so the
- * digits are decorative, with no live regions of their own), and the
- * button's accessible name comes from the visually hidden text.
+ * The bar's range springs exactly like the readout's (same LiveNumber and
+ * the same headline: a package quoted after a call is named in the label,
+ * never folded into a "+" floor), but stays silent: the readout's live region
+ * is the one announcement (so the digits are decorative, with no live regions
+ * of their own), and the button's accessible name comes from the visually
+ * hidden text.
  */
 function Range({ result }: { result: EstimateResult }) {
-  const spoken = formatEstimateRange(result).replace('–', ' to ');
-  if (result.lines.length > 0 && result.lines.every((line) => line.isCustom)) return <>Custom quote</>;
+  const headline = estimateHeadline(result);
+  if (headline.allCustom) return <>Custom quote</>;
   return (
     <>
-      <span className="visually-hidden">{spoken === 'Custom' ? 'Custom quote' : spoken}</span>
+      <span className="visually-hidden">{headlineRange(headline).replace('–', ' to ')}</span>
       <span aria-hidden="true">
-        {result.oneTimeHigh === null ? (
-          <LiveNumber value={result.oneTimeLow} format={formatMoney} suffix="+" spring={TOTAL_SPRING} decorative />
+        {headline.high === null ? (
+          <LiveNumber value={headline.low} format={formatMoney} suffix="+" spring={TOTAL_SPRING} decorative />
         ) : (
           <>
-            <LiveNumber value={result.oneTimeLow} format={formatMoney} spring={TOTAL_SPRING} decorative />–
+            <LiveNumber value={headline.low} format={formatMoney} spring={TOTAL_SPRING} decorative />–
             <LiveNumber
-              value={result.oneTimeHigh}
+              value={headline.high}
               format={formatMoney}
-              suffix={result.isOpenEnded ? '+' : ''}
+              suffix={headline.openEnded ? '+' : ''}
               spring={TOTAL_SPRING}
               decorative
             />
@@ -47,6 +49,16 @@ function Range({ result }: { result: EstimateResult }) {
 }
 
 /**
+ * What the range leaves out, in two lines at most on a 320px phone: "Your estimate, plus a custom
+ * quote" first, since a package quoted after a call changes what the range means (the monthly
+ * plan stays one tap away, in the readout), else "Your estimate, plus monthly".
+ */
+function barLabel(result: EstimateResult): string {
+  if (estimateHeadline(result).customNote) return 'Your estimate, plus a custom quote';
+  return result.monthly.length > 0 ? 'Your estimate, plus monthly' : 'Your estimate';
+}
+
+/**
  * Phones and tablets: the live range pinned to the bottom edge while the
  * questions are on screen, so every tap shows its effect without scrolling.
  * One button, one outcome (Fitts): the whole bar jumps to the full readout.
@@ -54,8 +66,6 @@ function Range({ result }: { result: EstimateResult }) {
  * options, and it slides away once the readout itself is in view.
  */
 export default function EstimateBar({ result, visible, onJump }: EstimateBarProps) {
-  const monthly = formatEstimateMonthly(result);
-
   // While the bar is up, the page's optimal viewing area ends above it, so a
   // control reached by keyboard is scrolled clear of the bar, never under it.
   useEffect(() => {
@@ -72,7 +82,7 @@ export default function EstimateBar({ result, visible, onJump }: EstimateBarProp
     <div className={styles.bar} data-visible={visible || undefined} inert={!visible}>
       <button type="button" className={styles.barButton} onClick={onJump}>
         <span className={styles.barText}>
-          <span className={styles.barLabel}>Your estimate{monthly ? ', plus monthly' : ''}</span>
+          <span className={styles.barLabel}>{barLabel(result)}</span>
           <span className={styles.barRange}>
             <Range result={result} />
           </span>

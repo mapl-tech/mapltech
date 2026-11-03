@@ -8,11 +8,12 @@ import { formatMoney } from '@/lib/estimate';
 import { faqPage, itemList, pageGraph, service as serviceNode } from '@/lib/schema';
 import FaqList from './FaqList';
 import HeroActions from './HeroActions';
-import { keepTogether } from './keepTogether';
+import { keepNumberWords, keepTogether } from './keepTogether';
 import ProofBlock from './ProofBlock';
 import Steps from './Steps';
 import TierSchedule from './TierSchedule';
 import {
+  ESTIMATE_LABEL,
   LAYER_VIEWS,
   SERVICES_REVISED,
   briefHref,
@@ -34,9 +35,6 @@ export interface ServicePageProps {
   slug: ServiceSlug;
 }
 
-/** The secondary ask on every service page: the estimator, with this service selected. */
-const ESTIMATE_LABEL = 'Price your project';
-
 /**
  * The one template behind all four /services/* pages (Nov 2026 simplify
  * pass). One idea per section, and the headings alone tell the story:
@@ -49,7 +47,9 @@ const ESTIMATE_LABEL = 'Price your project';
  *   close.
  *
  * Every "Start a project" (the hero's, the close's, and so the phone bar's,
- * which repeats the hero's) opens the brief with this service chosen; the NDA
+ * which repeats the hero's) opens the brief with this service chosen, and
+ * every way into the estimator with it selected says "Price your project"
+ * (ESTIMATE_LABEL: the hero's, the first answer's, the close's); the NDA
  * line and the approved client quote sit under the hero's pair, so every
  * service page shows the same proof in its first screen, and the close names
  * the clients instead of repeating the quote. Server Component, all copy in
@@ -115,7 +115,8 @@ export default function ServicePage({ slug }: ServicePageProps) {
       <CloseBand
         id="service-close-title"
         title={view.close.title}
-        lede={view.close.lede}
+        // A string prop: "20‑minute" kept on one line by a non-breaking hyphen (display only).
+        lede={keepNumberWords(view.close.lede)}
         href={brief}
         secondary={{ label: ESTIMATE_LABEL, href: view.estimate }}
         placement={`${view.slug}_close`}
@@ -139,7 +140,7 @@ function HeroFacts({ view }: { view: LayerView }) {
           {keepTogether(
             entryTimeline
               ? `for ${view.entryTier.name}, usually live in ${entryTimeline}.`
-              : `for ${view.entryTier.name}, the first tier.`,
+              : `for ${view.entryTier.name}, the first package.`,
           )}
         </dd>
       </div>

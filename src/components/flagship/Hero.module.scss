@@ -212,11 +212,9 @@ $short-band: max(30svh, 192px);
 
 .reassure {
   margin: 16px 0 0;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px at every width, as the quote line beside every other ask
   line-height: 1.5;
   color: $color-fg-muted;
-
-  @include phone-floor;
 
   @media #{$portrait} and (max-width: $phone-max) {
     margin-top: 12px;
@@ -239,7 +237,13 @@ $short-band: max(30svh, 192px);
   padding-top: clamp(18px, 2.4vh, 24px);
   border-top: 1px solid $color-hairline;
 
+  // Phones: the quote takes the full width (one line at 17px from 360px), who said it beside the
+  // avatar under it, so the whole line still ends inside a 390x844 first screen.
   @media #{$portrait} and (max-width: $phone-max) {
+    grid-template-areas:
+      'quote quote'
+      'avatar by';
+    row-gap: 4px;
     margin-top: 16px;
     padding-top: 14px;
   }
@@ -255,24 +259,36 @@ $short-band: max(30svh, 192px);
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+
+  @media #{$portrait} and (max-width: $phone-max) {
+    grid-area: avatar;
+  }
 }
 
 .proofQuote {
   margin: 0;
 
+  @media #{$portrait} and (max-width: $phone-max) {
+    grid-area: quote;
+  }
+
   p {
     margin: 0;
-    font-size: 1rem;
+    font-size: $font-size-base;
     line-height: 1.4;
     color: $color-fg;
   }
 }
 
-// 16px at every width, as the quote itself: the name never outsizes the words.
+// 17px at every width, as the quote itself (and as QuoteLine sets it on every other page).
 .proofBy {
-  font-size: 1rem;
+  font-size: $font-size-base;
   line-height: 1.4;
   color: $color-fg-muted;
+
+  @media #{$portrait} and (max-width: $phone-max) {
+    grid-area: by;
+  }
 }
 
 .primary {

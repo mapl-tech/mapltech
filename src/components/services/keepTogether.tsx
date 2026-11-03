@@ -23,3 +23,32 @@ export function keepTogether(text: string): ReactNode {
     ),
   );
 }
+
+/**
+ * Number-word compounds with a non-breaking hyphen ("20‑minute"), for plain
+ * string props that cannot carry a no-wrap span (the close band's lede and
+ * note). Display only: structured data keeps the plain hyphen.
+ */
+export const keepNumberWords = (text: string): string => text.replace(/(\d)-(?=[A-Za-z])/g, '$1‑');
+
+/**
+ * A link's label with its arrow kept on the last word's line: the last word
+ * and `end` (the arrow, and any visually hidden end of the link's name) share
+ * a no-wrap span, so a label that wraps carries its last word down with the
+ * arrow ("More about Custom Internal" / "Tools →"). The arrow never sits alone
+ * on a line, and in a flex link it never drifts to the far edge of the row
+ * (wrap the result in one element there, so the words and the arrow are one
+ * flex item, and space the arrow with a margin, not the flex gap).
+ */
+export function withLastWord(label: string, end: ReactNode): ReactNode {
+  const cut = label.lastIndexOf(' ');
+  return (
+    <>
+      {cut > 0 ? label.slice(0, cut + 1) : null}
+      <span style={NOWRAP}>
+        {label.slice(cut + 1)}
+        {end}
+      </span>
+    </>
+  );
+}

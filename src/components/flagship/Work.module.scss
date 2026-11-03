@@ -172,11 +172,9 @@ $card-wide: 920px;
 
 .metricLabel {
   margin: 0;
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   line-height: 1.45;
   color: $color-fg-muted;
-
-  @include phone-floor;
 }
 
 .read {
@@ -327,9 +325,7 @@ $card-wide: 920px;
 .askNote {
   margin: 0;
   max-width: 30em;
-  font-size: 1rem;
+  font-size: $font-size-base;
   line-height: 1.5;
   color: $color-fg-muted;
-
-  @include phone-floor;
 }

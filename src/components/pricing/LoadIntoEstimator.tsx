@@ -2,17 +2,10 @@
 
 import Link from 'next/link';
 import type { MouseEvent, ReactNode } from 'react';
-import {
-  decodeEstimateParams,
-  estimateHref,
-  normalizeEstimateInput,
-  type EstimateService,
-  type EstimateSize,
-  type SizeKey,
-} from '@/lib/estimate';
+import { estimateHref, normalizeEstimateInput, type EstimateService, type EstimateSize, type SizeKey } from '@/lib/estimate';
 import { anchorOffset, useLenis } from '@/components/ui/SmoothScroll';
 import { usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
-import { writeEstimateUrl } from './estimateUrlStore';
+import { readEstimateState, writeEstimateUrl } from './estimateUrlStore';
 
 interface LoadIntoEstimatorProps {
   service: EstimateService;
@@ -26,10 +19,12 @@ interface LoadIntoEstimatorProps {
  * service pages' words for the same step).
  *
  * A real link (`/pricing?svc=web&size.web=growth#estimator`) that works with
- * no JavaScript. With JavaScript it merges the package into the current estimate
- * (adds the service line, sets its size, keeps the rest), mirrors it to the
- * URL, scrolls to #estimator and moves focus to the live total so the new
- * range is read out as it springs into place.
+ * no JavaScript. With JavaScript it merges the package into the visitor's
+ * estimate (adds the service line, sets its size, keeps the rest), mirrors it
+ * to the URL, scrolls to #estimator and moves focus to the live total so the
+ * new range is read out as it springs into place. Before any answer the
+ * estimator only holds its default line (Web Development), which the visitor
+ * never chose, so the package loads alone, as EstimateBriefLink does.
  */
 export default function LoadIntoEstimator({ service, size, className, children }: LoadIntoEstimatorProps) {
   const lenis = useLenis();
@@ -41,10 +36,11 @@ export default function LoadIntoEstimator({ service, size, className, children }
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
 
-    const current = decodeEstimateParams(window.location.search);
-    const services = current.services.includes(service) ? current.services : [...current.services, service];
+    const { input, touched } = readEstimateState();
+    const current = touched ? input : null;
+    const services = current ? (current.services.includes(service) ? current.services : [...current.services, service]) : [service];
     writeEstimateUrl(
-      normalizeEstimateInput({ ...current, services, size: { ...current.size, [service]: size } as EstimateSize }),
+      normalizeEstimateInput({ ...current, services, size: { ...current?.size, [service]: size } as EstimateSize }),
       { hash: '#estimator' },
     );
 

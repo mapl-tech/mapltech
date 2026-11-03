@@ -104,7 +104,11 @@
   @include text-action($color-fg);
 }
 
+// After the label's last word inside its one flex item: the flex gap as a margin, and
+// inline-block so the hover nudge still moves it.
 .arrow {
+  display: inline-block;
+  margin-left: 10px;
   transition: transform 0.4s $ease-out-expo;
 
   .textLink:hover & {

@@ -118,6 +118,12 @@ function lowOf(label: string): number | null {
 /** The line every price on these pages closes with (services.ts cost answers). */
 export const QUOTE_LINE = 'You get a fixed quote after a 20-minute call.';
 
+/**
+ * Every link into the estimator says this, whatever the page ("See pricing" is the /pricing page
+ * itself): one label for one destination.
+ */
+export const ESTIMATE_LABEL = 'Price your project';
+
 const COUNT_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
 
 /* ------------------------------------------------------------------ */
@@ -125,8 +131,15 @@ const COUNT_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
 /* ------------------------------------------------------------------ */
 
 export interface Exhibit {
+  /** The live site (public/images/cases, 1800x1125), or with `board` the client's logo. */
   src: string;
   alt: string;
+  /**
+   * The row's example has no screen to show (Crowned Spice's automations run behind its store):
+   * the preview is its logo and the stages we automated (stories.ts `built.stages`), so preview
+   * and "Example:" name the same project.
+   */
+  board?: boolean;
 }
 
 interface ServiceCopy {
@@ -217,9 +230,12 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     // publishes no numbers, so the row shows one thing it automated, in the case study's words.
     example: 'crowned-spice',
     exampleStage: 'Shipping',
+    // The row's preview shows the same project as its "Example:", Crowned Spice (not the MAPL Tours
+    // capture the page's proof leads with): its logo and what we automated.
     exhibit: {
-      src: '/images/cases/tours-desktop.jpg',
-      alt: 'The MAPL Tours homepage, “Discover Jamaica beyond the resort.”, over aerial footage of the coast.',
+      src: '/images/clients/crowned-spice.png',
+      alt: 'The Crowned Spice logo beside what MAPL TECH automated for its store: stock, shipping and messages after the sale.',
+      board: true,
     },
     meta: {
       title: 'Automation & AI Workflow Setup for Agencies',
@@ -553,7 +569,7 @@ function priceList(view: LayerView, answer: string): FaqView['list'] {
   const tierShape = tiers.every((tier, i) => answer.includes(`${tier.name} (${cleanCopy(view.tiers[i].price)})`));
   if (tierShape && tiers.length > 1) {
     return {
-      lead: `From ${view.fromMoney}, across ${COUNT_WORDS[tiers.length]?.toLowerCase() ?? tiers.length} tiers.`,
+      lead: `From ${view.fromMoney}, across ${COUNT_WORDS[tiers.length]?.toLowerCase() ?? tiers.length} packages.`,
       points: tiers.map((tier) =>
         tier.isCustom
           ? `${tier.name}: priced per project`
@@ -602,7 +618,7 @@ export function faqItems(view: LayerView): FaqView[] {
   const priced: FaqView = {
     ...price,
     actions: [
-      { label: 'Price this service', href: view.estimate },
+      { label: ESTIMATE_LABEL, href: view.estimate },
       { label: PROJECT_LABEL, href: briefHref(view.service) },
     ],
   };
@@ -647,6 +663,8 @@ export interface RowExample {
   metric: { value: string; label: string } | null;
   /** Without a published result: one stage of what was built, in the case study's words (`exampleStage`). */
   fact: string | null;
+  /** The names of the stages built (stories.ts `built.stages`), for an exhibit `board`. */
+  stages: readonly string[];
 }
 
 /** The one real project beside a /services row: a listed case study, or null when there is none. */
@@ -657,7 +675,13 @@ export function rowExample(view: LayerView): RowExample | null {
   const filter = view.proofFilter;
   const metric = (story.results ?? []).find((result) => !filter || filter.results.test(result.label)) ?? null;
   const stage = metric ? undefined : story.built?.stages.find((item) => item.name === view.exampleStage);
-  return { client: story.client, href: `/our-work/${view.example}`, metric, fact: stage?.text ?? null };
+  return {
+    client: story.client,
+    href: `/our-work/${view.example}`,
+    metric,
+    fact: stage?.text ?? null,
+    stages: story.built?.stages.map((item) => item.name) ?? [],
+  };
 }
 
 export function proofCases(view: LayerView): ProofCase[] {

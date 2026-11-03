@@ -112,3 +112,8 @@ export function useEstimateState(): EstimateState {
   const search = useSyncExternalStore(subscribeEstimateUrl, readEstimateSearch, readEstimateSearchServer);
   return stateFor(search);
 }
+
+/** The estimate the URL holds at this moment, for event handlers (no subscription, no re-render). */
+export function readEstimateState(): EstimateState {
+  return stateFor(readEstimateSearch());
+}

@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import Arrow, { type ArrowDirection } from '@/components/ui/Arrow';
+import { withLastWord } from '@/components/services/keepTogether';
 import styles from './PriceList.module.scss';
 
 interface PriceGroupProps {
@@ -32,5 +34,21 @@ export default function PriceGroup({ id, title, from, meta, children }: PriceGro
       </summary>
       <div className={styles.groupBody}>{children}</div>
     </details>
+  );
+}
+
+/**
+ * A price-list link's words, the visually hidden end of its name (": Enterprise") and its
+ * arrow after a no-break space: the last word and the arrow share one no-wrap span, so a label
+ * that wraps carries its last word down with the arrow and never leaves the arrow alone.
+ */
+export function ActionLabel({ label, hidden, direction }: { label: string; hidden?: string; direction?: ArrowDirection }) {
+  return withLastWord(
+    label,
+    <>
+      {hidden ? <span className="visually-hidden">{hidden}</span> : null}
+      {'\u00a0'}
+      <Arrow direction={direction} />
+    </>,
   );
 }
