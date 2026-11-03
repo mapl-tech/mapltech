@@ -8,8 +8,9 @@
 // sits beside them on wide screens, and the six destinations follow as
 // editorial rows. Short phones (a 360x640 screen) get smaller numerals and a
 // tighter stack, so the path hint, the way home and the first destination all
-// sit in the first screen; tablets in portrait get smaller numerals too, so the
-// first destinations are not pushed to the bottom of the screen.
+// sit in the first screen, with the numerals clear of the header; tablets in
+// portrait get smaller numerals too, so the first destinations are not pushed
+// to the bottom of the screen.
 
 .page {
   position: relative;
@@ -50,8 +51,11 @@
   padding-top: calc(var(--header-height, 72px) + clamp(28px, 5vw, 72px));
   padding-bottom: clamp(72px, 10vw, 128px);
 
+  // 32px under the header (was 16px, which left the numerals' tops nearly on
+  // its edge); the room comes back from the gaps below (stage, lede, actions,
+  // places), so the first destination stays in a 360x640 screen.
   @include short-phone {
-    padding-top: calc(var(--header-height, 72px) + 16px);
+    padding-top: calc(var(--header-height, 72px) + 32px);
   }
 }
 
@@ -60,7 +64,7 @@
   gap: clamp(20px, 3vw, 40px);
 
   @include short-phone {
-    gap: 12px;
+    gap: 8px;
   }
 
   @include lg {
@@ -90,6 +94,12 @@
   color: $color-fg;
   user-select: none;
   @include tabular;
+
+  // At line-height 0.8 the digits rise ~0.05em above their box: on phones,
+  // where the box sits right under the header, it steps down to match.
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    margin-top: 0.06em;
+  }
 
   @include lg {
     font-size: clamp(14rem, 29vw - 20px, 25rem);
@@ -172,7 +182,7 @@
   max-width: 30em;
 
   @include short-phone {
-    margin-top: 16px;
+    margin-top: 12px;
   }
 }
 
@@ -182,6 +192,10 @@
   align-items: center;
   gap: 8px 28px;
   margin-top: clamp(24px, 2vw, 32px); // a one-line hint adds its reserved second line
+
+  @include short-phone {
+    margin-top: 16px;
+  }
 }
 
 .primary {
@@ -220,11 +234,13 @@
   @include text-action($color-fg);
 }
 
-// Path-aware recovery line under the lede (NotFoundHint). The browser swaps
-// the generic line for the path's own after load, inside two reserved lines
-// (a one-line button fills the same 52px), so the actions below never move.
+// Path-aware recovery line under the lede (NotFoundHint). The server HTML
+// holds the broken-link report; once the browser knows the path, a guess
+// replaces it inside the reserved box, so the actions below never move.
+// Two lines of text, or a button that wraps to two lines (59px: a long
+// service or case name on a phone or in the half-width column).
 .hint {
-  min-height: calc(2em * 1.55);
+  min-height: max(calc(2em * 1.55), 60px);
   margin: 16px 0 0;
   font-size: $font-size-base;
   line-height: 1.55;
@@ -232,8 +248,8 @@
 }
 
 // The specific hint: the filled button. A long name wraps inside it rather
-// than overflow a phone, set tight enough (two lines: 56px) to stay close to
-// the two reserved lines it replaces.
+// than overflow a phone, set tight enough (two lines: 59px) to fit the box
+// reserved for it.
 .hintButton {
   @include button-primary;
   min-height: 52px;
@@ -245,7 +261,10 @@
   @include focus-ring;
 }
 
+// A section's link after a short question ("Looking for prices? See
+// pricing"): a 48px-tall target that keeps the line where it was.
 .hintLink {
+  @include tall-target(26px);
   font-weight: $font-weight-semibold;
   color: $color-red-text;
   text-decoration: underline;
@@ -265,7 +284,7 @@
   margin-top: clamp(40px, 6vw, 96px);
 
   @include short-phone {
-    margin-top: 32px;
+    margin-top: 20px;
   }
 }
 
@@ -342,7 +361,7 @@
   color: $color-fg-muted;
 }
 
-// The report link, after the destinations.
+// The report link, after the destinations (when a guess holds the hint line).
 .report {
   margin: 28px 0 0;
   font-size: $font-size-base;

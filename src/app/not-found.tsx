@@ -14,13 +14,14 @@ import Arrow from '@/components/ui/Arrow';
  * no WebGL and no script beyond the path-aware hint and the report link. Very
  * large numerals under the page light (smaller on phones, so a destination is
  * in the first screen), a plain sentence as the H1, the path-aware hint in a
- * reserved line, the one primary action and the way home, then the six places
- * people usually want, as plain rows, and a way to report the broken link.
+ * reserved line (the broken-link report when the path gives no guess), the
+ * one primary action and the way home, then the six main pages, as plain
+ * rows, and the report after them when a guess took its line.
  * The ask is the page's own close (`data-page-close`): the footer drops its
  * ask and the phone bar stands down beside it. The hint gets the real service
  * and case study pages (slug and name only), so a mistyped /services/... or
- * /our-work/... link can point to the page it nearly was. Next.js marks the
- * response noindex.
+ * /our-work/... link (or a bare /web-development) can point to the page it
+ * nearly was. Next.js marks the response noindex.
  */
 
 export const metadata: Metadata = {
@@ -62,9 +63,9 @@ export default function NotFound() {
               We can&rsquo;t find that page.
             </h1>
             <p className={styles.lede}>
-              The link may be out of date, or the page has moved. These are the places most people are looking for.
+              The link may be out of date, or the page has moved. The main pages are listed below.
             </p>
-            <NotFoundHint services={SERVICE_PAGES} cases={CASE_PAGES} />
+            <NotFoundHint services={SERVICE_PAGES} cases={CASE_PAGES} email={siteConfig.email} />
             <div className={styles.actions} data-hero-cta="" data-page-close="">
               <Link href={PROJECT_HREF} className={styles.primary} data-cta-placement="not_found_project">
                 {PROJECT_LABEL}
@@ -99,7 +100,7 @@ export default function NotFound() {
             ))}
           </ul>
         </nav>
-        <BrokenLinkReport email={siteConfig.email} />
+        <BrokenLinkReport services={SERVICE_PAGES} cases={CASE_PAGES} email={siteConfig.email} />
       </div>
     </section>
   );

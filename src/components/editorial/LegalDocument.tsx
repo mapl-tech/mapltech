@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
-import { PROJECT_HREF, telHref } from '@/components/layout/chrome';
+import { PROJECT_HREF } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import ArticleToc from './ArticleToc';
 import TocDisclosure from './TocDisclosure';
@@ -82,6 +82,9 @@ function withEmailLink(text: string, href: string): ReactNode {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
+/** Read with each email button's name: it opens the mail app, not a page (the site's "opens in a new tab" pattern). */
+const MAIL_HINT = <span className="visually-hidden"> (opens your email app)</span>;
+
 /**
  * Privacy policy and terms of use (Nov 2026 award pass). Legal pages get
  * landed on directly, so they open like a landing page: the page hero with the
@@ -94,11 +97,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
  * phone bar's action too (`data-hero-cta` on the hero's email link). Each way
  * to ask has a second route, the contact form, and every email opens with a
  * neutral prompt in its body. The request looks the same wherever it is a
- * button (the hero, the closing panel). The closing panel is the page's close
- * (`data-page-close`: the phone bar stands down beside it and the footer drops
- * its own ask), with the sibling document and the way back into the site.
+ * button (the hero, the closing panel), and says it opens the email app. The
+ * closing panel is the page's close (`data-page-close`: the phone bar stands
+ * down beside it and the footer drops its own ask), with the sibling document
+ * and the way back into the site; it points to the ways to ask without
+ * repeating the address and number the last section has just given.
  * Printed, the document is ink on white with the site chrome, the contents
- * and the buttons left out. The legal wording is unchanged.
+ * and the buttons left out, and each link's destination printed after it (a
+ * page as its address, a section by its name). The legal wording is unchanged.
  */
 export default function LegalDocument({
   title,
@@ -130,8 +136,10 @@ export default function LegalDocument({
         actions={
           action && requestHref ? (
             <>
-              <a href={requestHref} className={styles.requestButton} data-hero-cta="">
+              {/* The phone bar repeats this action under its label alone (data-bar-label). */}
+              <a href={requestHref} className={styles.requestButton} data-hero-cta="" data-bar-label={action.label}>
                 {action.label}
+                {MAIL_HINT}
               </a>
               <Link href={PROJECT_HREF} className={styles.heroLink} data-cta-placement="legal_hero_form">
                 Or use the contact form
@@ -208,31 +216,29 @@ export default function LegalDocument({
               <h2 id="questions-title" className={styles.questionsTitle}>
                 {questions}
               </h2>
+              {/* The address and number are in the last section, just above: this says which way to ask.
+                  data-section: printed after the link, so "section 8" keeps its name on paper. */}
               {action ? (
                 <p className={styles.questionsText}>
-                  To use a right from <a href={`#${action.section}`}>section {number(action.section)}</a> (
-                  {action.rights}), email us and say which one, or use the{' '}
-                  <Link href={PROJECT_HREF}>contact form</Link>. Anything else:{' '}
-                  <a href={questionHref}>{siteConfig.email}</a> or{' '}
-                  <a href={telHref(siteConfig.phone)} className={styles.phone}>
-                    {siteConfig.phone}
-                  </a>
-                  . Our Toronto office is open 9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
+                  To use a right from{' '}
+                  <a href={`#${action.section}`} data-section={titleOf(action.section)}>
+                    section {number(action.section)}
+                  </a>{' '}
+                  ({action.rights}), email us and say which one, or use the{' '}
+                  <Link href={PROJECT_HREF}>contact form</Link>. Our Toronto office is open 9&nbsp;am to 6&nbsp;pm
+                  Eastern time, Monday to Friday.
                 </p>
               ) : (
                 <p className={styles.questionsText}>
-                  Email <a href={questionHref}>{siteConfig.email}</a>, call{' '}
-                  <a href={telHref(siteConfig.phone)} className={styles.phone}>
-                    {siteConfig.phone}
-                  </a>{' '}
-                  or use the <Link href={PROJECT_HREF}>contact form</Link>. Our Toronto office is open 9&nbsp;am to
-                  6&nbsp;pm Eastern time, Monday to Friday.
+                  Email us, or use the <Link href={PROJECT_HREF}>contact form</Link>. Our Toronto office is open
+                  9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               )}
               {/* data-header-quiet: while this filled ask is on screen the header's steps back to an outline. */}
               <p className={styles.questionsActions} data-header-quiet="">
                 <a href={requestHref ?? questionHref} className={styles.requestButton}>
                   {action ? action.label : 'Email your question'}
+                  {MAIL_HINT}
                 </a>
                 <Link href={sibling.href} className={styles.textLink}>
                   {sibling.label}

@@ -7,19 +7,21 @@ import { absoluteUrl, toISODate } from '@/config/routes';
 import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE } from '@/components/flagship/content';
+import { HERO_REASSURE, LOWEST_PRICE, SERVICES_INTRO } from '@/components/flagship/content';
 import BlogArchive, { type ArchiveRow, type ArchiveTopic } from '@/components/editorial/BlogArchive';
 import { categoryService, firstSentence, topicSlug } from '@/components/convert/blog-utils';
 import { SERVICE_LIST, serviceFrom, serviceLinks, topicLabel } from '@/components/editorial/services';
-import { SERVICE_META } from '@/lib/estimate';
+import { SERVICE_META, estimateHref, formatMoney } from '@/lib/estimate';
 import styles from './blog-index.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
 /**
- * /blog (Nov 2026, simplified): the page hero → the newest article presented
- * large (its title in the first screen on desktop) → every other article on
- * paper, grouped by month as editorial rows, with topic facets and instant
- * search (BlogArchive) → the crimson close. All post links are in the server
+ * /blog (Nov 2026, simplified): the page hero (one line under its action
+ * names the services' lowest public price and links the estimator, so a price
+ * is in the first screen) → the newest article presented large (its title in
+ * the first screen on desktop) → every other article on paper, grouped by
+ * month as editorial rows, with topic facets and instant search
+ * (BlogArchive) → the crimson close. All post links are in the server
  * HTML; the archive island gets only the fields a row shows, plus the four
  * services with their public prices (its line for the views without a service
  * of their own). The close says what its button opens: the four-question brief,
@@ -61,14 +63,17 @@ function monthLabel(iso: string): string {
   return `${MONTHS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
 }
 
-/** A service topic carries its service page and public "from" price (the archive's service line). */
+/** A service topic carries its service page, public "from" price (the archive's service line) and estimate. */
 function archiveTopic(category: BlogPost['category']): ArchiveTopic {
   const service = categoryService(category);
   const from = service ? serviceFrom(service) : undefined;
   return {
     slug: topicSlug(category),
     label: topicLabel(category),
-    service: service && from ? { href: SERVICE_META[service].path, from } : undefined,
+    service:
+      service && from
+        ? { href: SERVICE_META[service].path, from, estimate: estimateHref({ services: [service] }) }
+        : undefined,
   };
 }
 
@@ -107,6 +112,19 @@ export default function BlogPage() {
           <a href="#archive-q" className={styles.heroLink} data-cta-placement="blog_hero_archive">
             Search all articles
           </a>
+        }
+        // The services line, shortened to its lowest public price: a service and a price in the first screen.
+        note={
+          <>
+            Our services, delivered under your brand, from&nbsp;{formatMoney(LOWEST_PRICE)}.{' '}
+            <Link
+              href={SERVICES_INTRO.estimate.href}
+              className={styles.heroNoteLink}
+              data-cta-placement="blog_hero_estimate"
+            >
+              {SERVICES_INTRO.estimate.label}
+            </Link>
+          </>
         }
       />
 

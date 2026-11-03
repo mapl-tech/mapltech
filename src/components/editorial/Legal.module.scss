@@ -340,12 +340,6 @@ $ink-body: rgba(11, 11, 12, 0.86);
 
     @include focus-ring;
   }
-
-  // A phone number never breaks across lines (the email may: it is long).
-  .phone {
-    overflow-wrap: normal;
-    white-space: nowrap;
-  }
 }
 
 .questionsActions {
@@ -434,8 +428,10 @@ $ink-body: rgba(11, 11, 12, 0.86);
 // ---------------------------------------------------------------- print
 // Printed or saved as a PDF, the document is ink on white: the site chrome
 // (header, footer, phone bar, skip link, grain), the hero light, the contents
-// and the buttons are left out; links stay underlined, and the closing panel
-// keeps its email address and phone number as text.
+// and the buttons are left out; links stay underlined, with each destination
+// printed after its words (a page as its address, a section by its name).
+// The hero closes up and the short version is ruled rather than boxed, so
+// the first page runs on into the facts instead of leaving an empty frame.
 @media print {
   // A light scheme too: the page margins print in the canvas colour, which
   // the site's dark scheme would paint near-black.
@@ -472,7 +468,8 @@ $ink-body: rgba(11, 11, 12, 0.86);
       }
 
       > :not([aria-hidden='true']) {
-        padding: 0 0 32px;
+        row-gap: 20px;
+        padding: 0 0 24px;
       }
 
       * {
@@ -489,7 +486,10 @@ $ink-body: rgba(11, 11, 12, 0.86);
     display: none !important;
   }
 
+  // Last updated and Questions side by side: one line, not two blocks.
   .heroFacts {
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 48px;
     border-top-color: #000;
 
     a {
@@ -508,12 +508,22 @@ $ink-body: rgba(11, 11, 12, 0.86);
     padding: 0;
   }
 
-  // The summary may run across a page; each fact stays whole.
+  // The summary runs on across a page break: ruled above and below, not a
+  // box (a box split by a page left an empty frame at the foot of page one),
+  // its heading kept with the first fact, each fact whole.
   .summary {
-    padding: 16px 20px;
-    border: 1px solid #000;
+    margin-bottom: 24px;
+    padding: 12px 0 0;
+    border: 0;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
     border-radius: 0;
     background: none;
+  }
+
+  .summaryTitle,
+  .summaryNote {
+    break-after: avoid;
   }
 
   .summaryTitle,
@@ -539,12 +549,39 @@ $ink-body: rgba(11, 11, 12, 0.86);
     break-after: avoid;
   }
 
+  .prose p,
+  .prose li,
+  .fact dd {
+    orphans: 3;
+    widows: 3;
+  }
+
+  // The list dashes are a background, which browsers leave out of a print by
+  // default: drawn as a border, they print.
+  .prose li::before {
+    height: 0;
+    border-top: 2px solid #000;
+    background: none;
+  }
+
   .factLink,
   .factMail,
   .prose a,
   .questionsText a {
     color: #000;
     text-decoration-color: currentColor;
+  }
+
+  // Where each link goes, after its words: a page as its address ("contact
+  // form (mapltech.com/contact-us)"), a section by its name ("section 8 (Your
+  // rights)"). Email addresses and phone numbers already say where they go.
+  .prose a[href^='/']::after,
+  .questionsText a[href^='/']::after {
+    content: ' (mapltech.com' attr(href) ')';
+  }
+
+  .questionsText a[data-section]::after {
+    content: ' (' attr(data-section) ')';
   }
 
   .questions {

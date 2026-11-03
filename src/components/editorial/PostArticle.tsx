@@ -29,7 +29,8 @@ import Arrow from '@/components/ui/Arrow';
  * The H1 is the LCP everywhere; the stock cover stays in the metadata and on
  * the blog index, out of the reading path. Posts are HTML strings
  * (blog-posts.ts): preparePost() anchors every <h2>, repairs legacy internal
- * links, makes tables scroll inside the measure and splits the body before its
+ * links (and gives the body's own links to the brief the post's `?svc=`),
+ * makes tables scroll inside the measure and splits the body before its
  * third section for one quiet inline ask: the service's real public price, the
  * estimator (a filled button), the service page, and proof beside it (the
  * service's lead case study, or the approved client quote when the post has no
@@ -37,11 +38,22 @@ import Arrow from '@/components/ui/Arrow';
  * (`data-hero-cta`), so mid-read the bar offers this post's estimate rather
  * than a generic brief. The estimator has one label across the ask (inline,
  * bar, close): ESTIMATE_LABEL. The close's primary opens the brief with the
- * post's service already chosen (`?svc=`), the NDA line under it.
+ * post's service already chosen (`?svc=`), its lede says what that opens (the
+ * blog index close's words), the NDA line under it. A Lighthouse result in the
+ * proof reads on its own scale ("100/100").
  */
 
 /** The estimator's one label across the post's ask, as on the service pages and /pricing. */
 const ESTIMATE_LABEL = 'Price your project';
+
+/** What "Start a project" opens, in the blog index close's words. */
+const BRIEF_LINE = 'Answer four short questions about your project';
+
+/** A Lighthouse score reads on its own 0-100 scale ("100/100"), not as a bare number. */
+function resultValue(result: { value: string; label: string }): string {
+  const score = /\blighthouse\b.*\bscore\b/i.test(result.label) && /^\d{1,3}$/.test(result.value);
+  return score && Number(result.value) <= 100 ? `${result.value}/100` : result.value;
+}
 
 export interface PostArticleProps {
   post: BlogPost;
@@ -62,8 +74,9 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
   const iso = toISODate(post.date);
   const topic = topicSlug(post.category);
   const topicName = topicLabel(post.category);
-  const { before, after, headings } = preparePost(post.content);
   const service = categoryService(post.category);
+  // The body's own links to the brief carry the post's service too (?svc=).
+  const { before, after, headings } = preparePost(post.content, service);
   const serviceName = service ? SERVICE_META[service].label : null;
   const from = service ? serviceFrom(service) : undefined;
   const askHref = service ? estimateHref({ services: [service] }) : ESTIMATE_HREF;
@@ -189,7 +202,7 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                       <p className={styles.inlineProof}>
                         {leadResult ? (
                           <>
-                            <strong className={styles.proofValue}>{leadResult.value}</strong> {leadResult.label}.{' '}
+                            <strong className={styles.proofValue}>{resultValue(leadResult)}</strong> {leadResult.label}.{' '}
                           </>
                         ) : (
                           <>{lead.headline} </>
@@ -292,13 +305,14 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
       ) : null}
 
       {/* ---------------------------------------------------------- the close */}
-      {/* The lede's "20-minute" uses a no-break hyphen (U+2011), so "20-" never ends a line. */}
+      {/* The lede ends on what "Start a project" opens (the brief's four questions). Its
+          "20-minute" uses a no-break hyphen (U+2011), so "20-" never ends a line. */}
       <CloseBand
         title={serviceName ? 'Want help putting this into practice?' : 'Have a project in mind?'}
         lede={
           serviceName
-            ? `Our ${serviceName} service is delivered under your brand, for agencies and the businesses they serve. Every price is public, and a 20\u2011minute call turns yours into a fixed quote.`
-            : `We offer ${SERVICE_LIST} for agencies, under your brand. Every price is public.`
+            ? `Our ${serviceName} service is delivered under your brand, for agencies and the businesses they serve. ${BRIEF_LINE}, then a 20\u2011minute call turns it into a fixed quote.`
+            : `We offer ${SERVICE_LIST} for agencies, under your brand, and every price is public. ${BRIEF_LINE}.`
         }
         href={briefHref}
         note={serviceName ? NDA_LINE : HERO_REASSURE}

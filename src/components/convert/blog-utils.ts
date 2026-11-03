@@ -85,16 +85,33 @@ export function anchorHeadings(html: string): { html: string; headings: { id: st
   return { html: out, headings };
 }
 
+/** The project brief (layout/chrome.ts PROJECT_HREF, kept literal so this file stays import-free). */
+const BRIEF_PATH = '/contact-us';
+
+/** `?svc=web` added to a link's query-and-hash tail, unless it already names a service. */
+function withService(rest: string, service: EstimateService): string {
+  const hashAt = rest.indexOf('#');
+  const query = hashAt === -1 ? rest : rest.slice(0, hashAt);
+  const hash = hashAt === -1 ? '' : rest.slice(hashAt);
+  if (/[?&]svc=/.test(query)) return rest;
+  return `${query}${query.startsWith('?') ? '&' : '?'}svc=${service}${hash}`;
+}
+
 /**
  * Internal links some posts were written with before the service pages got
  * their final slugs (LEGACY_LINKS): the template rewrites them to the live
  * page at render time (blog-posts.ts stays the source of record).
  * next.config.ts redirects the same paths for links from outside the site.
+ * With the post's service, the body's links to the brief ("get in touch")
+ * open it with that service chosen, as the close's button does (brief.ts
+ * reads ?svc=).
  */
-export function repairLinks(html: string): string {
+export function repairLinks(html: string, service?: EstimateService | null): string {
   return html.replace(/href=(["'])(\/[^"'#?]*)([^"']*)\1/g, (full, quote: string, path: string, rest: string) => {
-    const fixed = LEGACY_LINKS[path.replace(/\/+$/, '')];
-    return fixed ? `href=${quote}${fixed}${rest}${quote}` : full;
+    const bare = path.replace(/\/+$/, '') || '/';
+    const live = LEGACY_LINKS[bare] ?? bare;
+    if (service && live === BRIEF_PATH) return `href=${quote}${live}${withService(rest, service)}${quote}`;
+    return live !== bare ? `href=${quote}${live}${rest}${quote}` : full;
   });
 }
 
@@ -124,13 +141,16 @@ export function splitBeforeHeading(html: string, index: number): [string, string
   return [html.slice(0, at), html.slice(at)];
 }
 
-/** Everything the post template needs from the raw HTML, in one pass. */
-export function preparePost(html: string): {
+/** Everything the post template needs from the raw HTML, in one pass (`service`: the post's service line). */
+export function preparePost(
+  html: string,
+  service?: EstimateService | null,
+): {
   before: string;
   after: string;
   headings: { id: string; text: string }[];
 } {
-  const { html: anchored, headings } = anchorHeadings(wrapTables(repairLinks(html.trim())));
+  const { html: anchored, headings } = anchorHeadings(wrapTables(repairLinks(html.trim(), service)));
   const [before, after] = splitBeforeHeading(anchored, 2);
   return { before, after, headings };
 }

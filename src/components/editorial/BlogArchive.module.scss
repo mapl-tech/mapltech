@@ -17,8 +17,9 @@ $control-border: rgba(11, 11, 12, 0.5);
 // ---------------------------------------------------------------- controls
 // The search, then the topics under it, at every width: side by side the
 // topic column was 582-832px for ~1,030px of chips, so they wrapped to two
-// rows. Stacked, the chips get the full measure and stay one row (all six
-// fit from ~1,100px; narrower, the row scrolls under an edge fade).
+// rows. Stacked, the chips get the full measure: one row from 1024px (a
+// little tighter up to 1280px), two rows on tablets, and on phones one row
+// that scrolls under an edge fade.
 .controls {
   display: grid;
   gap: 24px;
@@ -214,6 +215,16 @@ $chips-fade: 48px;
     }
   }
 
+  // Tablets and up: every chip in view, none under a fade. The row wraps
+  // instead of scrolling (two rows on a tablet, one from 1024px).
+  @include md {
+    flex-wrap: wrap;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+    animation: none;
+  }
+
   @include pointer-coarse {
     scrollbar-width: none;
 
@@ -280,6 +291,18 @@ $chips-fade: 48px;
     outline: $focus-ring-width solid $color-red-ink;
     outline-offset: 2px;
   }
+
+  // 1024-1279: the six chips need ~1,034px at full size and the row has
+  // ~922px, so they tighten a step (under 900px) to stay on one row.
+  @media (min-width: $breakpoint-lg) and (max-width: #{$breakpoint-xl - 0.02px}) {
+    gap: 8px;
+    padding: 0 12px;
+    font-size: 0.875rem;
+
+    .count {
+      font-size: $font-size-xs;
+    }
+  }
 }
 
 .count {
@@ -288,18 +311,33 @@ $chips-fade: 48px;
   @include tabular;
 }
 
+// The result line. A submitted search moves focus here (tabindex -1): a mouse
+// or keyboard user sees the ring; on touch the keyboard closing is the cue.
 .status {
   min-height: 1.5em;
   margin: 20px 0 0;
   font-size: $font-size-sm;
   color: $color-ink-muted;
   @include tabular;
+
+  &:focus {
+    outline: none;
+  }
+
+  @include pointer-fine {
+    &:focus-visible {
+      outline: $focus-ring-width solid $color-red-ink;
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+  }
 }
 
 // A service topic: one line to the service itself, with its public price.
+// 34em keeps the sentence near 65 characters a line (it ran ~85 at 44em).
 .service {
   margin: 12px 0 0;
-  max-width: 44em;
+  max-width: 34em;
   font-size: $font-size-base;
   line-height: 1.55;
   color: $color-ink;

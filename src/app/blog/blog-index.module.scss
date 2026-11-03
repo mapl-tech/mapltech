@@ -12,6 +12,26 @@
   @include text-action($color-fg);
 }
 
+// The services line under the hero's action ends on the estimator: a 44px
+// target in the sentence (the padding grows it, the margin gives it back).
+.heroNoteLink {
+  display: inline-block;
+  padding: 10px 0;
+  margin: -10px 0;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red, 0.7);
+  text-underline-offset: 4px;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+
+  @include focus-ring;
+}
+
 // ---------------------------------------------------------------- latest
 .latest {
   position: relative;

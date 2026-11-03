@@ -1,9 +1,10 @@
 'use client';
 
-import { Fragment, useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { flushSync } from 'react-dom';
 import Link from 'next/link';
 import { useUrlParams } from '@/components/convert/useUrlState';
+import { ESTIMATE_HREF } from '@/components/layout/chrome';
 import { useIsClient } from '@/components/ui/useMediaQuery';
 import { searchable } from '@/components/convert/blog-utils';
 import ArticleRow from './ArticleRow';
@@ -34,11 +35,15 @@ import styles from './BlogArchive.module.scss';
  *   #archive-all, and :target reveals every row. Without JavaScript at all a
  *   <noscript> style shows every row and drops the controls that need script
  *   (search, topics, paging).
+ * - A search term matches where a word starts ("ai" finds "AI agents", not
+ *   "maintain"; "access" still finds "accessibility" as you type).
  * - Topic counts are facets: they follow the current search.
- * - One polite live region reports the result count; the empty state says what
- *   to try next.
+ * - One polite live region reports the result count, inside the visible
+ *   result line. Enter (a phone keyboard's Search key) applies the search at
+ *   once and moves focus to that line, so the keyboard closes over the
+ *   results, not on them. The empty state says what to try next.
  * - Any link to #archive-q ("Search all articles" in the page hero) lands in
- *   the search field.
+ *   the search field, and so do both clear controls.
  */
 
 export interface ArchiveRow {
@@ -57,8 +62,11 @@ export interface ArchiveTopic {
   slug: string;
   /** The topic as shown (canonical service name or "Industry"). */
   label: string;
-  /** The service page behind a service topic, and its public "from" price ("$5,000"). */
-  service?: { href: string; from: string };
+  /**
+   * The service page behind a service topic, its public "from" price
+   * ("$5,000") and the estimator with that service chosen.
+   */
+  service?: { href: string; from: string; estimate: string };
 }
 
 interface BlogArchiveProps {
@@ -73,6 +81,8 @@ interface BlogArchiveProps {
 
 const ALL = 'all';
 const URL_DELAY = 400;
+/** The estimator, under the label the site gives it everywhere. */
+const ESTIMATE = { label: 'Price your project', href: ESTIMATE_HREF };
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
@@ -95,6 +105,17 @@ const monthOf = (iso: string) => `${MONTHS[Number(iso.slice(5, 7)) - 1]} ${iso.s
 /** "Sep 7" from "2026-09-07". */
 const dayOf = (iso: string) => `${MONTHS[Number(iso.slice(5, 7)) - 1].slice(0, 3)} ${Number(iso.slice(8, 10))}`;
 
+/** The term begins a word of the text (both already `searchable`). */
+function startsWord(text: string, term: string): boolean {
+  for (let at = text.indexOf(term); at !== -1; at = text.indexOf(term, at + 1)) {
+    if (at === 0 || !/[a-z0-9]/.test(text[at - 1])) return true;
+  }
+  return false;
+}
+
+/** The query's words, normalised like the index. */
+const wordsOf = (text: string) => searchable(text).split(/\s+/).filter(Boolean);
+
 export default function BlogArchive({ rows, topics, services = [], featured, pageSize = 24 }: BlogArchiveProps) {
   const [params, setParams] = useUrlParams();
   // Until hydration the no-script reveal (#archive-all:target) is live; after it, state owns the list.
@@ -116,11 +137,14 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
     () => new Map(rows.map((row) => [row, searchable(`${row.title} ${row.answer} ${labels.get(row.topic) ?? ''}`)])),
     [rows, labels],
   );
-  const terms = useMemo(() => searchable(query).split(/\s+/).filter(Boolean), [query]);
-  const searched = useMemo(
-    () => (terms.length ? rows.filter((row) => terms.every((term) => index.get(row)?.includes(term))) : rows),
-    [rows, terms, index],
+  const terms = useMemo(() => wordsOf(query), [query]);
+  /** The rows holding every word, each where a word starts. */
+  const find = useCallback(
+    (words: readonly string[]) =>
+      words.length ? rows.filter((row) => words.every((word) => startsWord(index.get(row) ?? '', word))) : rows,
+    [rows, index],
   );
+  const searched = useMemo(() => find(terms), [find, terms]);
   // Browsing (no topic, no search): the featured post already sits above the archive.
   const browsing = topic === ALL && terms.length === 0;
   const browseRows = useMemo(() => (featured ? rows.filter((row) => row.slug !== featured) : rows), [featured, rows]);
@@ -164,11 +188,11 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
 
   /** The result line: shown as you type, announced once typing pauses. */
   const describe = (text: string): string => {
-    const words = searchable(text).split(/\s+/).filter(Boolean);
+    const words = wordsOf(text);
     if (topic === ALL && !words.length) {
       return `Showing ${Math.min(limit, browseRows.length) + above} of ${rows.length} articles, newest first`;
     }
-    const pool = words.length ? rows.filter((row) => words.every((word) => index.get(row)?.includes(word))) : rows;
+    const pool = find(words);
     const found = topic === ALL ? pool : pool.filter((row) => row.topic === topic);
     if (!found.length) return `No articles match${words.length ? ` “${text.trim()}”` : ''}${topicLabel ? ` in ${topicLabel}` : ''}`;
     const noun = found.length === 1 ? 'article' : 'articles';
@@ -191,14 +215,16 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
     return () => document.removeEventListener('click', onClick);
   }, []);
 
+  const writeQuery = (value: string) => {
+    setParams((next) => {
+      if (value.trim()) next.set('q', value.trim());
+      else next.delete('q');
+    });
+  };
+
   const syncQuery = (value: string) => {
     clearTimeout(timer.current);
-    timer.current = setTimeout(() => {
-      setParams((next) => {
-        if (value.trim()) next.set('q', value.trim());
-        else next.delete('q');
-      });
-    }, URL_DELAY);
+    timer.current = setTimeout(() => writeQuery(value), URL_DELAY);
   };
 
   const onQuery = (event: ChangeEvent<HTMLInputElement>) => {
@@ -219,6 +245,8 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
     });
   };
 
+  // The button sits in the empty state, which hides once the list is back, so
+  // focus moves to the field first (as "Clear the search" does).
   const clearAll = () => {
     clearTimeout(timer.current);
     setDraft('');
@@ -226,6 +254,7 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
       next.delete('topic');
       next.delete('q');
     });
+    document.getElementById('archive-q')?.focus();
   };
 
   // The next page renders synchronously, then focus moves to its first row's
@@ -236,8 +265,15 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
     if (next) document.getElementById(`post-${next.slug}`)?.querySelector('a')?.focus();
   };
 
+  // Enter, or a phone keyboard's Search key: the search applies now (the line
+  // is current before focus reaches it), the field lets go, so the keyboard
+  // closes, and focus lands on the result line without scrolling the page.
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    clearTimeout(timer.current);
+    flushSync(() => writeQuery(query));
+    document.getElementById('archive-q')?.blur();
+    document.getElementById('archive-status')?.focus({ preventScroll: true });
   };
 
   return (
@@ -303,11 +339,13 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
         </div>
       </div>
 
-      <p className={styles.status} aria-hidden="true">
-        {describe(query)}
-      </p>
-      <p className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
-        {describe(urlQuery)}
+      {/* Seen as you type; read out (the live part) once typing pauses. Focus lands
+          here after a search is submitted, and reads the live part once. */}
+      <p id="archive-status" className={styles.status} tabIndex={-1}>
+        <span aria-hidden="true">{describe(query)}</span>
+        <span className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+          {describe(urlQuery)}
+        </span>
       </p>
 
       {current?.service ? (
@@ -381,14 +419,17 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
         })}
       </div>
 
+      {/* The result line above already says nothing matched: this says what to do next. */}
       <div className={styles.empty} hidden={matches.length > 0}>
         <p className={styles.emptyTitle}>
-          {terms.length ? `Nothing matches “${query.trim()}”` : 'No articles here yet'}
-          {topicLabel ? ` in ${topicLabel}` : ''}.
+          {terms.length ? 'Try a shorter word, or another topic.' : 'Try another topic.'}
         </p>
         <p className={styles.emptyText}>
-          Try a shorter word or another topic. Want a price instead? The estimator is faster:{' '}
-          <Link href="/pricing#estimator">open the estimator</Link>.
+          Want a price instead? The estimator shows your price before we ask for anything:{' '}
+          <Link href={current?.service?.estimate ?? ESTIMATE.href} data-cta-placement="blog_archive_empty_estimate">
+            {ESTIMATE.label}
+          </Link>
+          .
         </p>
         <button type="button" className={styles.emptyButton} onClick={clearAll}>
           Clear search and topic
