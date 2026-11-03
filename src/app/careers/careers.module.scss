@@ -7,14 +7,25 @@
 // themselves. This file owns the arrangement around them.
 
 // ---------------------------------------------------------------- how hiring works (paper)
+// The form comes first in the DOM, so phones and tablets reach it right
+// under the heading, with the rail after it. Wide screens keep that order
+// left to right (form, then the rail beside it), so reading order, visual
+// order and keyboard order are the same at every width.
 .applyGrid {
   display: grid;
   gap: clamp(40px, 5vw, 56px);
 
   @include lg {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     column-gap: 48px;
     align-items: start;
+  }
+}
+
+.applyForm {
+  @include lg {
+    grid-column: 1;
+    grid-row: 1;
   }
 }
 
@@ -25,8 +36,41 @@
   min-width: 0;
 
   @include lg {
+    grid-column: 2;
+    grid-row: 1;
     position: sticky;
     top: calc(var(--header-height, 72px) + 32px);
+  }
+}
+
+// Who a candidate would work with: the team and work pages, one line, ruled
+// off from the steps above it like a step of its own.
+.evidence {
+  margin: 0;
+  padding-top: 22px;
+  border-top: 1px solid $color-ink-hairline;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-ink;
+
+  a {
+    display: inline-block;
+    padding-block: 10px; // a 44px target without moving the line
+    margin-block: -10px;
+    color: $color-red-ink;
+    font-weight: $font-weight-semibold;
+    text-decoration: underline;
+    text-decoration-color: rgba($color-red-ink, 0.45);
+    text-underline-offset: 4px;
+
+    &:hover {
+      text-decoration-color: currentColor;
+    }
+
+    &:focus-visible {
+      outline: $focus-ring-width solid $color-red-ink;
+      outline-offset: 2px;
+    }
   }
 }
 

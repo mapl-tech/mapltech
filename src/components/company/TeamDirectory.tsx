@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { careers } from '@/config/site';
 import { countries, teamMembers } from '@/config/team';
 import { slugify } from '@/lib/schema';
 import OfficeClock from './OfficeClock';
-import { TEAM, countWord, listWords } from './content';
+import { TEAM, keepBrand } from './content';
+import { regions } from './regions';
 import ed from './Company.module.scss';
 import styles from './TeamDirectory.module.scss';
 
@@ -13,6 +13,9 @@ const OFFICE_OF: Record<string, { city: string; timeZone: string }> = {
   Nigeria: { city: 'Lagos', timeZone: 'Africa/Lagos' },
   Jamaica: { city: 'Kingston', timeZone: 'America/Jamaica' },
 };
+
+/** The branch page of a country with one (/nigeria, /jamaica). */
+const branchOf = (country: string) => Object.values(regions).find((region) => region.country === country);
 
 function initialsOf(name: string): string {
   return name
@@ -25,18 +28,20 @@ function initialsOf(name: string): string {
 
 /**
  * The rest of the team as listed in config/team.ts, set like a credits roll
- * on paper: grouped by country beside each office's live local time, name
- * and title only, initials instead of photos. These records carry
- * placeholder photos and are not yet confirmed by the owner, so nothing is
- * added to them here (no bios, no Person JSON-LD, no claims) and none of
- * them is featured anywhere else on the site. The `/team#canada`-style and
- * `/team#name` anchors keep older deep links working.
+ * on paper: grouped by country beside each office's live local time and the
+ * office hours, name and title only, initials instead of photos. These
+ * records carry placeholder photos and are not yet confirmed by the owner,
+ * so nothing is added to them here (no bios, no Person JSON-LD, no claims)
+ * and none of them is featured anywhere else on the site. The Nigeria and
+ * Jamaica groups link to their branch pages; job seekers get one small line
+ * at the foot. The `/team#canada`-style and `/team#name` anchors keep older
+ * deep links working.
  */
 export default function TeamDirectory() {
   const groups = countries
     .map((country) => ({ country, slug: country.toLowerCase(), members: teamMembers.filter((m) => m.country === country) }))
     .filter((group) => group.members.length > 0);
-  const roleCountries = Array.from(new Set(careers.map((role) => role.country)));
+  const { careers } = TEAM.directory;
 
   return (
     <section id="team" className={ed.paper} aria-labelledby="team-title">
@@ -46,27 +51,28 @@ export default function TeamDirectory() {
           <h2 id="team-title" className={ed.title}>
             {TEAM.directory.title}
           </h2>
-          <div className={styles.hiring}>
-            <p className={ed.lede}>
-              {countWord(careers.length)} open roles across {listWords(roleCountries)}.
-            </p>
-            <Link href="/careers" className={ed.action} data-cta-placement="team_directory_careers">
-              See open roles
-              <span aria-hidden="true" className={ed.arrow}>
-                →
-              </span>
-            </Link>
-          </div>
+          <p className={ed.lede}>{TEAM.directory.lede}</p>
         </header>
 
         <div className={styles.groups}>
           {groups.map((group) => {
             const office = OFFICE_OF[group.country];
+            const branch = branchOf(group.country);
             return (
               <div key={group.slug} id={group.slug} className={styles.group}>
                 <div className={styles.groupHead}>
                   <h3 className={styles.country}>{group.country}</h3>
                   {office ? <OfficeClock city={office.city} timeZone={office.timeZone} /> : null}
+                  {branch ? (
+                    <div className={styles.branch}>
+                      <Link href={branch.path} className={ed.action} data-cta-placement={`team_directory_${branch.slug}`}>
+                        {keepBrand(branch.brandName)}
+                        <span aria-hidden="true" className={ed.arrow}>
+                          →
+                        </span>
+                      </Link>
+                    </div>
+                  ) : null}
                 </div>
                 <ul className={styles.people} role="list">
                   {group.members.map((member) => (
@@ -84,6 +90,14 @@ export default function TeamDirectory() {
             );
           })}
         </div>
+
+        <p className={styles.careers}>
+          {careers.before}
+          <Link href={careers.href} data-cta-placement="team_directory_careers">
+            {careers.label}
+          </Link>
+          .
+        </p>
       </div>
     </section>
   );

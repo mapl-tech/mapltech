@@ -97,7 +97,7 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
   const apply = (event: MouseEvent<HTMLAnchorElement>, role: BoardRole) => {
     event.preventDefault();
     setParams((next) => next.set('role', role.slug), { hash: applyId });
-    // Land on the form itself: on phones the section's rail stacks above it.
+    // Land on the form itself, not the apply section's heading above it.
     const field = document.getElementById(applyFieldId);
     const target = (field instanceof HTMLSelectElement && field.form) || document.getElementById(applyId);
     target?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });

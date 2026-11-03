@@ -4,6 +4,8 @@ import JsonLd from '@/components/seo/JsonLd';
 import Accordion from '@/components/ui/Accordion';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
+import QuoteLine from '@/components/flagship/QuoteLine';
+import { WORK_SECTION } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from '@/components/layout/chrome';
 import { siteConfig } from '@/config/site';
 import { faqPage, getServiceLine, itemList, pageGraph, serviceId } from '@/lib/schema';
@@ -11,7 +13,6 @@ import { SERVICE_META } from '@/lib/estimate';
 import FactsBand from './FactsBand';
 import HeroActions from './HeroActions';
 import LocalTime from './LocalTime';
-import OfficeList from './OfficeList';
 import OfficeMap from './OfficeMap';
 import { PRICE_FACT, keepBrand } from './content';
 import { REPLY_TIME, rolesIn, startingFrom, type RegionConfig } from './regions';
@@ -28,14 +29,16 @@ export interface RegionalPageProps {
 }
 
 /**
- * The regional template for /nigeria and /jamaica (Nov 2026 simplify pass).
+ * The regional template for /nigeria and /jamaica (Nov 2026 simplify pass,
+ * review fixes).
  *
  * A sense of place without stock photography: the branch city's live local
- * time beside a to-scale drawing of the three offices. Then the market facts,
- * what the local team builds with real "from" prices (paper), the three
- * offices' hours with the branch first, a real local project where one
- * exists, the market questions with the branch's contact lines, and the
- * close.
+ * time beside a to-scale drawing of the three offices. Then the market facts
+ * (the working hours are said there, once), what the local team builds with
+ * real "from" prices and a direct way to start each one (paper), a real
+ * local project where one exists (otherwise the site-wide client quote and
+ * the work page), the market questions with the branch's contact lines, and
+ * the close.
  *
  * Schema (unchanged): WebPage + BreadcrumbList + ItemList of the four
  * services + FAQPage, all built from the same arrays the page renders. No
@@ -136,19 +139,38 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             </div>
           </header>
 
+          {/* Each row: the service page (its link covers the name, words and arrow), then the price and a brief that opens with that service chosen. */}
           <ul className={styles.rows} role="list" aria-label={region.services.heading}>
-            {services.map(({ row, line, from }) => (
-              <li key={line.slug} className={styles.row}>
-                <Link href={line.path} className={styles.rowLink} data-cta-placement={`${prefix}_services_${line.slug}`}>
-                  <span className={styles.rowName}>{SERVICE_META[row.service].label}</span>{' '}
-                  <span className={styles.rowText}>{row.description}</span>{' '}
-                  <span className={styles.rowMeta}>From {from}</span>
-                  <span className={styles.rowGo} aria-hidden="true">
-                    →
-                  </span>
-                </Link>
-              </li>
-            ))}
+            {services.map(({ row, line, from }) => {
+              const name = SERVICE_META[row.service].label;
+              return (
+                <li key={line.slug} className={styles.row}>
+                  <div className={styles.rowMain}>
+                    <Link href={line.path} className={styles.rowLink} data-cta-placement={`${prefix}_services_${line.slug}`}>
+                      <span className={styles.rowName}>{name}</span>
+                    </Link>
+                    <p className={styles.rowText}>{row.description}</p>
+                    <span className={styles.rowGo} aria-hidden="true">
+                      →
+                    </span>
+                  </div>
+                  <div className={styles.rowFoot}>
+                    <p className={styles.rowMeta}>From {from}</p>
+                    <Link
+                      href={`${PROJECT_HREF}?svc=${row.service}`}
+                      className={ed.action}
+                      data-cta-placement={`${prefix}_services_${row.service}_project`}
+                    >
+                      {PROJECT_LABEL}
+                      <span className="visually-hidden">: {name}</span>
+                      <span aria-hidden="true" className={ed.arrow}>
+                        →
+                      </span>
+                    </Link>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
 
           <div className={styles.realities}>
@@ -162,23 +184,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         </div>
       </section>
 
-      {/* The three offices' hours, the branch first. */}
-      <section id="overlap" className={ed.dark} aria-labelledby="overlap-title">
-        <div className={ed.inner}>
-          <header className={ed.head}>
-            <p className={ed.label}>Working hours</p>
-            <h2 id="overlap-title" className={ed.title}>
-              {region.overlap.heading}
-            </h2>
-            <p className={ed.lede}>{region.overlap.body}</p>
-          </header>
-          <div className={ed.offset}>
-            <OfficeList label="Our offices" focus={region.officeCity} current={region.path} placement={`${prefix}_offices`} />
-          </div>
-        </div>
-      </section>
-
-      {/* A real local project, only where one exists. */}
+      {/* A real local project where one exists; otherwise the site-wide proof in its place. */}
       {region.work ? (
         <section id="work" className={`${ed.dark} ${ed.ruled}`} aria-labelledby="work-title">
           <div className={ed.inner}>
@@ -231,7 +237,28 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             </article>
           </div>
         </section>
-      ) : null}
+      ) : (
+        <section id="work" className={`${ed.dark} ${ed.ruled}`} aria-labelledby="work-title">
+          <div className={ed.inner}>
+            <header className={`${ed.head} ${ed.headOnly}`}>
+              <p className={ed.label}>{WORK_SECTION.label}</p>
+              <h2 id="work-title" className={ed.title}>
+                {WORK_SECTION.title}
+              </h2>
+              <p className={ed.lede}>Most of what we build carries our partners’ names, not ours.</p>
+              <div className={styles.proof}>
+                <QuoteLine />
+                <Link href={WORK_SECTION.all.href} className={ed.action} data-cta-placement={`${prefix}_proof_work`}>
+                  {WORK_SECTION.all.label}
+                  <span aria-hidden="true" className={ed.arrow}>
+                    →
+                  </span>
+                </Link>
+              </div>
+            </header>
+          </div>
+        </section>
+      )}
 
       {/* Market questions: native <details>, every answer in the HTML; FAQPage JSON-LD from the same items. */}
       <section id="faq" className={`${ed.dark} ${ed.ruled}`} aria-labelledby="faq-title">
@@ -256,20 +283,10 @@ export default function RegionalPage({ region, title, description }: RegionalPag
                 <dd>
                   <a href={telHref(siteConfig.phone)} data-cta-placement={`${prefix}_branch_phone`}>
                     {siteConfig.phone}
-                  </a>
+                  </a>{' '}
+                  <span className={styles.line}>Toronto line</span>
                 </dd>
               </div>
-              {roles.length ? (
-                <div>
-                  <dt>Hiring</dt>
-                  <dd>
-                    <Link href={`/careers?loc=${region.country.toLowerCase()}#roles`} data-cta-placement={`${prefix}_careers_all`}>
-                      {roles.length} open {typeSet.length === 1 ? `${typeSet[0]} ` : ''}
-                      role{roles.length === 1 ? '' : 's'} in {region.country}
-                    </Link>
-                  </dd>
-                </div>
-              ) : null}
             </dl>
           </div>
           <div className={styles.faqList}>
@@ -278,11 +295,23 @@ export default function RegionalPage({ region, title, description }: RegionalPag
               defaultOpen={0}
               items={region.faq.items.map((item, i) => ({ id: `${prefix}-faq-${i + 1}`, question: item.question, answer: item.answer }))}
             />
+            {/* For job seekers: one small line, away from the buyer's contact lines. */}
+            {roles.length ? (
+              <p className={styles.hiring}>
+                Looking for work? See our{' '}
+                <Link href={`/careers?loc=${region.country.toLowerCase()}#roles`} data-cta-placement={`${prefix}_careers_all`}>
+                  {roles.length} open {typeSet.length === 1 ? `${typeSet[0]} ` : ''}
+                  role{roles.length === 1 ? '' : 's'} in {region.country}
+                </Link>
+                .
+              </p>
+            ) : null}
           </div>
         </div>
       </section>
 
-      <CloseBand title={region.close.title} lede={region.close.lede} placement={`${prefix}_close`} />
+      {/* Where the quote already stands in for a local project, the close does not repeat it. */}
+      <CloseBand title={region.close.title} lede={region.close.lede} placement={`${prefix}_close`} proof={Boolean(region.work)} />
     </>
   );
 }

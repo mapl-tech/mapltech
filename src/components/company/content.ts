@@ -18,14 +18,16 @@
  *   keeps no daylight saving time).
  * - Numbers: 200+ projects supported and 25+ years of combined experience as
  *   published on the live homepage (flagship/content.ts PROOF); the lowest
- *   public price is computed from `pricing`; role counts from `careers`.
+ *   public price is the homepage's LOWEST_PRICE (computed from `pricing`);
+ *   role counts from `careers`.
  */
 import type { StaticImageData } from 'next/image';
+import { LOWEST_PRICE } from '@/components/flagship/content';
 import { careers } from '@/config/site';
 import { executives, type Executive } from '@/config/team';
+import { formatMoney } from '@/lib/estimate';
 import { slugify } from '@/lib/schema';
 import type { OfficeCity } from './OfficeMap';
-import { lowestStartingPrice } from './regions';
 // Square, face-centred crops of the founders' own photos, for small avatars.
 import leshanAvatar from './leshan-avatar.jpg';
 import mercyAvatar from './mercy-avatar.jpg';
@@ -101,8 +103,14 @@ export function listWords(items: readonly string[]): string {
 }
 
 
+/** The lowest public price ("$3,500"), the homepage's and the phone bar's figure. */
+const LOWEST = formatMoney(LOWEST_PRICE);
+
 /** The public "from" price, the same words on every company page. */
-export const PRICE_FACT = { term: 'Public prices from', detail: `${lowestStartingPrice()} USD` } as const;
+export const PRICE_FACT = { term: 'Public prices from', detail: `${LOWEST} USD` } as const;
+
+/** Every office's hours (ui/officeTime), in the words /about-us uses. */
+const OFFICE_HOURS = 'Every team works 9 am to 6 pm local time, Monday to Friday.';
 
 /* ------------------------------------------------------------------ */
 /* /about-us                                                            */
@@ -118,13 +126,14 @@ export const ABOUT = {
     title: [{ text: 'We build the technology that ' }, { text: 'agencies sell.', accent: true }] as readonly TitleRun[],
     lede: 'That means websites, automation, internal tools and cloud systems for your clients. Your brand goes on the work. Our engineers stay behind it.',
   },
+  // The published figures lead, set large; then who, and where.
   facts: [
+    { term: 'Projects supported', figure: '200+' },
+    { term: 'Experience', figure: '25+', detail: 'years combined' },
+    { term: PRICE_FACT.term, figure: LOWEST, detail: 'USD' },
     { term: 'Founded by', detail: FOUNDER_NAMES },
     { term: 'Home base', detail: 'Toronto, Canada' },
     { term: 'Teams in', detail: 'Lagos, Nigeria · Kingston, Jamaica' },
-    { term: 'Experience', detail: '25+ years combined' },
-    { term: 'Projects supported', detail: '200+' },
-    PRICE_FACT,
   ],
   story: {
     label: 'Why MAPL TECH exists',
@@ -142,7 +151,7 @@ export const ABOUT = {
   offices: {
     label: 'Where we work',
     title: 'Three cities. One team.',
-    lede: 'Toronto is our headquarters. We also have teams in Lagos, Nigeria and Kingston, Jamaica. Every team works 9\u00a0am to 6\u00a0pm local time, Monday to Friday.',
+    lede: `Toronto is our headquarters. We also have teams in Lagos, Nigeria and Kingston, Jamaica. ${OFFICE_HOURS}`,
   },
   founders: {
     label: 'Who leads it',
@@ -165,11 +174,12 @@ export const TEAM = {
     title: [{ text: 'The people ' }, { text: 'behind the work.', accent: true }] as readonly TitleRun[],
     lede: `MAPL TECH is led by its co-founders, ${FOUNDER_NAMES}, with a team across Canada, Nigeria and Jamaica.`,
   },
+  // What a buyer checks first; the open roles are one small line at the foot of the directory.
   facts: [
     { term: 'Co-founders', detail: FOUNDER_NAMES },
     { term: 'Home base', detail: 'Toronto, Canada' },
     { term: 'Offices', detail: 'Toronto · Lagos · Kingston' },
-    { term: 'Open roles', detail: `${careers.length}, across ${listWords(Array.from(new Set(careers.map((r) => r.country))))}` },
+    PRICE_FACT,
   ],
   founders: {
     label: 'Leadership',
@@ -179,6 +189,8 @@ export const TEAM = {
   directory: {
     label: 'The team',
     title: 'Our team, by country.',
+    lede: OFFICE_HOURS,
+    careers: { before: 'Looking for a job with us? ', label: 'See open roles', href: '/careers' },
   },
   close: {
     title: 'Need a team behind your next client project?',
@@ -252,6 +264,14 @@ export const CAREERS = {
       { name: 'Tell us about you', text: 'Your name, your email and a few lines on why the role fits you.' },
       { name: 'Hear back by email', text: 'We read every application and reply by email.' },
     ],
+    // Beside the form: who a candidate would work with, and what we make.
+    evidence: {
+      before: 'Before you apply, ',
+      team: { label: 'meet the team', href: '/team' },
+      between: ' and ',
+      work: { label: 'see our work', href: '/our-work' },
+      after: '.',
+    },
   },
   talent: {
     summary: 'Don’t see your fit? Join the talent list.',

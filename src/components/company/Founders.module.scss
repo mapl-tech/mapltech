@@ -100,6 +100,11 @@
   gap: 22px;
   justify-items: start;
   max-width: 38rem;
+
+  // The ask, a beat below the lede.
+  > :last-child {
+    margin-top: 6px;
+  }
 }
 
 .people {
@@ -115,12 +120,16 @@
   }
 }
 
-// Phones: the portrait beside the words, so neither column is a sliver.
+// Phones: the portrait beside the name and role, the words full width under
+// them (the /team profile's arrangement), so no column is a sliver. From
+// 640px the two people sit side by side, each photo over its words.
 .person {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-  column-gap: 16px;
-  align-items: start;
+  grid-template-areas:
+    'photo head'
+    'body body';
+  gap: 18px 16px;
 
   @include sm {
     display: block;
@@ -133,11 +142,26 @@
   }
 }
 
-.personText {
+.personPhoto {
+  grid-area: photo;
+}
+
+.personHead {
+  grid-area: head;
+  align-self: center;
   min-width: 0;
 
   @include sm {
     margin-top: 18px;
+  }
+}
+
+.personBody {
+  grid-area: body;
+  min-width: 0;
+
+  @include sm {
+    margin-top: 12px;
   }
 }
 
@@ -157,7 +181,7 @@
 }
 
 .personFocus {
-  margin: 12px 0 0;
+  margin: 0;
   max-width: 30em;
   font-size: $font-size-base;
   line-height: 1.55;

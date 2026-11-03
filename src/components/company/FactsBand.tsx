@@ -3,14 +3,19 @@ import ed from './Company.module.scss';
 
 export interface Fact {
   term: string;
-  detail: string;
+  /** The value in words; after `figure` it reads as the figure's unit ("years combined"). */
+  detail?: string;
+  /** A published figure at the head of the value ("200+", "$3,500"), set large. */
+  figure?: string;
 }
 
 /**
  * The page's answer-first facts, set as the hero's foot: a ruled row of
  * terms and values (two columns on phones, one row on wide screens). These
  * are the lines a buyer scans first and an assistant quotes; every value is
- * computed or sourced in content.ts / regions.ts. Server Component.
+ * computed or sourced in content.ts / regions.ts. A fact with a `figure`
+ * sets it in the display face, so the published numbers are what the eye
+ * meets first. Server Component.
  */
 export default function FactsBand({ facts, label }: { facts: readonly Fact[]; label: string }) {
   if (!facts.length) return null;
@@ -22,7 +27,11 @@ export default function FactsBand({ facts, label }: { facts: readonly Fact[]; la
           {facts.map((fact) => (
             <div key={fact.term} className={ed.fact}>
               <dt>{fact.term}</dt>
-              <dd>{fact.detail}</dd>
+              <dd className={fact.figure ? ed.figured : undefined}>
+                {fact.figure ? <span className={ed.figure}>{fact.figure}</span> : null}
+                {fact.figure && fact.detail ? ' ' : null}
+                {fact.detail}
+              </dd>
             </div>
           ))}
         </dl>

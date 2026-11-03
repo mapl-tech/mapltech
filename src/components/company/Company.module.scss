@@ -55,6 +55,11 @@
   }
 }
 
+// A head that is the whole section: what follows the lede sits inside it.
+.headOnly {
+  margin-bottom: 0;
+}
+
 // Content that sits in the 9fr column under a section head.
 .offset {
   min-width: 0;
@@ -147,6 +152,19 @@
   font-size: 1.0625rem;
 
   @include focus-ring;
+
+  // On paper the ring is crimson ink, like every other paper control.
+  .paper &:focus-visible {
+    outline-color: $color-red-ink;
+  }
+}
+
+// A section's own ask (the filled one first, a text action beside it).
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
 }
 
 .arrow {
@@ -237,6 +255,25 @@
     overflow-wrap: anywhere;
     font-variant-numeric: tabular-nums;
   }
+
+  // A value led by a published figure: the figure in the display face, its
+  // unit on the line under it.
+  .figured {
+    color: $color-fg-muted;
+  }
+}
+
+.figure {
+  display: block;
+  margin-bottom: 2px;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(2rem, 1.45rem + 1.7vw, 3rem); // 32px -> 48px
+  line-height: 1;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: $color-fg;
+  @include tabular;
 }
 
 // ---------------------------------------------------------------- cards

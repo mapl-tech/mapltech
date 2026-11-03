@@ -14,6 +14,11 @@
  * Jamaica gets a real local project instead: MAPL Tours, the travel company
  * MAPL TECH built and runs in Jamaica (case study in case/stories.ts).
  *
+ * Each fact is said once (Nov 2026 review): the working hours in the facts
+ * row, the overlap with Toronto in the hours question, who does the work in
+ * the services lede. So there is no separate hours section, and no FAQ that
+ * repeats the team sentence.
+ *
  * The close ledes join three published lines: the 24-hour reply (/contact-us),
  * the fixed quote after a 20-minute call (the homepage close) and the USD
  * pricing these pages already stated.
@@ -75,7 +80,7 @@ export interface RegionConfig {
   team: { heading: string; body: string; realitiesHeading: string; realities: readonly string[] };
   /** `heading` names the service list for assistive tech. */
   services: { heading: string; rows: readonly RegionServiceRow[] };
-  overlap: { heading: string; body: string };
+  /** A real local project; without one the page shows the site-wide proof in its place. */
   work?: RegionWork;
   faq: { heading: string; items: readonly RegionFaq[] };
   close: { title: string; lede: string };
@@ -90,16 +95,6 @@ export function startingFrom(service: EstimateService): string {
   const lows = tiersFor(service)
     .map((tier) => parsePriceLabel(tier.price).low)
     .filter((n): n is number => typeof n === 'number');
-  return formatMoney(Math.min(...lows));
-}
-
-/** Lowest published price across every line, e.g. "$3,500". */
-export function lowestStartingPrice(): string {
-  const lows = ESTIMATE_SERVICES.flatMap((service) =>
-    tiersFor(service)
-      .map((tier) => parsePriceLabel(tier.price).low)
-      .filter((n): n is number => typeof n === 'number'),
-  );
   return formatMoney(Math.min(...lows));
 }
 
@@ -182,10 +177,6 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         },
       ],
     },
-    overlap: {
-      heading: 'We work in West Africa Time.',
-      body: 'Our Nigeria team works 9\u00a0am to 6\u00a0pm West Africa Time, so you get quick turnarounds and no overnight delays. Our Toronto headquarters comes online every weekday afternoon, Lagos time.',
-    },
     faq: {
       heading: 'Questions Nigerian agencies ask first.',
       items: [
@@ -203,11 +194,6 @@ export const regions: Record<RegionSlug, RegionConfig> = {
           question: 'Is the work NDPR compliant?',
           answer:
             'We plan for NDPR, Nigeria’s data protection rules, from the start of every Nigerian build. We also use the same engineering standards as our Toronto headquarters.',
-        },
-        {
-          question: 'Who actually does the work, Canada or Nigeria?',
-          answer:
-            'Engineers and project managers who live and work in Nigeria. Our Toronto headquarters and 25+ years of combined experience stand behind them.',
         },
         {
           question: 'What does a project cost in Nigeria?',
@@ -278,10 +264,6 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         },
       ],
     },
-    overlap: {
-      heading: 'Within an hour of Toronto, all year.',
-      body: 'Our Jamaica team works 9\u00a0am to 6\u00a0pm Eastern Standard Time, so you get fast replies and no overnight delays.',
-    },
     work: {
       client: 'MAPL Tours',
       label: 'Our own product, in Jamaica',
@@ -308,11 +290,6 @@ export const regions: Record<RegionSlug, RegionConfig> = {
           question: 'Do you build for Caribbean payment providers and island internet?',
           answer:
             'Yes. We build for audiences who mostly browse on phones, for Caribbean payment providers, for local search and for island internet connections. Client portals, dashboards and reports connect to local payment providers and business tools.',
-        },
-        {
-          question: 'Who actually does the work, Canada or Jamaica?',
-          answer:
-            'Engineers and project managers with Caribbean roots. Our Toronto headquarters and 25+ years of combined experience stand behind them.',
         },
         {
           question: 'What does a project cost in Jamaica?',

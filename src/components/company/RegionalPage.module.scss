@@ -4,7 +4,7 @@
 
 // ---------------------------------------------------------------- place (hero aside)
 // Wide screens: the to-scale map with the live clock card on its foot.
-// Phones: the clock card alone (the hours section below covers the offices).
+// Phones: the clock card alone.
 .place {
   position: relative;
 }
@@ -25,43 +25,75 @@
   border-top: 1px solid $color-ink-hairline;
 }
 
-// 4px of non-link space each side of the hairline: 8px between row targets.
+// The homepage services index on paper, in two parts: the service page's
+// link, stretched over the name, the words and the arrow (`rowMain`), then
+// the price and a "Start a project" link that opens the brief with that
+// service chosen (`rowFoot`), outside the stretched area so the two targets
+// never overlap. 4px of non-link space over each hairline and 12px under
+// each ask keep row targets apart.
 .row {
-  padding: 4px 0;
+  display: grid;
+  row-gap: 10px;
+  padding: 4px 0 12px;
   border-bottom: 1px solid $color-ink-hairline;
+
+  // Wide screens: name, words and arrow in one line, the price and ask under
+  // the words (the main part shares the row's columns as a subgrid).
+  @include lg {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.25fr) 48px;
+    column-gap: 32px;
+    padding-bottom: 18px;
+  }
 }
 
-// Whole-row links, the homepage services index on paper.
-.rowLink {
+.rowMain {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 40px;
   grid-template-areas:
     'name go'
-    'text text'
-    'meta meta';
+    'text text';
   align-items: baseline;
   row-gap: 10px;
-  padding: 22px 0 24px;
+  padding-top: 22px;
   color: $color-ink;
-  text-decoration: none;
 
   @include lg {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.25fr) 140px 48px;
-    grid-template-areas: 'name text meta go';
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.25fr) 48px;
+    grid-template-columns: subgrid;
+    grid-template-areas: 'name text go';
     column-gap: 32px;
     align-items: center;
-    padding: 30px 0;
+    padding-top: 26px;
+  }
+}
+
+.rowLink {
+  grid-area: name;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
   }
 
+  // The ring goes round everything the link covers.
   &:focus-visible {
-    outline: $focus-ring-width solid $color-red-ink;
-    outline-offset: 4px;
+    outline: none;
+
+    &::after {
+      outline: $focus-ring-width solid $color-red-ink;
+      outline-offset: 4px;
+    }
   }
 }
 
 .rowName {
-  grid-area: name;
+  display: inline-block;
   font-family: $font-display;
   font-weight: 700;
   font-size: clamp(1.625rem, 1rem + 2.2vw, 3rem); // 26px -> 48px
@@ -78,13 +110,30 @@
   color: $color-ink-muted;
 }
 
-.rowMeta {
-  grid-area: meta;
-  @include mono-label($color-ink-muted);
+// The starting price and the row's ask: one line, price first (phones: the
+// ask at the right edge; wide screens: right after the price, under the words).
+.rowFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 28px;
 
   @include lg {
-    justify-self: end;
+    grid-column: 2;
+    justify-content: flex-start;
   }
+}
+
+// Body size in full-strength ink: the price is a fact, not a caption.
+.rowMeta {
+  margin: 0;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  line-height: 1.4;
+  color: $color-ink;
+  white-space: nowrap;
+  @include tabular;
 }
 
 .rowGo {
@@ -100,25 +149,24 @@
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.6s $ease-out-expo;
 }
 
-// Hover / focus: the name steps right in crimson ink and the arrow fills.
-.rowLink:hover,
-.rowLink:focus-visible {
-  .rowName {
-    color: $color-red-ink;
+// Hover / focus on the service link: the name steps right in crimson ink and
+// the arrow fills.
+.rowLink:hover .rowName,
+.rowLink:focus-visible .rowName {
+  color: $color-red-ink;
 
-    @include motion-ok {
-      transform: translateX(14px);
-    }
+  @include motion-ok {
+    transform: translateX(14px);
   }
+}
 
-  .rowGo {
-    background: $color-ink;
-    border-color: $color-ink;
-    color: $color-paper;
+.rowMain:has(.rowLink:hover, .rowLink:focus-visible) .rowGo {
+  background: $color-ink;
+  border-color: $color-ink;
+  color: $color-paper;
 
-    @include motion-ok {
-      transform: rotate(-45deg);
-    }
+  @include motion-ok {
+    transform: rotate(-45deg);
   }
 }
 
@@ -297,6 +345,18 @@
   object-position: top;
 }
 
+// ---------------------------------------------------------------- proof (no local project yet)
+// The approved client quote and the work page, under the head's lede.
+.proof {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+  max-width: 44rem;
+  margin-top: clamp(4px, 1vw, 12px);
+  padding-top: clamp(20px, 2.6vw, 28px);
+  border-top: 1px solid $color-hairline;
+}
+
 // ---------------------------------------------------------------- faq
 .faqGrid {
   display: grid;
@@ -364,6 +424,36 @@
     text-decoration-color: rgba($color-red, 0.8);
     text-underline-offset: 4px;
     font-variant-numeric: tabular-nums;
+
+    &:hover {
+      text-decoration-color: currentColor;
+    }
+
+    @include focus-ring;
+  }
+}
+
+// "Toronto line": the number is headquarters', not the branch's.
+.line {
+  color: $color-fg-muted;
+  white-space: nowrap;
+}
+
+// The one line for job seekers, under the questions.
+.hiring {
+  margin: clamp(24px, 3vw, 32px) 0 0;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-fg-muted;
+
+  a {
+    display: inline-block;
+    padding-block: 10px; // a 44px target without moving the line
+    margin-block: -10px;
+    color: $color-fg;
+    text-decoration: underline;
+    text-decoration-color: rgba($color-red, 0.8);
+    text-underline-offset: 4px;
 
     &:hover {
       text-decoration-color: currentColor;

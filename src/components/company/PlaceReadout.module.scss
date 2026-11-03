@@ -4,6 +4,8 @@
 
 // The "you are here" card on a regional page: city, live local time, zone,
 // coordinates. A #121214 card; on wide screens it sits on the map's foot.
+// The numerals are plain text colour so the card never outshouts the hero's
+// button; the live state's teal is the status dot alone.
 
 .readout {
   position: relative;
@@ -34,10 +36,6 @@
   letter-spacing: -0.035em;
   color: $color-fg;
   @include tabular;
-
-  time {
-    color: $color-teal; // a live readout: the one place teal belongs
-  }
 }
 
 .status {

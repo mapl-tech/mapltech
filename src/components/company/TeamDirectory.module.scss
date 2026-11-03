@@ -2,14 +2,9 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// The directory on paper, set like a credits roll: the country and its
-// office clock in the label column, the names in the content column.
-
-.hiring {
-  display: grid;
-  gap: 4px;
-  justify-items: start;
-}
+// The directory on paper, set like a credits roll: the country, its office
+// clock and its branch page in the label column, the names in the content
+// column.
 
 .groups {
   border-top: 1px solid $color-ink-hairline;
@@ -53,6 +48,11 @@
   color: $color-ink;
 }
 
+// The branch page link, on its own line under the country and its clock.
+.branch {
+  flex-basis: 100%;
+}
+
 .people {
   margin: 0;
   padding: 0;
@@ -78,8 +78,9 @@
     border-bottom: 0;
   }
 
+  // Tablet and up, the title follows the name on one line (columns below).
   @include md {
-    grid-template-columns: 52px minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-columns: 52px minmax(0, 1fr) minmax(0, 1.4fr);
     grid-template-areas: 'initials name role';
     column-gap: 24px;
     min-height: 84px;
@@ -133,6 +134,83 @@
 
   @include md {
     align-self: center;
-    text-align: right;
+  }
+}
+
+// Tablet and up, where subgrid is supported: the whole directory shares one
+// set of columns (nested subgrids), so every title starts right after the
+// longest name and lines up down all three countries; a title never sits
+// far from its name. Wide screens add the country's column first: 3/12 of
+// the width, 48px from the names (two 24px gaps round an empty track).
+// Without subgrid each row keeps the fixed shares above.
+@supports (grid-template-columns: subgrid) {
+  @include md {
+    .groups {
+      display: grid;
+      grid-template-columns: 52px fit-content(55%) minmax(0, 1fr);
+      column-gap: 24px;
+    }
+
+    .group,
+    .people,
+    .member {
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+      column-gap: 24px;
+    }
+
+    .groupHead {
+      grid-column: 1 / -1;
+    }
+
+    .people {
+      display: grid;
+    }
+  }
+
+  @include lg {
+    .groups {
+      grid-template-columns: calc((100% - 48px) / 4) 0 52px fit-content(40%) minmax(0, 1fr);
+    }
+
+    .groupHead {
+      grid-column: 1;
+    }
+
+    .people {
+      grid-column: 3 / -1;
+    }
+  }
+}
+
+// The one line for job seekers, at the directory's foot.
+.careers {
+  margin: clamp(24px, 3vw, 32px) 0 0;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-ink-muted;
+
+  @include lg {
+    margin-left: calc((100% - 48px) * 3 / 12 + 48px);
+  }
+
+  a {
+    display: inline-block;
+    padding-block: 10px; // a 44px target without moving the line
+    margin-block: -10px;
+    font-weight: $font-weight-semibold;
+    color: $color-red-ink; // 7.8:1 on paper
+    text-decoration: underline;
+    text-decoration-color: rgba($color-red-ink, 0.45);
+    text-underline-offset: 4px;
+
+    &:hover {
+      text-decoration-color: currentColor;
+    }
+
+    &:focus-visible {
+      outline: $focus-ring-width solid $color-red-ink;
+      outline-offset: 2px;
+    }
   }
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
 import { REDESIGN_DATE } from '@/config/routes';
 import { careers, siteConfig } from '@/config/site';
@@ -18,6 +19,8 @@ import styles from './careers.module.scss';
 
 const PATH = '/careers';
 const URL = 'https://mapltech.com/careers';
+/** The apply form's card: the phone bar's "Apply" lands here. */
+const APPLY_FORM_ID = 'apply-form';
 
 export const metadata: Metadata = {
   title: CAREERS.title,
@@ -42,8 +45,12 @@ export const metadata: Metadata = {
  *
  * Order: the hero (roles first) -> the facts -> the board -> how to apply,
  * with the form (paper; the talent list for people with no listed role sits
- * one click away inside it) -> the close, which speaks to the agency owner
- * who came to see who would be doing the work.
+ * one click away beside it) -> the close, which speaks to the agency owner
+ * who came to see who would be doing the work. The form leads the apply
+ * section's DOM, so phones and tablets meet it right under "How to apply.";
+ * wide screens place the rail (steps, the team and work pages, email, the
+ * talent list) beside it on the left. Once the hero is gone, the phone bar
+ * offers "Apply" (to the form), not the roles the reader is already in.
  */
 /** Display only: a spaced hyphen used as a dash in the source copy reads as a colon. */
 const tidy = (text: string) => text.replace(/\s+-\s+/, ': ');
@@ -70,6 +77,7 @@ const careersGraph = pageGraph({
 
 export default function CareersPage() {
   const { hero, roles: rolesCopy, apply, talent } = CAREERS;
+  const { evidence } = apply;
   return (
     <>
       <JsonLd data={careersGraph} />
@@ -82,7 +90,12 @@ export default function CareersPage() {
         lede={<p>{hero.lede}</p>}
         actions={
           <HeroActions
-            primary={{ label: 'See open roles', href: '#roles', placement: 'careers_hero_primary' }}
+            primary={{
+              label: 'See open roles',
+              href: '#roles',
+              placement: 'careers_hero_primary',
+              bar: { label: 'Apply', href: `#${APPLY_FORM_ID}` },
+            }}
             secondary={{ label: 'How to apply', href: '#apply', placement: 'careers_hero_secondary' }}
           />
         }
@@ -121,8 +134,22 @@ export default function CareersPage() {
           </header>
 
           <div className={styles.applyGrid}>
+            <div id={APPLY_FORM_ID} className={`${ed.card} ${styles.formCard} ${styles.applyForm}`}>
+              <CareersApply roles={roles} contactEmail={siteConfig.email} />
+            </div>
             <div className={styles.applyRail}>
               <Steps steps={apply.steps.map(({ name, text }) => ({ title: name, text }))} tone="paper" />
+              <p className={styles.evidence}>
+                {evidence.before}
+                <Link href={evidence.team.href} data-cta-placement="careers_apply_team">
+                  {evidence.team.label}
+                </Link>
+                {evidence.between}
+                <Link href={evidence.work.href} data-cta-placement="careers_apply_work">
+                  {evidence.work.label}
+                </Link>
+                {evidence.after}
+              </p>
               <p className={styles.fallback}>
                 Prefer email? Write to{' '}
                 <a
@@ -146,9 +173,6 @@ export default function CareersPage() {
                   </div>
                 </div>
               </details>
-            </div>
-            <div className={`${ed.card} ${styles.formCard}`}>
-              <CareersApply roles={roles} contactEmail={siteConfig.email} />
             </div>
           </div>
         </div>

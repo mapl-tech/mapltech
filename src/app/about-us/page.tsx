@@ -30,11 +30,12 @@ export const metadata: Metadata = {
 
 /*
  * /about-us, Nov 2026 simplify pass. What the company does, said plainly, as
- * the first screen, the answer-first facts, then: why MAPL TECH exists, in
- * the founders' voice -> the two founders (paper) -> the three offices -> the
- * crimson close, with the site's reassurance line (a fixed quote after one
- * 20-minute call, an NDA first). How the work runs is told once, on the
- * homepage.
+ * the first screen, with the site's reassurance line under the ask (a fixed
+ * quote after one 20-minute call, an NDA first), then the answer-first facts
+ * (the published figures lead), then: why MAPL TECH exists, in the founders'
+ * voice -> the two founders (paper), with the ask beside them -> the three
+ * offices -> the crimson close, which says what the call is for (the
+ * homepage's close). How the work runs is told once, on the homepage.
  *
  * Structured data: AboutPage (mainEntity: the Organization from the root
  * layout) + BreadcrumbList + the two founders, from the same arrays the page
@@ -70,6 +71,7 @@ export default function AboutPage() {
             secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: 'about_hero_secondary' }}
           />
         }
+        note={HERO_REASSURE}
       />
 
       <FactsBand facts={ABOUT.facts} label="MAPL TECH at a glance" />
@@ -80,7 +82,7 @@ export default function AboutPage() {
 
       <Offices />
 
-      <CloseBand title={ABOUT.close.title} lede={HERO_REASSURE} placement="about_close" />
+      <CloseBand title={ABOUT.close.title} placement="about_close" />
     </>
   );
 }

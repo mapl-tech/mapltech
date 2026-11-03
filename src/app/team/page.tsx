@@ -31,7 +31,10 @@ export const metadata: Metadata = {
  * LinkedIn and the `/team#slug` anchors their Person nodes point at. Then the
  * wider team exactly as team.ts lists it, on paper: names and titles only,
  * with initials (those records are unconfirmed and carry placeholder photos,
- * so they get no photos, no bios and no Person nodes). Then the close.
+ * so they get no photos, no bios and no Person nodes), under the office
+ * hours, with the Nigeria and Jamaica groups linked to their branch pages.
+ * The page talks to buyers (the facts end on the public price); job seekers
+ * get one small line at the directory's foot. Then the close.
  *
  * Structured data (unchanged): AboutPage + BreadcrumbList + one Person node
  * per founder, from the same records the page renders.
