@@ -89,8 +89,8 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
                   </EstimateBriefLink>
                 ) : (
                   <LoadIntoEstimator service={facts.service} size={size.key} className={styles.tierAction}>
-                    Price this package<span className="visually-hidden">: {facts.name}, {tier.name}</span>
-                    <span aria-hidden="true"> ↑</span>
+                    Price this package<span className="visually-hidden">: {facts.name}, {tier.name}</span>{' '}
+                    <Arrow direction="up" />
                   </LoadIntoEstimator>
                 )}
               </div>
