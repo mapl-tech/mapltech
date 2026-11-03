@@ -180,7 +180,7 @@ $letter-spacing-widest: 0.12em;
 $letter-spacing-label: 0.08em;  // DM Sans caps need less than a mono face did
 
 // Measure
-$measure-lede: 56ch;
+$measure-lede: 31em; // ~65 characters a line (56ch let a 21px lede run ~80)
 $measure-prose: 62ch;
 
 // --------------------------------------------

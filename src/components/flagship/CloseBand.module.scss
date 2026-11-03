@@ -52,7 +52,7 @@
 
 .lede {
   margin: 0;
-  max-width: 34em;
+  max-width: $measure-lede; // ~65 characters a line
   font-size: $font-size-lede;
   line-height: 1.5;
   color: $color-white; // 7.56:1 on the crimson; transparency would erode it
