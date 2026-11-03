@@ -4,16 +4,16 @@
  * imports.
  *
  * Sources, so every sentence can be checked:
- * - The about hero: the live site's purpose ("the engineering backbone behind
- *   agencies that refuse to cut corners"), and what the company builds, as
- *   the four service lines and the white-label promise state it (the
- *   homepage FAQ: "every deliverable carries your brand").
+ * - The about hero: what the company does, said literally (the homepage hero:
+ *   "We build the websites, automation, software and cloud systems that
+ *   agencies sell"), then the four service lines and the white-label promise
+ *   (the homepage FAQ: "every deliverable carries your brand").
  * - Founders: `executives` in config/team.ts (names, titles, bios, LinkedIn,
  *   photos, the same two the homepage shows).
  * - "Why MAPL TECH exists": the previous about page ("MAPL TECH exists because
  *   agencies shouldn't need to hire a full engineering department...", "We
  *   don't compete with you") and flagship/content.ts WORK_INTRO.
- * - Offices: the published 09:00-18:00 local office hours (ui/officeTime)
+ * - Offices: the published 9 am to 6 pm local office hours (ui/officeTime)
  *   and the published offsets (Lagos 5-6 hours ahead of Toronto; Kingston
  *   keeps no daylight saving time).
  * - Numbers: 200+ projects supported and 25+ years of combined experience as
@@ -114,13 +114,9 @@ export const ABOUT = {
     'MAPL TECH builds websites, automation, internal tools and cloud systems for agencies, under the agency’s brand. Two founders, teams in Toronto, Lagos and Kingston, and public prices.',
   hero: {
     label: 'About MAPL TECH',
-    // The live site's purpose, said as what the company is.
-    title: [
-      { text: 'MAPL TECH is the ' },
-      { text: 'engineering backbone', accent: true },
-      { text: ' behind agencies that refuse to cut corners.' },
-    ] as readonly TitleRun[],
-    lede: 'We build the websites, automation, internal tools and cloud systems that agencies sell to their clients. Your brand goes on the work. Our engineers stay behind it.',
+    // What the company does, said literally (no metaphor), in seven words.
+    title: [{ text: 'We build the technology that ' }, { text: 'agencies sell.', accent: true }] as readonly TitleRun[],
+    lede: 'That means websites, automation, internal tools and cloud systems for your clients. Your brand goes on the work. Our engineers stay behind it.',
   },
   facts: [
     { term: 'Founded by', detail: FOUNDER_NAMES },
@@ -146,7 +142,7 @@ export const ABOUT = {
   offices: {
     label: 'Where we work',
     title: 'Three offices. One team.',
-    lede: 'Toronto is our headquarters. We also have teams in Lagos, Nigeria and Kingston, Jamaica. Every office works 09:00 to 18:00 local time, Monday to Friday.',
+    lede: 'Toronto is our headquarters. We also have teams in Lagos, Nigeria and Kingston, Jamaica. Every office works 9\u00a0am to 6\u00a0pm local time, Monday to Friday.',
   },
   founders: {
     label: 'Who leads it',

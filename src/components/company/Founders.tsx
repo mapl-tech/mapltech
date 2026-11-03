@@ -15,12 +15,14 @@ import styles from './Founders.module.scss';
  *   and the `/team#slug` anchors their Person JSON-LD points at.
  */
 
+// Both uses put the founder's name and role in visible text right after the
+// photo, so the photo is decorative (alt=""): no name read out twice.
 function Portrait({ founder, sizes, className }: { founder: Founder; sizes: string; className?: string }) {
   return (
     <div className={[styles.photo, className].filter(Boolean).join(' ')}>
       <Image
         src={founder.image}
-        alt={`${founder.name}, ${founder.title} of MAPL TECH`}
+        alt=""
         width={400}
         height={400}
         sizes={sizes}

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { BrowserFrame, DesktopShot } from './Frames';
 import IndexPreview from './IndexPreview';
 import PipelineDiagram from './PipelineDiagram';
-import { LAYER_VIEWS, type LayerView } from './serviceContent';
+import { LAYER_VIEWS, rowExample, type LayerView } from './serviceContent';
 import styles from './IndexRows.module.scss';
 
 /** "lrostaffing.com" for the preview's address bar, from the capture's case. */
@@ -25,9 +25,12 @@ function Exhibit({ layer, sizes }: { layer: LayerView; sizes: string }) {
 /**
  * The four services as a big index: what the service is in a few words, the
  * name as large as the row allows, the one-line summary, the public "from"
- * price and an arrow. Each row is one link to the service page. On desktop a
- * preview of real work trails the cursor (IndexPreview); tablets and reduced
- * motion get the same exhibit inline in the row; phones keep the rows short.
+ * price and an arrow. Each row is one link to the service page. Under it, a
+ * separate small link to one real project for that service (never nested in
+ * the row's link, and 8px clear of it); Cloud has no case study of its own,
+ * so its row has none. On desktop a preview of real work trails the cursor
+ * (IndexPreview); wide touch screens and reduced motion get the same exhibit
+ * inline in the row; phones and tablets keep the rows short.
  */
 export default function IndexRows({ labelId }: { labelId: string }) {
   return (
@@ -38,31 +41,55 @@ export default function IndexRows({ labelId }: { labelId: string }) {
     >
       <ol className={styles.rows} aria-labelledby={labelId}>
         {LAYER_VIEWS.map((layer, i) => (
-          <li key={layer.slug} className={styles.row} data-index={i}>
-            <Link href={layer.path} className={styles.link} data-cta-placement={`services_index_${layer.service}`}>
-              <span className={styles.kicker}>
-                {layer.role}
-                <span className="visually-hidden">: </span>
-              </span>
-              <span className={styles.name}>
-                {layer.name}
-                <span className="visually-hidden">. </span>
-              </span>
-              <span className={styles.summary}>
-                {layer.summary}
-                <span className="visually-hidden"> </span>
-              </span>
-              <div className={styles.media} aria-hidden="true">
-                <Exhibit layer={layer} sizes="560px" />
-              </div>
-              <span className={styles.meta}>{layer.fromLabel}</span>
-              <span className={styles.go} aria-hidden="true">
-                →
-              </span>
-            </Link>
-          </li>
+          <Row key={layer.slug} layer={layer} index={i} />
         ))}
       </ol>
     </IndexPreview>
+  );
+}
+
+function Row({ layer, index }: { layer: LayerView; index: number }) {
+  const example = rowExample(layer);
+  return (
+    <li className={styles.row} data-index={index} data-example={example ? '' : undefined}>
+      <Link href={layer.path} className={styles.link} data-cta-placement={`services_index_${layer.service}`}>
+        <span className={styles.kicker}>
+          {layer.role}
+          <span className="visually-hidden">: </span>
+        </span>
+        <span className={styles.name}>
+          {layer.name}
+          <span className="visually-hidden">. </span>
+        </span>
+        <span className={styles.summary}>
+          {layer.summary}
+          <span className="visually-hidden"> </span>
+        </span>
+        <div className={styles.media} aria-hidden="true">
+          <Exhibit layer={layer} sizes="560px" />
+        </div>
+        <span className={styles.meta}>{layer.fromLabel}</span>
+        <span className={styles.go} aria-hidden="true">
+          →
+        </span>
+      </Link>
+      {example ? (
+        <p className={styles.example}>
+          <Link
+            href={example.href}
+            className={styles.exampleLink}
+            data-cta-placement={`services_index_${layer.service}_example`}
+          >
+            <span>
+              <span className={styles.exampleLabel}>Example:</span> {example.client}
+            </span>
+            <span className="visually-hidden">, a case study for {layer.name}</span>
+            <span aria-hidden="true" className={styles.exampleArrow}>
+              →
+            </span>
+          </Link>
+        </p>
+      ) : null}
+    </li>
   );
 }

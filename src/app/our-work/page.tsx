@@ -69,7 +69,7 @@ export default function OurWorkPage() {
       <PageHeader
         id="work-title"
         label="Our work"
-        title="Work we can show."
+        title="Projects we can show you."
         lede={
           <p>
             Most of our work is published under our partners’ names. These {countWord(items.length)} projects carry ours.

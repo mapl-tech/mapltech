@@ -2,8 +2,9 @@
 
 import { useEffect, useId, useRef, useState, type FocusEvent, type FormEvent, type ReactNode } from 'react';
 import { ESTIMATE_SERVICES, SERVICE_META } from '@/lib/estimate';
-import { RECAPTCHA_ENABLED, field, isEmail, useContactSubmit } from './useContactSubmit';
+import { field, isEmail, useContactSubmit } from './useContactSubmit';
 import styles from '@/components/pricing/ReferralForm.module.scss';
+import RecaptchaNotice from './RecaptchaNotice';
 
 /**
  * The referral form (the live page's fields, kept: you, and the agency you
@@ -306,18 +307,8 @@ export default function ReferralSignup() {
         <p className={styles.note}>We mention your introduction when we reach out.</p>
       </div>
 
-      {RECAPTCHA_ENABLED ? (
-        <p className={styles.recaptcha}>
-          Protected by reCAPTCHA:{' '}
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
-            Privacy<span className="visually-hidden"> (opens in a new tab)</span>
-          </a>{' '}
-          ·{' '}
-          <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">
-            Terms<span className="visually-hidden"> (opens in a new tab)</span>
-          </a>
-        </p>
-      ) : null}
+      {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}
+      <RecaptchaNotice className={styles.recaptcha} />
     </form>
   );
 }

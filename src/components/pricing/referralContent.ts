@@ -60,7 +60,7 @@ export const REFERRAL_TERMS: FaqItem[] = [
   },
   {
     question: 'What does the agency I refer get?',
-    answer: `Public prices, a 20-minute call and a fixed quote after it. ${web.name} starts at ${web.fromLabel}, ${automation.name} at ${automation.fromLabel}, ${tools.name} at ${tools.fromLabel} and ${cloud.name} at ${cloud.fromLabel}. The work can go out under their own brand.`,
+    answer: `Public prices, a 20-minute call and a fixed quote after it. ${web.name} costs from ${web.fromLabel}, ${automation.name} from ${automation.fromLabel}, ${tools.name} from ${tools.fromLabel} and ${cloud.name} from ${cloud.fromLabel}. The work can go out under their own brand.`,
   },
   {
     question: 'Where does MAPL TECH work?',

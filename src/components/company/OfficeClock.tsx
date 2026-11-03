@@ -1,14 +1,15 @@
 'use client';
 
 import { isOfficeOpen, useMinute, zoneTime } from '@/components/ui/officeTime';
+import { timeWords } from './timeWords';
 import styles from './OfficeClock.module.scss';
 
 /**
- * "Toronto office · 17:22 · Open now" beside a country heading on paper: the
- * office's live local time and whether it is in office hours. The server
- * renders the city alone in the same box (no clock on the server), so
- * hydration causes no layout shift. Not a live region: a clock that announces
- * itself every minute is noise.
+ * "Toronto office · 5:22 pm · Open now" beside a country heading on paper: the
+ * office's live local time and whether it is in office hours (`dateTime`
+ * keeps the 24-hour value). The server renders the city alone in the same box
+ * (no clock on the server), so hydration causes no layout shift. Not a live
+ * region: a clock that announces itself every minute is noise.
  */
 export default function OfficeClock({ city, timeZone }: { city: string; timeZone: string }) {
   const minute = useMinute();
@@ -23,7 +24,7 @@ export default function OfficeClock({ city, timeZone }: { city: string; timeZone
             ·
           </span>
           <time dateTime={t.hhmm} className={styles.time}>
-            {t.hhmm}
+            {timeWords(t.hour, t.minute)}
           </time>
           <span className={styles.sep} aria-hidden="true">
             ·

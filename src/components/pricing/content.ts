@@ -79,7 +79,7 @@ export interface ServiceFacts {
   entry: string;
   tierCount: number;
   monthlyFrom: number;
-  /** Answer-first sentence for the price list (GEO): range of packages + monthly floor. */
+  /** Answer-first sentences for the price list (GEO): range of packages + monthly floor. */
   answer: string;
   href: string;
   linkLabel: string;
@@ -113,7 +113,7 @@ function factsFor(service: EstimateService): ServiceFacts {
     entry: copy.entry,
     tierCount: tiers.length,
     monthlyFrom,
-    answer: `${NUMBER_WORDS[tiers.length]} packages, from ${formatMoney(from)} to ${ceilingOf(service)}. ${monthly} ${monthly === 'Monthly maintenance' ? 'starts' : 'start'} at ${formatMoney(monthlyFrom)}.`,
+    answer: `${NUMBER_WORDS[tiers.length]} packages, from ${formatMoney(from)} to ${ceilingOf(service)}. ${monthly} from ${formatMoney(monthlyFrom)} a month.`,
     href: meta.path,
     linkLabel: `More about ${meta.label}`,
   };
@@ -125,7 +125,7 @@ export const factsOf = (service: EstimateService): ServiceFacts =>
   SERVICES.find((entry) => entry.service === service) ?? factsFor(service);
 
 /* ------------------------------------------------------------------ */
-/* Monthly lines: bundles and hourly                                     */
+/* Monthly lines: monthly partnerships (site.ts `bundles`) and hourly    */
 /* ------------------------------------------------------------------ */
 
 const bundleRange = (label: string) => {
@@ -133,9 +133,11 @@ const bundleRange = (label: string) => {
   return formatRange(parsed.low, parsed.high);
 };
 
-export const BUNDLES_ANSWER = `${NUMBER_WORDS[pricing.bundles.length]} bundles cover several services for one monthly price: ${pricing.bundles
-  .map((bundle) => `${bundle.name} at ${bundleRange(bundle.price)} a month`)
-  .join(' and ')}.`;
+/** The monthly partnerships in short sentences (the price list row and the pricing FAQ). */
+export const BUNDLES_ANSWER = [
+  'A monthly partnership covers several services for one monthly price.',
+  ...pricing.bundles.map((bundle) => `${bundle.name} is ${bundleRange(bundle.price)} a month.`),
+].join(' ');
 
 const standard = parsePriceLabel(pricing.hourlyRates.standard);
 const emergency = parsePriceLabel(pricing.hourlyRates.emergency);

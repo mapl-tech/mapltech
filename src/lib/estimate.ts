@@ -430,10 +430,10 @@ export function formatEstimateRange(result: EstimateResult): string {
   return formatRange(result.oneTimeLow, result.oneTimeHigh, { openEnded: result.isOpenEnded });
 }
 
-/** "$1,000–$2,000 / month", or null when no support is selected. */
+/** "$1,000–$2,000 a month", or null when no support is selected. */
 export function formatEstimateMonthly(result: EstimateResult): string | null {
   if (result.monthly.length === 0) return null;
-  return `${formatRange(result.monthlyLow, result.monthlyHigh)} / month`;
+  return `${formatRange(result.monthlyLow, result.monthlyHigh)} a month`;
 }
 
 export function formatLineRange(line: EstimateLine): string {
@@ -575,7 +575,7 @@ export function supportLineFor(service: EstimateService, level: SupportLevel): E
 }
 
 /**
- * Partner bundle for a multi-service selection. Automation + tools only →
+ * Monthly partnership for a multi-service selection. Automation + tools only →
  * "Agency Automation Partner" (its features: automation & AI workflows,
  * internal tooling support); anything touching web or cloud → "Full Systems
  * Partner" (automation, tools, web, infrastructure).
@@ -642,7 +642,7 @@ export function estimate(rawInput?: Partial<EstimateInput> | null): EstimateResu
       drivers.push({
         kind: 'support',
         service: line.service,
-        text: `${level?.label ?? 'Ongoing'} support → ${line.name}, ${formatRange(line.low, line.high)} / month`,
+        text: `${level?.label ?? 'Ongoing'} support → ${line.name}, ${formatRange(line.low, line.high)} a month`,
       });
     }
   } else if (lines.length > 0) {
@@ -660,7 +660,7 @@ export function estimate(rawInput?: Partial<EstimateInput> | null): EstimateResu
   if (bundle) {
     drivers.push({
       kind: 'bundle',
-      text: `${lines.length} service lines selected → ${bundle.name} covers this as one monthly partnership, ${formatRange(bundle.low, bundle.high)} / month`,
+      text: `${lines.length} service lines selected → ${bundle.name} covers this as one monthly partnership, ${formatRange(bundle.low, bundle.high)} a month`,
     });
   }
 
@@ -840,7 +840,7 @@ export function estimateSummaryText(result: EstimateResult, opts?: { shareUrl?: 
   }
 
   if (result.bundle) {
-    out.push(`Partner bundle: ${result.bundle.name}, ${formatRange(result.bundle.low, result.bundle.high)} / month`, '');
+    out.push(`Monthly partnership: ${result.bundle.name}, ${formatRange(result.bundle.low, result.bundle.high)} a month`, '');
   }
 
   out.push('Notes');

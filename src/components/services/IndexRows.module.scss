@@ -155,6 +155,47 @@
   }
 }
 
+// ---------------------------------------------------------------- the example
+// One real project per service, as its own small link under the row's link: never inside it (nested
+// links are invalid) and 8px clear of its hit area (the margin). The row's bottom space moves under
+// the example, so a row with one ends as far from the hairline as a row without.
+.row[data-example] .link {
+  padding-bottom: 8px;
+
+  @include lg {
+    padding-bottom: 12px;
+  }
+}
+
+.example {
+  display: flex;
+  margin: 8px 0 0;
+  padding-bottom: 12px;
+
+  @include lg {
+    padding-bottom: 28px;
+  }
+}
+
+.exampleLink {
+  @include text-action($color-fg);
+  gap: 8px;
+  font-size: $font-size-base;
+}
+
+.exampleLabel {
+  font-weight: $font-weight-medium;
+  color: $color-fg-muted;
+}
+
+.exampleArrow {
+  transition: transform 0.4s $ease-out-expo;
+
+  .exampleLink:hover & {
+    transform: translateX(4px);
+  }
+}
+
 // Hover and keyboard focus: the name steps right in crimson (large text, 3.66:1), the arrow fills.
 .link:hover,
 .link:focus-visible {

@@ -30,12 +30,14 @@
   @include mono-label;
 }
 
+// The answer, not the headline: always well under the H1 (PageHeader "l", 44px -> 104px), so the
+// promise stays the one dominant element. 32px on phones, 46px at 1440, 48px cap.
 .factPrice {
   margin: 0;
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(3.25rem, 2.2rem + 3.4vw, 5.75rem); // 52px -> 92px
-  line-height: 0.88;
+  font-size: clamp(2rem, 1.6rem + 1.4vw, 3rem);
+  line-height: 0.95;
   letter-spacing: -0.045em;
   color: $color-fg;
   @include tabular;
@@ -143,7 +145,8 @@
   gap: clamp(48px, 7vw, 88px);
 }
 
-// Six short points: one column on phones, two on tablets, three on wide screens.
+// Four short points: one column on phones, two from tablets. On wide screens the two columns sit
+// under the heading's column (the head's 9 of 12, after its 48px gap), as the stack row below does.
 .caps {
   list-style: none;
   margin: 0;
@@ -156,7 +159,8 @@
   }
 
   @include lg {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: calc((100% - 48px) * 0.75);
+    margin-left: auto;
   }
 }
 

@@ -318,7 +318,7 @@ $accent: $color-red-ink;
 }
 
 // The number leads visually, its unit sits under it; the DOM still reads
-// "Starting at $5,000" for assistive tech.
+// "From $5,000" for assistive tech.
 .priceValue {
   order: -1;
   font-family: $font-display;
@@ -331,10 +331,10 @@ $accent: $color-red-ink;
   @include tabular;
 }
 
+// "a month" beside a large price: never under 16px.
 .perLarge {
-  margin-left: 2px;
   font-family: $font-body;
-  font-size: 0.4em;
+  font-size: max(1rem, 0.4em);
   font-weight: $font-weight-semibold;
   letter-spacing: 0;
   color: $muted;
@@ -550,13 +550,18 @@ $accent: $color-red-ink;
   @include tabular;
 }
 
+// "a month" / "an hour" beside the amount; on phones it sits under it, so the
+// price column stays as narrow as the number and long plan names keep their room.
 .per {
-  margin-left: 2px;
   font-family: $font-body;
   font-size: 1rem;
   font-weight: $font-weight-medium;
   letter-spacing: 0;
   color: $muted;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    display: block;
+  }
 }
 
 .monthlyDesc {

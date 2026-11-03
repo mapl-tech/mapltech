@@ -65,7 +65,7 @@ function pricingFaq(): FaqEntry {
       `${SERVICE_META.automation.label} from ${fromOf(automation[0].price)}`,
       `${SERVICE_META.tools.label} from ${fromOf(tools[0].price)}`,
       `${SERVICE_META.cloud.label} from ${fromOf(cloud[0].price)}`,
-      `Monthly partner plans: ${bundleLow} to ${bundleHigh} a month`,
+      `Monthly partnerships: ${bundleLow} to ${bundleHigh} a month`,
       // "$65-$120/hour" in site.ts reads as "$65–$120 an hour" here, like every other range.
       `Hourly work: ${pricing.hourlyRates.standard.replace(/^(\$[\d,]+)-(\$[\d,]+)\/hour$/, '$1–$2 an hour')}`,
     ],

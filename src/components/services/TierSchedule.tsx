@@ -36,13 +36,15 @@ function Amount({ label }: { label: string }) {
 
 /**
  * What the service costs, on paper: one card per tier with its name, public
- * price, who it is for and what it includes. Tablets and desktops show the
- * first three inclusions and fold the rest into "See everything included";
- * phones fold them all, with the tier's action, into "What’s included", so
- * four tiers read in under two screens. No tier is marked "recommended":
- * nothing in the data says which one most clients choose. Each card
- * deep-links the estimator with that tier selected; a Custom tier goes to the
- * project brief. Monthly plans and the hourly rate follow, one tap away.
+ * price, who it is for and what it includes. A starting price reads "From
+ * $5,000"; a range reads as a range. Tablets and desktops show the first three
+ * inclusions and fold the rest into "What’s included"; phones fold them all,
+ * with the tier's action, into the same "What’s included", so four tiers read
+ * in under two screens. No tier is marked "recommended": nothing in the data
+ * says which one most clients choose. Each card deep-links the estimator with
+ * that tier selected ("Price this tier"); a Custom tier goes to the project
+ * brief ("Start a project"). Monthly plans and the hourly rate follow, one tap
+ * away.
  */
 export default function TierSchedule({ view }: { view: LayerView }) {
   const tiers = tierViews(view);
@@ -51,8 +53,11 @@ export default function TierSchedule({ view }: { view: LayerView }) {
   const hourly = humanPrice(pricing.hourlyRates.standard);
   const afterIntro = [
     support ? `Every tier includes ${support} of support after launch.` : 'Once it is live, we can keep looking after it.',
-    monthly ? `Monthly plans start at ${monthly}, and hourly work costs ${hourly}.` : `Hourly work costs ${hourly}.`,
-  ].join(' ');
+    monthly ? (support ? `After that, plans cost from ${monthly}.` : `Plans cost from ${monthly}.`) : null,
+    `Hourly work is ${hourly}.`,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <section id="tiers" className={styles.tiers} aria-labelledby="tiers-title">
@@ -114,6 +119,19 @@ export default function TierSchedule({ view }: { view: LayerView }) {
   );
 }
 
+/** Under the price: how Custom is priced, and the typical timeline where one is published (web), kept on one line. */
+function PriceNote({ tier }: { tier: TierView }) {
+  const timeline = tier.timeline ? `${tier.priceNote ? 'usually' : 'Usually'} ${tier.timeline.label}` : null;
+  if (!tier.priceNote && !timeline) return null;
+  return (
+    <p className={styles.priceNote}>
+      {tier.priceNote}
+      {tier.priceNote && timeline ? ' · ' : null}
+      {timeline ? <span className={styles.nowrap}>{timeline}</span> : null}
+    </p>
+  );
+}
+
 function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
   const top = tier.features.slice(0, TIER_HIGHLIGHTS);
   const rest = tier.features.slice(TIER_HIGHLIGHTS);
@@ -142,17 +160,10 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
         <h3 className={styles.tierName}>{tier.name}</h3>
         <div className={styles.priceBlock}>
           <p className={styles.price} data-long={tier.price.length > 8 ? '' : undefined}>
+            {tier.isFloor ? <span className={styles.from}>From </span> : null}
             {tier.price}
           </p>
-          <p className={styles.priceNote}>
-            {tier.priceNote}
-            {tier.timeline ? (
-              <>
-                {' · '}
-                <span className={styles.nowrap}>usually {tier.timeline.label}</span>
-              </>
-            ) : null}
-          </p>
+          <PriceNote tier={tier} />
         </div>
       </div>
       <p className={styles.who}>{keepTogether(sentence(tier.who))}</p>
@@ -164,8 +175,7 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
         </div>
         <details className={styles.more} data-rest={rest.length ? undefined : 'none'}>
           <summary className={styles.summary}>
-            <span className={styles.phoneOnly}>What’s included</span>
-            <span className={styles.wideOnly}>See everything included</span>
+            What’s included
             <span className="visually-hidden"> in {tier.name}</span>
             <span className={styles.chevron} aria-hidden="true" />
           </summary>

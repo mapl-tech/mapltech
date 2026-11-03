@@ -1,10 +1,21 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type FocusEvent, type FormEvent, type InputHTMLAttributes, type MouseEvent } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FocusEvent,
+  type FormEvent,
+  type InputHTMLAttributes,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import { useSearchString } from './useUrlState';
-import { GENERIC_ERROR, RECAPTCHA_ENABLED, isEmail, useContactSubmit } from './useContactSubmit';
+import { GENERIC_ERROR, isEmail, useContactSubmit } from './useContactSubmit';
 import {
   KIND_OPTIONS,
   briefLines,
@@ -22,6 +33,7 @@ import {
   type ReplyMethod,
 } from './brief';
 import styles from './ProjectBrief.module.scss';
+import RecaptchaNotice from './RecaptchaNotice';
 
 /**
  * The contact brief: one question at a time, in one form. Since the Nov 2026
@@ -432,7 +444,13 @@ export default function ProjectBrief() {
       ) : null}
 
       {/* ---------------------------------------------------------- step 1 */}
-      <fieldset className={styles.step} hidden={step !== 1} data-step="1">
+      {/* The hint (and the error, when there is one) describes the group once, not every option. */}
+      <fieldset
+        className={styles.step}
+        hidden={step !== 1}
+        data-step="1"
+        aria-describedby={errors.kind ? 'brief-kind-hint brief-kind-error' : 'brief-kind-hint'}
+      >
         <legend ref={setQuestionRef(1)} tabIndex={-1} className={styles.question}>
           What are we building?
         </legend>
@@ -445,19 +463,23 @@ export default function ProjectBrief() {
           value={kind}
           onChange={chooseKind}
           onPick={(event, option) => pointerPick(event, option.key === 'unsure' ? 3 : 2)}
-          describedBy={errors.kind ? 'brief-kind-hint brief-kind-error' : 'brief-kind-hint'}
         />
         {errors.kind ? <FieldError id="brief-kind-error" message={errors.kind} alert /> : null}
       </fieldset>
 
       {/* ---------------------------------------------------------- step 2 */}
-      <fieldset className={styles.step} hidden={step !== 2} data-step="2">
+      <fieldset
+        className={styles.step}
+        hidden={step !== 2}
+        data-step="2"
+        aria-describedby={errors.size ? 'brief-size-hint brief-size-error' : 'brief-size-hint'}
+      >
         <legend ref={setQuestionRef(2)} tabIndex={-1} className={styles.question}>
           {sizeQuestion(kind)}
         </legend>
         <p id="brief-size-hint" className={styles.hint}>
           {kind === 'partner'
-            ? 'Monthly plans from our public price list. Pick one to move on.'
+            ? 'Each partnership shows its public monthly price. Pick one to move on.'
             : 'Each size shows its public price. Pick one to move on.'}
         </p>
         <Options
@@ -466,7 +488,6 @@ export default function ProjectBrief() {
           value={size}
           onChange={chooseSize}
           onPick={(event) => pointerPick(event, 3)}
-          describedBy={errors.size ? 'brief-size-hint brief-size-error' : 'brief-size-hint'}
         />
         {errors.size ? <FieldError id="brief-size-error" message={errors.size} alert /> : null}
       </fieldset>
@@ -532,6 +553,12 @@ export default function ProjectBrief() {
             }}
             onBlur={onBlur('email')}
             error={errors.email}
+            note={
+              <>
+                We use your email to contact you about your brief. We never sell it.{' '}
+                <Link href="/privacy">Privacy policy</Link>
+              </>
+            }
             required
           />
           <Field
@@ -607,28 +634,14 @@ export default function ProjectBrief() {
           )}
         </button>
         {step === 4 ? (
-          <p className={styles.trust}>
-            We reply by email or a call, whichever you chose, and never sell your details.{' '}
-            <Link href="/privacy">Privacy policy</Link>
-          </p>
+          <p className={styles.trust}>We reply by email or a call, whichever you chose.</p>
         ) : (
           <p className={styles.trust}>Nothing is sent until the last step.</p>
         )}
       </div>
 
-      {RECAPTCHA_ENABLED ? (
-        <p className={styles.recaptcha}>
-          Protected by reCAPTCHA. Google&apos;s{' '}
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
-            Privacy Policy<span className="visually-hidden"> (opens in a new tab)</span>
-          </a>{' '}
-          and{' '}
-          <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">
-            Terms<span className="visually-hidden"> (opens in a new tab)</span>
-          </a>{' '}
-          apply.
-        </p>
-      ) : null}
+      {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}
+      <RecaptchaNotice className={styles.recaptcha} />
     </form>
   );
 }
@@ -641,15 +654,12 @@ function Options({
   value,
   onChange,
   onPick,
-  describedBy,
 }: {
   name: string;
   options: readonly ChoiceOption[];
   value: string | null;
   onChange: (value: string) => void;
   onPick: (event: MouseEvent<HTMLLabelElement>, option: ChoiceOption) => void;
-  /** The step hint (and the error, when there is one). */
-  describedBy?: string;
 }) {
   return (
     <div className={styles.options}>
@@ -667,7 +677,6 @@ function Options({
             checked={value === option.key}
             onChange={() => onChange(option.key)}
             className={styles.radio}
-            aria-describedby={describedBy}
           />
           <span className={styles.optionText}>
             <span className={styles.optionLabel}>{option.label}</span>
@@ -685,9 +694,12 @@ interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   optional?: boolean;
   error?: string;
+  /** A plain line under the field (after its error), read with it as its description. */
+  note?: ReactNode;
 }
 
-function Field({ id, label, optional, error, required, ...input }: FieldProps) {
+function Field({ id, label, optional, error, note, required, ...input }: FieldProps) {
+  const describedBy = [error ? `${id}-error` : null, note ? `${id}-note` : null].filter(Boolean).join(' ');
   return (
     <div className={styles.field}>
       <label htmlFor={id} className={styles.label}>
@@ -699,10 +711,15 @@ function Field({ id, label, optional, error, required, ...input }: FieldProps) {
         className={styles.input}
         required={required}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${id}-error` : undefined}
+        aria-describedby={describedBy || undefined}
         {...input}
       />
       {error ? <FieldError id={`${id}-error`} message={error} /> : null}
+      {note ? (
+        <p id={`${id}-note`} className={styles.fieldNote}>
+          {note}
+        </p>
+      ) : null}
     </div>
   );
 }

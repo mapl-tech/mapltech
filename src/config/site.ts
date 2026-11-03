@@ -138,7 +138,7 @@ export const pricing = {
           'Cloud setup on AWS, Google Cloud or Azure',
           'Basic automatic testing and deployment',
           'Security certificate (SSL), DNS and domain setup',
-          'Your app packaged in containers and deployed',
+          'Your app packaged in containers and put online',
           'Alerts if the site goes down',
           'Written guides and handover',
         ],
@@ -200,9 +200,9 @@ export const pricing = {
         features: [
           'Everything in Starter',
           'Up to 12 pages with content you can update',
-          'Content editing for your client (WordPress or a headless CMS)',
+          'Easy content editing for your client (WordPress or a headless CMS)',
           'Online store or bookings',
-          'Advanced SEO, including structured data for Google',
+          'Advanced SEO, so Google understands every page',
           'Analytics that track sales and sign-ups',
           'Connections to your CRM, email and payments',
           '60 days of support after launch',
@@ -217,7 +217,7 @@ export const pricing = {
           'A custom web application, front end and back end',
           'AI features such as chatbots, recommendations and content',
           'User logins and access levels',
-          'Custom APIs and connections to other services',
+          'Custom connections to the other software your client uses',
           'Live data and content that updates in real time',
           'Automatic testing before every update goes live',
           '90 days of support after launch',
@@ -230,7 +230,7 @@ export const pricing = {
         features: [
           'Everything in Advanced',
           'Dedicated project manager and engineering team',
-          'Custom hosting and release setup',
+          'Custom hosting and a safe way to release updates',
           'Several languages and regions',
           'Security audits and compliance checks',
           'Tested under heavy traffic and planned for growth',
@@ -331,6 +331,7 @@ export const portfolioProjects = [
   {
     title: 'MAPL Tours',
     slug: 'mapl-tours',
+    order: 3, // third on /our-work: the next project with published results
     category: 'Automation and AI Workflows',
     description: 'Our own product: a travel and tourism company fully managed by AI - from trip planning and booking to customer communication and itinerary generation. Built and run in-house by MAPL TECH.',
     tags: ['Own product', 'AI', 'Automation'],

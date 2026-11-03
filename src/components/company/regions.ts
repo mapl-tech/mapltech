@@ -143,7 +143,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     facts: [
       { term: 'Branch', detail: 'Lagos, Nigeria' },
       { term: 'Serves', detail: 'Lagos, Abuja and Port Harcourt' },
-      { term: 'Working hours', detail: '09:00–18:00 West Africa Time (UTC+1)' },
+      { term: 'Working hours', detail: '9\u00a0am to 6\u00a0pm West Africa Time (UTC+1)' },
       { term: 'Payments we integrate', detail: 'Paystack and Flutterwave' },
     ],
     team: {
@@ -184,7 +184,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     },
     overlap: {
       heading: 'We work in West Africa Time.',
-      body: 'Our Nigeria team works 09:00 to 18:00 West Africa Time, so you get quick turnarounds and no overnight delays. Our Toronto headquarters comes online every weekday afternoon, Lagos time.',
+      body: 'Our Nigeria team works 9\u00a0am to 6\u00a0pm West Africa Time, so you get quick turnarounds and no overnight delays. Our Toronto headquarters comes online every weekday afternoon, Lagos time.',
     },
     faq: {
       heading: 'Questions Nigerian agencies ask first.',
@@ -239,7 +239,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     facts: [
       { term: 'Branch', detail: 'Kingston, Jamaica' },
       { term: 'Serves', detail: 'Kingston and Montego Bay' },
-      { term: 'Working hours', detail: '09:00–18:00 Eastern Standard Time (UTC−5)' },
+      { term: 'Working hours', detail: '9\u00a0am to 6\u00a0pm Eastern Standard Time (UTC−5)' },
       { term: 'How we deliver', detail: 'Weekly updates and documented decisions' },
     ],
     team: {
@@ -280,7 +280,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     },
     overlap: {
       heading: 'Within an hour of Toronto, all year.',
-      body: 'Our Jamaica team works 09:00 to 18:00 Eastern Standard Time, so you get fast replies and no overnight delays.',
+      body: 'Our Jamaica team works 9\u00a0am to 6\u00a0pm Eastern Standard Time, so you get fast replies and no overnight delays.',
     },
     work: {
       client: 'MAPL Tours',

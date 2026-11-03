@@ -618,6 +618,32 @@ $tile-ring: rgba(11, 11, 12, 0.13);
   }
 }
 
+// A plain line under a field (the email's privacy line): ink-muted 6.4:1, links in ink.
+.fieldNote {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $muted;
+  @include phone-floor;
+
+  a {
+    color: $ink;
+    text-decoration: underline;
+    text-decoration-color: rgba(11, 11, 12, 0.35);
+    text-underline-offset: 4px;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration-color: $accent;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $accent;
+      outline-offset: 2px;
+    }
+  }
+}
+
 // White on crimson-ink: 6.4:1.
 .errorIcon {
   display: grid;

@@ -97,11 +97,11 @@ export default function PricingPage() {
         }
       />
 
-      {/* The answer, as a ledger: the four starting prices, each a link to its tiers. */}
+      {/* The answer, as a ledger: each service's "From" price, each a link to its tiers. */}
       <section className={styles.starting} aria-labelledby="starting-title">
         <div className={styles.startingInner}>
           <h2 id="starting-title" className={styles.startingLabel}>
-            Starting prices
+            What each service costs
           </h2>
           <dl className={styles.ledger}>
             {SERVICES.map((facts) => (
@@ -125,8 +125,8 @@ export default function PricingPage() {
             ))}
           </dl>
           <p className={styles.asOf}>
-            Bundles of several services from {BUNDLES_FROM} a month. Hourly work from {HOURLY_FROM} an hour. Prices last
-            updated <time dateTime={LAST_REVIEWED}>{longDate(LAST_REVIEWED)}</time>.
+            Monthly partnerships cover several services, from {BUNDLES_FROM} a month. Hourly work from {HOURLY_FROM} an
+            hour. All prices are in US dollars. Last updated <time dateTime={LAST_REVIEWED}>{longDate(LAST_REVIEWED)}</time>.
           </p>
         </div>
       </section>

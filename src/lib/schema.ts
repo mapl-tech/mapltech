@@ -708,11 +708,11 @@ export function offerCatalog(opts?: { path?: string; name?: string }): OfferCata
     {
       '@type': 'OfferCatalog',
       '@id': `${url}#bundles`,
-      name: 'Partnership bundles',
+      name: 'Monthly partnerships',
       url,
       numberOfItems: pricing.bundles.length,
       itemListElement: pricing.bundles.map((bundle) =>
-        offer({ name: bundle.name, description: bundle.description, price: bundle.price, path, category: 'Partnership bundle' }),
+        offer({ name: bundle.name, description: bundle.description, price: bundle.price, path, category: 'Monthly partnership' }),
       ),
     },
     {

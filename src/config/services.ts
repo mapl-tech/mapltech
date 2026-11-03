@@ -193,15 +193,17 @@ export const services: readonly ServiceRecord[] = [
     heroLabel: 'Web Development',
     pricingKey: 'webDevelopment',
     estimateKey: 'web',
-    // Plain-language pass (Nov 2026): the live pages' facts, in everyday words.
-    heroTitle: 'Fast, accessible websites, built for the team that runs them',
+    // Plain-language pass (Nov 2026): the live pages' facts, in everyday words. The H1 is a promise of
+    // eight words or fewer; the service's name is the eyebrow above it.
+    heroTitle: 'Fast, accessible websites under your brand',
     oneLiner:
       'Fast, accessible websites built from your designs. We handle the build, so your agency can focus on design and your clients.',
     sections: {
       capabilities: {
         label: 'What we build',
-        title: 'Fast, accessible websites, built for the team that runs them',
-        subtitle: 'Every site is built for the people who will run it, and checked for speed and accessibility before launch.',
+        title: 'What every site gets',
+        // Starter: "Custom-coded website ... (up to 7 pages)"; Advanced: "A custom web application, front end and back end".
+        subtitle: 'We build everything from small sites to full web apps.',
       },
       process: {
         label: 'How it works',
@@ -310,14 +312,15 @@ export const services: readonly ServiceRecord[] = [
     heroLabel: 'Automation & AI',
     pricingKey: 'automation',
     estimateKey: 'automation',
-    heroTitle: 'Stop doing by hand what should happen automatically',
+    heroTitle: 'Let automation handle the repetitive work',
     oneLiner:
       'We connect your CRM, project tools, invoicing and client intake so they work as one. From simple automations to custom AI agents.',
     sections: {
       capabilities: {
         label: 'What we build',
-        title: 'Stop doing by hand what should happen automatically',
-        subtitle: 'More than simple app connections: automation that links all your tools and keeps working.',
+        title: 'What we automate',
+        // The tiers in order: Foundation (CRM, key automations), then AI intake, then custom AI agents.
+        subtitle: 'Start with the basics, then add AI when you are ready.',
       },
       process: {
         label: 'How it works',
@@ -406,17 +409,19 @@ export const services: readonly ServiceRecord[] = [
     path: '/services/custom-internal-tools',
     shortName: 'Custom Internal Tools',
     name: 'Custom Internal Tools for Agencies',
-    heroLabel: 'Internal Tools',
+    heroLabel: 'Custom Internal Tools',
     pricingKey: 'internalTools',
     estimateKey: 'tools',
-    heroTitle: 'Tools built around your agency, not the other way around',
+    heroTitle: 'Internal tools that fit how you work',
     oneLiner:
       'Dashboards, client portals and reporting tools built around how your team works, not how a software company thinks you should work.',
     sections: {
       capabilities: {
         label: 'What we build',
-        title: 'Tools built around your agency, not the other way around',
-        subtitle: 'Off-the-shelf software makes you change how you work. We build tools that fit how you already work.',
+        title: 'Tools for your team and your clients',
+        // Capabilities "Secure from the start" (built in from day one) and "Grows with you" (add later, without
+        // starting over), said once here so the points below can show the tools themselves.
+        subtitle: 'Each one is secure from day one, and you can add to it later without starting over.',
       },
       process: {
         label: 'How it works',
@@ -509,13 +514,13 @@ export const services: readonly ServiceRecord[] = [
     heroLabel: 'Cloud Engineering',
     pricingKey: 'cloudEngineering',
     estimateKey: 'cloud',
-    heroTitle: 'Hosting that grows when your clients do',
+    heroTitle: 'Cloud hosting that grows with your clients',
     oneLiner:
       'We set up and look after cloud hosting, so your agency stops worrying about downtime, traffic spikes or broken releases.',
     sections: {
       capabilities: {
         label: 'What we build',
-        title: 'Hosting that grows when your clients do',
+        title: 'What we set up and look after',
         subtitle: 'We do more than switch on a server and hope for the best.',
       },
       process: {

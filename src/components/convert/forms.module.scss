@@ -277,8 +277,9 @@
 }
 
 .recaptcha {
-  font-size: $font-size-xs;
-  color: $color-fg-dim;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  color: $color-fg-muted;
   margin: 0;
 
   a {

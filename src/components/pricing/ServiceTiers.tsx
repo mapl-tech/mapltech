@@ -33,7 +33,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
         {tiers.map((tier, index) => {
           const parsed = parsePriceLabel(tier.price);
           const size = SIZE_OPTIONS[facts.service].find((option) => option.tierIndex === index);
-          const unit = parsed.isCustom ? 'Quoted after a call' : facts.service === 'web' ? 'Starting at' : 'One-time';
+          const unit = parsed.isCustom ? 'Quoted after a call' : facts.service === 'web' ? 'From' : 'One-time';
           return (
             <li key={tier.name} className={styles.tier}>
               <div className={styles.tierHead}>
@@ -94,7 +94,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
               <span className={styles.monthlyName}>{line.name}</span>
               <span className={styles.monthlyPrice}>
                 {priceText(line.price)}
-                <span className={styles.per}>/month</span>
+                <span className={styles.per}> a month</span>
               </span>
               {line.description ? <span className={styles.monthlyDesc}>{line.description}</span> : null}
             </li>

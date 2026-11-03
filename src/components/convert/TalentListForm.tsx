@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FocusEvent, type FormEvent } from 're
 import { checkField, checkForm, type FieldRule } from '@/components/company/formErrors';
 import css from '@/components/company/CareersForm.module.scss';
 import { field, useContactSubmit } from './useContactSubmit';
+import RecaptchaNotice from './RecaptchaNotice';
 import forms from './forms.module.scss';
 
 /**
@@ -188,6 +189,8 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
           {status === 'sending' ? 'Sending…' : 'Join the talent list'}
         </button>
       </div>
+
+      <RecaptchaNotice className={forms.recaptcha} />
     </form>
   );
 }

@@ -4,9 +4,10 @@ import { useEffect, useRef, useState, type FocusEvent, type FormEvent } from 're
 import { checkField, checkForm, normaliseUrl, type FieldRule } from '@/components/company/formErrors';
 import css from '@/components/company/CareersForm.module.scss';
 import { useUrlParams } from './useUrlState';
-import { RECAPTCHA_ENABLED, field, useContactSubmit } from './useContactSubmit';
+import { field, useContactSubmit } from './useContactSubmit';
 import type { BoardRole } from './CareersBoard';
 import forms from './forms.module.scss';
+import RecaptchaNotice from './RecaptchaNotice';
 
 /**
  * Careers apply form: role (pre-selected from ?role=, which the board's
@@ -289,18 +290,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
         </a>
       </div>
 
-      {RECAPTCHA_ENABLED ? (
-        <p className={forms.recaptcha}>
-          Protected by reCAPTCHA:{' '}
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
-            Privacy
-          </a>{' '}
-          ·{' '}
-          <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">
-            Terms
-          </a>
-        </p>
-      ) : null}
+      <RecaptchaNotice className={forms.recaptcha} />
     </form>
   );
 }

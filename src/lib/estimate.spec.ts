@@ -222,7 +222,7 @@ describe('ongoing support maps to the matching maintenance / retainer line', () 
     expect(result.monthly.map((line) => line.name)).toEqual(['Growth Support', 'Ongoing Optimization']);
     expect(result.monthlyLow).toBe(2500);
     expect(result.monthlyHigh).toBe(4500);
-    expect(formatEstimateMonthly(result)).toBe('$2,500–$4,500 / month');
+    expect(formatEstimateMonthly(result)).toBe('$2,500–$4,500 a month');
   });
 
   it('exposes every support level for the chips', () => {
@@ -308,7 +308,7 @@ describe('notes and drivers', () => {
     const result = estimate(one('web', 'growth', { toggles: { cms: true, designSupplied: true }, support: 'growth' }));
     expect(result.drivers.map((driver) => driver.kind)).toEqual(['service', 'addon', 'addon', 'support', 'timeline']);
     expect(result.drivers[0].text).toBe('Web Development, 8–12 pages → Growth / E-Commerce');
-    expect(result.drivers[3].text).toBe('Growth support → Growth Support, $1,000–$2,000 / month');
+    expect(result.drivers[3].text).toBe('Growth support → Growth Support, $1,000–$2,000 a month');
   });
 });
 
@@ -434,10 +434,10 @@ describe('estimateSummaryText / estimateSubjectText', () => {
     const text = estimateSummaryText(result, { shareUrl: 'https://mapltech.com/pricing?svc=web&size.web=growth&cms=1#estimator' });
     expect(text.startsWith('MAPL TECH scope estimate')).toBe(true);
     expect(text).toContain('One-time build: $8,500–$12,000');
-    expect(text).toContain('Ongoing support: $1,000–$2,000 / month');
+    expect(text).toContain('Ongoing support: $1,000–$2,000 a month');
     expect(text).toContain('Web Development — Growth / E-Commerce ($8,500–$12,000, starting at $8,500)');
     expect(text).toContain('  - CMS integration (headless or WordPress) → included in Growth / E-Commerce');
-    expect(text).toContain('  - Growth support → Growth Support, $1,000–$2,000 / month');
+    expect(text).toContain('  - Growth support → Growth Support, $1,000–$2,000 a month');
     expect(text).toContain(FIXED_QUOTE_NOTE);
     expect(text).toContain(pricing.hourlyRates.emergency);
     expect(text.trim().endsWith('Shareable link: https://mapltech.com/pricing?svc=web&size.web=growth&cms=1#estimator')).toBe(true);

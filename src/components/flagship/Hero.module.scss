@@ -14,6 +14,13 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   min-height: 100svh;
   overflow: clip;
   background: $color-ground;
+
+  // Portrait: as tall as its content. On phones that is still taller than the
+  // screen; on a tablet the next section now peeks in below the quote instead
+  // of a band of empty ground.
+  @media #{$portrait} {
+    min-height: 0;
+  }
 }
 
 // The CSS light: the whole picture until the scene arrives, and without WebGL.
@@ -102,7 +109,9 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .copy {
-  max-width: min(800px, 56vw);
+  // Narrow enough that every line ends before the scene's spine, down to a
+  // tablet in landscape (1024px), where 56vw ran the reassurance into the rods.
+  max-width: min(800px, 52vw);
 
   @media #{$portrait} {
     max-width: 640px;

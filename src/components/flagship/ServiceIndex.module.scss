@@ -111,6 +111,12 @@ $rows-wide: 920px;
   line-height: 1;
   letter-spacing: -0.03em;
   transition: transform 0.6s $ease-out-expo, color 0.3s ease;
+
+  // In the one-row layout the name has a column of its own: size it by the
+  // list's width, so "Web Development" stays on one line from a 1024px tablet.
+  @container service-rows (min-width: #{$rows-wide}) {
+    font-size: clamp(2.25rem, 3.6cqi, 3.5rem);
+  }
 }
 
 .summary {

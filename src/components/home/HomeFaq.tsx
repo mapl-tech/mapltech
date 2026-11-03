@@ -3,8 +3,8 @@ import type { FaqEntry } from './data';
 import styles from './HomeFaq.module.scss';
 
 /**
- * 08 FAQ: five white-label objections on the native <details name="faq">
- * accordion (interaction #11). Answers are always in the HTML; the same array
+ * The five questions agencies ask, on the native <details name="faq">
+ * accordion (interaction #11), the first one open as on every FAQ on the site. Answers are always in the HTML; the same array
  * feeds the FAQPage JSON-LD in page.tsx (plain `answer` text there, the
  * scannable `list` form here when an answer carries several figures).
  */
@@ -26,6 +26,7 @@ export default function HomeFaq({ items }: { items: readonly FaqEntry[] }) {
   return (
     <Accordion
       name="faq"
+      defaultOpen={0}
       items={items.map((item, i) => ({
         id: `faq-${i + 1}`,
         question: item.question,

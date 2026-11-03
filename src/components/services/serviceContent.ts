@@ -125,18 +125,25 @@ export interface Exhibit {
 }
 
 interface ServiceCopy {
-  /** H1: the service's canonical name (SERVICE_META label, the same on every page of the site). */
+  /** The service's canonical name (SERVICE_META label, the same on every page of the site): the hero eyebrow. */
   name: string;
-  /** What the service is, in a few everyday words: the hero label and the index kicker. */
+  /** What the service is, in a few everyday words: the /services index kicker. */
   role: string;
-  /** Outcome-first hero lede, under 30 words. */
+  /** Hero lede under the promise, under 30 words; it adds to the H1 rather than repeating it. */
   lede: string;
   /** The entry tier's headline inclusions, composed from its feature list. */
   entryIncludes: string;
+  /**
+   * "What we build": the four strongest of the six services.ts capabilities, by title, in reading order. A
+   * point that repeats the section's heading or intro stays out (that heading or intro already says it).
+   */
+  buildPoints: readonly string[];
   /** Label for the technology chips under "What we build"; null shows none (automation's list repeats its capabilities). */
   stackLabel: string | null;
   /** Case studies that prove this service, lead case first (stories.ts slugs); two at most. */
   proofSlugs: readonly string[];
+  /** The one case study the /services row links to (stories.ts slug); null when the service has none of its own. */
+  example: string | null;
   /** Cloud shows only MAPL Tours' published delivery facts. */
   proofFilter?: { headline: string; results: RegExp };
   /** Real work for the index preview; null draws the release diagram instead (cloud has no screen). */
@@ -157,13 +164,16 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
   'web-development': {
     name: SERVICE_META.web.label,
     role: 'Websites and web apps',
-    // services.ts capabilities (speed, accessibility, built for whoever runs it) · FAQ "we build them exactly from
-    // Figma, Sketch or XD files" · the live lede "Built from your designs, shipped under your brand."
-    lede: 'Fast, accessible websites built from your designs and delivered under your brand. Your client gets a site that is easy to use and easy to update.',
+    // FAQ "we build them exactly from Figma, Sketch or XD files" · the live lede "Built from your designs, shipped
+    // under your brand." (speed, accessibility and the brand are the H1's promise).
+    lede: 'We build each site exactly from your designs. Your client gets a site that is easy to use and easy to update.',
     // Starter features: "Custom-coded website that works on every screen (up to 7 pages)", "Designed for phones first"
     entryIncludes: 'Up to 7 custom-coded pages, built for phones first',
+    // Out: "Phones first" (says "we design", but agencies bring the designs) and "Solid behind the scenes" (weakest).
+    buildPoints: ['Built for the people who run it', 'Fast pages', 'Works on every device', 'Accessible to everyone'],
     stackLabel: 'Built with',
     proofSlugs: ['lro-staffing', 'chha-ncr'],
+    example: 'lro-staffing',
     exhibit: {
       src: '/images/cases/lro-desktop.jpg',
       alt: 'The LRO Staffing homepage built by MAPL TECH: “Building Careers. Strengthening Organizations.” above a job search panel.',
@@ -184,13 +194,16 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     name: SERVICE_META.automation.label,
     role: 'Less manual work',
     // services.ts oneLiner ("From simple automations to custom AI agents") · content.ts LAYERS deliverable
-    // "Lead routing, follow-ups and reporting on autopilot"
-    lede: 'We connect the tools your team already uses and automate the repetitive work: follow-ups, sorting new leads and reports. From simple automations to custom AI agents.',
+    // "Lead routing, follow-ups and reporting on autopilot" (taking repetitive work away is the H1's promise).
+    lede: 'We connect the tools your team already uses, then automate follow-ups, sorting new leads and reports. From simple automations to custom AI agents.',
     // Foundation Automation features: "CRM setup for your team", "New leads sent to the right person
     // automatically", "3 to 5 key automations"
     entryIncludes: 'CRM setup, new leads sent to the right person, and 3 to 5 key automations',
+    // Out: "Custom connections" (repeats "All your tools, connected") and "Built for bigger teams" (top tier only).
+    buildPoints: ['A CRM that does the follow-up', 'All your tools, connected', 'AI that sorts new enquiries', 'AI agents that act'],
     stackLabel: null,
     proofSlugs: ['mapl-tours', 'crowned-spice'],
+    example: 'mapl-tours',
     exhibit: {
       src: '/images/cases/tours-desktop.jpg',
       alt: 'The MAPL Tours homepage, “Discover Jamaica beyond the resort.”, over aerial footage of the coast.',
@@ -210,12 +223,16 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
   'custom-internal-tools': {
     name: SERVICE_META.tools.label,
     role: 'Dashboards and portals',
-    // services.ts oneLiner: "designed for how your team actually operates, not how a SaaS platform thinks you should"
-    lede: 'Dashboards, client portals and reporting tools built around how your team works, not how a software company thinks you should work.',
+    // services.ts oneLiner (dashboards, client portals and reporting tools) · ctaBand "Tired of workarounds and
+    // spreadsheets? ... We will build the tool that fixes it, for good." (fitting how you work is the H1's promise).
+    lede: 'Dashboards, client portals and reporting tools that replace spreadsheets and workarounds.',
     // Internal Dashboards features: "Live reports", "Access levels for each role"
     entryIncludes: 'Live reports, with access levels for each role',
+    // Out: "Secure from the start" and "Grows with you" (the section intro says both).
+    buildPoints: ['Dashboards', 'Client portals', 'Operations and reporting', 'Works with your tools'],
     stackLabel: 'Built with',
     proofSlugs: ['lro-salary-guide', 'unsvcc'],
+    example: 'lro-salary-guide',
     exhibit: {
       src: '/images/cases/salary-desktop.jpg',
       alt: 'The LRO 2026 Interactive Salary Guide built by MAPL TECH, with its filters and charts.',
@@ -235,13 +252,18 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
   'cloud-engineering': {
     name: SERVICE_META.cloud.label,
     role: 'Hosting that stays online',
-    // services.ts capabilities: AWS, GCP or Azure · "Automated build, test, and deploy pipelines" · monitoring and alerting
-    lede: 'We set up and run your hosting on AWS, Google Cloud or Azure. Every update is tested before it goes live, and monitoring spots problems early.',
+    // services.ts capabilities: AWS, Google Cloud or Azure · oneLiner "so your agency stops worrying about downtime,
+    // traffic spikes or broken releases" (the points below answer each worry).
+    lede: 'We set up and run your hosting on AWS, Google Cloud or Azure. Your agency stops worrying about downtime, traffic spikes and broken updates.',
     // Starter Cloud Setup features: "Cloud setup on AWS, Google Cloud or Azure", "Basic automatic testing and
     // deployment", "Alerts if the site goes down"
     entryIncludes: 'Cloud setup on AWS, Google Cloud or Azure, automatic deployment and downtime alerts',
+    // The four that answer the lede's worries. Out: "Written down as code" (technical) and "Security and compliance".
+    buildPoints: ['Moving to the cloud', 'Tested updates', 'Monitoring', 'Predictable costs'],
     stackLabel: 'Built with',
     proofSlugs: ['mapl-tours'],
+    // No cloud case study exists: the /services row shows no example.
+    example: null,
     // Only what stories.ts publishes about MAPL Tours' delivery and production: the tests every change passes
     // and live payments.
     proofFilter: {
@@ -270,8 +292,10 @@ export interface LayerView extends ServiceCopy {
   record: ServiceRecord;
   /** One sentence for the index row and the ItemList description: the homepage's own (content.ts LAYERS). */
   summary: string;
-  /** "What we build" heading: what the service gives the reader, as a statement. */
-  promise: string;
+  /** H1: the service's promise in plain words, eight words or fewer, with its main keyword (services.ts heroTitle). */
+  headline: string;
+  /** "What we build" heading (services.ts capabilities title). */
+  buildTitle: string;
   /** Lede under "What we build" (services.ts capabilities subtitle). */
   deliverIntro: string;
   /** "How it works" heading for this service's four steps. */
@@ -320,7 +344,8 @@ function toView(record: ServiceRecord): LayerView {
     path: record.path,
     record,
     summary: layer ? cleanCopy(layer.summary) : cleanCopy(record.oneLiner),
-    promise: statement(record.heroTitle),
+    headline: statement(record.heroTitle),
+    buildTitle: statement(record.sections.capabilities.title),
     deliverIntro: cleanCopy(record.sections.capabilities.subtitle),
     processTitle: statement(record.sections.process.title),
     close: { title: cleanCopy(sentenceCase(record.ctaBand.heading)), lede: `${cleanCopy(record.ctaBand.body)} ${QUOTE_LINE}` },
@@ -359,7 +384,7 @@ export function supportWindow(view: LayerView): string | null {
 /* Tiers                                                                */
 /* ------------------------------------------------------------------ */
 
-/** How many inclusions a tier card shows before the rest fold into "See everything included". */
+/** How many inclusions a tier card shows before the rest fold into "What’s included". */
 export const TIER_HIGHLIGHTS = 3;
 
 export interface TierView {
@@ -367,10 +392,12 @@ export interface TierView {
   name: string;
   /** Tier description from site.ts, cleaned: who the tier is for. */
   who: string;
-  /** "$5,000", "$3,500–$5,000", "$20,000+", "Custom" */
+  /** "$5,000", "$3,500–$5,000", "$12,000–$25,000+", "Custom"; a floor ("$20,000+") shows its amount, after "From". */
   price: string;
-  /** Under the price: what kind of number it is. */
-  priceNote: string;
+  /** A starting price ("$5,000", "$20,000+"): the card reads "From $5,000". Ranges and Custom read as they are. */
+  isFloor: boolean;
+  /** Under the price, for Custom only: how it is priced. */
+  priceNote: string | null;
   isCustom: boolean;
   /** "Everything in Starter" when the tier builds on the one before it. */
   builds: string | null;
@@ -416,9 +443,10 @@ export function tierEstimateHref(service: EstimateService, tierIndex: number): s
 
 export function tierViews(view: LayerView): TierView[] {
   const timelines = tierTimelines(view.record);
-  const startingAt = view.service === 'web';
   return view.tiers.map((tier, index) => {
     const parsed = parsePriceLabel(tier.price);
+    // One amount ("$5,000", a web starting price) or an open end ("$20,000+") is a floor; two amounts are a range.
+    const isFloor = !parsed.isCustom && parsed.low !== null && (parsed.high === null || parsed.high === parsed.low);
     const builds = tier.features.find((feature) => /^everything in /i.test(feature)) ?? null;
     const timeline = timelines.get(tier.name);
     return {
@@ -429,8 +457,9 @@ export function tierViews(view: LayerView): TierView[] {
         .replace(/^-|-$/g, '')}`,
       name: tier.name,
       who: cleanCopy(tier.description),
-      price: parsed.isCustom ? 'Custom' : cleanCopy(tier.price),
-      priceNote: parsed.isCustom ? 'Priced with you on a call' : startingAt ? 'Starting price' : 'Price range',
+      price: parsed.isCustom ? 'Custom' : isFloor && parsed.low !== null ? formatMoney(parsed.low) : cleanCopy(tier.price),
+      isFloor,
+      priceNote: parsed.isCustom ? 'Priced with you on a call' : null,
       isCustom: parsed.isCustom,
       builds,
       features: tier.features.filter((feature) => feature !== builds).map(cleanCopy),
@@ -450,11 +479,12 @@ export function costTitle(view: LayerView): string {
 /* What we build, how it works, FAQ                                     */
 /* ------------------------------------------------------------------ */
 
+/** The four points under "What we build", in `buildPoints` order (a title services.ts lacks is skipped). */
 export function capabilityViews(view: LayerView) {
-  return view.record.capabilities.map((capability) => ({
-    title: sentenceCase(capability.title),
-    text: cleanCopy(capability.description),
-  }));
+  return view.buildPoints.flatMap((title) => {
+    const capability = view.record.capabilities.find((item) => item.title === title);
+    return capability ? [{ title: sentenceCase(capability.title), text: cleanCopy(capability.description) }] : [];
+  });
 }
 
 export function stageViews(view: LayerView) {
@@ -489,10 +519,13 @@ function priceList(view: LayerView, answer: string): FaqView['list'] {
   const tiers = tierViews(view);
   const tierShape = tiers.every((tier, i) => answer.includes(`${tier.name} (${cleanCopy(view.tiers[i].price)})`));
   if (tierShape && tiers.length > 1) {
-    const from = view.service === 'web' ? 'from ' : '';
     return {
       lead: `From ${view.fromMoney}, across ${COUNT_WORDS[tiers.length]?.toLowerCase() ?? tiers.length} tiers.`,
-      points: tiers.map((tier) => (tier.isCustom ? `${tier.name}: priced per project` : `${tier.name}: ${from}${tier.price}`)),
+      points: tiers.map((tier) =>
+        tier.isCustom
+          ? `${tier.name}: priced per project`
+          : `${tier.name}: ${tier.isFloor ? `from ${tier.price}` : tier.price}`,
+      ),
       close: answer.match(/You get a fixed quote[^.]*\./)?.[0],
     };
   }
@@ -551,6 +584,13 @@ const listed = new Set(listedProjects().map((project) => project.slug));
 function caseKind(tags: readonly string[]): string {
   const sector = tags[1] ?? '';
   return tags[0] === 'Our own product' ? [tags[0], sector].filter(Boolean).join(' · ') : sector;
+}
+
+/** The one real project beside a /services row: a listed case study, or null (Cloud has none of its own). */
+export function rowExample(view: LayerView): { client: string; href: string } | null {
+  if (!view.example || !listed.has(view.example)) return null;
+  const story = findStory(view.example);
+  return story ? { client: story.client, href: `/our-work/${view.example}` } : null;
 }
 
 export function proofCases(view: LayerView): ProofCase[] {

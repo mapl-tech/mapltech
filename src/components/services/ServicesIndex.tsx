@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import CloseBand from '@/components/flagship/CloseBand';
+import { HERO_REASSURE } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import HeroActions from './HeroActions';
@@ -13,18 +14,20 @@ import styles from './ServicesIndex.module.scss';
  * /services (Nov 2026 simplify pass): one page, three ideas.
  *
  *   what we build (PageHeader) → the four services, one row and one link
- *   each (real work trailing the cursor on desktop) → how it works, on paper,
- *   in the homepage's four steps → the crimson close.
+ *   each, with one real project linked beside it (real work trailing the
+ *   cursor on desktop) → how it works, on paper, in the homepage's four steps
+ *   → the crimson close.
  *
- * Server Component; the index preview is the only client island. Copy is
- * sourced in serviceContent.ts.
+ * The homepage's reassurance (a fixed quote after one call, an NDA first)
+ * sits under the hero's buttons and the close's. Server Component; the index
+ * preview is the only client island. Copy is sourced in serviceContent.ts.
  */
 export default function ServicesIndex() {
   return (
     <>
       <PageHeader
         id="services-title"
-        label="Services for agencies"
+        label="Services"
         title={
           <>
             What we build <em>for agencies.</em>
@@ -33,10 +36,12 @@ export default function ServicesIndex() {
         lede={
           <p>
             Websites, automation, custom tools and cloud hosting, built by engineers who understand agency work. Every
-            price is public, and every quote is fixed after a <span className={styles.nowrap}>20-minute</span> call.
+            price is public.
           </p>
         }
-        actions={<HeroActions page="services" secondary={{ label: PRICING_LABEL, href: PRICING_HREF }} />}
+        actions={
+          <HeroActions page="services" secondary={{ label: PRICING_LABEL, href: PRICING_HREF }} note={HERO_REASSURE} />
+        }
       />
 
       <section className={styles.index} aria-labelledby="lines-title">
@@ -47,7 +52,7 @@ export default function ServicesIndex() {
           <IndexRows labelId="lines-title" />
           <div className={styles.pointer}>
             <p className={styles.pointerText}>
-              {keepTogether(`Need more than one service? Monthly partnerships start at ${PARTNERSHIP_FROM}.`)}
+              {keepTogether(`Need more than one service? A monthly partnership covers two or more, from ${PARTNERSHIP_FROM}.`)}
             </p>
             <Link href={PRICING_HREF} className={styles.textLink} data-cta-placement="services_partner_pricing">
               {PRICING_LABEL}
@@ -74,7 +79,8 @@ export default function ServicesIndex() {
       <CloseBand
         id="services-close-title"
         title="Not sure which service fits?"
-        lede="Tell us about the project. On a 20-minute call we agree what it needs, then you get a fixed quote."
+        lede="Tell us about the project, and we will help you pick the right service."
+        note={HERO_REASSURE}
         placement="services_close"
       />
     </>

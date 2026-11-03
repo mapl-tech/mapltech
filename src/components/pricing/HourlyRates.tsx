@@ -16,7 +16,7 @@ export default function HourlyRates() {
               <span className={styles.monthlyName}>{rate.name}</span>
               <span className={styles.monthlyPrice}>
                 {priceText(rate.price)}
-                <span className={styles.per}>/hour</span>
+                <span className={styles.per}> an hour</span>
               </span>
               <span className={styles.monthlyDesc}>{rate.description}</span>
             </li>

@@ -167,14 +167,14 @@ export default function LegalDocument({
                   To use a right from <a href={`#${action.section}`}>section {number(action.section)}</a> (
                   {action.rights}), email us and say which one. Anything else:{' '}
                   <a href={mailto(mailSubject)}>{siteConfig.email}</a> or{' '}
-                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office is open 09:00 to 18:00
-                  Eastern time, Monday to Friday.
+                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office is open 9&nbsp;am to
+                  6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               ) : (
                 <p className={styles.questionsText}>
                   Email <a href={mailto(mailSubject)}>{siteConfig.email}</a> or call{' '}
-                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office is open 09:00 to 18:00
-                  Eastern time, Monday to Friday.
+                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office is open 9&nbsp;am to
+                  6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               )}
               <p className={styles.questionsActions}>

@@ -26,3 +26,15 @@
   @include text-action($color-fg);
   font-size: 1.0625rem;
 }
+
+// The homepage hero's reassurance (flagship/Hero.module.scss .reassure): a full line of PageHeader's
+// wrapping actions row, 16px under the buttons (its 12px row gap plus 4px).
+.note {
+  flex-basis: 100%;
+  margin: 4px 0 0;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  color: $color-fg-muted;
+
+  @include phone-floor;
+}

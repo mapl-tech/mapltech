@@ -5,6 +5,7 @@ import { aboutPage, breadcrumb, graph, orgId, personRef } from '@/lib/schema';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
+import { HERO_REASSURE } from '@/components/flagship/content';
 import FactsBand from '@/components/company/FactsBand';
 import { FoundersSpread } from '@/components/company/Founders';
 import HeroActions from '@/components/company/HeroActions';
@@ -28,11 +29,12 @@ export const metadata: Metadata = {
 };
 
 /*
- * /about-us, Nov 2026 simplify pass. The live site's purpose as the first
- * screen (the engineering backbone behind agencies that refuse to cut
- * corners), the answer-first facts, then: why MAPL TECH exists, in the
- * founders' voice -> the two founders (paper) -> the three offices -> the
- * crimson close. How the work runs is told once, on the homepage.
+ * /about-us, Nov 2026 simplify pass. What the company does, said plainly, as
+ * the first screen, the answer-first facts, then: why MAPL TECH exists, in
+ * the founders' voice -> the two founders (paper) -> the three offices -> the
+ * crimson close, with the site's reassurance line (a fixed quote after one
+ * 20-minute call, an NDA first). How the work runs is told once, on the
+ * homepage.
  *
  * Structured data: AboutPage (mainEntity: the Organization from the root
  * layout) + BreadcrumbList + the two founders, from the same arrays the page
@@ -78,7 +80,7 @@ export default function AboutPage() {
 
       <Offices />
 
-      <CloseBand title={ABOUT.close.title} placement="about_close" />
+      <CloseBand title={ABOUT.close.title} lede={HERO_REASSURE} placement="about_close" />
     </>
   );
 }

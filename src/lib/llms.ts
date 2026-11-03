@@ -174,7 +174,7 @@ function pricingShort(): string {
   const lines = [
     `- ${link('Pricing', '/pricing')}: every package, retainer and bundle on one page.`,
     ...SERVICE_LINES.map((line) => `- ${line.shortName}: ${tierSummary(line)}.`),
-    `- Partnership bundles: ${pricing.bundles.map((b) => `${b.name} ${b.price}`).join(' · ')}.`,
+    `- Monthly partnerships: ${pricing.bundles.map((b) => `${b.name} ${b.price}`).join(' · ')}.`,
     `- Hourly: ${pricing.hourlyRates.standard} standard, ${pricing.hourlyRates.emergency} emergency.`,
     '- Enterprise web platforms are quoted per project ("Custom").',
   ];
@@ -327,7 +327,7 @@ function pricingFull(): string {
     '',
     `Full comparison: ${link('Pricing', '/pricing')}. Package prices per service are listed above.`,
     '',
-    'Partnership bundles:',
+    'Monthly partnerships:',
     '',
     ...bundles,
     '',

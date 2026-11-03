@@ -1,7 +1,7 @@
 import type { FaqItem } from '@/lib/schema';
 import { pricing } from '@/config/site';
-import { formatMoney, formatRange, parsePriceLabel } from '@/lib/estimate';
-import { factsOf, priceText } from './content';
+import { formatMoney } from '@/lib/estimate';
+import { BUNDLES_ANSWER, factsOf, priceText } from './content';
 
 /**
  * The pricing FAQ. Rendered by the native <details> accordion and emitted
@@ -17,17 +17,11 @@ import { factsOf, priceText } from './content';
  */
 
 const web = factsOf('web');
-const bundles = pricing.bundles
-  .map((bundle) => {
-    const parsed = parsePriceLabel(bundle.price);
-    return `${bundle.name} at ${formatRange(parsed.low, parsed.high)} a month`;
-  })
-  .join(' and ');
 
 export const pricingFaq: FaqItem[] = [
   {
     question: 'How accurate is the estimator?',
-    answer: `It uses the same prices as this page. Each answer matches a published package, and an add-on moves you to the package that includes it. ${web.name} prices are starting prices, so a ${web.name} range runs from one package’s price to the next. You get a fixed quote after a 20-minute call.`,
+    answer: `It uses the same prices as this page. Each answer matches a published package, and an add-on moves you to the package that includes it. ${web.name} packages list their lowest price, so a ${web.name} range goes from your package’s price to the next package’s price. You get a fixed quote after a 20-minute call.`,
   },
   {
     question: `How long does a typical ${web.name} project take?`,
@@ -41,7 +35,7 @@ export const pricingFaq: FaqItem[] = [
   },
   {
     question: 'Can we pay monthly instead of per project?',
-    answer: `Yes. Every service has monthly plans, starting at ${formatMoney(web.monthlyFrom)} a month for ${web.name} maintenance. Two bundles cover several services for one monthly price: ${bundles}.`,
+    answer: `Yes. Every service has monthly plans, from ${formatMoney(web.monthlyFrom)} a month for ${web.name} maintenance. ${BUNDLES_ANSWER}`,
   },
   {
     question: 'What happens after the site launches?',

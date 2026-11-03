@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import CountUp from '@/components/ui/CountUp';
 import { PROOF, PROOF_SECTION } from './content';
 import styles from './Proof.module.scss';
 
@@ -22,7 +23,7 @@ export default function Proof() {
           {PROOF.stats.map((stat) => (
             <div key={stat.label} className={styles.stat}>
               <dt className={styles.value}>
-                {stat.value}
+                <CountUp value={stat.value} />
                 <span className={styles.suffix}>{stat.suffix}</span>
               </dt>
               <dd className={styles.statLabel}>{stat.label}</dd>

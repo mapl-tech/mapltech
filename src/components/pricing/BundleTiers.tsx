@@ -8,17 +8,23 @@ import TierDetails from './TierDetails';
 import styles from './PriceList.module.scss';
 
 /**
- * Bundles from `pricing.bundles`: several services for one monthly price.
- * The estimator names the matching bundle whenever two or more services are
- * priced together (`bundleFor` in estimate.ts). Each bundle's "Start a
- * project" opens the brief with that bundle already chosen.
+ * Monthly partnerships from `pricing.bundles`: several services for one
+ * monthly price. The estimator names the matching partnership whenever two or
+ * more services are priced together (`bundleFor` in estimate.ts). Each one's
+ * "Start a project" opens the brief with that partnership already chosen.
+ * The row keeps its #bundles anchor (links and the OfferCatalog JSON-LD use it).
  */
 export default function BundleTiers() {
   return (
-    <PriceGroup id="bundles" title="Monthly bundles" from={`From ${BUNDLES_FROM} a month`} meta={`${pricing.bundles.length} bundles`}>
+    <PriceGroup
+      id="bundles"
+      title="Monthly partnerships"
+      from={`From ${BUNDLES_FROM} a month`}
+      meta={`${pricing.bundles.length} partnerships`}
+    >
       <div className={styles.groupHead}>
         <p className={styles.groupAnswer}>{BUNDLES_ANSWER}</p>
-        <p className={styles.groupNote}>Pick two or more services in the estimator to see the bundle that fits.</p>
+        <p className={styles.groupNote}>Pick two or more services in the estimator to see the partnership that fits.</p>
       </div>
 
       <ol className={styles.tiers} role="list">
@@ -29,10 +35,9 @@ export default function BundleTiers() {
               <div className={styles.tierHead}>
                 <h4 className={styles.tierName}>{bundle.name}</h4>
                 <p className={styles.tierPrice}>
-                  <span className={styles.tierUnit}>Monthly</span>
                   <span className={styles.priceValue}>
                     {priceText(bundle.price)}
-                    <span className={styles.perLarge}>/mo</span>
+                    <span className={styles.perLarge}> a month</span>
                   </span>
                 </p>
               </div>
@@ -59,7 +64,7 @@ export default function BundleTiers() {
                   data-cta-placement={`pricing_bundle_${slug.replace(/-/g, '_')}`}
                 >
                   {PROJECT_LABEL}
-                  <span className="visually-hidden"> with the {bundle.name} bundle</span>
+                  <span className="visually-hidden">: {bundle.name}</span>
                   <span aria-hidden="true"> →</span>
                 </Link>
               </div>

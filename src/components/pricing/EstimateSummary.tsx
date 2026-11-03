@@ -10,7 +10,6 @@ import {
   SUPPORT_LEVELS,
   TOGGLE_OPTIONS,
   estimateHref,
-  formatEstimateMonthly,
   formatEstimateRange,
   formatLineRange,
   formatMoney,
@@ -86,6 +85,25 @@ function caveatsFor(input: EstimateInput, result: EstimateResult): string[] {
   return notes;
 }
 
+/**
+ * Where the range comes from, in one plain sentence, exactly as estimate.ts
+ * computes it: a Web Development package runs from its own price to the next
+ * package's price (no top when the next one is a custom quote); any other
+ * package shows its listed range; several packages are added together. Null
+ * when nothing has a public price (the unit line covers "Custom").
+ */
+function rangeBasis(result: EstimateResult): string | null {
+  const priced = result.lines.filter((line) => !line.isCustom);
+  if (priced.length === 0) return null;
+  if (priced.length > 1) return 'The range adds together the price ranges of your packages.';
+  const [line] = priced;
+  const name = keepHyphens(line.tierName);
+  if (!line.startingAt) return `This is the listed price range for ${name}.`;
+  return line.high === null
+    ? `The range goes up from the price of ${name}. The next package is a custom quote.`
+    : `The range goes from the price of ${name} to the price of the next package.`;
+}
+
 /** "$5,000 to $8,500 one-time, plus $500 to $1,000 a month": what the live region reads out. */
 function spoken(result: EstimateResult): string {
   const range = formatEstimateRange(result).replace('–', ' to ');
@@ -105,7 +123,8 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
   }, [latest]);
 
   const allCustom = result.lines.length > 0 && result.lines.every((line) => line.isCustom);
-  const monthly = formatEstimateMonthly(result);
+  const basis = rangeBasis(result);
+  const monthly = result.monthly.length > 0 ? `${formatRange(result.monthlyLow, result.monthlyHigh)} a month` : null;
   const multi = result.lines.length > 1;
   const level = SUPPORT_LEVELS.find((entry) => entry.key === input.support);
   const caveats = caveatsFor(input, result);
@@ -155,10 +174,12 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
           )}
         </p>
 
+        {basis ? <p className={styles.basis}>{basis}</p> : null}
+
         {monthly ? (
           <p className={styles.monthly}>
             <span className={styles.monthlyValue}>+ {monthly}</span>
-            <span className={styles.monthlyName}> {result.monthly.map((line) => line.name).join(' + ')}</span>
+            <span className={styles.monthlyName}> for {result.monthly.map((line) => line.name).join(' + ')}</span>
           </p>
         ) : null}
 
@@ -213,7 +234,7 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
                       {level?.label} support: {line.name}
                       {multi ? <span className={styles.driverFor}> ({SERVICE_META[line.service].shortLabel})</span> : null}
                     </span>
-                    <span className={styles.driverPrice}>{formatRange(line.low, line.high)}/mo</span>
+                    <span className={styles.driverPrice}>{formatRange(line.low, line.high)} a month</span>
                   </p>
                 </li>
               ))
@@ -238,13 +259,13 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
             {result.bundle ? (
               <li className={styles.driver} data-kind="bundle">
                 <p className={styles.driverRow}>
-                  <span className={styles.driverName}>Monthly bundle: {result.bundle.name}</span>
-                  <span className={styles.driverPrice}>{formatRange(result.bundle.low, result.bundle.high)}/mo</span>
+                  <span className={styles.driverName}>Monthly partnership: {result.bundle.name}</span>
+                  <span className={styles.driverPrice}>{formatRange(result.bundle.low, result.bundle.high)} a month</span>
                 </p>
                 <p className={styles.bundleNote}>
                   Covers these {result.lines.length} services for one monthly price.{' '}
                   <a href="#bundles" className={styles.inlineLink} data-cta-placement="pricing_estimate_bundles">
-                    Compare bundles
+                    Compare monthly partnerships
                   </a>
                 </p>
               </li>

@@ -148,7 +148,7 @@ export default function ContactPage() {
                 </li>
               </ul>
               <p className={styles.hoursText}>
-                Our offices in Toronto, Lagos and Kingston are open 09:00 to 18:00 local time, Monday to Friday.
+                Our offices in Toronto, Lagos and Kingston are open 9&nbsp;am to 6&nbsp;pm local time, Monday to Friday.
               </p>
             </section>
           </div>

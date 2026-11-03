@@ -3,7 +3,7 @@
 @use '../../styles/editorial' as *;
 
 // Case study (Nov 2026, simplified). Rhythm: dark hero → paper results →
-// dark story → dark live site → crimson ask → the next project.
+// dark story → dark live site → the next project (one row) → crimson ask, last.
 $portrait: '(max-aspect-ratio: 21/20)';
 $landscape: '(min-aspect-ratio: 21/20)';
 
@@ -581,8 +581,10 @@ $landscape: '(min-aspect-ratio: 21/20)';
   height: 290vh;
   background: $color-ground;
 
+  // Phones and portrait tablets: the pin holds for at most 760px of scrolling
+  // (about one phone screen), so the section stays near two screens tall.
   @media #{$portrait} {
-    height: 200vh;
+    height: calc(100vh + min(100vh, 760px));
   }
 
   &[data-still] {
@@ -631,6 +633,13 @@ $landscape: '(min-aspect-ratio: 21/20)';
   margin: 0;
   font-size: $font-size-sm;
   color: $color-fg-muted;
+  @include phone-floor;
+}
+
+// The way out of the pin: a plain text action, 44px tall, in the pinned head.
+.siteSkip {
+  font-size: $font-size-sm;
+  @include text-action($color-fg);
   @include phone-floor;
 }
 
@@ -722,10 +731,12 @@ $landscape: '(min-aspect-ratio: 21/20)';
   }
 }
 
+// The story's footnote: where the numbers and the quote come from.
 .sources {
   margin: 0;
-  padding: 28px 0;
-  border-bottom: 1px solid $color-hairline;
+  // A readable measure: the rule spans the shell, the sentence stops at ~75 characters.
+  padding: 24px max(0px, calc(100% - 36em)) clamp(40px, 6vw, 72px) 0;
+  border-top: 1px solid $color-hairline;
   font-size: $font-size-sm; // a sentence, not a label: the secondary size, not 13px
   line-height: 1.5;
   color: $color-fg-muted;
@@ -733,61 +744,96 @@ $landscape: '(min-aspect-ratio: 21/20)';
 }
 
 // ===================================================================
-// The next project: one full-bleed link
+// The next project: one row in the /our-work index style, above the ask
 // ===================================================================
+.nextBand {
+  background: $color-ground;
+  padding: clamp(40px, 6vw, 88px) 0;
+}
+
+// Phones: label, name and line, with the arrow beside them (no capture).
+// From 768px the real capture leads the row.
 .next {
   position: relative;
-  isolation: isolate;
-  display: block;
-  overflow: hidden;
-  min-height: clamp(420px, 68vh, 720px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  grid-template-areas: 'text go';
+  align-items: center;
+  column-gap: 16px;
+  padding: 28px 0;
+  border-top: 1px solid $color-hairline-strong;
+  border-bottom: 1px solid $color-hairline;
   color: $color-fg;
   text-decoration: none;
 
+  @include md {
+    grid-template-columns: minmax(0, 1fr) 48px;
+    column-gap: clamp(24px, 3vw, 40px);
+
+    &[data-has-media] {
+      grid-template-columns: clamp(184px, 24vw, 264px) minmax(0, 1fr) 48px;
+      grid-template-areas: 'media text go';
+    }
+  }
+
+  // The crimson rule the index rows draw across the top in hover and focus.
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -1px;
+    height: 1px;
+    background: $color-red;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.6s $ease-out-expo;
+    pointer-events: none;
+  }
+
   &:focus-visible {
-    outline: 3px solid $color-red;
-    outline-offset: -3px;
+    outline: $focus-ring;
+    outline-offset: 4px;
+  }
+
+  &:focus-visible::before {
+    transform: scaleX(1);
+  }
+
+  @include pointer-fine-motion {
+    &:hover::before {
+      transform: scaleX(1);
+    }
   }
 }
 
 .nextMedia {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
+  grid-area: media;
+  display: none;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #0d0d0f;
+  box-shadow:
+    0 30px 60px -30px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: transform 0.8s $ease-out-expo;
 
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.74) 0%, rgba(10, 10, 10, 0.9) 62%, $color-ground 100%);
+  @include md {
+    display: block;
   }
 }
 
 .nextImg {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-  // Softened so the screenshot's own text never competes with the name over it.
-  filter: grayscale(0.5) blur(3px);
-  transform: scale(1.06);
-  transition: transform 1.2s $ease-out-expo, filter 0.8s ease;
-
-  .next:hover & {
-    transform: scale(1.02);
-    filter: grayscale(0) blur(0);
-  }
+  height: auto;
 }
 
-.nextInner {
-  @include shell;
-  position: relative;
+.nextText {
+  grid-area: text;
   display: grid;
-  align-content: end;
-  gap: 16px;
-  min-height: inherit;
-  padding-top: 64px;
-  padding-bottom: clamp(48px, 7vw, 96px);
+  gap: 10px;
+  min-width: 0;
 }
 
 .nextLabel {
@@ -799,36 +845,78 @@ $landscape: '(min-aspect-ratio: 21/20)';
 }
 
 .nextName {
+  justify-self: start;
   font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(3rem, 1rem + 8.4vw, 10rem);
-  line-height: 0.9;
-  letter-spacing: -0.05em;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 1rem + 2.3vw, 3rem); // 28px -> 48px, as on /our-work
+  line-height: 1;
+  letter-spacing: -0.03em;
   text-wrap: balance;
+  transition:
+    transform 0.6s $ease-out-expo,
+    color 0.3s ease;
 }
 
 .nextLine {
-  max-width: 36em;
-  font-size: $font-size-lede;
+  max-width: 40em;
+  font-size: $font-size-base;
   line-height: 1.5;
   color: $color-text-body;
 }
 
 .nextGo {
-  justify-self: start;
+  grid-area: go;
+  justify-self: end;
   display: inline-grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
-  margin-top: 8px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: $color-red-fill;
-  color: $color-white;
-  font-size: 1.5rem;
-  transition: transform 0.6s $ease-out-expo;
+  border: 1px solid $color-hairline-strong;
+  font-size: 1.1rem;
+  color: $color-fg;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.6s $ease-out-expo;
 
-  .next:hover & {
-    transform: translateX(10px);
+  @include md {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+// Hover and keyboard focus: the name in crimson (large text), the arrow filled.
+.next:focus-visible {
+  .nextName {
+    color: $color-red;
+  }
+
+  .nextGo {
+    background: $color-fg;
+    border-color: $color-fg;
+    color: $color-ground;
+  }
+}
+
+@include pointer-fine-motion {
+  .next:hover {
+    .nextName {
+      color: $color-red;
+      transform: translateX(12px);
+    }
+
+    .nextMedia {
+      transform: translateY(-4px);
+    }
+
+    .nextGo {
+      background: $color-fg;
+      border-color: $color-fg;
+      color: $color-ground;
+      transform: rotate(-45deg);
+    }
   }
 }
 

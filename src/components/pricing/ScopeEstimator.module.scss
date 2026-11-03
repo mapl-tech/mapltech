@@ -90,7 +90,7 @@ $card: #121214;
 .hint {
   margin: 0 0 18px;
   max-width: 56ch;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px: a sentence, never under the phone floor
   line-height: 1.5;
   color: $label-muted;
 }
@@ -133,13 +133,21 @@ $card: #121214;
   gap: 8px;
 }
 
+// Two columns only where a tile keeps room for its name beside the summed
+// monthly price (four services priced at once): tablets, and wide desktops.
+// From 1024px to 1279px the questions share the row with the readout, so the
+// tiles stack again.
 .options {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 8px;
 
-  @include sm {
+  @include md {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: $breakpoint-lg) and (max-width: #{$breakpoint-xl - 1px}) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -304,6 +312,22 @@ $card: #121214;
   white-space: nowrap;
   color: $color-fg;
   @include tabular;
+}
+
+// "a month" on its own line under a monthly amount, so the price column stays
+// as narrow as the number and the level's name keeps its room at 360px.
+.tileUnit {
+  display: block;
+  font-family: $font-body;
+  font-size: 1rem;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0;
+  text-align: right;
+  color: $label-muted;
+
+  .tile[data-checked] & {
+    color: rgba(245, 242, 238, 0.84);
+  }
 }
 
 // Checkbox and radio marks (the visual twin of the hidden native control).
@@ -487,6 +511,13 @@ $card: #121214;
   @include lg {
     position: sticky;
     top: calc(var(--header-height, 72px) + 24px);
+    max-height: calc(100svh - var(--header-height, 72px) - 48px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    // Room for focus rings and the card's edge inside the scroll box.
+    padding: 4px;
+    margin: -4px;
   }
 }
 
@@ -565,11 +596,22 @@ $card: #121214;
 .unit {
   margin: 12px 0 0;
   font-size: 1rem;
+  @include phone-floor; // sentences: 17px on phones
   line-height: 1.5;
   color: rgba(245, 242, 238, 0.86);
 }
 
 .unitNote {
+  color: $label-muted;
+}
+
+// Where the range comes from (EstimateSummary rangeBasis), under the unit line.
+.basis {
+  margin: 6px 0 0;
+  max-width: 40ch;
+  font-size: 1rem;
+  @include phone-floor; // sentences: 17px on phones
+  line-height: 1.5;
   color: $label-muted;
 }
 
@@ -755,6 +797,7 @@ $card: #121214;
 .nextNote {
   margin: 0;
   font-size: 1rem;
+  @include phone-floor; // sentences: 17px on phones
   line-height: 1.5;
   color: $label-muted;
 }
@@ -843,6 +886,21 @@ $card: #121214;
   font-size: 1rem;
   line-height: 1.5;
   color: $color-red-text;
+}
+
+// Google's reCAPTCHA notice (the badge is hidden site-wide): one sentence, inline links.
+.recaptcha {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $label-muted;
+
+  a {
+    color: rgba(245, 242, 238, 0.86);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    @include focus-ring;
+  }
 }
 
 .sent {

@@ -17,6 +17,9 @@ import {
   parsePriceLabel,
   tiersFor,
   type EstimateService,
+  type EstimateSize,
+  type EstimateToggles,
+  type SizeKey,
 } from '@/lib/estimate';
 
 export type PortfolioProject = (typeof portfolioProjects)[number];
@@ -142,9 +145,30 @@ export function startingPriceLabel(service: EstimateService): string | undefined
   return `From ${formatMoney(parsed.low)}`;
 }
 
-/** Estimator deep link prefilled with one service line (`/pricing?svc=web#estimator`). */
-export function estimateLinkFor(service: EstimateService): string {
-  return estimateHref({ services: [service] });
+/**
+ * Estimator deep link for one service line, carrying only what is given: a
+ * size (`/pricing?svc=web&size.web=growth#estimator`) and any switches
+ * (`&cms=1`). With no size the link names none (`/pricing?svc=web#estimator`)
+ * and the estimator opens on its first size, as it does for any visitor.
+ */
+export function estimateLinkFor({
+  service,
+  size,
+  toggles,
+}: {
+  service: EstimateService;
+  size?: SizeKey;
+  toggles?: EstimateToggles;
+}): string {
+  const href = estimateHref({ services: [service], size: size ? ({ [service]: size } as EstimateSize) : {}, toggles });
+  if (size) return href;
+  // The encoder always writes a size (it fills in the first option): drop it.
+  const [path, hash] = href.split('#');
+  const [base, query = ''] = path.split('?');
+  const params = new URLSearchParams(query);
+  params.delete(`size.${service}`);
+  const rest = params.toString();
+  return `${base}${rest ? `?${rest}` : ''}${hash ? `#${hash}` : ''}`;
 }
 
 /** Scoping-call link carrying the same service line for the contact page to read. */

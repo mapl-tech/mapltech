@@ -41,7 +41,7 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 .trust {
   flex: 0 0 100%;
   margin: 4px 0 0;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px: a sentence, never under the phone floor
   line-height: 1.5;
   color: $color-fg-muted;
 }
@@ -138,7 +138,7 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 .cellNote {
   margin: 14px 0 0;
   max-width: 24ch;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px: a sentence, never under the phone floor
   line-height: 1.45;
   color: $color-fg-muted;
 }
@@ -160,7 +160,7 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 
 .asOf {
   margin: 24px 0 0;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px: a sentence, never under the phone floor
   line-height: 1.5;
   color: $color-fg-muted;
 

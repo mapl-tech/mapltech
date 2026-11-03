@@ -3,6 +3,7 @@
 import { useActionState, useId } from 'react';
 import { estimateSubjectText, estimateSummaryText, type EstimateResult } from '@/lib/estimate';
 import styles from './ScopeEstimator.module.scss';
+import RecaptchaNotice from '@/components/convert/RecaptchaNotice';
 
 /**
  * "Get it in writing": one optional field, after the number (reciprocity).
@@ -141,6 +142,8 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
           {state.message}
         </p>
       ) : null}
+      {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}
+      <RecaptchaNotice className={styles.recaptcha} />
     </form>
   );
 }

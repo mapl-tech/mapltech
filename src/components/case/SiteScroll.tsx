@@ -14,17 +14,24 @@ import styles from './Case.module.scss';
  *
  * Reduced motion: no pin, no scrub; the frame becomes an ordinary scrollable
  * region the reader can move through themselves.
+ *
+ * The pin holds the reader for a while, so a visible "Skip the live site" link
+ * sits in the pinned head (on screen for the whole pin, first in the tab
+ * order) and jumps to `skipTo`, the first thing after the section.
  */
 export default function SiteScroll({
   client,
   url,
   desktop,
   mobile,
+  skipTo,
 }: {
   client: string;
   url?: string;
   desktop: FullCapture;
   mobile: FullCapture;
+  /** Id of the element right after this section. */
+  skipTo?: string;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useScrollProgress(sectionRef, { mode: 'pinned', rest: 0 });
@@ -61,6 +68,12 @@ export default function SiteScroll({
             The live site, top to bottom.
           </h2>
           <p className={styles.siteNote}>Keep scrolling: this is the real site, captured in full, not a mock-up.</p>
+          {skipTo ? (
+            <a href={`#${skipTo}`} className={styles.siteSkip}>
+              Skip the live site
+              <span aria-hidden="true">↓</span>
+            </a>
+          ) : null}
         </div>
 
         <div className={styles.siteFrameDesktop} data-frame="">

@@ -38,10 +38,11 @@ const ESTIMATE_LABEL = 'Price your project';
  * The one template behind all four /services/* pages (Nov 2026 simplify
  * pass). One idea per section, and the headings alone tell the story:
  *
- *   the service, in a sentence, with the answer beside it (from price, what
- *   the entry tier includes, support, the quote) → what we build (paper) →
- *   work we can show → what it costs (paper) → how it works → questions →
- *   the other services → the crimson close.
+ *   the service's name as the eyebrow and its promise as the H1 (the one
+ *   dominant element), with the answer beside it at a quieter size (from
+ *   price, what the entry tier includes, support, the quote) → what we build
+ *   (paper, four points) → work we can show → what it costs (paper) → how it
+ *   works → questions → the other services → the crimson close.
  *
  * Server Component, all copy in the HTML, no client island. JSON-LD is one
  * page graph built from the same arrays the page renders.
@@ -79,8 +80,8 @@ export default function ServicePage({ slug }: ServicePageProps) {
         id="service-title"
         size="l"
         crumbs={[{ label: 'Services', href: '/services' }, { label: view.name }]}
-        label={view.role}
-        title={view.name}
+        label={view.name}
+        title={view.headline}
         lede={<p>{view.lede}</p>}
         actions={<HeroActions page={view.slug} secondary={{ label: ESTIMATE_LABEL, href: view.estimate }} />}
         aside={<HeroFacts view={view} />}
@@ -132,7 +133,7 @@ function HeroFacts({ view }: { view: LayerView }) {
           {keepTogether(
             support
               ? `${support} of support included, then plans from ${monthly} a month`
-              : `Monthly plans from ${monthly} a month`,
+              : `Plans from ${monthly} a month`,
           )}
         </dd>
       </div>
@@ -144,7 +145,7 @@ function HeroFacts({ view }: { view: LayerView }) {
   );
 }
 
-/** What the service delivers: six short points on paper, then the technologies we build with. */
+/** What the service delivers: its four strongest points on paper, then the technologies we build with. */
 function WhatWeBuild({ view }: { view: LayerView }) {
   const stack = view.stackLabel ? stackLine(view) : [];
   return (
@@ -153,7 +154,7 @@ function WhatWeBuild({ view }: { view: LayerView }) {
         <header className={styles.head}>
           <p className={styles.label}>What we build</p>
           <h2 id="build-title" className={styles.title}>
-            {view.promise}
+            {view.buildTitle}
           </h2>
           <p className={styles.lede}>{view.deliverIntro}</p>
         </header>

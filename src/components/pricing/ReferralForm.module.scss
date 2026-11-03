@@ -189,19 +189,19 @@ $muted: $color-fg-muted;
 
 .note {
   margin: 0;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px: a sentence, never under the phone floor
   line-height: 1.5;
   color: $muted;
 }
 
+// Google's notice as one sentence: its links are inline text (2.5.8 inline exception).
 .recaptcha {
   margin: 0;
   font-size: 1rem;
+  line-height: 1.5;
   color: $muted;
 
   a {
-    display: inline-block;
-    padding: 10px 0;
     color: rgba(245, 242, 238, 0.86);
     text-decoration: underline;
     text-underline-offset: 3px;

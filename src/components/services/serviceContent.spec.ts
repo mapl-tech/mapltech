@@ -15,6 +15,7 @@ import {
   faqItems,
   indexMetadata,
   proofCases,
+  rowExample,
   sentenceCase,
   serviceMetadata,
   stageViews,
@@ -93,7 +94,8 @@ describe('service pages', () => {
         view.summary,
         view.entryIncludes,
         view.deliverIntro,
-        view.promise,
+        view.headline,
+        view.buildTitle,
         view.processTitle,
         view.close.title,
         view.close.lede,
@@ -128,12 +130,45 @@ describe('service pages', () => {
     },
   );
 
-  it('states each promise, process heading and close in plain words', () => {
-    const [webView, automation, tools, cloud] = LAYER_VIEWS;
-    expect(webView.promise).toBe('Fast, accessible websites, built for the team that runs them.');
-    expect(automation.promise).toBe('Stop doing by hand what should happen automatically.');
-    expect(tools.promise).toBe('Tools built around your agency, not the other way around.');
-    expect(cloud.promise).toBe('Hosting that grows when your clients do.');
+  it('leads with one promise: the H1 in eight words or fewer, the service name above it', () => {
+    const keywords = [/\bwebsites?\b/i, /\bautomation\b/i, /\binternal tools\b/i, /\bcloud\b/i];
+    LAYER_VIEWS.forEach((view, i) => {
+      expect(words(view.headline), view.headline).toBeLessThanOrEqual(8);
+      expect(view.headline).toMatch(keywords[i]);
+      // Sentence case: after the first word, only acronyms keep a capital.
+      for (const word of view.headline.split(/\s+/).slice(1)) expect(word, view.headline).not.toMatch(/^[A-Z][a-z]/);
+      // The eyebrow is the canonical name, and services.ts says the same.
+      expect(view.record.heroLabel).toBe(view.name);
+      // The promise is the H1 alone: the "What we build" heading says something else.
+      expect(view.buildTitle).not.toBe(view.headline);
+    });
+    expect(LAYER_VIEWS.map((view) => view.headline)).toEqual([
+      'Fast, accessible websites under your brand.',
+      'Let automation handle the repetitive work.',
+      'Internal tools that fit how you work.',
+      'Cloud hosting that grows with your clients.',
+    ]);
+  });
+
+  it('shows the four strongest points under "What we build", none repeating its heading or intro', () => {
+    for (const view of LAYER_VIEWS) {
+      const points = capabilityViews(view);
+      expect(points, view.slug).toHaveLength(4);
+      expect(points.map((p) => p.title)).toEqual(view.buildPoints.map(sentenceCase));
+      for (const title of view.buildPoints) expect(view.record.capabilities.some((c) => c.title === title), title).toBe(true);
+      const said = `${view.buildTitle} ${view.deliverIntro}`.toLowerCase();
+      for (const point of points) expect(said, point.title).not.toContain(point.title.toLowerCase());
+    }
+    expect(LAYER_VIEWS.map((view) => view.buildTitle)).toEqual([
+      'What every site gets.',
+      'What we automate.',
+      'Tools for your team and your clients.',
+      'What we set up and look after.',
+    ]);
+  });
+
+  it('states each process heading and close in plain words', () => {
+    const [, automation, tools, cloud] = LAYER_VIEWS;
     expect(cloud.processTitle).toBe('Four steps to reliable hosting.');
     expect(automation.close.title).toBe('Tired of copying data between tools?');
     expect(tools.close.lede).toBe(
@@ -154,12 +189,22 @@ describe('service pages', () => {
       '8–14 weeks',
       '8–14 weeks',
     ]);
-    expect(tierViews(webView).map((t) => t.priceNote)).toEqual([
-      'Starting price',
-      'Starting price',
-      'Starting price',
-      'Priced with you on a call',
+    // A starting price reads "From $5,000"; only Custom carries a note. Never "Starting price".
+    expect(tierViews(webView).map((t) => t.isFloor)).toEqual([true, true, true, false]);
+    expect(tierViews(webView).map((t) => t.priceNote)).toEqual([null, null, null, 'Priced with you on a call']);
+    // An open end ("$20,000+") is a floor too; a range stays a range, even an open one.
+    const cloudTiers = tierViews(LAYER_VIEWS[3]);
+    expect(cloudTiers.map((t) => [t.price, t.isFloor])).toEqual([
+      ['$5,000–$8,000', false],
+      ['$10,000–$18,000', false],
+      ['$20,000', true],
     ]);
+    expect(tierViews(LAYER_VIEWS[2]).map((t) => t.price)[2]).toBe('$12,000–$25,000+');
+    for (const view of LAYER_VIEWS) {
+      for (const tier of tierViews(view)) {
+        expect(`${tier.price} ${tier.priceNote ?? ''}`).not.toMatch(/starting|\/\s*mo(nth)?\b|price range/i);
+      }
+    }
     // Only web states timelines.
     for (const view of LAYER_VIEWS.slice(1)) expect(tierViews(view).every((t) => t.timeline === null)).toBe(true);
   });
@@ -209,6 +254,8 @@ describe('service pages', () => {
       'Advanced / AI-Powered: from $12,000',
       'Enterprise: priced per project',
     ]);
+    // An open-ended tier reads like the price card: "from $20,000".
+    expect(faqItems(LAYER_VIEWS[3])[0].list?.points[2]).toBe('Enterprise Cloud Platform: from $20,000');
     for (const view of LAYER_VIEWS) for (const faq of faqItems(view)) expect(faq.answer).not.toMatch(/\/month/);
   });
 });
@@ -233,5 +280,14 @@ describe('services index', () => {
       expect(`${step.title} ${step.text}`).not.toMatch(BANNED);
     }
     expect(PARTNERSHIP_FROM).toBe('$4,000 a month');
+  });
+
+  it('links each row to one real project, and Cloud (no case study of its own) to none', () => {
+    expect(LAYER_VIEWS.map(rowExample)).toEqual([
+      { client: 'LRO Staffing', href: '/our-work/lro-staffing' },
+      { client: 'MAPL Tours', href: '/our-work/mapl-tours' },
+      { client: 'LRO Interactive Salary Guide', href: '/our-work/lro-salary-guide' },
+      null,
+    ]);
   });
 });

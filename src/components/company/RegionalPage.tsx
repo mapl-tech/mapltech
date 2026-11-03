@@ -275,6 +275,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
           <div className={styles.faqList}>
             <Accordion
               name={`${prefix}-faq`}
+              defaultOpen={0}
               items={region.faq.items.map((item, i) => ({ id: `${prefix}-faq-${i + 1}`, question: item.question, answer: item.answer }))}
             />
           </div>

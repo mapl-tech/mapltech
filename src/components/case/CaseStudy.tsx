@@ -15,12 +15,14 @@ import styles from './Case.module.scss';
  * The case-study template (Nov 2026, simplified). Written for the next buyer:
  *
  *   hero (the name, the facts, the product) → results → the story in
- *   chapters (situation, what we built, what changed, what they said) → the
- *   live site, top to bottom → why it matters to you → the next project.
+ *   chapters (situation, what we built, what changed, what they said) and its
+ *   sources → the live site, top to bottom → the next project, as one row →
+ *   why it matters to you, with the ask. The page ends on the ask.
  *
  * Every section renders only when its story field exists, so a project with a
  * thin record gets a shorter page, never padding. Every sentence is sourced in
- * stories.ts.
+ * stories.ts. "Price a project like this" opens the estimator on the story's
+ * own target (stories.ts `estimate`), or on its service line alone.
  */
 export default function CaseStudy({
   entry,
@@ -31,9 +33,14 @@ export default function CaseStudy({
   story: CaseStory;
   next?: { entry: WorkEntry; story: CaseStory | undefined };
 }) {
-  const estimateHref = estimateLinkFor(entry.service);
+  const estimateHref = estimateLinkFor(story.estimate ?? { service: entry.service });
   const full = FULL_PAGES[entry.slug];
   const live = story.facts.find((fact) => fact.href);
+  // "Skip the live site" lands on the first thing after it: the next project, else the ask.
+  const afterLive = next ? 'case-next' : story.matters ? 'case-matters' : undefined;
+  const nextName = next ? (next.story?.client ?? next.entry.title) : '';
+  // A real capture only, never a mockup: a project without one gets a text-only row.
+  const nextShot = next?.story?.media?.desktop;
 
   const chapters = [
     story.situation?.length ? { id: 'situation', label: 'The situation' } : null,
@@ -213,10 +220,58 @@ export default function CaseStudy({
         </div>
       ) : null}
 
-      {/* ---------------------------------------------------------- the live site */}
-      {full ? <SiteScroll client={story.client} url={live?.detail} desktop={full.desktop} mobile={full.mobile} /> : null}
+      {story.sources ? (
+        <div className={styles.shell}>
+          <p className={styles.sources}>Sources: {story.sources}</p>
+        </div>
+      ) : null}
 
-      {/* ---------------------------------------------------------- matters */}
+      {/* ---------------------------------------------------------- the live site */}
+      {full ? (
+        <SiteScroll client={story.client} url={live?.detail} desktop={full.desktop} mobile={full.mobile} skipTo={afterLive} />
+      ) : null}
+
+      {/* ---------------------------------------------------------- next: one row, above the ask */}
+      {next ? (
+        <div className={styles.nextBand}>
+          <div className={styles.shell}>
+            <Link
+              id="case-next"
+              href={next.entry.path}
+              className={styles.next}
+              data-has-media={nextShot ? '' : undefined}
+              aria-label={`Next project: ${nextName}`}
+              aria-describedby="case-next-line"
+              data-cta-placement={`case_${entry.slug}_next`}
+            >
+              {nextShot ? (
+                <span className={styles.nextMedia} aria-hidden="true">
+                  <Image
+                    src={nextShot}
+                    alt=""
+                    width={1800}
+                    height={1125}
+                    sizes="(min-width: 1024px) 264px, 26vw"
+                    className={styles.nextImg}
+                  />
+                </span>
+              ) : null}
+              <span className={styles.nextText}>
+                <span className={styles.nextLabel}>Next project</span>
+                <span className={styles.nextName}>{nextName}</span>
+                <span id="case-next-line" className={styles.nextLine}>
+                  {next.story?.headline ?? next.entry.description}
+                </span>
+              </span>
+              <span className={styles.nextGo} aria-hidden="true">
+                →
+              </span>
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
+      {/* ---------------------------------------------------------- matters: the ask, last */}
       {story.matters ? (
         <CloseBand
           id="case-matters"
@@ -227,44 +282,6 @@ export default function CaseStudy({
           note={HERO_REASSURE}
           hero
         />
-      ) : null}
-
-      {story.sources ? (
-        <p className={styles.sources}>
-          <span className={styles.shell}>Sources: {story.sources}</span>
-        </p>
-      ) : null}
-
-      {/* ---------------------------------------------------------- next */}
-      {next ? (
-        <Link
-          href={next.entry.path}
-          className={styles.next}
-          aria-label={`Next project: ${next.story?.client ?? next.entry.title}`}
-          aria-describedby="case-next-line"
-          data-cta-placement={`case_${entry.slug}_next`}
-        >
-          <span className={styles.nextMedia} aria-hidden="true">
-            <Image
-              src={next.story?.media?.desktop ?? next.entry.image}
-              alt=""
-              width={1800}
-              height={1125}
-              sizes="100vw"
-              className={styles.nextImg}
-            />
-          </span>
-          <span className={styles.nextInner}>
-            <span className={styles.nextLabel}>Next project</span>
-            <span className={styles.nextName}>{next.story?.client ?? next.entry.title}</span>
-            <span id="case-next-line" className={styles.nextLine}>
-              {next.story?.headline ?? next.entry.description}
-            </span>
-            <span className={styles.nextGo} aria-hidden="true">
-              →
-            </span>
-          </span>
-        </Link>
       ) : null}
     </article>
   );

@@ -37,7 +37,7 @@
 
 .trust {
   margin: 0;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px: a sentence, never under the phone floor
   line-height: 1.5;
   color: $color-fg-muted;
 }

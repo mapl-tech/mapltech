@@ -11,6 +11,18 @@
  * omitted by the template, never padded.
  */
 import { caseStudies, testimonials } from '@/config/site';
+import type { EstimateService, EstimateToggles, SizeByService } from '@/lib/estimate';
+
+/**
+ * Where "Price a project like this" opens the estimator: the service line,
+ * plus only what the story's own facts state. A size where a page count or
+ * system type is published; an estimator switch (CMS, AI, logins) where the
+ * facts name that feature. Anything the facts leave open stays unset, and the
+ * estimator shows its usual first option for it.
+ */
+export type CaseEstimate = {
+  [S in EstimateService]: { service: S; size?: SizeByService[S]; toggles?: EstimateToggles };
+}[EstimateService];
 
 export interface CaseFact {
   term: string;
@@ -48,6 +60,8 @@ export interface CaseStory {
   sources?: string;
   /** Real screenshots of the live product (captured Nov 2026). */
   media?: { desktop: string; mobile?: string; alt: string; caption?: string };
+  /** The estimator target for "Price a project like this" (see CaseEstimate). */
+  estimate?: CaseEstimate;
 }
 
 const alita = testimonials.find((t) => t.company === 'LRO Staffing');
@@ -111,6 +125,10 @@ export const STORIES: readonly CaseStory[] = [
       mobile: '/images/cases/lro-mobile.jpg',
       alt: 'The LRO Staffing homepage: “Building Careers. Strengthening Organizations.” above a job search panel.',
     },
+    // Growth ("8–12 pages"): the eight expertise pages alone pass Starter's seven,
+    // before the homepage, job search and blog. CMS: built on WordPress, with a
+    // blog the team publishes to. No logins or 13+ page count is published.
+    estimate: { service: 'web', size: 'growth', toggles: { cms: true } },
   },
   {
     slug: 'mapl-tours',
@@ -162,6 +180,10 @@ export const STORIES: readonly CaseStory[] = [
       mobile: '/images/cases/tours-mobile.jpg',
       alt: 'The MAPL Tours homepage: “Discover Jamaica beyond the resort.” over aerial footage of the coast.',
     },
+    // AI: site.ts calls it "a travel and tourism company fully managed by AI", and
+    // AI assistants look up its fares through MCP tools. Our own product, with no
+    // client scope to size: no size chosen.
+    estimate: { service: 'automation', toggles: { ai: true } },
   },
   {
     slug: 'chha-ncr',
@@ -230,6 +252,11 @@ export const STORIES: readonly CaseStory[] = [
       mobile: '/images/cases/chha-mobile.jpg',
       alt: 'The CHHA-NCR homepage after the July 2026 relaunch.',
     },
+    // Growth ("8–12 pages"): the homepage, five journey-stage pages, the clinic
+    // directory and the Accessible Ottawa guide pass Starter's seven, before the
+    // board bios and AGM reports. CMS: volunteers edit it themselves on
+    // WordPress. No logins are published.
+    estimate: { service: 'web', size: 'growth', toggles: { cms: true } },
   },
   {
     slug: 'lro-salary-guide',
@@ -262,6 +289,10 @@ export const STORIES: readonly CaseStory[] = [
       mobile: '/images/cases/salary-mobile.jpg',
       alt: 'The LRO 2026 Interactive Salary Guide with its filters and charts.',
     },
+    // Internal Dashboards: filters and charts that update live are that tier's
+    // "Custom charts and graphs" and "Live reports". Nothing of a client portal
+    // (documents, payments) or an ops system. ("Role-based" here means job role.)
+    estimate: { service: 'tools', size: 'dashboard' },
   },
   {
     slug: 'focas-canada',
@@ -289,6 +320,9 @@ export const STORIES: readonly CaseStory[] = [
       mobile: '/images/cases/focas-mobile.jpg',
       alt: 'The FOCAS Canada homepage.',
     },
+    // CMS: built with WordPress (a content editor is not in Starter). No page
+    // count is published, and nothing says how members sign in: no size chosen.
+    estimate: { service: 'web', toggles: { cms: true } },
   },
   {
     slug: 'unsvcc',
@@ -318,6 +352,11 @@ export const STORIES: readonly CaseStory[] = [
       alt: 'The UNSVCC public website: “United Senior Citizen Voice for Change Coalition”.',
       caption: 'The coalition’s public site. The dashboard itself is internal and stays private.',
     },
+    // Internal Dashboards: "live numbers ... in one place" and "access by role"
+    // are that tier's own description and "Access levels for each role" (the
+    // logins switch). Its self-building reports also appear in the ops tier, but
+    // nothing else of that tier (running whole operations) is published.
+    estimate: { service: 'tools', size: 'dashboard', toggles: { auth: true } },
   },
   {
     slug: 'crowned-spice',
@@ -339,6 +378,9 @@ export const STORIES: readonly CaseStory[] = [
       heading: 'Why this matters if your client sells online',
       text: 'The online store is the easy part. The hours go into everything after someone clicks buy. We automate each step of an order, so the client’s team only handles the unusual ones.',
     },
+    // Three automations fit "3–5 core automations", but stock kept in step across
+    // every sales channel could also be a multi-system pipeline: no size chosen.
+    estimate: { service: 'automation' },
   },
 ];
 

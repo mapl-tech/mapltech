@@ -65,22 +65,24 @@ const toggleName = (toggle: ToggleOption): string => TOGGLE_LABELS[toggle.key] ?
 
 /**
  * What a support level is and costs across the selected lines: the published
- * line it maps to ("Essential Care") and the monthly sum ("$1,000–$2,000/mo").
+ * line it maps to ("Essential Care") and the monthly sum ("$1,000–$2,000",
+ * shown with "a month" under it).
  */
 function supportEffect(services: readonly EstimateService[], level: SupportLevel): { meta: string; price: string | null } {
   if (level === 'none') return { meta: 'No monthly plan', price: null };
   const lines = services.map((service) => supportLineFor(service, level)).filter((line) => line !== undefined);
   if (lines.length === 0) return { meta: 'Not offered for this service', price: null };
-  const price = `${formatRange(
+  const price = formatRange(
     lines.reduce((sum, line) => sum + line.low, 0),
     lines.reduce((sum, line) => sum + line.high, 0),
-  )}/mo`;
+  );
   return { meta: lines.length === 1 ? lines[0].name : `${lines.length} monthly plans`, price };
 }
 
 /**
  * What an add-on does to the price, read from the engine before the visitor
  * flips it: the tier it requires, or that the current tier already covers it.
+ * Web Development prices are the lowest a package costs, so they read "from $8,500".
  */
 function toggleEffect(toggle: ToggleOption, input: EstimateInput): string {
   const services = input.services.filter((service) => toggle.appliesTo.includes(service));
@@ -88,8 +90,10 @@ function toggleEffect(toggle: ToggleOption, input: EstimateInput): string {
     const without = resolveTier(service, input.size[service], { ...input.toggles, [toggle.key]: false });
     const withIt = resolveTier(service, input.size[service], { ...input.toggles, [toggle.key]: true });
     const prefix = services.length > 1 ? `${SERVICE_META[service].shortLabel}: ` : '';
+    const price = priceText(withIt.tier.price);
+    const shown = service === 'web' && price !== 'Custom quote' ? `from ${price}` : price;
     return withIt.index > without.index
-      ? `${prefix}${services.length > 1 ? 'n' : 'N'}eeds ${keepHyphens(withIt.tier.name)}, ${priceText(withIt.tier.price)}`
+      ? `${prefix}${services.length > 1 ? 'n' : 'N'}eeds ${keepHyphens(withIt.tier.name)}, ${shown}`
       : `${prefix}${services.length > 1 ? 'i' : 'I'}ncluded in ${keepHyphens(without.tier.name)}`;
   });
   return parts.join(' · ');
@@ -343,7 +347,12 @@ export default function ScopeEstimator() {
                   <span className={styles.radio} aria-hidden="true" />
                   <span className={styles.tileName}>{level.label}</span>
                   <span className={styles.tileMeta}>{effect.meta}</span>
-                  {effect.price ? <span className={styles.tilePrice}>{effect.price}</span> : null}
+                  {effect.price ? (
+                    <span className={styles.tilePrice}>
+                      {effect.price}
+                      <span className={styles.tileUnit}> a month</span>
+                    </span>
+                  ) : null}
                 </label>
               );
             })}
