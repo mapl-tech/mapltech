@@ -373,8 +373,16 @@ export default function Header() {
         <DesktopNav pathname={pathname} />
 
         <div className={styles.utility}>
-          {/* On the brief itself the ask would point at the page you are on. */}
-          {onProjectPage ? null : (
+          {/* On the brief itself the ask would point at the page you are on. An
+              invisible, inert copy keeps its width, so the nav sits where it
+              does on every other page. */}
+          {onProjectPage ? (
+            <span className={`${styles.cta} ${styles.ctaHold}`} aria-hidden="true" inert>
+              <MagneticButton size="small" className={styles.headerBtn} disabled>
+                {PROJECT_LABEL}
+              </MagneticButton>
+            </span>
+          ) : (
             <>
               <span className={styles.cta} data-cta-placement="header_project">
                 <MagneticButton href={projectHref} size="small" placement="header_project" className={styles.headerBtn}>

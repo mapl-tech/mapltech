@@ -270,6 +270,11 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
+// The brief's own page: the ask's space without the ask (Header.tsx).
+.ctaHold {
+  visibility: hidden;
+}
+
 .ctaCompact {
   display: inline-block;
   transition: opacity 0.24s ease, visibility 0s linear 0s;
