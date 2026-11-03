@@ -12,7 +12,6 @@ import {
   normalizeEstimateInput,
   resolveTier,
   supportLineFor,
-  tiersFor,
   type EstimateInput,
   type EstimateService,
   type EstimateSize,
@@ -25,7 +24,7 @@ import {
 } from '@/lib/estimate';
 import { anchorOffset, useLenis } from '@/components/ui/SmoothScroll';
 import { useMediaQuery, usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
-import { SERVICES, TOGGLE_LABELS, keepHyphens, priceText } from './content';
+import { SERVICES, TOGGLE_LABELS, addOnsMoving, inSentence, keepHyphens, priceText } from './content';
 import EstimateBar from './EstimateBar';
 import EstimateSummary from './EstimateSummary';
 import { clearEstimateUrl, useEstimateState, writeEstimateUrl } from './estimateUrlStore';
@@ -50,6 +49,12 @@ import styles from './ScopeEstimator.module.scss';
  * Simplify pass (Nov 2026): every option changes the price or the brief. The
  * "design supplied" switch is gone from the questions (it never moved the
  * price); a shared link that carries it still decodes.
+ *
+ * An add-on can need a dearer package than the size alone ("Content editing"
+ * needs Growth / E-Commerce): the visitor's size answer stays chosen, and
+ * every size option names the package and price it lands on with the
+ * add-ons, so the chosen size and the estimate always agree; the readout's
+ * basis line says which add-on moved it.
  */
 
 const TIMELINE_COPY: Record<EstimateTimeline, { label: string; effect: string }> = {
@@ -242,12 +247,14 @@ export default function ScopeEstimator() {
             <span className={styles.legendText}>How big is it?</span>
           </legend>
           {input.services.map((service) => {
-            const tiers = tiersFor(service);
             const startingAt = service === 'web';
             const options = (
               <div className={styles.sizes}>
                 {SIZE_OPTIONS[service].map((option) => {
-                  const tier = tiers[option.tierIndex];
+                  // The package this size lands on with the add-ons chosen below (one can need a dearer
+                  // package), so the chosen size always names the package and price the estimate shows.
+                  const { tier } = resolveTier(service, option.key, input.toggles);
+                  const movedBy = addOnsMoving(service, option.key, input.toggles);
                   const checked = input.size[service] === option.key;
                   const price = priceText(tier.price);
                   return (
@@ -262,7 +269,10 @@ export default function ScopeEstimator() {
                       />
                       <span className={styles.radio} aria-hidden="true" />
                       <span className={styles.tileName}>{option.label}</span>
-                      <span className={styles.tileMeta}>{keepHyphens(tier.name)}</span>
+                      <span className={styles.tileMeta}>
+                        {keepHyphens(tier.name)}
+                        {movedBy.length > 0 ? `, for ${movedBy.length > 1 ? 'your add-ons' : inSentence(movedBy[0])}` : null}
+                      </span>
                       <span className={styles.tilePrice}>
                         {startingAt && price !== 'Custom quote' ? `from ${price}` : price}
                       </span>

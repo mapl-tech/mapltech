@@ -71,7 +71,16 @@ export default function ServiceIndex() {
           <h2 id="services-title" className={styles.title}>
             {SERVICES_INTRO.title}
           </h2>
-          <p className={styles.lede}>{SERVICES_INTRO.lede}</p>
+          {/* The rows each open a service; the estimator prices one or several at once. */}
+          <p className={styles.lede}>
+            {SERVICES_INTRO.lede}{' '}
+            <Link href={SERVICES_INTRO.estimate.href} className={styles.ledeLink} data-cta-placement="home_services_estimate">
+              {SERVICES_INTRO.estimate.label}
+              <span aria-hidden="true" className={styles.ledeArrow}>
+                {'\u00a0'}→
+              </span>
+            </Link>
+          </p>
         </header>
 
         <div className={styles.body}>

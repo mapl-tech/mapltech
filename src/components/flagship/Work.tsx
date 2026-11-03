@@ -48,9 +48,10 @@ export default function Work() {
                   <p className={styles.outcome}>{card.outcome}</p>
                   <dl className={styles.metrics}>
                     {card.metrics.map((metric) => (
+                      // The term is what is counted, the value its number; CSS sets the number first.
                       <div key={metric.label} className={styles.metric}>
-                        <dt className={styles.value}>{metric.value}</dt>
-                        <dd className={styles.metricLabel}>{metric.label}</dd>
+                        <dt className={styles.metricLabel}>{metric.label}</dt>
+                        <dd className={styles.value}>{metric.value}</dd>
                       </div>
                     ))}
                   </dl>
@@ -103,7 +104,9 @@ export default function Work() {
         })}
       </ol>
 
-      <div className={styles.ask}>
+      {/* One filled ask on screen at a time: while this one is in view the header's is an
+          outline (data-header-quiet) and the phone bar steps aside (data-bar-stand-down). */}
+      <div className={styles.ask} data-header-quiet="" data-bar-stand-down="">
         <p className={styles.askTitle}>{WORK_SECTION.ask}</p>
         <div className={styles.askAction}>
           <Link href={PRIMARY_CTA.href} className={styles.askPrimary} data-cta-placement="home_work_ask">

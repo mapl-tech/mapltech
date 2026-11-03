@@ -1,7 +1,6 @@
 import { ViewTransition, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { WORK_SECTION } from '@/components/flagship/content';
-import QuoteLine from '@/components/flagship/QuoteLine';
 import { BrowserFrame, DesktopShot, PhoneFrame } from './Frames';
 import PipelineDiagram from './PipelineDiagram';
 import { keepTogether } from './keepTogether';
@@ -15,8 +14,8 @@ import styles from './ProofBlock.module.scss';
  * at most. Cloud has no screen to show, so its exhibit is how a release runs
  * on infrastructure we set up, beside MAPL Tours' published delivery facts.
  * Every fact is from stories.ts; a case with no published numbers shows what
- * was built instead. The lead case that carries the approved client quote
- * (LRO Staffing) shows it, so the work has its client's voice beside it.
+ * was built instead. The approved client quote is in the page's hero (every
+ * service page), so it is not repeated beside the lead case.
  */
 export default function ProofBlock({ view }: { view: LayerView }) {
   const cases = proofCases(view);
@@ -97,7 +96,6 @@ function LeadCase({ item, view }: { item: ProofCase; view: LayerView }) {
             ))}
           </ul>
         ) : null}
-        {item.clientQuote ? <QuoteLine className={styles.quote} /> : null}
         <Link href={item.href} className={styles.read} data-cta-placement={`${view.slug}_case_${item.slug}`}>
           Read the case study<span className="visually-hidden">: {item.client}</span>
           <span aria-hidden="true" className={styles.readArrow}>
@@ -127,10 +125,10 @@ function LeadCase({ item, view }: { item: ProofCase; view: LayerView }) {
       {item.results.length ? (
         <dl className={styles.metrics} style={{ '--cols': item.results.length } as CSSProperties}>
           {item.results.map((result) => (
-            // Value first, in the DOM as on screen: "~50%, of customers now arrive through ChatGPT".
+            // The term is what is counted, the value its number; CSS sets the number first.
             <div key={result.label} className={styles.metric}>
-              <dt className={styles.value}>{result.value}</dt>
-              <dd className={styles.metricLabel}>{result.label}</dd>
+              <dt className={styles.metricLabel}>{result.label}</dt>
+              <dd className={styles.value}>{result.value}</dd>
             </div>
           ))}
         </dl>

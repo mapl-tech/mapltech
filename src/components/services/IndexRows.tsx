@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { PRICING_LABEL } from '@/components/layout/chrome';
 import { BrowserFrame, DesktopShot } from './Frames';
 import IndexPreview from './IndexPreview';
 import PipelineDiagram from './PipelineDiagram';
@@ -27,10 +28,12 @@ function Exhibit({ layer, sizes }: { layer: LayerView; sizes: string }) {
  * name as large as the row allows, the one-line summary, the public "from"
  * price right under it and an arrow. Each row is one link to the service
  * page, named by the service and its price (the summary is its description,
- * as on the homepage's index). Under it, two separate small links (never
- * nested in the row's link, and 8px clear of it): one real project for that
- * service with one of its published results beside it, and a quiet "Start a
- * … project" that opens the brief with the service chosen. On desktop a
+ * as on the homepage's index). Under it, separate small links (never nested
+ * in the row's link, and 8px clear of it): one real project for that service
+ * with one of its published results (or, without one, one thing it does)
+ * beside it; then the row's actions, as the hero's pair: "Start a … project",
+ * an outlined button that opens the brief with the service chosen, and a
+ * quiet "See pricing" that opens the estimator with it selected. On desktop a
  * preview of real work trails the cursor (IndexPreview); wide touch screens
  * and reduced motion get the same exhibit inline in the row; phones and
  * tablets keep the rows short.
@@ -58,11 +61,13 @@ function Row({ layer, index }: { layer: LayerView; index: number }) {
   const example = rowExample(layer);
   const id = `index-${layer.service}`;
   return (
-    <li className={styles.row} data-index={index}>
-      {/* Named "Web Development. From $5,000"; the summary is the description. */}
+    <li className={styles.row}>
+      {/* Named "Web Development. From $5,000"; the summary is the description. The trailing preview
+          follows this link only (data-index), never the foot, whose example can be another project. */}
       <Link
         href={layer.path}
         className={styles.link}
+        data-index={index}
         aria-labelledby={`${id}-name ${id}-meta`}
         aria-describedby={`${id}-summary`}
         data-cta-placement={`services_index_${layer.service}`}
@@ -102,11 +107,13 @@ function Row({ layer, index }: { layer: LayerView; index: number }) {
                 →
               </span>
             </Link>
-            {/* One result the case study publishes, as the evidence beside the link. */}
+            {/* One result the case study publishes, as the evidence beside the link, or one thing it built. */}
             {example.metric ? (
               <span className={styles.exampleMetric}>
                 <span className={styles.exampleValue}>{example.metric.value}</span> {example.metric.label}
               </span>
+            ) : example.fact ? (
+              <span className={styles.exampleMetric}>{example.fact}</span>
             ) : null}
           </p>
         ) : null}
@@ -117,9 +124,13 @@ function Row({ layer, index }: { layer: LayerView; index: number }) {
             data-cta-placement={`services_index_${layer.service}_start`}
           >
             Start {projectOf(layer.name)}
-            <span aria-hidden="true" className={styles.exampleArrow}>
+            <span aria-hidden="true" className={styles.startArrow}>
               →
             </span>
+          </Link>
+          <Link href={layer.estimate} className={styles.priceLink} data-cta-placement={`services_index_${layer.service}_price`}>
+            {PRICING_LABEL}
+            <span className="visually-hidden"> for {layer.name}</span>
           </Link>
         </p>
       </div>

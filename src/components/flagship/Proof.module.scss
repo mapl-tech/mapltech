@@ -84,22 +84,28 @@
   }
 }
 
-// Three published numbers, as big as the page allows.
+// Three published numbers, as big as the page allows. Phones: one short row
+// each, the number beside what it counts, the labels lined up on the widest
+// number (subgrid), so the three take ~270px instead of ~430px.
 .stats {
   display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 20px;
   margin: 0;
   border-top: 1px solid $color-hairline-strong;
 
   @include md {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 0;
   }
 }
 
 .stat {
   display: grid;
-  gap: 12px;
-  align-content: start;
-  padding: clamp(24px, 3vw, 36px) 0;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  padding: 18px 0;
   border-bottom: 1px solid $color-hairline;
 
   // The clients row below draws its own rule; two would frame an empty band.
@@ -108,7 +114,12 @@
   }
 
   @include md {
-    padding-right: 32px;
+    grid-column: auto;
+    grid-template-columns: none;
+    align-items: stretch;
+    align-content: start;
+    gap: 12px;
+    padding: clamp(24px, 3vw, 36px) 32px clamp(24px, 3vw, 36px) 0;
     border-bottom: 0;
 
     & + & {
@@ -118,14 +129,21 @@
   }
 }
 
+// The <dd> after its label in the DOM, shown first (nothing in a stat is focusable).
 .value {
+  order: -1;
+  margin: 0;
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(4rem, 2.4rem + 6vw, 8.5rem); // 64px -> 136px
+  font-size: 3.25rem; // 52px beside its label on phones
   line-height: 0.9;
   letter-spacing: -0.045em;
   color: $color-fg;
   @include tabular;
+
+  @include md {
+    font-size: clamp(4rem, 2.4rem + 6vw, 8.5rem); // 64px -> 136px
+  }
 }
 
 .suffix {

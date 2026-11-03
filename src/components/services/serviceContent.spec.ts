@@ -292,22 +292,45 @@ describe('services index', () => {
     expect(PARTNERSHIP_FROM).toBe('$4,000 a month');
   });
 
-  it('links each row to one real project with a published result beside it, Cloud to the case its page shows', () => {
+  it('links each row to one real project with published evidence beside it, Cloud to the case its page shows', () => {
     const examples = LAYER_VIEWS.map(rowExample);
     expect(examples.map((example) => example && { client: example.client, href: example.href })).toEqual([
       { client: 'LRO Staffing', href: '/our-work/lro-staffing' },
-      { client: 'MAPL Tours', href: '/our-work/mapl-tours' },
+      { client: 'Crowned Spice', href: '/our-work/crowned-spice' },
       { client: 'LRO Interactive Salary Guide', href: '/our-work/lro-salary-guide' },
       { client: 'MAPL Tours', href: '/our-work/mapl-tours' },
     ]);
-    // Every metric is one stories.ts publishes for that case; the salary guide publishes none.
+    // MAPL Tours, our own product, is one row's example, not two.
+    expect(examples.filter((example) => example?.href === '/our-work/mapl-tours')).toHaveLength(1);
+    // Every metric is one stories.ts publishes for that case; a case without numbers (Crowned Spice,
+    // the salary guide) shows one stage of what was built, in the case study's own words.
     LAYER_VIEWS.forEach((view, i) => {
-      const metric = examples[i]?.metric;
-      if (metric) expect(findStory(view.example ?? '')?.results).toContainEqual(metric);
+      const example = examples[i];
+      const story = findStory(view.example ?? '');
+      if (example?.metric) expect(story?.results).toContainEqual(example.metric);
+      if (example?.fact) expect(story?.built?.stages.map((stage) => stage.text)).toContain(example.fact);
+      expect(Boolean(example?.metric) || Boolean(example?.fact), view.slug).toBe(true);
     });
-    expect(examples.map((example) => example?.metric?.value ?? null)).toEqual(['100', '~50%', null, '~2,000']);
+    expect(examples.map((example) => example?.metric?.value ?? null)).toEqual(['100', null, null, '~2,000']);
+    expect(examples.map((example) => example?.fact ?? null)).toEqual([
+      null,
+      'Shipping starts automatically when an order is ready.',
+      'Charts that update as soon as you change a filter.',
+      null,
+    ]);
     // Cloud keeps to delivery facts, as its page does.
     expect(examples[3]?.metric?.label).toMatch(/tests/);
+  });
+
+  it('ends each price answer on the estimator and the brief, with the service chosen', () => {
+    for (const view of LAYER_VIEWS) {
+      const [price, ...rest] = faqItems(view);
+      expect(price.actions).toEqual([
+        { label: 'Price this service', href: `/pricing?svc=${view.service}#estimator` },
+        { label: 'Start a project', href: `/contact-us?svc=${view.service}` },
+      ]);
+      for (const item of rest) expect(item.actions).toBeUndefined();
+    }
   });
 
   it('starts each service in the brief with that service, and each tier with its package', () => {

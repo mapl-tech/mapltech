@@ -148,12 +148,6 @@
 }
 
 // The client's own words (QuoteLine), ruled off from the outcome above.
-.quote {
-  margin-top: 4px;
-  padding-top: 18px;
-  border-top: 1px solid $color-hairline;
-}
-
 .read {
   @include text-action($color-fg);
   justify-self: start;
@@ -241,7 +235,10 @@
   }
 }
 
+// The <dd> after its label in the DOM, shown first (nothing in a metric is focusable).
 .value {
+  order: -1;
+  margin: 0;
   font-family: $font-display;
   font-weight: 800;
   font-size: clamp(2.75rem, 1.7rem + 3.2vw, 4.75rem); // 44px -> 76px

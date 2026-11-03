@@ -29,6 +29,7 @@ export default function PageHeader({
   proof = false,
   id = 'page-title',
   size = 'xl',
+  asideAlign = 'end',
 }: {
   label?: string;
   title: ReactNode;
@@ -43,6 +44,8 @@ export default function PageHeader({
   id?: string;
   /** xl: 48 -> 136px, for pages that lead with a statement; l: 44 -> 104px for long titles. */
   size?: 'xl' | 'l';
+  /** Wide screens: the aside sits on the copy's last line (end) or level with its top (start, for a tall aside). */
+  asideAlign?: 'end' | 'start';
 }) {
   // The label names the page's section; when the breadcrumb already ends on
   // that same name ("Pricing / Pricing"), the label is left out.
@@ -52,7 +55,7 @@ export default function PageHeader({
   return (
     <header className={styles.header} aria-labelledby={id}>
       <div className={styles.light} aria-hidden="true" />
-      <div className={styles.inner} data-has-aside={aside ? '' : undefined}>
+      <div className={styles.inner} data-has-aside={aside ? '' : undefined} data-aside-align={aside ? asideAlign : undefined}>
         <div className={styles.copy}>
           {crumbs?.length ? (
             <nav aria-label="Breadcrumb" className={styles.crumbs}>

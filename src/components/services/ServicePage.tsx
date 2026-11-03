@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import CloseBand from '@/components/flagship/CloseBand';
-import { NDA_LINE } from '@/components/flagship/content';
+import { CLIENTS_LINE, NDA_LINE } from '@/components/flagship/content';
 import JsonLd from '@/components/seo/JsonLd';
 import PageHeader from '@/components/ui/PageHeader';
 import type { ServiceSlug } from '@/config/services';
@@ -49,9 +49,11 @@ const ESTIMATE_LABEL = 'Price your project';
  *
  * Every "Start a project" (the hero's, the close's, and so the phone bar's,
  * which repeats the hero's) opens the brief with this service chosen; the NDA
- * line sits under the hero's pair. Server Component, all copy in the HTML, no
- * client island. JSON-LD is one page graph built from the same arrays the
- * page renders.
+ * line and the approved client quote sit under the hero's pair, so every
+ * service page shows the same proof in its first screen, and the close names
+ * the clients instead of repeating the quote. Server Component, all copy in
+ * the HTML, no client island. JSON-LD is one page graph built from the same
+ * arrays the page renders.
  */
 export default function ServicePage({ slug }: ServicePageProps) {
   const view = layerView(slug);
@@ -99,6 +101,7 @@ export default function ServicePage({ slug }: ServicePageProps) {
           />
         }
         aside={<HeroFacts view={view} />}
+        proof
       />
 
       <WhatWeBuild view={view} />
@@ -115,6 +118,7 @@ export default function ServicePage({ slug }: ServicePageProps) {
         href={brief}
         secondary={{ label: ESTIMATE_LABEL, href: view.estimate }}
         placement={`${view.slug}_close`}
+        proofLine={CLIENTS_LINE}
       />
     </>
   );

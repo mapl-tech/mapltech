@@ -13,12 +13,16 @@
 import { pricing } from '@/config/site';
 import {
   SERVICE_META,
+  TOGGLE_OPTIONS,
   formatMoney,
   formatRange,
   parsePriceLabel,
   recurringLinesFor,
+  resolveTier,
   tiersFor,
   type EstimateService,
+  type EstimateToggles,
+  type SizeKey,
   type ToggleKey,
 } from '@/lib/estimate';
 
@@ -39,6 +43,13 @@ export function priceText(label: string): string {
 
 /** Tier names with non-breaking hyphens, so "E-Commerce" and "AI-Powered" never split across lines. */
 export const keepHyphens = (text: string): string => text.replace(/-/g, '‑');
+
+/**
+ * Number-word compounds with a non-breaking hyphen ("20‑minute"), for plain
+ * string props that cannot carry a no-wrap span (the close band's lede).
+ * Display only: structured data keeps the plain hyphen.
+ */
+export const keepNumberWords = (text: string): string => text.replace(/(\d)-(?=[A-Za-z])/g, '$1\u2011');
 
 /**
  * site.ts descriptions use a spaced hyphen as a dash ("a brochure site - they
@@ -216,6 +227,36 @@ export const TOGGLE_LABELS: Partial<Record<ToggleKey, string>> = {
   ecommerce: 'Online store or bookings',
   auth: 'User logins and roles',
 };
+
+/**
+ * The add-ons that move a size up to a dearer package (estimate.ts
+ * resolveTier), by their names on this page: only those that need the
+ * package the estimate lands on ("Content editing (CMS)" for Growth / E-Commerce
+ * at "Up to 7 pages"). Empty when the size's own package applies.
+ */
+export function addOnsMoving(service: EstimateService, size: SizeKey | undefined, toggles: EstimateToggles): string[] {
+  const own = resolveTier(service, size, {}).index;
+  const landed = resolveTier(service, size, toggles).index;
+  if (landed <= own) return [];
+  return TOGGLE_OPTIONS.filter(
+    (toggle) => toggles[toggle.key] === true && resolveTier(service, size, { [toggle.key]: true }).index === landed,
+  ).map((toggle) => TOGGLE_LABELS[toggle.key] ?? toggle.label);
+}
+
+/** "A", "A and B", "A, B and C". */
+export function listWords(items: readonly string[]): string {
+  return items.length < 2 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+}
+
+/** An add-on's name inside a sentence: "content editing (CMS)" (acronyms such as "AI features" keep their capitals). */
+export const inSentence = (name: string): string => (/^[A-Z][a-z]/.test(name) ? name[0].toLowerCase() + name.slice(1) : name);
+
+/**
+ * The estimate's springing digits (ui/LiveNumber): critically damped and
+ * quick, so a new total settles in about 0.3s (0.4s for the largest jumps)
+ * and never trails the click that changed it.
+ */
+export const TOTAL_SPRING = { stiffness: 1400, damping: 58, mass: 0.6 } as const;
 
 export const PRICE_LIST = {
   label: 'Price list',

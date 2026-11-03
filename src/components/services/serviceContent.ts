@@ -49,9 +49,9 @@ import {
   type SizeKey,
 } from '@/lib/estimate';
 import { findStory } from '@/components/case/stories';
-import { APPROACH, LAYERS, SPOTLIGHT } from '@/components/flagship/content';
+import { APPROACH, LAYERS } from '@/components/flagship/content';
 import { FAQ_ITEMS, type FaqEntry } from '@/components/home/data';
-import { PROJECT_HREF } from '@/components/layout/chrome';
+import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import type { Step } from './Steps';
 
 /** The date this family was rebuilt (JSON-LD dateModified); the sitemap uses routes.ts REDESIGN_DATE. */
@@ -149,6 +149,11 @@ interface ServiceCopy {
   proofSlugs: readonly string[];
   /** The one case study the /services row links to (stories.ts slug), with its first published result. */
   example: string | null;
+  /**
+   * For an example case that publishes no numbers: the name of the stage of what we built (stories.ts
+   * `built.stages`) whose words stand beside the link instead, as the row's evidence.
+   */
+  exampleStage?: string;
   /** Cloud shows only MAPL Tours' published delivery facts. */
   proofFilter?: { headline: string; results: RegExp };
   /** Real work for the index preview; null draws the release diagram instead (cloud has no screen). */
@@ -208,7 +213,10 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     buildPoints: ['A CRM that does the follow-up', 'All your tools, connected', 'AI that sorts new enquiries', 'AI agents that act'],
     stackLabel: null,
     proofSlugs: ['mapl-tours', 'crowned-spice'],
-    example: 'mapl-tours',
+    // A client's automation (MAPL Tours, our own product, is the Cloud row's example): Crowned Spice
+    // publishes no numbers, so the row shows one thing it automated, in the case study's words.
+    example: 'crowned-spice',
+    exampleStage: 'Shipping',
     exhibit: {
       src: '/images/cases/tours-desktop.jpg',
       alt: 'The MAPL Tours homepage, “Discover Jamaica beyond the resort.”, over aerial footage of the coast.',
@@ -238,6 +246,7 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     stackLabel: 'Built with',
     proofSlugs: ['lro-salary-guide', 'unsvcc'],
     example: 'lro-salary-guide',
+    exampleStage: 'See',
     exhibit: {
       src: '/images/cases/salary-desktop.jpg',
       alt: 'The LRO 2026 Interactive Salary Guide built by MAPL TECH, with its filters and charts.',
@@ -319,7 +328,7 @@ export interface LayerView extends ServiceCopy {
   entryTier: ServiceTier;
   /** Cheapest monthly line. */
   lowestMonthly: { name: string; amount: number } | null;
-  /** Estimator deep link with this service preselected. */
+  /** Estimator deep link with this service preselected (`/pricing?svc=web#estimator`). */
   estimate: string;
 }
 
@@ -362,7 +371,8 @@ function toView(record: ServiceRecord): LayerView {
     fromMoney: formatMoney(from),
     entryTier: tiers[0],
     lowestMonthly: cheapestMonthly(recurring),
-    estimate: estimateHref({ services: [record.estimateKey] }),
+    // The service alone: the estimator starts on its first size, and the visitor picks the rest.
+    estimate: `/pricing?svc=${record.estimateKey}#estimator`,
   };
 }
 
@@ -526,6 +536,8 @@ export interface FaqView {
   answer: string;
   /** Price answers in list form: the direct sentence, one figure per line, the quote line. */
   list?: { lead: string; points: readonly string[]; close?: string };
+  /** Links under the answer (the page only; the JSON-LD carries the answer text alone). */
+  actions?: readonly { label: string; href: string }[];
 }
 
 /**
@@ -585,7 +597,16 @@ export function faqItems(view: LayerView): FaqView[] {
     return { question, answer: words.filter(Boolean).join(' '), list };
   });
   const whiteLabel: FaqView = { question: WHITE_LABEL_FAQ.question, answer: cleanCopy(WHITE_LABEL_FAQ.answer) };
-  return [...items.slice(0, 1), whiteLabel, ...items.slice(1)];
+  // The price answer ends on a price and a call: both one tap away, with this service already chosen.
+  const [price, ...rest] = items;
+  const priced: FaqView = {
+    ...price,
+    actions: [
+      { label: 'Price this service', href: view.estimate },
+      { label: PROJECT_LABEL, href: briefHref(view.service) },
+    ],
+  };
+  return [priced, whiteLabel, ...rest];
 }
 
 /* ------------------------------------------------------------------ */
@@ -604,8 +625,6 @@ export interface ProofCase {
   url?: string;
   results: readonly { value: string; label: string }[];
   stages: readonly { name: string; text: string }[];
-  /** The case carries the site's one approved client quote (site.ts testimonials, LRO Staffing). */
-  clientQuote: boolean;
 }
 
 const listed = new Set(listedProjects().map((project) => project.slug));
@@ -626,6 +645,8 @@ export interface RowExample {
   href: string;
   /** The case's first published result, as evidence beside the link (a cloud row keeps to delivery facts); null when it has none. */
   metric: { value: string; label: string } | null;
+  /** Without a published result: one stage of what was built, in the case study's words (`exampleStage`). */
+  fact: string | null;
 }
 
 /** The one real project beside a /services row: a listed case study, or null when there is none. */
@@ -635,7 +656,8 @@ export function rowExample(view: LayerView): RowExample | null {
   if (!story) return null;
   const filter = view.proofFilter;
   const metric = (story.results ?? []).find((result) => !filter || filter.results.test(result.label)) ?? null;
-  return { client: story.client, href: `/our-work/${view.example}`, metric };
+  const stage = metric ? undefined : story.built?.stages.find((item) => item.name === view.exampleStage);
+  return { client: story.client, href: `/our-work/${view.example}`, metric, fact: stage?.text ?? null };
 }
 
 export function proofCases(view: LayerView): ProofCase[] {
@@ -656,7 +678,6 @@ export function proofCases(view: LayerView): ProofCase[] {
       results,
       // What was built, for a case with no published numbers (a filtered case keeps to its numbers).
       stages: filter ? [] : (story.built?.stages ?? []),
-      clientQuote: Boolean(story.quote && SPOTLIGHT && story.quote.name === SPOTLIGHT.name),
     });
   }
   return out.slice(0, 2);
@@ -678,6 +699,9 @@ export const INDEX_FAQ: readonly FaqEntry[] = [
   homeFaq('Who owns the code when the project ends?'),
   homeFaq("Can you work in our client's timezone?"),
 ];
+
+/** The monthly partnerships row of the price list (/pricing opens a row named by the hash). */
+export const PARTNERSHIPS_HREF = '/pricing#bundles';
 
 /** Lowest monthly partnership (site.ts `pricing.bundles`): "$4,000 a month". */
 export const PARTNERSHIP_FROM = `${formatMoney(

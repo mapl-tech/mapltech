@@ -117,6 +117,11 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   margin: 0;
 }
 
+// An answer's paragraph inside the accordion's answer box (its type comes from there).
+.faqText {
+  margin: 0;
+}
+
 // Focus is never hidden under the fixed header (WCAG 2.4.11).
 .faq :is(a, button, input, select, textarea, summary) {
   scroll-margin-top: 8px;

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Accordion from '@/components/ui/Accordion';
 import { keepTogether } from './keepTogether';
 import type { FaqView } from './serviceContent';
@@ -33,12 +34,33 @@ function AnswerText({ item }: { item: FaqView }) {
   );
 }
 
+/** The next step after an answer (the price: this service in the estimator, then the brief). */
+function Actions({ actions, name }: { actions: NonNullable<FaqView['actions']>; name: string }) {
+  return (
+    <p className={styles.actions}>
+      {actions.map((action) => (
+        <Link
+          key={action.href}
+          href={action.href}
+          className={styles.action}
+          data-cta-placement={`${name.replace(/-/g, '_')}_${action.href.startsWith('/pricing') ? 'estimate' : 'project'}`}
+        >
+          {action.label}
+          <span aria-hidden="true" className={styles.arrow}>
+            →
+          </span>
+        </Link>
+      ))}
+    </p>
+  );
+}
+
 /**
  * A service's FAQ on the homepage's accordion (ui/Accordion: native
  * <details name>, one open at a time, no client JS). Every answer is in the
  * server HTML whether open or closed, and the page builds its FAQPage JSON-LD
  * from the same array, so they cannot disagree. The first answer (the price
- * question) starts open.
+ * question) starts open and ends on its links, so it is never a dead end.
  */
 export default function FaqList({ items, name }: { items: readonly FaqView[]; name: string }) {
   return (
@@ -48,7 +70,12 @@ export default function FaqList({ items, name }: { items: readonly FaqView[]; na
       items={items.map((item, i) => ({
         id: `${name}-${i + 1}`,
         question: item.question,
-        answer: <AnswerText item={item} />,
+        answer: (
+          <>
+            <AnswerText item={item} />
+            {item.actions ? <Actions actions={item.actions} name={name} /> : null}
+          </>
+        ),
       }))}
     />
   );

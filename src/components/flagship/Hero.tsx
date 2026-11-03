@@ -72,9 +72,10 @@ export default function Hero() {
         </div>
 
         <div className={styles.foot}>
-          {/* Shown once the scene is live, gone after the first touch (CSS :has on the stage's data attributes). */}
+          {/* Shown once the scene is live, gone after the first touch (CSS :has on the stage's data
+              attributes); mouse and landscape only, so it names the mouse. What to do, then what a click does. */}
           <p className={styles.hint} aria-hidden="true">
-            Move through it. It holds.
+            Move your mouse to push the rods. Click to scatter them.
           </p>
         </div>
       </div>

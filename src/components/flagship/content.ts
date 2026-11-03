@@ -7,7 +7,7 @@
  */
 import { listedProjects, pricing, testimonials } from '@/config/site';
 import { parsePriceLabel, type EstimateService } from '@/lib/estimate';
-import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
+import { ESTIMATE_HREF, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 
 /** The one primary action, labelled the same everywhere (header, hero, bar, close). */
 export const PRIMARY_CTA = { label: PROJECT_LABEL, href: PROJECT_HREF } as const;
@@ -186,7 +186,8 @@ export const WORK: readonly WorkCard[] = (
       outcome: 'A travel company we built and run ourselves, with AI handling quoting, booking and follow-up.',
       metrics: [
         { value: '~50%', label: 'of customers now arrive through ChatGPT' },
-        { value: '~2,000', label: 'automatic checks run before every update' },
+        // The case study's own words (stories.ts), as /services and the service pages quote them.
+        { value: '~2,000', label: 'automated tests run before any change goes live' },
       ],
       image: { src: '/images/case-mapl-tours.jpg', alt: 'MAPL Tours homepage over aerial footage of the Jamaican coast.' },
       href: '/our-work/mapl-tours',
@@ -228,6 +229,13 @@ export const HERO_PROOF = SPOTLIGHT
 
 export const MOBILE_BAR_CONTEXT = `Public prices, from ${money(LOWEST_PRICE)}`;
 
+/**
+ * The close band's proof where the page's hero already carries the approved
+ * quote (home, /services, the service pages): the clients whose projects have
+ * published case studies on /our-work, by the names those cases use.
+ */
+export const CLIENTS_LINE = 'Clients include LRO Staffing, CHHA-NCR, FOCAS Canada and Crowned Spice.';
+
 /* ------------------------------------------------------------------ */
 /* Homepage sections (Nov 2026 simplify pass): the live site's purpose, */
 /* in plain words. Facts come from the live homepage and the FAQ.       */
@@ -237,6 +245,8 @@ export const SERVICES_INTRO = {
   label: 'What we do',
   title: 'What we build for agencies.',
   lede: 'Four services, each with a public starting price. Use one, or combine them.',
+  /** The rows' prices lead here: the estimator, for one service or several (the label /pricing uses for it). */
+  estimate: { label: 'Price your project', href: ESTIMATE_HREF },
 } as const;
 
 /** The four service rows: names, summaries and links from LAYERS; previews are real work. */

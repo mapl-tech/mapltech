@@ -159,9 +159,10 @@
 }
 
 // ---------------------------------------------------------------- the row's foot
-// One real project per service with one of its published results beside it, and a quiet "Start a …
-// project", each its own small link under the row's link: never inside it (nested links are invalid)
-// and 8px clear of its hit area (the margin). The row's bottom space moves under the foot.
+// One real project per service with one of its published results beside it, then the row's actions
+// (an outlined "Start a … project" and a quiet "See pricing"), each its own link under the row's link:
+// never inside it (nested links are invalid) and 8px clear of its hit area (the margin). The row's
+// bottom space moves under the foot.
 .link {
   padding-bottom: 8px;
 
@@ -203,7 +204,8 @@
   color: $color-fg-muted;
 }
 
-.exampleArrow {
+.exampleArrow,
+.startArrow {
   transition: transform 0.4s $ease-out-expo;
 
   .exampleLink:hover &,
@@ -229,19 +231,52 @@
 }
 
 .start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px; // wrapped on narrow phones, the two targets stay 8px apart
   margin: 0;
 }
 
-// Quieter than the example: muted until hovered.
+// The row's primary, as the header's quiet ask: an outlined button (a 3.5:1 edge, WCAG 1.4.11) that
+// fills crimson on hover, so it never reads as another text link beside the example. Long names wrap
+// inside it on the narrowest phones.
 .startLink {
-  @include text-action($color-fg-muted);
-  gap: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 20px 10px 22px;
+  border-radius: $radius-full;
+  box-shadow: inset 0 0 0 1px rgba($color-fg, 0.4);
   font-size: $font-size-base;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
+  line-height: 1.25;
+  color: $color-fg;
+  text-decoration: none;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
-    color: $color-fg;
+    background: $color-red-fill-hover;
+    box-shadow: none;
   }
+
+  @include focus-ring;
+
+  // Phones: the row's full width, the label left and the arrow right, so a long service name
+  // wraps the same way in every row.
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+// The secondary beside it, as in the hero's pair: the estimator with this service selected.
+.priceLink {
+  @include text-action($color-fg);
+  font-size: $font-size-base;
 }
 
 // Hover and keyboard focus: the name steps right in crimson (large text, red-display 6.4:1), the arrow fills.

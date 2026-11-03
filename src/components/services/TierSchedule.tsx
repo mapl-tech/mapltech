@@ -44,11 +44,11 @@ function Amount({ label }: { label: string }) {
  * displayed: a single list cannot show three items while its <details> is
  * closed without client JS or ::details-content overrides.) No tier is marked
  * "recommended": nothing in the data says which one most clients choose.
- * Every card closes on its actions, on the row at every width: "Start with
+ * Every card closes on its actions, on the row at every width: "Choose
  * <package>" opens the project brief with the service and the package chosen,
  * and "Price this package" opens the estimator with it selected (a Custom
- * package has no price to show, so it has only the first). Monthly plans and
- * the hourly rate follow, one tap away.
+ * package has no price to show, so it has only the first); across a row of
+ * tiers both line up. Monthly plans and the hourly rate follow, one tap away.
  */
 export default function TierSchedule({ view }: { view: LayerView }) {
   const tiers = tierViews(view);
@@ -180,7 +180,7 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
       <div className={styles.actions}>
         <Link href={tier.brief} className={styles.tierLink} data-cta-placement={`${slug}_${tier.id}_start`}>
           {/* No-break hyphens and space: "AI‑Powered" never splits, and the arrow stays on its line. */}
-          Start with {tier.name.replace(/-/g, '\u2011')}{'\u00a0'}
+          Choose {tier.name.replace(/-/g, '\u2011')}{'\u00a0'}
           <span aria-hidden="true" className={styles.arrow}>
             →
           </span>

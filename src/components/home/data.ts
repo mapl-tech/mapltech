@@ -9,6 +9,7 @@
  */
 import { pricing, siteConfig } from '@/config/site';
 import { SERVICE_META, formatMoney, parsePriceLabel } from '@/lib/estimate';
+import { ESTIMATE_HREF, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 
 /** "$3,500-$5,000" → "$3,500": the low end of a published range, as written. */
 const fromOf = (label: string): string => label.split('-')[0].trim();
@@ -47,6 +48,11 @@ export interface FaqEntry {
   answer: string;
   /** The same answer in a scannable form for the page (figures one per line). */
   list?: { lead: string; points: readonly string[]; close?: string };
+  /**
+   * The next step after the answer, as links under it (the page only: the
+   * JSON-LD carries the answer text alone).
+   */
+  actions?: readonly { label: string; href: string }[];
 }
 
 const bundleLow = lowOf(pricing.bundles[0].price);
@@ -75,6 +81,11 @@ function pricingFaq(): FaqEntry {
     question: 'How much does white-label work cost?',
     answer: [list.lead, ...list.points.map((point) => `${point}.`), list.close].join(' '),
     list,
+    // The answer names a price and a call: both are one tap away (the estimator, the brief).
+    actions: [
+      { label: 'Price your project', href: ESTIMATE_HREF },
+      { label: PROJECT_LABEL, href: PROJECT_HREF },
+    ],
   };
 }
 

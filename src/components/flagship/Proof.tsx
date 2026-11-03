@@ -29,12 +29,13 @@ export default function Proof() {
 
         <dl className={styles.stats}>
           {PROOF.stats.map((stat) => (
+            // The term is what is counted, the value its number; CSS sets the number first.
             <div key={stat.label} className={styles.stat}>
-              <dt className={styles.value}>
+              <dt className={styles.statLabel}>{stat.label}</dt>
+              <dd className={styles.value}>
                 <CountUp value={stat.value} />
                 <span className={styles.suffix}>{stat.suffix}</span>
-              </dt>
-              <dd className={styles.statLabel}>{stat.label}</dd>
+              </dd>
             </div>
           ))}
         </dl>

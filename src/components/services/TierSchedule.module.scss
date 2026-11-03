@@ -101,10 +101,10 @@
     border-bottom: 0;
   }
 
-  // Name, price, who, inclusions and action line up across a row of tiers.
+  // Name, price, who, inclusions and both actions line up across a row of tiers.
   @supports (grid-template-rows: subgrid) {
     @include md {
-      grid-row: span 5;
+      grid-row: span 6;
       grid-template-rows: subgrid;
       align-content: stretch;
     }
@@ -348,13 +348,30 @@
 }
 
 // The card closes on its actions at every width (on phones they were folded inside "What’s
-// included"): start with this package (the brief), then price it (the estimator), quieter. Top of
-// their row, so every "Start with" lines up across the tiers, Custom's (which has no price) too.
+// included"): choose this package (the brief), then price it (the estimator), quieter. Tablets and
+// desktops: each link is a row of the tier's subgrid, so every "Choose …" and every "Price this
+// package" lines up across the tiers, even where a long name wraps "Choose …" onto two lines.
 .actions {
   display: grid;
   justify-items: start;
   align-self: start;
   row-gap: 8px; // the two 44px targets stay 8px apart
+
+  @supports (grid-template-rows: subgrid) {
+    @include md {
+      display: contents;
+
+      > * {
+        justify-self: start;
+        align-self: start;
+      }
+
+      // The tier's 18px row gap, less 10px: the two targets stay 8px apart, as on phones.
+      > .priceLink {
+        margin-top: -10px;
+      }
+    }
+  }
 }
 
 .textLink {
@@ -365,7 +382,7 @@
   }
 }
 
-// Long package names wrap the label onto a second line ("Start with Growth / E‑Commerce"), so the
+// Long package names can wrap the label onto a second line ("Choose Advanced / AI‑Powered"), so the
 // underline is text-decoration, which follows the wrap (as the price list's tier actions do).
 .tierLink,
 .priceLink {

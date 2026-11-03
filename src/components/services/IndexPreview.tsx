@@ -11,7 +11,9 @@ import styles from './IndexRows.module.scss';
  * the same frames inline in each row instead (CSS), so this adds nothing there.
  *
  * The rows themselves are server-rendered children; this only listens on
- * their container and positions the decorative frames (aria-hidden).
+ * their container and positions the decorative frames (aria-hidden). A row's
+ * frame shows over its `[data-index]` element (the service link), so the
+ * small links under it never carry a preview of another project.
  */
 export default function IndexPreview({ frames, children }: { frames: readonly ReactNode[]; children: ReactNode }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -68,7 +70,12 @@ export default function IndexPreview({ frames, children }: { frames: readonly Re
     };
     const onFocusIn = (event: FocusEvent) => {
       const index = indexOf(event.target);
-      if (index === null || !query.matches) return;
+      if (!query.matches) return;
+      // A link under a row (its example, its actions): no preview there.
+      if (index === null) {
+        setActive(null);
+        return;
+      }
       const row = (event.target as HTMLElement).closest<HTMLElement>('[data-index]');
       if (!row) return;
       const rect = root.getBoundingClientRect();

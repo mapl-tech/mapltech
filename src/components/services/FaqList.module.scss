@@ -1,4 +1,5 @@
 @use '../../styles/variables' as *;
+@use '../../styles/editorial' as *;
 
 // Answer typography inside ui/Accordion (body tone #C6C4C0, 11.3:1 on the card).
 .text,
@@ -38,5 +39,27 @@
       height: 2px;
       background: $color-red;
     }
+  }
+}
+
+// The next step after an answer: two text links on the card (white on the card 17:1),
+// 44px targets 8px apart when they wrap.
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 8px 0 0;
+}
+
+.action {
+  @include text-action($color-fg);
+  gap: 8px;
+}
+
+.arrow {
+  transition: transform 0.4s $ease-out-expo;
+
+  .action:hover & {
+    transform: translateX(4px);
   }
 }

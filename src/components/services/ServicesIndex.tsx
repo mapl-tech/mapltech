@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { Faq } from '@/components/flagship/Acts';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE } from '@/components/flagship/content';
+import { CLIENTS_LINE, HERO_REASSURE } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import HeroActions from './HeroActions';
 import IndexRows from './IndexRows';
 import Steps from './Steps';
 import { keepTogether } from './keepTogether';
-import { INDEX_FAQ, INDEX_STEPS, PARTNERSHIP_FROM } from './serviceContent';
+import { INDEX_FAQ, INDEX_STEPS, PARTNERSHIPS_HREF, PARTNERSHIP_FROM } from './serviceContent';
 import styles from './ServicesIndex.module.scss';
 
 /**
@@ -21,9 +21,10 @@ import styles from './ServicesIndex.module.scss';
  *   white-label questions, answered as on the homepage → the crimson close.
  *
  * The homepage's reassurance (a fixed quote after one call, an NDA first)
- * sits under the hero's buttons and the close's, and the approved client
- * quote under the hero's. Server Component; the index preview is the only
- * client island. Copy is sourced in serviceContent.ts.
+ * sits under the hero's buttons and the close's, the approved client quote
+ * under the hero's, and the close names the clients instead of repeating it.
+ * Server Component; the index preview is the only client island. Copy is
+ * sourced in serviceContent.ts.
  */
 export default function ServicesIndex() {
   return (
@@ -58,8 +59,9 @@ export default function ServicesIndex() {
             <p className={styles.pointerText}>
               {keepTogether(`Need more than one service? A monthly partnership covers two or more, from ${PARTNERSHIP_FROM}.`)}
             </p>
-            <Link href={PRICING_HREF} className={styles.textLink} data-cta-placement="services_partner_pricing">
-              {PRICING_LABEL}
+            {/* The partnerships row of the price list (it opens on arrival). */}
+            <Link href={PARTNERSHIPS_HREF} className={styles.textLink} data-cta-placement="services_partner_pricing">
+              Compare monthly partnerships
               <span aria-hidden="true" className={styles.arrow}>
                 →
               </span>
@@ -88,6 +90,7 @@ export default function ServicesIndex() {
         lede="Tell us about the project, and we will help you pick the right service."
         note={HERO_REASSURE}
         placement="services_close"
+        proofLine={CLIENTS_LINE}
       />
     </>
   );

@@ -45,6 +45,14 @@
       align-items: end;
     }
   }
+
+  // A tall aside (the pricing price list, the referral form) starts level with
+  // the copy, so the breadcrumb and the aside's label share a line.
+  &[data-aside-align='start'] {
+    @include lg {
+      align-items: start;
+    }
+  }
 }
 
 .copy {

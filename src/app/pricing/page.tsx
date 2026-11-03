@@ -22,19 +22,23 @@ import {
   PRICING_TITLE,
   PRICING_URL,
   SERVICES,
+  keepNumberWords,
   longDate,
 } from '@/components/pricing/content';
 import sections from '@/components/pricing/PricingSections.module.scss';
+import { keepTogether } from '@/components/services/keepTogether';
 import styles from './page.module.scss';
 
 /*
  * /pricing (Nov 2026 award pass, simplified). Answer first: the H1 names the
  * question, the lede says how to use the page and the trust line says what
- * happens after the range (a 20-minute call, one fixed price). Then the four
- * starting prices as a ledger of very large numerals, the estimator (the hero
- * action: #estimator, deep-linkable as /pricing?svc=web#estimator, URL state
- * and engine untouched), the full price list on paper with every service
- * collapsed to one row, the FAQ and the crimson close.
+ * happens after the range (a 20-minute call, one fixed price), and the four
+ * starting prices sit beside them in the hero (under them on phones and
+ * tablets), so the first screen shows a price at every width. Then the
+ * estimator (the hero action: #estimator, deep-linkable as
+ * /pricing?svc=web#estimator, URL state and engine untouched), the full price
+ * list on paper with every service collapsed to one row, the FAQ and the
+ * crimson close.
  *
  * Every price is read from site.ts through src/lib/estimate.ts. Structured
  * data is one page graph: WebPage + BreadcrumbList + the OfferCatalog of every
@@ -72,6 +76,60 @@ const pricingGraph = pageGraph({
   nodes: [offerCatalog({ path: PRICING_PATH }), faqPage(pricingFaq, { path: PRICING_PATH, name: FAQ_COPY.title })],
 });
 
+/**
+ * The answer beside the question: each service's "From" price and what its
+ * first package is, each row a link to that service's packages in the price
+ * list (OpenTarget opens the row it points at), then what the numbers cover.
+ * In the hero's right column on wide screens, under its copy on phones and
+ * tablets.
+ */
+function StartingPrices() {
+  return (
+    <section className={styles.starting} aria-labelledby="starting-title">
+      <h2 id="starting-title" className={styles.startingLabel}>
+        What each service costs
+      </h2>
+      <ul className={styles.ledger} role="list">
+        {SERVICES.map((facts) => (
+          <li key={facts.service}>
+            {/* Named "Web Development, From $5,000, All 4 packages"; the first package is the description. */}
+            <a
+              href={`#${facts.id}`}
+              className={styles.cell}
+              aria-labelledby={`ledger-${facts.service}-name ledger-${facts.service}-price ledger-${facts.service}-more`}
+              aria-describedby={`ledger-${facts.service}-note`}
+              data-cta-placement={`pricing_ledger_${facts.service}`}
+            >
+              <span id={`ledger-${facts.service}-name`} className={styles.cellName}>
+                {facts.name}
+                <span className="visually-hidden">,</span>
+              </span>
+              <span id={`ledger-${facts.service}-price`} className={styles.cellPrice}>
+                <span className={styles.from}>From </span>
+                <span className={styles.amount}>{facts.fromLabel}</span>
+                <span className="visually-hidden">,</span>
+              </span>
+              <span id={`ledger-${facts.service}-note`} className={styles.cellNote}>
+                {facts.entry}
+              </span>
+              <span id={`ledger-${facts.service}-more`} className={styles.cellMore}>
+                All {facts.tierCount} packages
+                <span className={styles.cellArrow} aria-hidden="true">
+                  ↓
+                </span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p className={styles.asOf}>
+        Monthly partnerships cover several services, from {BUNDLES_FROM} a month. Hourly work from {HOURLY_FROM} an hour.
+        All prices are in US dollars. Last updated <time dateTime={LAST_REVIEWED}>{longDate(LAST_REVIEWED)}</time>.
+      </p>
+    </section>
+  );
+}
+
 export default function PricingPage() {
   return (
     <>
@@ -79,6 +137,8 @@ export default function PricingPage() {
 
       <PageHeader
         id="pricing-title"
+        size="l"
+        asideAlign="start"
         crumbs={[{ label: 'Home', href: '/' }, { label: 'Pricing' }]}
         label={HERO.eyebrow}
         title={HERO.title}
@@ -92,44 +152,11 @@ export default function PricingPage() {
             <Link href={PROJECT_HREF} className={styles.secondary} data-cta-placement="pricing_hero_project">
               {PROJECT_LABEL}
             </Link>
-            <p className={styles.trust}>{HERO.trust}</p>
+            <p className={styles.trust}>{keepTogether(HERO.trust)}</p>
           </>
         }
+        aside={<StartingPrices />}
       />
-
-      {/* The answer, as a ledger: each service's "From" price, each a link to its tiers. */}
-      <section className={styles.starting} aria-labelledby="starting-title">
-        <div className={styles.startingInner}>
-          <h2 id="starting-title" className={styles.startingLabel}>
-            What each service costs
-          </h2>
-          <dl className={styles.ledger}>
-            {SERVICES.map((facts) => (
-              <div key={facts.service} className={styles.cell}>
-                <dt className={styles.cellName}>{facts.name}</dt>
-                <dd className={styles.cellPrice}>
-                  <span className={styles.from}>From</span>
-                  <span className={styles.amount}>{facts.fromLabel}</span>
-                </dd>
-                <dd className={styles.cellNote}>{facts.entry}</dd>
-                <dd className={styles.cellLink}>
-                  {/* Visible words first, context after (2.5.3); OpenTarget opens the row it points at. */}
-                  <a href={`#${facts.id}`} data-cta-placement={`pricing_ledger_${facts.service}`}>
-                    All {facts.tierCount} packages<span className="visually-hidden"> for {facts.name}</span>
-                    <span className={styles.cellArrow} aria-hidden="true">
-                      ↓
-                    </span>
-                  </a>
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <p className={styles.asOf}>
-            Monthly partnerships cover several services, from {BUNDLES_FROM} a month. Hourly work from {HOURLY_FROM} an
-            hour. All prices are in US dollars. Last updated <time dateTime={LAST_REVIEWED}>{longDate(LAST_REVIEWED)}</time>.
-          </p>
-        </div>
-      </section>
 
       {/* The one interaction. */}
       <section id="estimator" className={styles.estimator} aria-labelledby="estimator-title">
@@ -160,7 +187,12 @@ export default function PricingPage() {
             name="pricing-faq"
             defaultOpen={0}
             className={sections.faqList}
-            items={pricingFaq.map((item, index) => ({ id: `faq-${index + 1}`, question: item.question, answer: item.answer }))}
+            // The JSON-LD's words exactly; "20-minute" and ranges kept on one line (a no-wrap span).
+            items={pricingFaq.map((item, index) => ({
+              id: `faq-${index + 1}`,
+              question: item.question,
+              answer: <p className={sections.faqText}>{keepTogether(item.answer)}</p>,
+            }))}
           />
         </div>
       </section>
@@ -169,7 +201,7 @@ export default function PricingPage() {
         id="pricing-close-title"
         placement="pricing_close"
         title={CLOSE.title}
-        lede={CLOSE.lede}
+        lede={keepNumberWords(CLOSE.lede)}
         secondary={{ label: 'See the work', href: '/our-work' }}
       />
     </>

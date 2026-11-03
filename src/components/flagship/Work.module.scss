@@ -157,7 +157,10 @@ $card-wide: 920px;
   align-content: start;
 }
 
+// The <dd> after its label in the DOM, shown first (nothing in a metric is focusable).
 .value {
+  order: -1;
+  margin: 0;
   font-family: $font-display;
   font-weight: 800;
   font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem);

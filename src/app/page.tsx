@@ -8,7 +8,7 @@ import Approach from '@/components/flagship/Approach';
 import Proof from '@/components/flagship/Proof';
 import CloseBand from '@/components/flagship/CloseBand';
 import { Faq } from '@/components/flagship/Acts';
-import { LAYERS, WORK } from '@/components/flagship/content';
+import { CLIENTS_LINE, LAYERS, WORK } from '@/components/flagship/content';
 
 /*
  * Homepage (Nov 2026 simplify pass). The live site's purpose in five sections
@@ -48,7 +48,7 @@ export default function HomePage() {
       <Proof />
       <Faq items={FAQ_ITEMS} />
       {/* The hero already carries the approved quote; the close names clients with published case studies. */}
-      <CloseBand proofLine="Clients include LRO Staffing, CHHA-NCR, FOCAS Canada and Crowned Spice." />
+      <CloseBand proofLine={CLIENTS_LINE} />
     </>
   );
 }

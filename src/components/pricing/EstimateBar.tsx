@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import LiveNumber from '@/components/ui/LiveNumber';
 import { formatEstimateMonthly, formatEstimateRange, formatMoney, type EstimateResult } from '@/lib/estimate';
+import { TOTAL_SPRING } from './content';
 import styles from './ScopeEstimator.module.scss';
 
 interface EstimateBarProps {
@@ -26,11 +27,17 @@ function Range({ result }: { result: EstimateResult }) {
       <span className="visually-hidden">{spoken === 'Custom' ? 'Custom quote' : spoken}</span>
       <span aria-hidden="true">
         {result.oneTimeHigh === null ? (
-          <LiveNumber value={result.oneTimeLow} format={formatMoney} suffix="+" decorative />
+          <LiveNumber value={result.oneTimeLow} format={formatMoney} suffix="+" spring={TOTAL_SPRING} decorative />
         ) : (
           <>
-            <LiveNumber value={result.oneTimeLow} format={formatMoney} decorative />–
-            <LiveNumber value={result.oneTimeHigh} format={formatMoney} suffix={result.isOpenEnded ? '+' : ''} decorative />
+            <LiveNumber value={result.oneTimeLow} format={formatMoney} spring={TOTAL_SPRING} decorative />–
+            <LiveNumber
+              value={result.oneTimeHigh}
+              format={formatMoney}
+              suffix={result.isOpenEnded ? '+' : ''}
+              spring={TOTAL_SPRING}
+              decorative
+            />
           </>
         )}
       </span>

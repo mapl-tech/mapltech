@@ -22,8 +22,9 @@ import {
 import { NDA_LINE } from '@/components/flagship/content';
 import QuoteLine from '@/components/flagship/QuoteLine';
 import { PROJECT_LABEL } from '@/components/layout/chrome';
+import { keepTogether } from '@/components/services/keepTogether';
 import SendEstimateForm from './SendEstimateForm';
-import { QUOTE_NOTE, TOGGLE_LABELS, keepHyphens, priceText } from './content';
+import { QUOTE_NOTE, TOGGLE_LABELS, TOTAL_SPRING, addOnsMoving, keepHyphens, listWords, priceText } from './content';
 import styles from './ScopeEstimator.module.scss';
 
 /**
@@ -96,17 +97,33 @@ function caveatsFor(input: EstimateInput, result: EstimateResult): string[] {
  * any other package shows its listed range; several packages are added
  * together. The top of a Web Development range is named as the next
  * package's start, so it never reads as the price of the visitor's own
- * ("Starter up to $8,500"). Null when nothing has a public price (the unit
- * line covers "Custom").
+ * ("Starter up to $8,500"). When an add-on, not the size, chose the package,
+ * the line says so first ("Content editing (CMS) needs Growth / E-Commerce"),
+ * so a dearer package never appears without its reason. Null when nothing has
+ * a public price (the unit line covers "Custom").
  */
 function rangeBasis(result: EstimateResult): string | null {
   const priced = result.lines.filter((line) => !line.isCustom);
   if (priced.length === 0) return null;
-  if (priced.length > 1) return 'The range adds together the price ranges of your packages.';
+  const { size, toggles } = result.input;
+  if (priced.length > 1) {
+    const moved = result.lines
+      .filter((line) => addOnsMoving(line.service, size[line.service], toggles).length > 0)
+      .map((line) => `${line.serviceName} to ${keepHyphens(line.tierName)}`);
+    const why = moved.length > 0 ? ` Your add-ons move ${listWords(moved)}.` : '';
+    return `The range adds together the price ranges of your packages.${why}`;
+  }
   const [line] = priced;
   const name = keepHyphens(line.tierName);
-  if (!line.startingAt) return `This is the listed price range for ${name}.`;
-  const starts = line.low === null ? `${name} has a starting price.` : `${name} starts at ${formatMoney(line.low)}.`;
+  const movedBy = addOnsMoving(line.service, size[line.service], toggles);
+  const needs = movedBy.length > 0 ? `${listWords(movedBy)} ${movedBy.length > 1 ? 'need' : 'needs'} ${name}` : null;
+  if (!line.startingAt) return needs ? `${needs}. This is its listed price range.` : `This is the listed price range for ${name}.`;
+  const from = line.low === null ? null : formatMoney(line.low);
+  const starts = needs
+    ? `${needs}${from ? `, which starts at ${from}` : ''}.`
+    : from
+      ? `${name} starts at ${from}.`
+      : `${name} has a starting price.`;
   const next = tiersFor(line.service)[line.tierIndex + 1];
   if (line.high === null || !next) return `${starts} The next package is a custom quote, so the range has no upper end.`;
   return `${starts} The range ends at ${formatMoney(line.high)}, where ${keepHyphens(next.name)} starts.`;
@@ -156,16 +173,30 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
               {allCustom ? (
                 <span className={styles.live}>Custom</span>
               ) : result.oneTimeHigh === null ? (
-                <LiveNumber value={result.oneTimeLow} format={formatMoney} suffix="+" className={styles.live} decorative />
+                <LiveNumber
+                  value={result.oneTimeLow}
+                  format={formatMoney}
+                  suffix="+"
+                  className={styles.live}
+                  spring={TOTAL_SPRING}
+                  decorative
+                />
               ) : (
                 <>
-                  <LiveNumber value={result.oneTimeLow} format={formatMoney} className={styles.live} decorative />
+                  <LiveNumber
+                    value={result.oneTimeLow}
+                    format={formatMoney}
+                    className={styles.live}
+                    spring={TOTAL_SPRING}
+                    decorative
+                  />
                   <span className={styles.dash}>–</span>
                   <LiveNumber
                     value={result.oneTimeHigh}
                     format={formatMoney}
                     suffix={result.isOpenEnded ? '+' : ''}
                     className={styles.live}
+                    spring={TOTAL_SPRING}
                     decorative
                   />
                 </>
@@ -175,11 +206,12 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
         </div>
 
         <p className={styles.unit}>
+          {/* "20-minute" never splits across lines (a no-wrap span, same characters). */}
           {allCustom ? (
-            'We quote this after a 20-minute call'
+            keepTogether('We quote this after a 20-minute call')
           ) : (
             <>
-              One-time cost<span className={styles.unitNote}> · {QUOTE_NOTE}</span>
+              One-time cost<span className={styles.unitNote}> · {keepTogether(QUOTE_NOTE)}</span>
             </>
           )}
         </p>
