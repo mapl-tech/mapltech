@@ -65,8 +65,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
  * last-updated date and a way to ask, then the document itself on paper. It
  * starts with "The short version", facts the document itself states, each
  * linked to its section; then every section in full (no accordions),
- * numbered, anchored and listed in a sticky contents rail. The legal wording
- * is unchanged.
+ * numbered, anchored and listed in a sticky contents rail (phones and
+ * tablets: a contents disclosure above the short version, so it is in reach
+ * at the top of the document). The page's task, when it has one, is the
+ * phone bar's action too (`data-hero-cta` on the hero's email link). The
+ * closing panel offers the sibling document and the way back into the site.
+ * The legal wording is unchanged.
  */
 export default function LegalDocument({
   title,
@@ -93,7 +97,7 @@ export default function LegalDocument({
         lede={intro}
         actions={
           action ? (
-            <a href={mailto(action.subject)} className={styles.heroAction}>
+            <a href={mailto(action.subject)} className={styles.heroAction} data-hero-cta="">
               {action.label}
             </a>
           ) : undefined
@@ -124,6 +128,8 @@ export default function LegalDocument({
           </div>
 
           <div className={styles.main}>
+            <TocDisclosure items={toc} label="On this page" tone="paper" />
+
             <section className={styles.summary} aria-labelledby="facts-title">
               <h2 id="facts-title" className={styles.summaryTitle}>
                 The short version
@@ -144,13 +150,14 @@ export default function LegalDocument({
               </dl>
             </section>
 
-            <TocDisclosure items={toc} label="On this page" tone="paper" />
-
             <div id="legal-body" className={styles.sections}>
               {sections.map((section, index) => (
                 <section key={section.id} id={section.id} className={styles.section}>
                   <h2 className={styles.sectionTitle}>
-                    <span className={styles.sectionNumber}>{pad(index + 1)}</span>
+                    {/* Decoration: the heading reads "Introduction", not "01Introduction". */}
+                    <span className={styles.sectionNumber} aria-hidden="true">
+                      {pad(index + 1)}
+                    </span>
                     {section.title}
                   </h2>
                   <div className={styles.prose}>{section.content}</div>
@@ -167,14 +174,18 @@ export default function LegalDocument({
                   To use a right from <a href={`#${action.section}`}>section {number(action.section)}</a> (
                   {action.rights}), email us and say which one. Anything else:{' '}
                   <a href={mailto(mailSubject)}>{siteConfig.email}</a> or{' '}
-                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office is open 9&nbsp;am to
-                  6&nbsp;pm Eastern time, Monday to Friday.
+                  <a href={telHref(siteConfig.phone)} className={styles.phone}>
+                    {siteConfig.phone}
+                  </a>
+                  . Our Toronto office is open 9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               ) : (
                 <p className={styles.questionsText}>
                   Email <a href={mailto(mailSubject)}>{siteConfig.email}</a> or call{' '}
-                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office is open 9&nbsp;am to
-                  6&nbsp;pm Eastern time, Monday to Friday.
+                  <a href={telHref(siteConfig.phone)} className={styles.phone}>
+                    {siteConfig.phone}
+                  </a>
+                  . Our Toronto office is open 9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               )}
               <p className={styles.questionsActions}>
@@ -183,6 +194,10 @@ export default function LegalDocument({
                 </a>
                 <Link href={sibling.href} className={styles.textLink}>
                   {sibling.label}
+                  <span aria-hidden="true">→</span>
+                </Link>
+                <Link href="/" className={styles.textLink}>
+                  Back to the homepage
                   <span aria-hidden="true">→</span>
                 </Link>
               </p>

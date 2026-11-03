@@ -1,14 +1,17 @@
 import Link from 'next/link';
 import type { BlogPost } from '@/data/blog-posts';
+import type { ServiceSlug } from '@/config/services';
 import { toISODate } from '@/config/routes';
-import { getServiceLine, startingPrice, type ServiceSlug } from '@/lib/schema';
-import { SERVICE_META, estimateHref, type EstimateService } from '@/lib/estimate';
+import { SERVICE_META, estimateHref, formatMoney } from '@/lib/estimate';
 import { ESTIMATE_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import CloseBand from '@/components/flagship/CloseBand';
+import QuoteLine from '@/components/flagship/QuoteLine';
+import { LOWEST_PRICE } from '@/components/flagship/content';
+import { layerView, proofCases } from '@/components/services/serviceContent';
 import { categoryService, firstSentence, preparePost, topicSlug } from '@/components/convert/blog-utils';
 import ArticleRow from './ArticleRow';
 import ArticleToc from './ArticleToc';
-import { SERVICE_LIST, topicLabel } from './services';
+import { SERVICE_LIST, serviceFrom, topicLabel } from './services';
 import TocDisclosure from './TocDisclosure';
 import styles from './Post.module.scss';
 
@@ -26,8 +29,11 @@ import styles from './Post.module.scss';
  * the blog index, out of the reading path. Posts are HTML strings
  * (blog-posts.ts): preparePost() anchors every <h2>, repairs legacy internal
  * links, makes tables scroll inside the measure and splits the body before its
- * third section for one quiet inline ask carrying the service's real public
- * price.
+ * third section for one quiet inline ask: the service's real public price, the
+ * estimator, the service page, and proof beside it (the service's lead case
+ * study, or the approved client quote when the post has no service). The ask
+ * is the page's hero action for the phone bar (`data-hero-cta`), so mid-read
+ * the bar offers this post's estimate rather than a generic brief.
  */
 
 export interface PostArticleProps {
@@ -45,11 +51,6 @@ function shortDate(date: string): string {
   return `${MONTHS[month - 1]} ${day}, ${year}`;
 }
 
-/** Public "from" price for a service line (site.ts via schema.ts). */
-function fromPrice(service: EstimateService): string | undefined {
-  return startingPrice(getServiceLine(SERVICE_META[service].slug as ServiceSlug));
-}
-
 export default function PostArticle({ post, related, newer, older }: PostArticleProps) {
   const iso = toISODate(post.date);
   const topic = topicSlug(post.category);
@@ -57,8 +58,14 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
   const { before, after, headings } = preparePost(post.content);
   const service = categoryService(post.category);
   const serviceName = service ? SERVICE_META[service].label : null;
-  const from = service ? fromPrice(service) : undefined;
+  const from = service ? serviceFrom(service) : undefined;
   const askHref = service ? estimateHref({ services: [service] }) : ESTIMATE_HREF;
+  // The service's lead case study (serviceContent.ts proofCases: listed projects only).
+  const lead = service ? proofCases(layerView(SERVICE_META[service].slug as ServiceSlug))[0] : undefined;
+  const leadResult = lead?.results[0];
+  // The phone bar repeats this ask as "Price a project" beside the price it
+  // starts from (both short, so they share one line at 360px).
+  const barContext = `From ${from ?? formatMoney(LOWEST_PRICE)}`;
   const isOrgAuthor = post.author.name.trim().toLowerCase() === 'mapl tech';
   const hasToc = headings.length > 1;
 
@@ -135,12 +142,51 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                         ? `Our ${serviceName} service is delivered under your brand, from ${from}. The estimator shows your price before we ask for anything.`
                         : 'Our prices are public. The estimator shows your price before we ask for anything.'}
                     </p>
-                    <Link href={askHref} className={styles.inlineLink} data-cta-placement="blog_post_inline">
-                      Price a project like this
-                      <span aria-hidden="true" className={styles.arrow}>
-                        →
-                      </span>
-                    </Link>
+                    <div className={styles.inlineActions}>
+                      <Link
+                        href={askHref}
+                        className={styles.inlineLink}
+                        data-cta-placement="blog_post_inline"
+                        data-hero-cta="below"
+                        data-bar-label="Price a project"
+                        data-bar-context={barContext}
+                      >
+                        Price a project like this
+                        <span aria-hidden="true" className={styles.arrow}>
+                          →
+                        </span>
+                      </Link>
+                      {service && serviceName ? (
+                        <Link
+                          href={SERVICE_META[service].path}
+                          className={styles.inlineService}
+                          data-cta-placement="blog_post_inline_service"
+                        >
+                          How our {serviceName} service works
+                        </Link>
+                      ) : (
+                        <Link href="/services" className={styles.inlineService} data-cta-placement="blog_post_inline_service">
+                          What we build for agencies
+                        </Link>
+                      )}
+                    </div>
+                    {/* Proof beside the ask: the service's lead case, else the approved quote. */}
+                    {lead ? (
+                      <p className={styles.inlineProof}>
+                        {leadResult ? (
+                          <>
+                            <strong className={styles.proofValue}>{leadResult.value}</strong> {leadResult.label}.{' '}
+                          </>
+                        ) : (
+                          <>{lead.headline} </>
+                        )}
+                        <Link href={lead.href} className={styles.proofLink} data-cta-placement="blog_post_inline_case">
+                          {lead.client} case study
+                        </Link>
+                      </p>
+                    ) : (
+                      <QuoteLine className={styles.inlineQuote} />
+                    )}
                   </aside>
                   <div className={styles.prose} dangerouslySetInnerHTML={{ __html: after }} />
                 </>

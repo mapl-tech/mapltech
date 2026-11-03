@@ -285,6 +285,10 @@ $ink-body: rgba(11, 11, 12, 0.86);
   a {
     @include ink-link;
   }
+
+  a[href^='tel:'] {
+    white-space: nowrap;
+  }
 }
 
 // ---------------------------------------------------------------- questions (ink)
@@ -326,6 +330,12 @@ $ink-body: rgba(11, 11, 12, 0.86);
     }
 
     @include focus-ring;
+  }
+
+  // A phone number never breaks across lines (the email may: it is long).
+  .phone {
+    overflow-wrap: normal;
+    white-space: nowrap;
   }
 }
 

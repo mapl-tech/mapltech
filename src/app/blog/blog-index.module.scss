@@ -4,6 +4,8 @@
 
 // /blog: page hero (PageHeader) → the newest article as one large card (the
 // homepage's work-card treatment) → the archive on paper → the crimson close.
+// Desktop keeps an article title in the first screen (1440x900): the card sets
+// its copy beside the cover and sits closer to the hero.
 
 // ---------------------------------------------------------------- hero extras
 .heroLink {
@@ -14,6 +16,13 @@
 .latest {
   position: relative;
   background: $color-ground;
+
+  // The hero's bottom padding (PageHeader: clamp(64px, 9vw, 128px)) is sized
+  // for a change of section; the card continues the hero on the same ground,
+  // so on desktop it keeps a 64px gap instead.
+  @include lg {
+    margin-top: calc(64px - clamp(64px, 9vw, 128px));
+  }
 }
 
 .latestInner {
@@ -21,12 +30,19 @@
   padding-bottom: $editorial-pad-y;
 }
 
-// A magazine lead: the cover across the top of the card, then the headline
-// (8 columns) beside the standfirst (4 columns).
+// A magazine lead. Phones and tablets: the cover across the top (tablets
+// only), then the copy. Desktop: the copy (8 columns: headline, then the
+// standfirst) beside the cover (4 columns), so the title starts at the top of
+// the card.
 .card {
   position: relative;
   isolation: isolate;
   overflow: clip; // not hidden: a scroll container would capture the cover's view() timeline
+
+  @include lg {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  }
   border-radius: clamp(22px, 2.6vw, 36px);
   background:
     radial-gradient(70% 90% at 85% 100%, rgba(217, 28, 63, 0.16) 0%, transparent 60%),
@@ -53,9 +69,9 @@
   padding: clamp(22px, 4vw, 56px);
 
   @include lg {
-    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
-    column-gap: 48px;
-    align-items: start;
+    grid-column: 1;
+    grid-row: 1;
+    align-content: start;
   }
 }
 
@@ -177,8 +193,12 @@
     aspect-ratio: 2 / 1;
   }
 
+  // Beside the copy: the full height of the card, fading into it on the left.
   @include lg {
-    aspect-ratio: 3 / 1;
+    grid-column: 2;
+    grid-row: 1;
+    aspect-ratio: auto;
+    min-height: 100%;
   }
 
   &::after {
@@ -189,6 +209,12 @@
       radial-gradient(70% 90% at 100% 100%, rgba(217, 28, 63, 0.3) 0%, transparent 62%),
       linear-gradient(180deg, rgba(18, 18, 20, 0) 50%, #121214 100%);
     pointer-events: none;
+
+    @include lg {
+      background:
+        radial-gradient(90% 70% at 100% 100%, rgba(217, 28, 63, 0.3) 0%, transparent 62%),
+        linear-gradient(90deg, #121214 0%, rgba(18, 18, 20, 0.55) 22%, rgba(18, 18, 20, 0) 60%);
+    }
   }
 }
 

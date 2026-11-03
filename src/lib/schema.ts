@@ -922,8 +922,20 @@ export function blogPosting(post: BlogPost, opts?: { dateModified?: string }): B
   };
 }
 
-/** Blog node for the index, with compact BlogPosting entries. */
-export function blog(posts: readonly BlogPost[], opts?: { name?: string; description?: string }): Blog {
+/**
+ * Blog node for the index: what the blog is, who publishes it, and its newest
+ * posts (`limit`, default 10) as compact BlogPostings (headline, URL, date).
+ * Every post's full BlogPosting, author included, is on its own page under the
+ * same @id, and the index HTML links every post, so the whole archive is not
+ * repeated here (it was ~40KB, sent twice: in the HTML and the RSC payload).
+ */
+export function blog(
+  posts: readonly BlogPost[],
+  opts?: { name?: string; description?: string; limit?: number },
+): Blog {
+  const newest = [...posts]
+    .sort((a, b) => toISODate(b.date).localeCompare(toISODate(a.date)))
+    .slice(0, opts?.limit ?? 10);
   return {
     '@type': 'Blog',
     '@id': BLOG_ID,
@@ -932,13 +944,12 @@ export function blog(posts: readonly BlogPost[], opts?: { name?: string; descrip
     url: absoluteUrl('/blog'),
     publisher: orgId(),
     inLanguage: DEFAULT_LANGUAGE,
-    blogPost: posts.map((post) => ({
+    blogPost: newest.map((post) => ({
       '@type': 'BlogPosting',
       '@id': blogPostingId(post.slug),
       headline: post.title,
       url: absoluteUrl(`/blog/${post.slug}`),
       datePublished: toISODate(post.date),
-      author: authorRef(post.author),
     })),
   };
 }

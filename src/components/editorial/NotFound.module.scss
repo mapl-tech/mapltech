@@ -6,7 +6,9 @@
 // light gathers behind very large numerals (decorative, aria-hidden; the zero
 // is drawn as a crimson outline, like the homepage's step numerals), the copy
 // sits beside them on wide screens, and the six destinations follow as
-// editorial rows.
+// editorial rows. Short phones (a 360x640 screen) get smaller numerals and a
+// tighter stack, so the path hint, the way home and the first destination all
+// sit in the first screen.
 
 .page {
   position: relative;
@@ -35,15 +37,30 @@
   }
 }
 
+// Portrait phones no taller than 760px.
+@mixin short-phone {
+  @media (max-width: #{$breakpoint-sm - 0.02px}) and (max-height: 760px) {
+    @content;
+  }
+}
+
 .inner {
   @include shell;
   padding-top: calc(var(--header-height, 72px) + clamp(28px, 5vw, 72px));
   padding-bottom: clamp(72px, 10vw, 128px);
+
+  @include short-phone {
+    padding-top: calc(var(--header-height, 72px) + 16px);
+  }
 }
 
 .stage {
   display: grid;
   gap: clamp(20px, 3vw, 40px);
+
+  @include short-phone {
+    gap: 12px;
+  }
 
   @include lg {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
@@ -68,6 +85,10 @@
 
   @include lg {
     font-size: clamp(14rem, 29vw - 20px, 25rem);
+  }
+
+  @include short-phone {
+    font-size: clamp(4rem, 18vw, 8rem); // 65px at 360
   }
 
   > span {
@@ -108,6 +129,11 @@
   &::before {
     @include section-label-rule;
   }
+
+  // The numerals right above already say 404; screen readers still get the label.
+  @include short-phone {
+    @include sr-only;
+  }
 }
 
 .title {
@@ -126,14 +152,18 @@
   @include lede;
   margin: 20px 0 0;
   max-width: 30em;
+
+  @include short-phone {
+    margin-top: 16px;
+  }
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px 28px;
-  margin-top: clamp(28px, 3.4vw, 40px);
+  gap: 8px 28px;
+  margin-top: clamp(24px, 2vw, 32px); // a one-line hint adds its reserved second line
 }
 
 .primary {
@@ -158,8 +188,11 @@
   @include text-action($color-fg);
 }
 
-// Path-aware recovery line (missing /blog/<slug> only), under the lede.
+// Path-aware recovery line under the lede (NotFoundHint). The browser swaps
+// the generic line for the path's own after load, inside two reserved lines,
+// so the actions below never move.
 .hint {
+  min-height: calc(2em * 1.55);
   margin: 16px 0 0;
   font-size: $font-size-base;
   line-height: 1.55;
@@ -183,12 +216,16 @@
 
 // ---------------------------------------------------------------- destinations
 .places {
-  margin-top: clamp(64px, 9vw, 120px);
+  margin-top: clamp(40px, 9vw, 120px);
+
+  @include short-phone {
+    margin-top: 32px;
+  }
 }
 
 .placesTitle {
   @include section-label;
-  margin: 0 0 20px;
+  margin: 0 0 clamp(12px, 2vw, 20px);
 
   &::before {
     @include section-label-rule;
@@ -256,6 +293,30 @@
   font-size: $font-size-sm;
   line-height: 1.45;
   color: $color-fg-muted;
+
+  @include phone-floor;
+}
+
+// The report link, after the destinations.
+.report {
+  margin: 28px 0 0;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-text-body;
+}
+
+.reportLink {
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red-text, 0.6);
+  text-underline-offset: 4px;
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+
+  @include focus-ring;
 }
 
 .placeArrow {

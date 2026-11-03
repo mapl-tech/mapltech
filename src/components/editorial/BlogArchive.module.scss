@@ -69,6 +69,8 @@ $control-border: rgba(11, 11, 12, 0.5);
   transition: border-color 160ms ease, background-color 160ms ease;
   -webkit-appearance: none;
   appearance: none;
+  // "Search all articles" lands here: room for the field's label above it.
+  scroll-margin-top: 40px;
 
   &::placeholder {
     color: $color-ink-muted;
@@ -147,9 +149,33 @@ $control-border: rgba(11, 11, 12, 0.5);
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+
+  // Phones: one row that scrolls sideways (wrapped, the six chips took four
+  // rows), bled to the screen edges so a chip cut at the edge says there is
+  // more. The padding keeps the first chip on the text edge and the focus ring
+  // clear of the clip; the browser scrolls each chip into view as Tab reaches it.
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    margin: -6px calc(-1 * #{$editorial-gutter});
+    padding: 6px $editorial-gutter;
+    scroll-padding-inline: $editorial-gutter;
+    scroll-snap-type: x proximity;
+
+    @include pointer-coarse {
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
 }
 
 .chip {
+  flex: none;
+  scroll-snap-align: start;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -201,6 +227,32 @@ $control-border: rgba(11, 11, 12, 0.5);
   font-size: $font-size-sm;
   color: $color-ink-muted;
   @include tabular;
+}
+
+// A service topic: one line to the service itself, with its public price.
+.service {
+  margin: 12px 0 0;
+  max-width: 44em;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-ink;
+}
+
+.serviceLink {
+  font-weight: $font-weight-semibold;
+  color: $color-red-ink;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red-ink, 0.45);
+  text-underline-offset: 4px;
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 2px;
+  }
 }
 
 // ---------------------------------------------------------------- groups

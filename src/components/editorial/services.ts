@@ -1,5 +1,6 @@
 import type { BlogCategory } from '@/data/blog-posts';
 import { SERVICE_META, type EstimateService } from '@/lib/estimate';
+import { getServiceLine, startingPrice, type ServiceSlug } from '@/lib/schema';
 import { categoryService } from '@/components/convert/blog-utils';
 
 /** The four service lines, in site order. */
@@ -27,4 +28,9 @@ export const SERVICE_LIST = joinList(SERVICE_NAMES);
 export function topicLabel(category: BlogCategory): string {
   const service = categoryService(category);
   return service ? SERVICE_META[service].label : category;
+}
+
+/** A service line's public "from" price, "$5,000" (site.ts `pricing` via schema.ts). */
+export function serviceFrom(service: EstimateService): string | undefined {
+  return startingPrice(getServiceLine(SERVICE_META[service].slug as ServiceSlug));
 }

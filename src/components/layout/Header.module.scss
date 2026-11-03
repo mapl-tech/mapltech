@@ -314,8 +314,10 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
 
 // One filled button per first viewport: while the page's hero CTA is on screen
 // the header's steps back to an outline (and fills again on hover). It starts
-// quiet in pure CSS whenever the page has a hero CTA, so there is no flash
-// before JavaScript observes; the observer only reports when it has gone.
+// quiet in pure CSS whenever the page has a hero CTA in its first screen, so
+// there is no flash before JavaScript observes; the observer only reports
+// when it has gone. An ask further down (a post's mid-read ask) is marked
+// data-hero-cta="below", so the header starts filled there.
 @mixin quiet-cta {
   background: transparent;
   box-shadow: inset 0 0 0 1px rgba($color-fg, 0.4); // 3.5:1 edge (WCAG 1.4.11)
@@ -327,7 +329,8 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
-:global(body:has([data-hero-cta])) .header:not([data-hero-cta-view='out']),
+:global(body:has([data-hero-cta]:not([data-hero-cta='below']))) .header:not([data-hero-cta-view='out']),
+.header[data-hero-cta-view='in'],
 .header[data-cta-quiet] {
   .headerBtn,
   .compactBtn {

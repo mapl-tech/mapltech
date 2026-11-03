@@ -7,17 +7,20 @@ import { absoluteUrl, toISODate } from '@/config/routes';
 import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
+import { HERO_REASSURE } from '@/components/flagship/content';
 import BlogArchive, { type ArchiveRow, type ArchiveTopic } from '@/components/editorial/BlogArchive';
-import { firstSentence, topicSlug } from '@/components/convert/blog-utils';
-import { SERVICE_LIST, topicLabel } from '@/components/editorial/services';
+import { categoryService, firstSentence, topicSlug } from '@/components/convert/blog-utils';
+import { SERVICE_LIST, serviceFrom, topicLabel } from '@/components/editorial/services';
+import { SERVICE_META } from '@/lib/estimate';
 import styles from './blog-index.module.scss';
 
 /**
  * /blog (Nov 2026, simplified): the page hero → the newest article presented
- * large → every article on paper, grouped by month as editorial rows, with
- * topic facets and instant search (BlogArchive) → the crimson close. All post
- * links are in the server HTML. Structured data: a CollectionPage with the
- * Blog node listing every BlogPosting.
+ * large (its title in the first screen on desktop) → every other article on
+ * paper, grouped by month as editorial rows, with topic facets and instant
+ * search (BlogArchive) → the crimson close. All post links are in the server
+ * HTML; the archive island gets only the fields a row shows. Structured data:
+ * a CollectionPage with the Blog node and its newest posts (schema.ts blog()).
  */
 
 const MONTHS = [
@@ -49,37 +52,35 @@ export const metadata: Metadata = {
   },
 };
 
-function dateParts(post: BlogPost) {
-  const iso = toISODate(post.date);
-  const [year, month, day] = iso.split('-').map(Number);
+/** "September 2026" from an ISO date. */
+function monthLabel(iso: string): string {
+  return `${MONTHS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
+}
+
+/** A service topic carries its service page and public "from" price (the archive's service line). */
+function archiveTopic(category: BlogPost['category']): ArchiveTopic {
+  const service = categoryService(category);
+  const from = service ? serviceFrom(service) : undefined;
   return {
-    iso,
-    year,
-    monthKey: iso.slice(0, 7),
-    monthLabel: `${MONTHS[month - 1]} ${year}`,
-    short: `${MONTHS[month - 1].slice(0, 3)} ${day}`,
+    slug: topicSlug(category),
+    label: topicLabel(category),
+    service: service && from ? { href: SERVICE_META[service].path, from } : undefined,
   };
 }
 
 export default function BlogPage() {
-  const rows: ArchiveRow[] = posts.map((post) => {
-    const date = dateParts(post);
-    return {
-      slug: post.slug,
-      title: post.title,
-      answer: firstSentence(post.excerpt),
-      category: topicLabel(post.category),
-      topic: topicSlug(post.category),
-      dateISO: date.iso,
-      dateLabel: date.short,
-      monthKey: date.monthKey,
-      monthLabel: date.monthLabel,
-      readTime: post.readTime,
-    };
-  });
-  const topics: ArchiveTopic[] = categories.map((category) => ({ slug: topicSlug(category), label: topicLabel(category) }));
-  const firstMonth = dateParts(posts[posts.length - 1]).monthLabel;
-  const newest = dateParts(latest);
+  // Only what a row shows: the island derives labels, short dates and months itself.
+  const rows: ArchiveRow[] = posts.map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    answer: firstSentence(post.excerpt),
+    topic: topicSlug(post.category),
+    date: toISODate(post.date),
+    readTime: post.readTime,
+  }));
+  const topics: ArchiveTopic[] = categories.map(archiveTopic);
+  const firstMonth = monthLabel(toISODate(posts[posts.length - 1].date));
+  const latestISO = toISODate(latest.date);
 
   return (
     <>
@@ -99,7 +100,7 @@ export default function BlogPage() {
         title="Practical guides for agencies."
         lede={`Articles on ${SERVICE_LIST}, written by the MAPL TECH team for agencies and their clients.`}
         actions={
-          <a href="#archive" className={styles.heroLink} data-cta-placement="blog_hero_archive">
+          <a href="#archive-q" className={styles.heroLink} data-cta-placement="blog_hero_archive">
             Search all articles
           </a>
         }
@@ -114,7 +115,7 @@ export default function BlogPage() {
                 src={latest.coverImage}
                 alt={latest.coverImageAlt}
                 fill
-                sizes="(min-width: 1440px) 1296px, (min-width: 768px) 92vw, 1px"
+                sizes="(min-width: 1440px) 432px, (min-width: 1024px) 30vw, (min-width: 768px) 92vw, 1px"
                 loading="eager"
                 fetchPriority="high"
                 className={styles.image}
@@ -135,7 +136,7 @@ export default function BlogPage() {
               <div className={styles.standfirst}>
                 <p className={styles.excerpt}>{latest.excerpt}</p>
                 <p className={styles.meta}>
-                  <time dateTime={newest.iso}>{latest.date}</time>
+                  <time dateTime={latestISO}>{latest.date}</time>
                   <span>{latest.readTime} min read</span>
                 </p>
                 <span className={styles.read} aria-hidden="true">
@@ -160,13 +161,14 @@ export default function BlogPage() {
               {posts.length} articles since {firstMonth}, newest first. Choose a topic, or search the titles and summaries.
             </p>
           </header>
-          <BlogArchive rows={rows} topics={topics} />
+          <BlogArchive rows={rows} topics={topics} featured={latest.slug} />
         </div>
       </section>
 
       <CloseBand
         title="Need it built, not just explained?"
         lede="Our prices are public: you see your number before we ask for anything."
+        note={HERO_REASSURE}
         placement="blog_close"
         id="blog-close-title"
       />

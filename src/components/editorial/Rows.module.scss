@@ -19,16 +19,19 @@
   padding: 26px 0 28px;
   border-bottom: 1px solid $color-ink-hairline;
 
+  // The meta column fits the longest topic, "CUSTOM INTERNAL TOOLS" (~184px
+  // of 13px caps), on one line; the gap gives back what the column takes.
   @include md {
-    grid-template-columns: 96px minmax(0, 1fr) 168px;
+    grid-template-columns: 96px minmax(0, 1fr) 200px;
     grid-template-areas: 'date main meta';
-    column-gap: 32px;
+    column-gap: 24px;
     padding: 32px 0;
   }
 
   @include lg {
-    grid-template-columns: 120px minmax(0, 1fr) 184px 44px;
+    grid-template-columns: 120px minmax(0, 1fr) 200px 44px;
     grid-template-areas: 'date main meta go';
+    column-gap: 32px;
     padding: 36px 0;
   }
 }
@@ -98,6 +101,10 @@
 
   @include md {
     gap: 8px;
+
+    > span {
+      white-space: nowrap;
+    }
   }
 }
 

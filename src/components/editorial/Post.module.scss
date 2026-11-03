@@ -25,7 +25,8 @@ $measure: 34em;
   overflow: clip;
 }
 
-// The page light (PageHeader's): one crimson glow and grain.
+// The page light (PageHeader's): one crimson glow and grain, faded out before
+// the hero's bottom edge so the article meets it without a seam.
 .light {
   position: absolute;
   inset: 0;
@@ -33,6 +34,8 @@ $measure: 34em;
   background:
     radial-gradient(55% 70% at 88% 18%, rgba(217, 28, 63, 0.18) 0%, rgba(217, 28, 63, 0.05) 45%, transparent 72%),
     radial-gradient(50% 50% at 0% 100%, rgba(217, 28, 63, 0.07) 0%, transparent 70%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
 
   &::after {
     content: '';
@@ -48,7 +51,7 @@ $measure: 34em;
   display: grid;
   gap: 12px;
   padding-top: calc(var(--header-height, 72px) + clamp(32px, 6vw, 96px));
-  padding-bottom: clamp(48px, 6vw, 88px);
+  padding-bottom: clamp(32px, 6vw, 88px);
 
   @include lg {
     grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
@@ -131,23 +134,35 @@ $measure: 34em;
   text-wrap: balance;
   overflow-wrap: break-word;
 
+  // Phones: 30px up to 390px, rising to meet the scale above at 640px, so the
+  // hero leaves room for the article to start in the first screen.
+  @media (max-width: #{$breakpoint-sm - 0.02px}) {
+    font-size: clamp(1.875rem, 0.62rem + 5.15vw, 2.68rem);
+  }
+
   @include motion-ok {
     animation: post-settle 1.1s $ease-out-expo both;
   }
 }
 
+// The post's own summary. Phones show its first three lines (the article's
+// opening paragraph follows right after); screen readers get all of it.
 .dek {
   @include lede;
   margin: clamp(22px, 2.8vw, 32px) 0 0;
   max-width: 40em;
+
+  @media (max-width: #{$breakpoint-sm - 0.02px}) {
+    @include line-clamp(3);
+  }
 }
 
 // One row of facts (the case study's hero facts): 2 x 2 on phones, 4 across from md.
 .facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px 24px;
-  margin: clamp(32px, 4vw, 48px) 0 0;
+  gap: 14px 24px;
+  margin: clamp(24px, 4vw, 48px) 0 0;
   padding-top: 18px;
   border-top: 1px solid $color-hairline-strong;
 
@@ -543,10 +558,36 @@ $measure: 34em;
   color: $color-text-body;
 }
 
+.inlineActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 28px;
+  margin-top: 8px;
+}
+
 .inlineLink {
   @include text-action($color-fg);
-  margin-top: 8px;
   font-size: $font-size-base;
+}
+
+// The service page: a quieter, underlined second action.
+.inlineService {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: $font-size-base;
+  color: $color-text-body;
+  text-decoration: underline;
+  text-decoration-color: rgba(245, 242, 238, 0.35);
+  text-underline-offset: 4px;
+
+  &:hover {
+    color: $color-fg;
+    text-decoration-color: currentColor;
+  }
+
+  @include focus-ring;
 }
 
 .arrow {
@@ -557,6 +598,47 @@ $measure: 34em;
       transform: translateX(4px);
     }
   }
+}
+
+// Proof beside the ask, under a hairline: the lead case's first published
+// result (or its outcome line) and a link to the case study.
+.inlineProof {
+  margin: 18px 0 0;
+  padding-top: 18px;
+  max-width: 36em;
+  border-top: 1px solid $color-hairline-strong;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-text-body;
+}
+
+.proofValue {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: 1.25em;
+  letter-spacing: -0.02em;
+  color: $color-fg;
+  @include tabular;
+}
+
+.proofLink {
+  font-weight: $font-weight-semibold;
+  color: $color-red-text;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red-text, 0.45);
+  text-underline-offset: 4px;
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+
+  @include focus-ring;
+}
+
+.inlineQuote {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid $color-hairline-strong;
 }
 
 // ---------------------------------------------------------------- author

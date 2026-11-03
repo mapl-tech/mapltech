@@ -253,6 +253,7 @@
   font-size: $font-size-sm;
   color: $color-fg-muted;
   @include tabular;
+  @include phone-floor;
 
   [data-tone='paper'] & {
     color: $color-ink-muted;

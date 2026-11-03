@@ -1,17 +1,22 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { blogPosts } from '@/data/blog-posts';
+import { siteConfig } from '@/config/site';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { SERVICE_NAMES } from '@/components/editorial/services';
-import NotFoundHint from '@/components/editorial/NotFoundHint';
+import NotFoundHint, { BrokenLinkReport } from '@/components/editorial/NotFoundHint';
 import styles from '@/components/editorial/NotFound.module.scss';
 
 /**
  * The site-wide 404 (any unmatched URL and every notFound() call), kept light:
- * no WebGL and no script beyond the path-aware hint. Very large numerals under
- * the page light, a plain sentence as the H1, the one primary action and the
- * way home, then the six places people usually want, as plain rows.
- * Next.js marks the response noindex.
+ * no WebGL and no script beyond the path-aware hint and the report link. Very
+ * large numerals under the page light (smaller on phones, so a destination is
+ * in the first screen), a plain sentence as the H1, the path-aware hint in a
+ * reserved line, the one primary action and the way home, then the six places
+ * people usually want, as plain rows, and a way to report the broken link.
+ * The ask is the page's own close (`data-page-close`): the footer drops its
+ * ask and the phone bar stands down beside it. Next.js marks the response
+ * noindex.
  */
 
 export const metadata: Metadata = {
@@ -52,7 +57,7 @@ export default function NotFound() {
               The link may be out of date, or the page has moved. These are the places most people are looking for.
             </p>
             <NotFoundHint />
-            <div className={styles.actions} data-hero-cta="">
+            <div className={styles.actions} data-hero-cta="" data-page-close="">
               <Link href={PROJECT_HREF} className={styles.primary} data-cta-placement="not_found_project">
                 {PROJECT_LABEL}
                 <span aria-hidden="true" className={styles.arrow}>
@@ -86,6 +91,7 @@ export default function NotFound() {
             ))}
           </ul>
         </nav>
+        <BrokenLinkReport email={siteConfig.email} />
       </div>
     </section>
   );
