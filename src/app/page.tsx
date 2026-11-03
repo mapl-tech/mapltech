@@ -47,7 +47,8 @@ export default function HomePage() {
       <Approach />
       <Proof />
       <Faq items={FAQ_ITEMS} />
-      <CloseBand />
+      {/* The hero already carries the approved quote beside its ask. */}
+      <CloseBand proof={false} />
     </>
   );
 }

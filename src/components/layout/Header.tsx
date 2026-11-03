@@ -306,6 +306,8 @@ function useHeroCtaView(pathname: string): 'in' | 'out' | undefined {
 export default function Header() {
   const pathname = usePathname() ?? '/';
   const onProjectPage = pathname === PROJECT_HREF;
+  // Pages whose own ask is another form (apply, refer): the header's never fills to compete with it.
+  const quietCta = pathname.startsWith('/careers') || pathname.startsWith('/referral');
   const compact = useCompact();
   const heroCtaView = useHeroCtaView(pathname);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -317,6 +319,7 @@ export default function Header() {
       className={styles.header}
       data-compact={compact ? '' : undefined}
       data-hero-cta-view={heroCtaView}
+      data-cta-quiet={quietCta ? '' : undefined}
       style={VIEW_TRANSITION_ANCHOR}
     >
       <div className={styles.bar}>

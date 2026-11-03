@@ -1,12 +1,15 @@
 import Link from 'next/link';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import { CLOSE_BAND, PRIMARY_CTA } from './content';
+import QuoteLine from './QuoteLine';
 import styles from './CloseBand.module.scss';
 
 /**
  * The close: a full crimson band with the one ask. Every page ends on one;
- * the copy defaults to the homepage's and can be set per page. The secondary
- * action defaults to pricing. `data-page-close` tells the footer to drop its
+ * the copy defaults to the homepage's and can be set per page. The primary can
+ * carry the page's context into the brief (`href`, e.g. a case study's
+ * service), the secondary defaults to pricing, and the approved client quote
+ * sits under the ask (`proof`), so the last decision has its proof beside it. `data-page-close` tells the footer to drop its
  * own ask, so the page never asks twice in a row.
  */
 export default function CloseBand({
@@ -17,6 +20,8 @@ export default function CloseBand({
   id = 'close-title',
   note,
   hero = false,
+  href = PRIMARY_CTA.href,
+  proof = true,
 }: {
   title?: string;
   lede?: string;
@@ -28,6 +33,10 @@ export default function CloseBand({
   note?: string;
   /** Mark the primary as the page's hero CTA (pages whose only ask is this band). */
   hero?: boolean;
+  /** Where the primary goes: the brief, optionally with an answer filled in (`/contact-us?svc=web`). */
+  href?: string;
+  /** The approved client quote under the ask (off where the page already shows it nearby). */
+  proof?: boolean;
 }) {
   return (
     <section className={styles.close} aria-labelledby={id} data-page-close="">
@@ -39,7 +48,7 @@ export default function CloseBand({
         {lede ? <p className={styles.lede}>{lede}</p> : null}
         <div className={styles.actions}>
           <Link
-            href={PRIMARY_CTA.href}
+            href={href}
             className={styles.primary}
             data-cta-placement={`${placement}_primary`}
             data-hero-cta={hero ? '' : undefined}
@@ -56,6 +65,7 @@ export default function CloseBand({
           ) : null}
         </div>
         {note ? <p className={styles.note}>{note}</p> : null}
+        {proof ? <QuoteLine tone="band" className={styles.proof} /> : null}
       </div>
     </section>
   );

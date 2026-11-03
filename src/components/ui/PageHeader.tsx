@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import QuoteLine from '@/components/flagship/QuoteLine';
 import styles from './PageHeader.module.scss';
 
 export interface Crumb {
@@ -10,8 +11,10 @@ export interface Crumb {
 /**
  * The standard page hero (Nov 2026 award pass): optional breadcrumbs, a
  * numbered-label voice, a very large Overpass H1, a measured lede, then the
- * page's actions. `aside` sits beside the copy on desktop and under it on
- * phones (a figure, live clocks, facts). Server-rendered; the H1 is painted
+ * page's actions, then (optionally) one line answering the risk and the
+ * approved client quote, so proof sits beside the first ask. `aside` sits
+ * beside the copy on desktop and under it on phones (a figure, live clocks,
+ * facts). Server-rendered; the H1 is painted
  * at full opacity in the first frame (only transform animates), so it can be
  * the LCP element.
  */
@@ -22,6 +25,8 @@ export default function PageHeader({
   crumbs,
   actions,
   aside,
+  note,
+  proof = false,
   id = 'page-title',
   size = 'xl',
 }: {
@@ -31,6 +36,10 @@ export default function PageHeader({
   crumbs?: readonly Crumb[];
   actions?: ReactNode;
   aside?: ReactNode;
+  /** One line under the actions answering the risk (sourced copy only). */
+  note?: ReactNode;
+  /** The approved client quote under the actions. */
+  proof?: boolean;
   id?: string;
   /** xl: 48 -> 136px, for pages that lead with a statement; l: 44 -> 104px for long titles. */
   size?: 'xl' | 'l';
@@ -62,6 +71,8 @@ export default function PageHeader({
           </h1>
           {lede ? <div className={styles.lede}>{lede}</div> : null}
           {actions ? <div className={styles.actions}>{actions}</div> : null}
+          {note ? <p className={styles.note}>{note}</p> : null}
+          {proof ? <QuoteLine className={styles.proof} /> : null}
         </div>
         {aside ? <div className={styles.aside}>{aside}</div> : null}
       </div>

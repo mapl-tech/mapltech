@@ -14,13 +14,16 @@ import styles from './MobileActionBar.module.scss';
  * It repeats the page's own hero action: the link marked `data-hero-cta` (or
  * the first link inside it) gives the label and the target, so a service page
  * opens the estimator with its service selected and /referral offers "Refer an
- * agency". Without a hero link it offers "Start a project". The context line
- * is the hero CTA's `data-bar-context` if set, else the public price floor for
+ * agency". The hero CTA's `data-bar-label` / `data-bar-href` override them
+ * where the bar should do something else (careers: "Apply" to the form).
+ * Without a hero link it offers "Start a project". The context line is the
+ * hero CTA's `data-bar-context` if set, else the public price floor for
  * pricing actions, else nothing.
  *
  * Appears once the page H1 and the hero CTA have both left the viewport (so
  * a hero without its own action is never covered at load); hides while that
- * CTA, any <form> or the keyboard is up. While it shows, the
+ * CTA, any <form>, the page's close band (it carries the same ask) or the
+ * keyboard is up. While it shows, the
  * page gets bottom scroll padding so a focused control is never hidden under
  * it (WCAG 2.4.11). Clicks dispatch `cta_click` on window with
  * { placement: 'sticky_bar', action, href }.
@@ -75,13 +78,15 @@ export default function MobileActionBar({
 
     const heroCta = document.querySelector('[data-hero-cta]');
     const heroLink = heroCta?.matches('a[href]') ? heroCta : heroCta?.querySelector('a[href]');
-    const href = heroLink?.getAttribute('href');
+    const href = heroCta?.getAttribute('data-bar-href') ?? heroLink?.getAttribute('href');
     const action: BarAction | null =
       heroCta && heroLink && href
         ? {
             path: pathname,
             href,
-            label: (heroLink.textContent ?? '').replace(/[\s→]+$/u, '').trim() || estimateLabel,
+            label:
+              heroCta.getAttribute('data-bar-label') ??
+              ((heroLink.textContent ?? '').replace(/[\s→]+$/u, '').trim() || estimateLabel),
             context: heroCta.getAttribute('data-bar-context') ?? (isEstimate(href) ? context : ''),
           }
         : null;
@@ -110,7 +115,8 @@ export default function MobileActionBar({
       raf = requestAnimationFrame(() => setHeroGone(true));
     }
 
-    const forms = Array.from(document.querySelectorAll('form'));
+    // Forms and the close band: the page is already asking, so the bar stands down.
+    const forms = Array.from(document.querySelectorAll('form, [data-page-close]'));
     if (forms.length > 0) {
       const inView = new Set<Element>();
       const formIO = new IntersectionObserver(

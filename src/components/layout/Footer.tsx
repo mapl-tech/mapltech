@@ -81,7 +81,11 @@ export default function Footer() {
             <h2 className={styles.heading}>Contact</h2>
             <ul role="list">
               <li>
-                <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+                {/* On a phone's half-width column the address breaks after the @, never mid-domain. */}
+                <a href={`mailto:${siteConfig.email}`}>
+                  {siteConfig.email.split('@')[0]}@<wbr />
+                  {siteConfig.email.split('@')[1]}
+                </a>
               </li>
               <li>
                 <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>
@@ -104,7 +108,7 @@ export default function Footer() {
 
         <div className={styles.legal}>
           <p>
-            © {year} MAPL TECH Inc. Toronto · Lagos · Kingston
+            © {year} MAPL TECH Inc. <span className={styles.nowrap}>Toronto · Lagos · Kingston</span>
           </p>
           <ul role="list">
             <li>

@@ -1,0 +1,55 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Avatar, quote, attribution: the home hero's proof line, reusable.
+.quote {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: 14px;
+  row-gap: 2px;
+  align-items: center;
+  max-width: 34em;
+  margin: 0;
+
+  // Without a photo the words take the whole width.
+  &:not(:has(img)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.avatar {
+  grid-row: span 2;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.text {
+  margin: 0;
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: $color-fg;
+
+    @include phone-floor;
+  }
+}
+
+.by {
+  font-size: $font-size-sm;
+  line-height: 1.4;
+  color: $color-fg-muted;
+
+  @include phone-floor;
+}
+
+// On the crimson close band small text is solid white only (7.56:1).
+.quote[data-tone='band'] {
+  .text p,
+  .by {
+    color: $color-white;
+  }
+}

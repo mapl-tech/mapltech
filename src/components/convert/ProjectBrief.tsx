@@ -66,6 +66,20 @@ import RecaptchaNotice from './RecaptchaNotice';
 type Step = 1 | 2 | 3 | 4;
 type FieldName = 'kind' | 'size' | 'name' | 'email' | 'phone';
 
+/** The unsent brief, kept per tab (sessionStorage) so a detour does not lose it. */
+const DRAFT_KEY = 'mapl:brief-draft';
+interface Draft {
+  kind: BriefKind | null;
+  size: string | null;
+  step: Step | null;
+  details: string;
+  name: string;
+  email: string;
+  company: string;
+  reply: ReplyMethod;
+  phone: string;
+}
+
 const STEP_NAMES = ['What', 'Size', 'Details', 'Reply'] as const;
 const ADVANCE_DELAY = 180;
 const FOLD_EASE = 'cubic-bezier(0.23, 1, 0.32, 1)';
@@ -99,6 +113,50 @@ export default function ProjectBrief() {
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [sent, setSent] = useState<{ lines: BriefLine[]; reply: ReplyMethod; email: string; phone: string; href: string } | null>(null);
+
+  // The draft survives following a link away and coming back: kept in this
+  // tab's sessionStorage (never sent anywhere), restored on return, cleared
+  // once the brief is sent. A link that pre-picks a different service wins
+  // over the draft's own answers; the typed fields come back either way.
+  const draftReady = useRef(false);
+  useEffect(() => {
+    let draft: Partial<Draft> | null = null;
+    try {
+      draft = JSON.parse(window.sessionStorage.getItem(DRAFT_KEY) ?? 'null');
+    } catch {
+      draft = null;
+    }
+    const frame = requestAnimationFrame(() => {
+      if (draft) {
+        const linked = readPrefill(window.location.search);
+        if (!linked || linked.kind === draft.kind) {
+          if (typeof draft.kind === 'string' && isBriefKind(draft.kind)) setKindChoice(draft.kind);
+          if (typeof draft.size === 'string') setSizeChoice(draft.size);
+          if (draft.step === 1 || draft.step === 2 || draft.step === 3 || draft.step === 4) setOpenStep(draft.step);
+        }
+        if (typeof draft.details === 'string') setDetails(draft.details);
+        if (typeof draft.name === 'string') setName(draft.name);
+        if (typeof draft.email === 'string') setEmail(draft.email);
+        if (typeof draft.company === 'string') setCompany(draft.company);
+        if (draft.reply === 'email' || draft.reply === 'phone') setReply(draft.reply);
+        if (typeof draft.phone === 'string') setPhone(draft.phone);
+      }
+      draftReady.current = true;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (sent || !draftReady.current) return;
+    const draft: Draft = { kind: kindChoice, size: sizeChoice, step: openStep, details, name, email, company, reply, phone };
+    const empty = !kindChoice && !sizeChoice && !details && !name && !email && !company && !phone;
+    try {
+      if (empty) window.sessionStorage.removeItem(DRAFT_KEY);
+      else window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch {
+      // Storage blocked: the brief still works, it just is not kept.
+    }
+  }, [kindChoice, sizeChoice, openStep, details, name, email, company, reply, phone, sent]);
 
   // Answers: the visitor's choice wins; otherwise the prefill from the link they followed.
   const kind: BriefKind | null = kindChoice ?? prefill?.kind ?? null;
@@ -286,6 +344,11 @@ export default function ProjectBrief() {
       message,
     });
     if (ok) {
+      try {
+        window.sessionStorage.removeItem(DRAFT_KEY);
+      } catch {
+        // Nothing was kept.
+      }
       setSent({
         lines: briefLines(answers, prefill),
         reply,

@@ -29,8 +29,9 @@
 
 .inner {
   @include shell;
-  padding-top: clamp(96px, 14vw, 200px);
-  padding-bottom: clamp(96px, 14vw, 200px);
+  // The site's section rhythm (64px on phones, 144px at most), not a wall.
+  padding-top: clamp(64px, 10vw, 144px);
+  padding-bottom: clamp(64px, 10vw, 144px);
   display: grid;
   gap: clamp(24px, 3vw, 36px);
   justify-items: start;
@@ -115,4 +116,11 @@
     outline: 2px solid $color-white;
     outline-offset: 3px;
   }
+}
+
+// The quote under the ask, ruled off in white (a rule, not text).
+.proof {
+  margin-top: clamp(8px, 1.4vw, 16px);
+  padding-top: clamp(18px, 2vw, 24px);
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
 }

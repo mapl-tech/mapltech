@@ -142,6 +142,23 @@
   margin-top: clamp(28px, 3.6vw, 40px);
 }
 
+.note {
+  margin: 16px 0 0;
+  max-width: 38em;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  color: $color-fg-muted;
+
+  @include phone-floor;
+}
+
+// The quote under the ask, ruled off like the home hero's.
+.proof {
+  margin-top: clamp(20px, 2.6vw, 28px);
+  padding-top: clamp(16px, 2vw, 22px);
+  border-top: 1px solid $color-hairline;
+}
+
 .aside {
   min-width: 0;
 }
