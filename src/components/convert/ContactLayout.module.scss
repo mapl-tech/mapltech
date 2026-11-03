@@ -4,11 +4,11 @@
 
 // /contact-us (Nov 2026, simplified). Under the standard PageHeader, one paper
 // sheet: the brief (7fr) beside what happens next, one client quote and the
-// direct line (5fr). Phones read it in DOM order: brief, next steps, quote,
-// direct line, then a way back up.
+// direct line (5fr). Below 1024px it reads in DOM order: the brief with the
+// quote as one line under its button, next steps, the direct line, then a way
+// back up.
 //
-// On paper #F1EDE7: ink 17.6:1, ink-muted 6.4:1, crimson-ink 5.5:1. The direct
-// line is a dark card on the sheet (fg on #121214 about 17:1, fg-muted 7.2:1).
+// On paper #F1EDE7: ink 17.6:1, ink-muted 8.1:1, crimson-ink 7.8:1 (AAA).
 
 $ease: cubic-bezier(0.23, 1, 0.32, 1);
 $ink: $color-ink;
@@ -17,8 +17,12 @@ $hair: $color-ink-hairline;
 $accent: $color-red-ink;
 
 // ---------------------------------------------------------------- the sheet
+// The sheet rises into PageHeader's bottom padding (clamp(64px, 9vw, 128px),
+// kept in step here), 24-40px under the lede, and opens close to its top edge,
+// so the first answers of the brief are on the first screen.
 .sheet {
   position: relative;
+  margin-top: calc(clamp(24px, 2.6vw, 40px) - clamp(64px, 9vw, 128px));
   background: $color-paper;
   color: $ink;
   border-radius: clamp(24px, 3vw, 40px);
@@ -34,8 +38,13 @@ $accent: $color-red-ink;
     'aside'
     'back';
   row-gap: clamp(64px, 9vw, 112px);
-  padding-top: clamp(32px, 6vw, 88px);
+  padding-top: clamp(28px, 3.4vw, 48px);
   padding-bottom: clamp(56px, 9vw, 128px);
+
+  // Short screens: the brief opens nearer the sheet's edge (see ProjectBrief's $short).
+  @media (max-height: 760px) {
+    padding-top: clamp(20px, 2.4vw, 32px);
+  }
 
   @include lg {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
@@ -48,6 +57,18 @@ $accent: $color-red-ink;
 .formCol {
   grid-area: form;
   min-width: 0;
+}
+
+// The approved quote as one line under the brief's button, where the aside
+// (and its full quote) only follows the whole form (QuoteLine tone="paper").
+.formProof {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid $hair;
+
+  @include lg {
+    display: none;
+  }
 }
 
 .noscript {
@@ -95,12 +116,17 @@ $accent: $color-red-ink;
 }
 
 // ---------------------------------------------------------------- proof (one client, in her words)
+// Beside the brief from 1024px; below that the quote line under the brief stands in for it.
 .proof {
   @include rise-in;
-  display: grid;
+  display: none;
   gap: 20px;
   min-width: 0;
   margin: 0;
+
+  @include lg {
+    display: grid;
+  }
 }
 
 .proofQuote {
@@ -179,30 +205,23 @@ $accent: $color-red-ink;
   }
 }
 
-// ---------------------------------------------------------------- direct line (dark on paper)
+// ---------------------------------------------------------------- direct line
+// A quiet block on the paper, in the aside's own voice: the other way in, so
+// never louder than the brief's "Send the brief", which it sits level with on
+// desktop once the brief reaches its last step. Plain ink links, 48px tall.
 .direct {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
   display: grid;
-  gap: 18px;
+  gap: 16px;
   min-width: 0;
-  padding: clamp(24px, 3vw, 36px);
-  border-radius: clamp(22px, 2.4vw, 32px);
-  background:
-    radial-gradient(90% 110% at 100% 0%, rgba(217, 28, 63, 0.24) 0%, transparent 62%),
-    #121214;
-  color: $color-fg;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.07),
-    0 40px 80px -40px rgba(11, 11, 12, 0.55);
+  padding-top: clamp(28px, 3vw, 36px);
+  border-top: 1px solid $hair;
 }
 
 .directLabel {
-  @include section-label;
+  @include section-label($muted);
 
   &::before {
-    @include section-label-rule;
+    @include section-label-rule($accent);
   }
 }
 
@@ -210,7 +229,7 @@ $accent: $color-red-ink;
   margin: 0;
   font-size: 1.0625rem;
   line-height: 1.5;
-  color: $color-text-body;
+  color: $muted;
 }
 
 .channels {
@@ -226,34 +245,33 @@ $accent: $color-red-ink;
   display: inline-flex;
   align-items: center;
   min-height: 48px;
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.5rem); // 20px -> 24px: present, never louder than the brief
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  color: $color-fg;
+  font-size: 1.125rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1.3;
+  color: $ink;
   text-decoration: underline;
   text-decoration-thickness: 1px;
-  text-decoration-color: rgba(245, 242, 238, 0.32);
-  text-underline-offset: 7px;
+  text-decoration-color: rgba($ink, 0.35);
+  text-underline-offset: 6px;
   overflow-wrap: anywhere;
   transition: text-decoration-color 200ms $ease;
   @include tabular;
 
   &:hover {
-    text-decoration-color: $color-red;
+    text-decoration-color: $accent;
   }
 
-  @include focus-ring;
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
 }
 
 .hoursText {
   margin: 0;
-  padding-top: 18px;
-  border-top: 1px solid $color-hairline;
   font-size: 1rem;
   line-height: 1.5;
-  color: $color-fg-muted;
+  color: $muted;
   @include phone-floor;
 }
 

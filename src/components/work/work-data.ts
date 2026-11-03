@@ -171,7 +171,10 @@ export function estimateLinkFor({
   return `${base}${rest ? `?${rest}` : ''}${hash ? `#${hash}` : ''}`;
 }
 
-/** Scoping-call link carrying the same service line for the contact page to read. */
+/**
+ * The project brief with this service line already chosen (`/contact-us?svc=web`):
+ * brief.ts `readPrefill` reads it, and the brief opens on its size question.
+ */
 export function scopingCallLinkFor(service: EstimateService): string {
   return `/contact-us?svc=${service}`;
 }

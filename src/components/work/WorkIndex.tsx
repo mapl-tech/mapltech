@@ -23,11 +23,15 @@ import styles from './WorkIndex.module.scss';
  * The rows are server-rendered children (every label, link and capture is in
  * the HTML). This island adds:
  *
- * - Filter chips with live counts. The choice lives in the URL (`?type=web`),
- *   read through useSyncExternalStore and written with history.replaceState,
- *   so a filtered view can be shared. Filtering is one attribute on the root;
- *   CSS hides the rows of other lines, so nothing mounts or unmounts and the
- *   server HTML always holds every project. The result is announced politely.
+ * - Filter chips with live counts: one choice out of several, so they are
+ *   native radios (a fieldset named for assistive tech), styled as chips. Tab
+ *   reaches the chosen one, the arrow keys move along the line; on phones the
+ *   line scrolls sideways instead of wrapping. The choice lives in the URL
+ *   (`?type=web`), read through useSyncExternalStore and written with
+ *   history.replaceState, so a filtered view can be shared. Filtering is one
+ *   attribute on the root; CSS hides the rows of other lines, so nothing
+ *   mounts or unmounts and the server HTML always holds every project. The
+ *   result is announced politely.
  * - The preview card, on wide screens with a fine pointer and motion allowed,
  *   mounted on the first visit to the list (so phones, reduced motion and
  *   crawlers pay nothing). Pointer: the card eases after the cursor in a rAF
@@ -73,6 +77,20 @@ function writeTypeParam(key: WorkFilterKey) {
 }
 
 const serverFilter = (): WorkFilterKey => 'all';
+
+/**
+ * On phones the chips are one line that scrolls sideways: bring `chip` fully
+ * into it, clear of the gutter (scrollIntoView ignores the line's scroll
+ * padding, so the offset is set by hand). No-op where the line does not scroll.
+ */
+function bringIntoLine(line: HTMLElement, chip: Element) {
+  if (line.scrollWidth <= line.clientWidth) return;
+  const pad = parseFloat(getComputedStyle(line).paddingLeft) || 0;
+  const c = chip.getBoundingClientRect();
+  const l = line.getBoundingClientRect();
+  if (c.left < l.left + pad) line.scrollLeft -= l.left + pad - c.left;
+  else if (c.right > l.right - pad) line.scrollLeft += c.right - (l.right - pad);
+}
 
 /* ------------------------------------------------------------------ preview motion */
 
@@ -176,6 +194,19 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     inside: false,
     focusRow: null,
   });
+
+  // A chip reached with the arrow keys comes fully into the sideways line, and
+  // so does the chosen one (a shared `?type=` link may choose the last chip).
+  const chipsRef = useRef<HTMLFieldSetElement>(null);
+  const revealChip = (e: ReactFocusEvent<HTMLFieldSetElement>) => {
+    const chip = e.target instanceof Element ? e.target.closest('label') : null;
+    if (chip) bringIntoLine(e.currentTarget, chip);
+  };
+  useEffect(() => {
+    const line = chipsRef.current;
+    const chip = line?.querySelector('input:checked')?.closest('label');
+    if (line && chip) bringIntoLine(line, chip);
+  }, [active]);
 
   const select = (filter: WorkFilter) => {
     writeTypeParam(filter.key);
@@ -372,24 +403,27 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
       <div className={styles.toolbar}>
         {heading}
         {filters.length > 2 ? (
-          <div className={styles.chips} role="group" aria-label="Filter projects by service line">
+          <fieldset ref={chipsRef} className={styles.chips} onFocus={revealChip}>
+            <legend className="visually-hidden">Filter projects by service line</legend>
             {filters.map((filter) => (
-              <button
-                key={filter.key}
-                type="button"
-                className={styles.chip}
-                aria-pressed={active === filter.key}
-                onClick={() => select(filter)}
-              >
+              <label key={filter.key} className={styles.chip}>
+                <input
+                  type="radio"
+                  name="work-filter"
+                  value={filter.key}
+                  checked={active === filter.key}
+                  onChange={() => select(filter)}
+                  className={styles.chipInput}
+                />
                 {filter.label}
                 <span className={styles.count}>
                   <span className="visually-hidden">, </span>
                   {filter.count}
                   <span className="visually-hidden"> {filter.count === 1 ? 'project' : 'projects'}</span>
                 </span>
-              </button>
+              </label>
             ))}
-          </div>
+          </fieldset>
         ) : null}
       </div>
       <p className="visually-hidden" role="status">

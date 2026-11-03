@@ -53,8 +53,11 @@ import RecaptchaNotice from './RecaptchaNotice';
  *   first question says so, WCAG 3.2.2); keyboard users choose with the arrow
  *   keys and continue with Enter or the button, so arrowing never jumps away.
  *   Each new step moves focus to its question.
- * - Links from the estimator (?svc=&size.<svc>=...) and the pricing bundles
- *   (?bundle=) prefill the first answers, echoed back as "From your estimate".
+ * - Links from the estimator (?svc=&size.<svc>=...), the pricing bundles
+ *   (?bundle=) and the service and case pages (?svc= alone) prefill the first
+ *   answers, echoed back with where they came from: "your estimate" only when
+ *   the link carried one, "the pricing page" for a bundle, otherwise "the page
+ *   you came from".
  * - Errors sit under the field they belong to, in words that say how to fix
  *   them; the first invalid field takes focus. Inputs are 17px (no iOS zoom),
  *   targets at least 48px.
@@ -97,7 +100,12 @@ function emailError(value: string): string | undefined {
   return isEmail(value.trim()) ? undefined : MESSAGES.email;
 }
 
-export default function ProjectBrief() {
+export default function ProjectBrief({
+  reassure,
+}: {
+  /** One sourced line added to the reply line beside "Send the brief" (the page's NDA promise). */
+  reassure?: string;
+} = {}) {
   const search = useSearchString();
   const prefill = useMemo(() => readPrefill(search), [search]);
   const { status, error, submit, warmUp } = useContactSubmit();
@@ -167,6 +175,9 @@ export default function ProjectBrief() {
   const step: Step = openStep ?? defaultStep;
   const sizes = sizeOptions(kind);
   const fromPrefill = Boolean(prefill) && kindChoice === null;
+  // Say only what the link carried: an estimate (a size), a bundle, or just the service line.
+  const prefillFrom =
+    prefill?.source === 'estimate' ? 'your estimate' : prefill?.source === 'bundle' ? 'the pricing page' : 'the page you came from';
 
   const answers: BriefAnswers = {
     kind,
@@ -483,10 +494,7 @@ export default function ProjectBrief() {
       </ol>
 
       {fromPrefill && step >= defaultStep && rows.length ? (
-        <p className={styles.prefill}>
-          {prefill?.source === 'bundle' ? 'Filled in from the pricing page.' : 'Filled in from your estimate.'} Change
-          anything that is not right.
-        </p>
+        <p className={styles.prefill}>Filled in from {prefillFrom}. Change anything that is not right.</p>
       ) : null}
 
       {rows.length ? (
@@ -697,7 +705,9 @@ export default function ProjectBrief() {
           )}
         </button>
         {step === 4 ? (
-          <p className={styles.trust}>We reply by email or a call, whichever you chose.</p>
+          <p className={styles.trust}>
+            We reply by email or a call, whichever you chose.{reassure ? ` ${reassure}` : null}
+          </p>
         ) : (
           <p className={styles.trust}>Nothing is sent until the last step.</p>
         )}

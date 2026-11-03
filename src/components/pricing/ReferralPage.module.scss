@@ -5,6 +5,10 @@
 // /referral (Nov 2026 award pass, simplified). The shared section grammar
 // lives in PricingSections.module.scss; this module adds the hero's two-line
 // title and actions, the steps band and the form section.
+//
+// A short page, so a tighter rhythm than the long ones' 64-144px: 48px of
+// air on phones, 104px at most.
+$pad-y: clamp(48px, 7vw, 104px);
 
 // ---------------------------------------------------------------- hero
 // Each sentence of the H1 on its own line; the condition in crimson (PageHeader's <em>).
@@ -51,7 +55,7 @@
 
 .howInner {
   @include shell;
-  padding-bottom: clamp(72px, 10vw, 144px);
+  padding-bottom: $pad-y;
 }
 
 .howLabel {
@@ -72,7 +76,8 @@
 
 .signupInner {
   @include shell;
-  @include section-pad;
+  padding-top: $pad-y;
+  padding-bottom: $pad-y;
   display: grid;
   gap: 48px;
 
@@ -118,7 +123,22 @@
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
+// The approved quote under the section's lede, ruled off like the heroes'.
+.signupProof {
+  margin-top: clamp(28px, 3vw, 40px);
+  padding-top: clamp(18px, 2vw, 24px);
+  border-top: 1px solid $color-hairline;
+}
+
 // Focus is never hidden under the fixed header (WCAG 2.4.11).
 .signup :is(a, button, input, select, textarea, summary) {
   scroll-margin-top: 8px;
+}
+
+// ---------------------------------------------------------------- questions
+// The shared FAQ section (PricingSections), on this page's rhythm. Two classes,
+// so this wins over the shared section-pad whatever order the sheets load in.
+.terms .termsInner {
+  padding-top: $pad-y;
+  padding-bottom: $pad-y;
 }

@@ -7,19 +7,23 @@ import { absoluteUrl } from '@/config/routes';
 import { siteConfig, testimonials } from '@/config/site';
 import { telHref } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
+import QuoteLine from '@/components/flagship/QuoteLine';
 import ProjectBrief from '@/components/convert/ProjectBrief';
 import Steps from '@/components/services/Steps';
 import styles from '@/components/convert/ContactLayout.module.scss';
 
 /**
  * /contact-us (Nov 2026, simplified): the site's primary destination. Every
- * "Start a project" button lands here, so the page is the ask: a short hero,
- * then the project brief on a paper sheet, four questions, one at a time
+ * "Start a project" button lands here, so the page is the ask: a compact hero,
+ * then the project brief on a paper sheet that rises to meet it (the first
+ * answers are on the first screen), four questions, one at a time
  * (ProjectBrief; fields, validation, submission and analytics unchanged).
  * Beside it (under it on phones), three things only: what happens after you
  * send it, one client in her own words (the approved LRO Staffing quote), and
- * the email and phone number. No close band: the sheet carries
- * `data-page-close`, so the footer drops its own ask.
+ * the email and phone number. Below 1024px, where all of that follows the
+ * whole form, the quote moves up as one line under the brief's button. No
+ * close band: the sheet carries `data-page-close`, so the footer drops its
+ * own ask.
  *
  * Structured data: ContactPage + BreadcrumbList + ContactPoint.
  */
@@ -61,6 +65,9 @@ const NEXT_STEPS = [
 /** The one approved client quote (site.ts `testimonials`), beside the decision. */
 const PROOF = testimonials.find((entry) => entry.company === 'LRO Staffing') ?? null;
 
+/** The hero's NDA promise, said again beside "Send the brief" (confidential detail comes after it). */
+const NDA_LINE = 'We sign an NDA before you share anything confidential.';
+
 export default function ContactPage() {
   return (
     <>
@@ -77,10 +84,10 @@ export default function ContactPage() {
         crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]}
         label="Contact"
         title="Start a project."
+        size="l"
         lede={
           <p>
-            Answer four short questions about your project. After a 20-minute call, you get a fixed quote. We sign an NDA
-            before you share anything confidential.
+            Answer four short questions about your project. After a 20-minute call, you get a fixed quote. {NDA_LINE}
           </p>
         }
       />
@@ -95,7 +102,9 @@ export default function ContactPage() {
                 <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a> instead.
               </p>
             </noscript>
-            <ProjectBrief />
+            <ProjectBrief reassure={NDA_LINE} />
+            {/* Below 1024px the aside (and its quote) follows the whole form: the quote moves up to the brief's button. */}
+            <QuoteLine tone="paper" className={styles.formProof} />
           </div>
 
           <div className={styles.aside}>

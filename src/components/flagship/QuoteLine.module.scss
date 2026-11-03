@@ -1,5 +1,6 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
 // Avatar, quote, attribution: the home hero's proof line, reusable.
 .quote {
@@ -51,5 +52,16 @@
   .text p,
   .by {
     color: $color-white;
+  }
+}
+
+// On paper: ink and ink-muted (17.6:1, 8.1:1).
+.quote[data-tone='paper'] {
+  .text p {
+    color: $color-ink;
+  }
+
+  .by {
+    color: $color-ink-muted;
   }
 }

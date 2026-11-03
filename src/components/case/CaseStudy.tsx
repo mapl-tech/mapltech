@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { WorkEntry } from '@/components/work/work-types';
-import { estimateLinkFor } from '@/components/work/work-data';
+import { estimateLinkFor, scopingCallLinkFor } from '@/components/work/work-data';
 import CloseBand from '@/components/flagship/CloseBand';
 import { HERO_REASSURE } from '@/components/flagship/content';
 import CaseStage from './CaseStage';
@@ -14,15 +14,17 @@ import styles from './Case.module.scss';
 /**
  * The case-study template (Nov 2026, simplified). Written for the next buyer:
  *
- *   hero (the name, the facts, the product) → results → the story in
+ *   hero (the name, the product, the facts) → results → the story in
  *   chapters (situation, what we built, what changed, what they said) and its
- *   sources → the live site, top to bottom → the next project, as one row →
- *   why it matters to you, with the ask. The page ends on the ask.
+ *   sources → the live site, top to bottom → why it matters to you, with the
+ *   ask → the next project, as one row. The ask is the last decision; the
+ *   next project is only a way on for a reader who is still looking.
  *
  * Every section renders only when its story field exists, so a project with a
  * thin record gets a shorter page, never padding. Every sentence is sourced in
  * stories.ts. "Price a project like this" opens the estimator on the story's
- * own target (stories.ts `estimate`), or on its service line alone.
+ * own target (stories.ts `estimate`), or on its service line alone; the ask
+ * opens the brief with that same service line already chosen.
  */
 export default function CaseStudy({
   entry,
@@ -33,11 +35,12 @@ export default function CaseStudy({
   story: CaseStory;
   next?: { entry: WorkEntry; story: CaseStory | undefined };
 }) {
-  const estimateHref = estimateLinkFor(story.estimate ?? { service: entry.service });
+  const service = story.estimate?.service ?? entry.service;
+  const estimateHref = estimateLinkFor(story.estimate ?? { service });
   const full = FULL_PAGES[entry.slug];
   const live = story.facts.find((fact) => fact.href);
-  // "Skip the live site" lands on the first thing after it: the next project, else the ask.
-  const afterLive = next ? 'case-next' : story.matters ? 'case-matters' : undefined;
+  // "Skip the live site" lands on the first thing after it: the ask, else the next project.
+  const afterLive = story.matters ? 'case-matters' : next ? 'case-next' : undefined;
   const nextName = next ? (next.story?.client ?? next.entry.title) : '';
   // A real capture only, never a mockup: a project without one gets a text-only row.
   const nextShot = next?.story?.media?.desktop;
@@ -77,8 +80,23 @@ export default function CaseStudy({
           <h1 id="case-title" className={styles.title}>
             {story.client}
           </h1>
+          {/* In the phone's reading order: the headline, the product, then the
+              facts, so the capture reaches the first screen. From 768px the grid
+              sets the facts under (tablet) or beside (desktop) the headline and
+              the capture below both; the capture holds nothing focusable, so the
+              tab order is the same either way. */}
           <div className={styles.heroFoot}>
             <p className={styles.headline}>{story.headline}</p>
+            {story.media ? (
+              <CaseStage
+                slug={entry.slug}
+                url={live?.detail}
+                desktop={story.media.desktop}
+                mobile={story.media.mobile}
+                alt={story.media.alt}
+                caption={story.media.caption}
+              />
+            ) : null}
             <dl className={styles.facts}>
               {story.facts.map((fact) => (
                 <div key={fact.term} className={styles.fact}>
@@ -99,17 +117,6 @@ export default function CaseStudy({
             </dl>
           </div>
         </div>
-
-        {story.media ? (
-          <CaseStage
-            slug={entry.slug}
-            url={live?.detail}
-            desktop={story.media.desktop}
-            mobile={story.media.mobile}
-            alt={story.media.alt}
-            caption={story.media.caption}
-          />
-        ) : null}
       </header>
 
       {/* ---------------------------------------------------------- results */}
@@ -231,7 +238,21 @@ export default function CaseStudy({
         <SiteScroll client={story.client} url={live?.detail} desktop={full.desktop} mobile={full.mobile} skipTo={afterLive} />
       ) : null}
 
-      {/* ---------------------------------------------------------- next: one row, above the ask */}
+      {/* ---------------------------------------------------------- matters: the ask, with the brief on this service line */}
+      {story.matters ? (
+        <CloseBand
+          id="case-matters"
+          title={story.matters.heading}
+          lede={story.matters.text}
+          href={scopingCallLinkFor(service)}
+          secondary={{ label: 'Price a project like this', href: estimateHref }}
+          placement={`case_${entry.slug}`}
+          note={HERO_REASSURE}
+          hero
+        />
+      ) : null}
+
+      {/* ---------------------------------------------------------- next: one row, after the ask */}
       {next ? (
         <div className={styles.nextBand}>
           <div className={styles.shell}>
@@ -269,19 +290,6 @@ export default function CaseStudy({
             </Link>
           </div>
         </div>
-      ) : null}
-
-      {/* ---------------------------------------------------------- matters: the ask, last */}
-      {story.matters ? (
-        <CloseBand
-          id="case-matters"
-          title={story.matters.heading}
-          lede={story.matters.text}
-          secondary={{ label: 'Price a project like this', href: estimateHref }}
-          placement={`case_${entry.slug}`}
-          note={HERO_REASSURE}
-          hero
-        />
       ) : null}
     </article>
   );

@@ -194,6 +194,31 @@ $muted: $color-fg-muted;
   color: $muted;
 }
 
+// The privacy line (the brief's wording): muted, its link in the foreground
+// colour, inline in the sentence (2.5.8 inline exception).
+.privacy {
+  margin: 0;
+  max-width: 40em;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $muted;
+  @include phone-floor;
+
+  a {
+    color: $color-fg;
+    text-decoration: underline;
+    text-decoration-color: rgba($color-fg, 0.35);
+    text-underline-offset: 4px;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration-color: $color-red;
+    }
+
+    @include focus-ring;
+  }
+}
+
 // Google's notice as one sentence: its links are inline text (2.5.8 inline exception).
 .recaptcha {
   margin: 0;

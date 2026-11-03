@@ -39,7 +39,8 @@ export function PrimaryCta({ href, placement, children, className, hero = false 
 /**
  * Text action ("See pricing", "Read the case study"). Takes the surrounding
  * text colour; `tone="paper"` swaps the focus ring to the ink-safe crimson.
- * External links open in a new tab and say so.
+ * External links open in a new tab and say so. `arrow={false}` sets it as the
+ * site's quiet secondary (the hero and close-band "See pricing": words only).
  */
 export function TextCta({
   href,
@@ -49,7 +50,8 @@ export function TextCta({
   external = false,
   hero = false,
   tone = 'dark',
-}: BaseProps & { external?: boolean; hero?: boolean; tone?: 'dark' | 'paper' }) {
+  arrow = true,
+}: BaseProps & { external?: boolean; hero?: boolean; tone?: 'dark' | 'paper'; arrow?: boolean }) {
   const cls = [styles.text, className].filter(Boolean).join(' ');
   if (external) {
     return (
@@ -65,9 +67,11 @@ export function TextCta({
   return (
     <Link href={href} className={cls} data-tone={tone} data-cta-placement={placement} data-hero-cta={hero ? '' : undefined}>
       {children}
-      <span aria-hidden="true" className={styles.arrow}>
-        →
-      </span>
+      {arrow ? (
+        <span aria-hidden="true" className={styles.arrow}>
+          →
+        </span>
+      ) : null}
     </Link>
   );
 }

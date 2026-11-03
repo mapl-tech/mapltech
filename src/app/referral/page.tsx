@@ -1,6 +1,7 @@
 import Accordion from '@/components/ui/Accordion';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
+import QuoteLine from '@/components/flagship/QuoteLine';
 import JsonLd from '@/components/seo/JsonLd';
 import { faqPage, howTo, pageGraph } from '@/lib/schema';
 import ReferralSignup from '@/components/convert/ReferralSignup';
@@ -21,10 +22,12 @@ import styles from '@/components/pricing/ReferralPage.module.scss';
 
 /*
  * /referral (Nov 2026 award pass, simplified). What it is, then how it works
- * (the live page's three steps, as numbered columns), the form, the questions
- * and the crimson close for visitors with a project of their own. Metadata
- * (title, description, canonical, Open Graph) lives in ./layout.tsx. No bonus
- * amount is published, so none is stated.
+ * (the live page's three steps, as numbered columns), the form with the
+ * approved client quote beside it, the questions and the crimson close for
+ * visitors with a project of their own. Sections sit on a tighter rhythm than
+ * the long pages (48-104px). Metadata (title, description, canonical, Open
+ * Graph) lives in ./layout.tsx. No bonus amount is published, so none is
+ * stated.
  */
 
 const referralGraph = pageGraph({
@@ -88,6 +91,8 @@ export default function ReferralPage() {
               {REFERRAL_FORM.title}
             </h2>
             <p className={sections.lede}>{REFERRAL_FORM.lede}</p>
+            {/* What a client says about working with us, beside the introduction you are about to make. */}
+            <QuoteLine className={styles.signupProof} />
           </div>
           <div className={styles.formCard}>
             <ReferralSignup />
@@ -96,8 +101,8 @@ export default function ReferralPage() {
       </section>
 
       {/* Questions: the homepage's accordion; FAQPage JSON-LD from the same array. */}
-      <section id="terms" className={sections.faq} aria-labelledby="terms-title">
-        <div className={sections.faqInner}>
+      <section id="terms" className={`${sections.faq} ${styles.terms}`} aria-labelledby="terms-title">
+        <div className={`${sections.faqInner} ${styles.termsInner}`}>
           <div className={sections.faqHead}>
             <p className={sections.label}>{REFERRAL_TERMS_COPY.label}</p>
             <h2 id="terms-title" className={sections.title}>

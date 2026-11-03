@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState, type FocusEvent, type FormEvent, type ReactNode } from 'react';
+import Link from 'next/link';
 import { ESTIMATE_SERVICES, SERVICE_META } from '@/lib/estimate';
 import { field, isEmail, useContactSubmit } from './useContactSubmit';
 import styles from '@/components/pricing/ReferralForm.module.scss';
@@ -8,11 +9,13 @@ import RecaptchaNotice from './RecaptchaNotice';
 
 /**
  * The referral form (the live page's fields, kept: you, and the agency you
- * are introducing). Required fields are validated on submit, then again on
- * blur once a first attempt has been made; each error sits under its field,
- * is linked with aria-describedby, and focus moves to the first one. On
- * success the form is replaced by a status panel that takes focus. Posts to
- * /api/contact with the subject "Referral: <name>".
+ * are introducing: their name and email, then the agency's name if it is not
+ * the same). Required fields are validated on submit, then again on blur once
+ * a first attempt has been made; each error sits under its field, is linked
+ * with aria-describedby, and focus moves to the first one. Beside the button,
+ * the brief's own privacy line, with the link to the policy. On success the
+ * form is replaced by a status panel that takes focus. Posts to /api/contact
+ * with the subject "Referral: <name>".
  */
 
 type FieldKey = 'name' | 'email' | 'refName' | 'refEmail';
@@ -26,7 +29,7 @@ function validate(data: FormData): Errors {
   const email = field(data, 'email');
   if (!email) errors.email = 'Enter your email address.';
   else if (!isEmail(email)) errors.email = 'Enter an email address like name@agency.com.';
-  if (!field(data, 'refName')) errors.refName = 'Enter the name of the person or agency you are introducing.';
+  if (!field(data, 'refName')) errors.refName = 'Enter their name, so we know who to ask for.';
   const refEmail = field(data, 'refEmail');
   if (!refEmail) errors.refEmail = 'Enter their email address so we can reach them.';
   else if (!isEmail(refEmail)) errors.refEmail = 'Enter an email address like name@agency.com.';
@@ -217,7 +220,7 @@ export default function ReferralSignup() {
       <fieldset className={styles.fieldset}>
         <legend className={styles.legend}>The agency you are introducing</legend>
         <div className={styles.fields}>
-          <Field id={id('refName')} label="Contact or agency name" error={errors.refName}>
+          <Field id={id('refName')} label="Their name" error={errors.refName}>
             {(describedBy) => (
               <input
                 id={id('refName')}
@@ -305,6 +308,11 @@ export default function ReferralSignup() {
           {status === 'sending' ? 'Sending…' : 'Send referral'}
         </button>
         <p className={styles.note}>We mention your introduction when we reach out.</p>
+        {/* The brief's privacy line, for both addresses this form collects. */}
+        <p className={styles.privacy}>
+          We use these emails to contact you and the agency about this referral. We never sell them.{' '}
+          <Link href="/privacy">Privacy policy</Link>
+        </p>
       </div>
 
       {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}

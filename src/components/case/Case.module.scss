@@ -3,7 +3,9 @@
 @use '../../styles/editorial' as *;
 
 // Case study (Nov 2026, simplified). Rhythm: dark hero → paper results →
-// dark story → dark live site → the next project (one row) → crimson ask, last.
+// dark story → dark live site → crimson ask → the next project (one row).
+// Sentences never drop under the 17px body size (facts, sources, notes, the
+// skip link); only labels and the browser's address bar are smaller.
 $portrait: '(max-aspect-ratio: 21/20)';
 $landscape: '(min-aspect-ratio: 21/20)';
 
@@ -37,6 +39,12 @@ $landscape: '(min-aspect-ratio: 21/20)';
   background:
     radial-gradient(70% 50% at 50% 100%, rgba(217, 28, 63, 0.2) 0%, transparent 70%),
     $color-ground;
+
+  // The glow lights the product shot from below; with no shot it would only
+  // end in a seam at the hero's edge.
+  &:not(:has(.stage)) {
+    background: $color-ground;
+  }
 }
 
 .heroInner {
@@ -88,7 +96,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   margin: 0;
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(3.25rem, 1rem + 10.5vw, 12.5rem); // 52px -> 200px
+  font-size: clamp(3.25rem, 1rem + 10.5vw, 8rem); // 52px -> 128px (from 1067px)
   line-height: 0.88;
   letter-spacing: -0.05em;
   text-wrap: balance;
@@ -100,6 +108,10 @@ $landscape: '(min-aspect-ratio: 21/20)';
   }
 }
 
+// Source order is the phone's: the headline, the product, the facts, so the
+// capture reaches the first screen. From 768px the facts sit under the
+// headline (tablets) or beside it (desktops), and the product follows both,
+// across both columns; see .stage.
 .heroFoot {
   display: grid;
   gap: clamp(28px, 4vw, 48px);
@@ -119,6 +131,13 @@ $landscape: '(min-aspect-ratio: 21/20)';
   color: $color-text-body;
   max-width: 34em;
   text-wrap: pretty;
+
+  // Desktop: large enough to answer the name above it (24px -> 30px).
+  @include lg {
+    font-size: clamp(1.5rem, 0.75rem + 1.4vw, 1.875rem);
+    line-height: 1.38;
+    letter-spacing: -0.01em;
+  }
 }
 
 .facts {
@@ -146,11 +165,10 @@ $landscape: '(min-aspect-ratio: 21/20)';
 
   dd {
     margin: 0;
-    font-size: $font-size-sm;
+    font-size: $font-size-base;
     line-height: 1.45;
     color: $color-fg;
     overflow-wrap: anywhere;
-    @include phone-floor;
   }
 
   a {
@@ -168,20 +186,32 @@ $landscape: '(min-aspect-ratio: 21/20)';
 }
 
 // The product shot: tilted back, straightening and growing as it scrolls in.
+// A .heroFoot grid item: 48-104px from what sits above it (the grid's row gap
+// plus this margin). From 768px it follows the facts, across both columns.
 .stage {
   --p: 0.5;
   position: relative;
-  width: min(1180px, calc(100% - 2 * #{$editorial-gutter}));
-  margin: clamp(48px, 7vw, 104px) auto 0;
+  width: min(1180px, 100%);
+  margin: calc(clamp(48px, 7vw, 104px) - clamp(28px, 4vw, 48px)) auto 0;
   padding-right: 9%;
   padding-bottom: 7%;
   perspective: 1800px;
+
+  // Phones: the facts follow it, a clear step below the hanging phone.
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    margin-bottom: 12px;
+  }
+
+  @include md {
+    order: 1;
+    grid-column: 1 / -1;
+  }
 }
 
 .stageBrowser {
   overflow: hidden;
   border-radius: clamp(10px, 1.2vw, 18px);
-  background: #0d0d0f;
+  background: $color-surface-1;
   box-shadow: 0 60px 120px -40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08);
   transform-origin: 50% 0%;
   transform: rotateX(calc(max(0, 0.42 - var(--p)) * 46deg)) scale(calc(0.9 + min(var(--p), 0.42) * 0.238));
@@ -196,8 +226,8 @@ $landscape: '(min-aspect-ratio: 21/20)';
   aspect-ratio: 9 / 19.5;
   overflow: hidden;
   border-radius: clamp(14px, 2vw, 30px);
-  border: clamp(3px, 0.4vw, 6px) solid #1b1b1e;
-  background: #0d0d0f;
+  border: clamp(3px, 0.4vw, 6px) solid $color-surface-3;
+  background: $color-surface-1;
   box-shadow: 0 40px 80px -24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.1);
   transform: translate3d(0, calc((0.5 - var(--p)) * 180px), 0);
   will-change: transform;
@@ -219,7 +249,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   margin-top: 20px;
   // Clear of the phone, which hangs in the stage's bottom-right corner.
   padding-right: 26%;
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   line-height: 1.5;
   color: $color-fg-muted;
 }
@@ -230,7 +260,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   gap: 14px;
   height: clamp(28px, 2.6vw, 38px);
   padding: 0 14px;
-  background: #18181b;
+  background: $color-surface-2;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -429,13 +459,15 @@ $landscape: '(min-aspect-ratio: 21/20)';
   }
 }
 
+// The situation's first paragraph: large prose a step above the rest
+// (22px -> 32px), so it reads as the start of the story, not as a heading.
 .lead {
   margin: 0;
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: clamp(1.75rem, 0.95rem + 2.8vw, 3.5rem); // 28px -> 56px
-  line-height: 1.1;
-  letter-spacing: -0.026em;
+  max-width: 30em;
+  font-size: clamp(1.375rem, 1rem + 1.1vw, 2rem);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: $color-fg;
   text-wrap: pretty;
 }
 
@@ -569,6 +601,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
 .quoteRole {
   font-size: $font-size-sm;
   color: $color-fg-muted;
+  @include phone-floor;
 }
 
 // ===================================================================
@@ -631,16 +664,14 @@ $landscape: '(min-aspect-ratio: 21/20)';
 
 .siteNote {
   margin: 0;
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   color: $color-fg-muted;
-  @include phone-floor;
 }
 
 // The way out of the pin: a plain text action, 44px tall, in the pinned head.
 .siteSkip {
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   @include text-action($color-fg);
-  @include phone-floor;
 }
 
 .siteFrameDesktop,
@@ -650,7 +681,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   min-height: 0;
   height: 100%;
   overflow: hidden;
-  background: #0d0d0f;
+  background: $color-surface-1;
   box-shadow: 0 60px 120px -40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
@@ -676,7 +707,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   aspect-ratio: 9 / 19.5;
   max-width: min(330px, 78vw);
   border-radius: 34px;
-  border: 6px solid #1b1b1e;
+  border: 6px solid $color-surface-3;
 
   @media #{$portrait} {
     display: flex;
@@ -737,14 +768,13 @@ $landscape: '(min-aspect-ratio: 21/20)';
   // A readable measure: the rule spans the shell, the sentence stops at ~75 characters.
   padding: 24px max(0px, calc(100% - 36em)) clamp(40px, 6vw, 72px) 0;
   border-top: 1px solid $color-hairline;
-  font-size: $font-size-sm; // a sentence, not a label: the secondary size, not 13px
+  font-size: $font-size-base; // a sentence, not a label: the body size at every width
   line-height: 1.5;
   color: $color-fg-muted;
-  @include phone-floor;
 }
 
 // ===================================================================
-// The next project: one row in the /our-work index style, above the ask
+// The next project: one row in the /our-work index style, after the ask
 // ===================================================================
 .nextBand {
   background: $color-ground;
@@ -812,7 +842,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   display: none;
   overflow: hidden;
   border-radius: 10px;
-  background: #0d0d0f;
+  background: $color-surface-1;
   box-shadow:
     0 30px 60px -30px rgba(0, 0, 0, 0.85),
     0 0 0 1px rgba(255, 255, 255, 0.08);

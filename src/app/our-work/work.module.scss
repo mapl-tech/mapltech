@@ -7,16 +7,34 @@
 // with its real capture. Then one client quote and the crimson close.
 
 // ===================================================================
+// The hero's proof
+// ===================================================================
+// The approved quote in PageHeader's actions row, ruled off from the ask;
+// where the row is too narrow it wraps under the buttons. Phones leave it out
+// so the first project's capture reaches the first screen: on this page the
+// work is the proof, and the client's full quote follows the index.
+.heroProof {
+  padding-left: clamp(20px, 2vw, 28px);
+  border-left: 1px solid $color-hairline-strong;
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    display: none;
+  }
+}
+
+// ===================================================================
 // The index
 // ===================================================================
+// It rises into PageHeader's bottom padding (clamp(64px, 9vw, 128px), kept in
+// step here), leaving 40-48px under the hero, so the first project reaches the
+// first screen. No fill of its own: the hero's light fades out under it.
 .index {
   position: relative;
-  background: $color-ground; // PageHeader's light fades out before its edge
+  margin-top: calc(clamp(40px, 3.4vw, 48px) - clamp(64px, 9vw, 128px));
 }
 
 .indexInner {
   @include shell;
-  padding-top: clamp(8px, 2vw, 24px);
   padding-bottom: clamp(56px, 8vw, 112px);
 }
 
@@ -124,7 +142,7 @@
 .browser {
   overflow: hidden;
   border-radius: clamp(10px, 1.2vw, 14px);
-  background: #0d0d0f;
+  background: $color-surface-1;
   box-shadow:
     0 30px 60px -30px rgba(0, 0, 0, 0.85),
     0 0 0 1px rgba(255, 255, 255, 0.08);
@@ -148,7 +166,7 @@
   gap: 12px;
   height: 30px;
   padding: 0 12px;
-  background: #18181b;
+  background: $color-surface-2;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
   @include lg {
@@ -209,7 +227,7 @@
   background:
     linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 18px 18px,
     linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 18px 18px,
-    #101012;
+    $color-surface-1;
   box-shadow:
     0 30px 60px -30px rgba(0, 0, 0, 0.85),
     0 0 0 1px rgba(255, 255, 255, 0.08);
@@ -549,6 +567,7 @@
 .quoteRole {
   font-size: $font-size-sm;
   color: $color-fg-muted;
+  @include phone-floor;
 }
 
 .voiceMore {

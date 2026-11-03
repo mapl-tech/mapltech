@@ -20,8 +20,8 @@
 // The section label on the left, the chips on the right (stacked on phones).
 .toolbar {
   display: grid;
-  gap: 20px;
-  padding-bottom: clamp(24px, 3vw, 36px);
+  gap: 16px;
+  padding-bottom: clamp(16px, 1.8vw, 24px);
 
   @include lg {
     grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
@@ -30,18 +30,43 @@
   }
 }
 
+// A fieldset of radios (one choice), set as a row of chips.
 .chips {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  // Phones: one line that scrolls sideways, running out to the screen edges
+  // (the cut-off chip says there is more), instead of three wrapped lines. The
+  // 6px above and below keep a focused chip's ring clear of the scroll clip;
+  // a chip reached with the arrow keys scrolls into view clear of the gutter.
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    margin: -6px calc(-1 * #{$editorial-gutter});
+    padding: 6px $editorial-gutter;
+    scroll-padding-inline: $editorial-gutter;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 
   @include lg {
     justify-content: flex-end;
   }
 }
 
-// 44px pills, 8px apart. Pressed: the paper fill (ink label 17:1).
+// 44px pills, 8px apart. Chosen: the paper fill (ink label 17:1).
 .chip {
+  position: relative;
+  flex: none;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -54,9 +79,11 @@
   font-size: 1rem;
   font-weight: $font-weight-semibold;
   line-height: 1;
+  white-space: nowrap;
   color: $color-fg;
   cursor: pointer;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
     background-color 0.25s ease,
     border-color 0.25s ease,
@@ -66,10 +93,15 @@
     border-color: rgba($color-red, 0.75);
   }
 
-  &[aria-pressed='true'] {
+  &:has(.chipInput:checked) {
     background: $color-paper;
     border-color: $color-paper;
     color: $color-ink;
+  }
+
+  &:has(.chipInput:focus-visible) {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
   }
 
   &:active {
@@ -77,16 +109,29 @@
       transform: scale(0.97);
     }
   }
-
-  @include focus-ring;
 }
 
-// Muted on the ground (7.4:1), ink-muted on the paper fill (6.4:1).
+// The radio itself, unpainted, over the whole chip: the chip is its face, and
+// a focused radio scrolls the chip it covers into view.
+.chipInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: inherit;
+  opacity: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+// Muted on the ground, ink-muted on the paper fill (both AAA).
 .count {
   @include mono-label;
   font-size: 0.8125rem;
 
-  .chip[aria-pressed='true'] & {
+  .chip:has(.chipInput:checked) & {
     color: $color-ink-muted;
   }
 }
@@ -149,7 +194,7 @@
   bottom: 12px;
   padding: 8px 12px;
   border-radius: 10px;
-  background: rgba(8, 8, 10, 0.9);
+  background: rgba($color-ground, 0.9);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
   font-size: $font-size-xs;
   line-height: 1.4;
@@ -168,7 +213,7 @@
   background:
     linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 22px 22px,
     linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 22px 22px,
-    #101012;
+    $color-surface-1;
 }
 
 .flowLabel {
@@ -189,7 +234,7 @@
     padding: 10px 12px;
     border-radius: 8px;
     border: 1px solid rgba($color-fg, 0.18);
-    background: #17171a;
+    background: $color-surface-2;
     font-family: $font-display;
     font-weight: $font-weight-bold;
     font-size: 0.9375rem;

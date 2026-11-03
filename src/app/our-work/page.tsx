@@ -4,6 +4,8 @@ import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
+import { HERO_REASSURE } from '@/components/flagship/content';
+import QuoteLine from '@/components/flagship/QuoteLine';
 import { PrimaryCta, TextCta } from '@/components/work/Cta';
 import WorkIndex from '@/components/work/WorkIndex';
 import { WORK_PAGE, catalogFilters, catalogItems, catalogVoice, countWord, type CatalogItem } from '@/components/work/catalog';
@@ -14,10 +16,11 @@ import styles from './work.module.scss';
 
 /*
  * /our-work (Nov 2026 simplify pass): four parts, in reading order. The page
- * hero says the honest line (most of our work ships under partners' names);
- * the index lists every project in the owner's order, each with its real
- * capture and a link to its case study, filterable by service line; one
- * client quote; the ask.
+ * hero says the honest line (most of our work ships under partners' names),
+ * with the risk answer and the approved quote beside its ask, in the compact
+ * size so the first project reaches the first screen; the index lists every
+ * project in the owner's order, each with its real capture and a link to its
+ * case study, filterable by service line; one client quote; the ask.
  *
  * Every row's capture carries the case hero's view-transition name, so it
  * morphs into the case study's browser frame on navigation (one element per
@@ -68,6 +71,7 @@ export default function OurWorkPage() {
 
       <PageHeader
         id="work-title"
+        size="l"
         label="Our work"
         title="Websites, tools and automation we built."
         lede={
@@ -81,11 +85,16 @@ export default function OurWorkPage() {
             <PrimaryCta href={PROJECT_HREF} placement="work_hero_primary" hero>
               {PROJECT_LABEL}
             </PrimaryCta>
-            <TextCta href={PRICING_HREF} placement="work_hero_pricing">
+            <TextCta href={PRICING_HREF} placement="work_hero_pricing" arrow={false}>
               {PRICING_LABEL}
             </TextCta>
+            {/* The approved quote in the actions row, beside the ask rather than
+                under it (PageHeader's `proof`), so the hero stays one row shorter
+                and the first project reaches the first screen. */}
+            <QuoteLine className={styles.heroProof} />
           </>
         }
+        note={HERO_REASSURE}
       />
 
       {/* ------------------------------------------------------------ the index */}
@@ -138,10 +147,12 @@ export default function OurWorkPage() {
         </section>
       ) : null}
 
+      {/* The band's own quote line stays off: the client voice sits right above it. */}
       <CloseBand
         id="work-close-title"
         placement="work_close"
         title="Ready to start your project?"
+        proof={!voice}
       />
     </>
   );

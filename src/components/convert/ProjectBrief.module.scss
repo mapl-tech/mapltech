@@ -21,6 +21,9 @@ $field: #fffdfa;
 $field-border: rgba(11, 11, 12, 0.54); // 4.1:1 on paper (was 0.46, 3.1:1)
 $tile: rgba(255, 255, 255, 0.62);
 $tile-ring: rgba(11, 11, 12, 0.13);
+// Short screens (a 1280×720 laptop, a 360×640 phone): the counter, the bar and
+// the open question sit closer together, so the first answers make the first screen.
+$short: '(max-height: 760px)';
 
 .brief {
   position: relative;
@@ -64,6 +67,10 @@ $tile-ring: rgba(11, 11, 12, 0.13);
   line-height: 0.86;
   letter-spacing: -0.045em;
   @include tabular;
+
+  @media #{$short} {
+    font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem);
+  }
 }
 
 .countOf {
@@ -82,6 +89,10 @@ $tile-ring: rgba(11, 11, 12, 0.13);
   margin: 18px 0 0;
   padding: 0;
   list-style: none;
+
+  @media #{$short} {
+    margin-top: 12px;
+  }
 }
 
 .segment {
@@ -262,6 +273,10 @@ $tile-ring: rgba(11, 11, 12, 0.13);
     margin-top: 36px;
   }
 
+  @media #{$short} {
+    margin-top: 20px;
+  }
+
   @include motion-ok {
     animation: step-in 560ms $ease-out-expo both;
   }
@@ -293,6 +308,10 @@ $tile-ring: rgba(11, 11, 12, 0.13);
   text-wrap: balance;
   scroll-margin-top: 24px;
 
+  @media #{$short} {
+    font-size: clamp(1.625rem, 1.2rem + 1.4vw, 2.25rem); // 26px -> 36px
+  }
+
   // A programmatic focus target, not a control: no ring.
   &:focus {
     outline: none;
@@ -305,6 +324,10 @@ $tile-ring: rgba(11, 11, 12, 0.13);
   font-size: 1.0625rem;
   line-height: 1.5;
   color: $muted;
+
+  @media #{$short} {
+    margin-top: 8px;
+  }
 }
 
 .options {
@@ -313,6 +336,10 @@ $tile-ring: rgba(11, 11, 12, 0.13);
   margin: 26px 0 0;
   // The rows lay out by the space the column gives them, not by the viewport.
   container-type: inline-size;
+
+  @media #{$short} {
+    margin-top: 16px;
+  }
 }
 
 .option {

@@ -12,14 +12,11 @@
   font-size: 1.0625rem;
 
   @include focus-ring;
-
-  // Phones: the full width, the biggest target in reach.
-  @media (max-width: #{$breakpoint-sm - 1px}) {
-    width: 100%;
-  }
 }
 
-// The site's text action: the underline draws away on hover.
+// The site's text action: the underline draws away on hover. Set as the
+// quiet secondary ("See pricing", no arrow) it sits beside the pill from 375px,
+// as on the service and company heroes.
 .text {
   @include text-action;
   font-size: 1.0625rem;

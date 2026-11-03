@@ -70,16 +70,30 @@ function serviceFrom(service: EstimateService): string {
 
 const partnerLow = lowest(pricing.bundles.map((bundle) => bundle.price));
 
+/**
+ * One plain line under the two answers whose names say least, in the words the
+ * site already uses for them (kept here as text, so the brief's bundle does not
+ * carry the service pages' copy).
+ */
+const KIND_DETAIL: Partial<Record<BriefKind, string>> = {
+  // config/services.ts, Cloud Engineering `heroTitle`.
+  cloud: 'Cloud hosting that grows with your clients',
+  // pricing/content.ts BUNDLES_ANSWER: "A monthly partnership covers several services for one monthly price."
+  partner: 'Several services for one monthly price',
+};
+
 /** Step 1: what are we building? Every option carries its real public floor price. */
 export const KIND_OPTIONS: readonly ChoiceOption[] = [
   ...(['web', 'automation', 'tools', 'cloud'] as const).map((service) => ({
     key: service,
     label: KIND_LABEL[service],
+    detail: KIND_DETAIL[service],
     price: serviceFrom(service),
   })),
   {
     key: 'partner',
     label: KIND_LABEL.partner,
+    detail: KIND_DETAIL.partner,
     price: partnerLow === null ? undefined : `From ${money(partnerLow)} a month`,
   },
   { key: 'unsure', label: KIND_LABEL.unsure, detail: 'Tell us the goal in step 3' },
@@ -106,7 +120,17 @@ function tierPrice(service: EstimateService, price: string): string {
   return service === 'web' ? `From ${displayPrice(price)}` : displayPrice(price);
 }
 
-/** Step 2 options for a kind (none for "not sure yet"). */
+/** "Internal dashboard" and "Internal Dashboards": a tier name that only repeats the size says nothing new. */
+function sameWords(a: string, b: string): boolean {
+  const words = (text: string) => text.toLowerCase().replace(/s\b/g, '').replace(/\s+/g, ' ').trim();
+  return words(a) === words(b);
+}
+
+/**
+ * Step 2 options for a kind (none for "not sure yet"). A size leads with what
+ * the buyer can count (pages, automations, the kind of system), the package it
+ * maps to second, unless the package name only repeats it.
+ */
 export function sizeOptions(kind: BriefKind | null): readonly ChoiceOption[] {
   if (!kind || kind === 'unsure') return [];
   const open: ChoiceOption = { key: UNSURE, label: 'Not sure yet', detail: 'Leave it open' };
@@ -125,7 +149,12 @@ export function sizeOptions(kind: BriefKind | null): readonly ChoiceOption[] {
   return [
     ...SIZE_OPTIONS[kind].map((option) => {
       const tier = tiers[Math.min(option.tierIndex, tiers.length - 1)];
-      return { key: option.key, label: option.label, detail: tier.name, price: tierPrice(kind, tier.price) };
+      return {
+        key: option.key,
+        label: option.label,
+        detail: sameWords(option.label, tier.name) ? undefined : tier.name,
+        price: tierPrice(kind, tier.price),
+      };
     }),
     open,
   ];
@@ -201,7 +230,8 @@ function sizeLine(kind: BriefKind, size: string | null, prefill: BriefPrefill | 
   // Estimator add-ons (CMS, e-commerce, auth...) can lift the tier; honour them while the answer still matches.
   const toggles = prefill?.input && prefill.kind === kind && prefill.size === size ? prefill.input.toggles : {};
   const { tier } = resolveTier(kind, size as SizeKey, toggles);
-  return `${option.label}: ${tier.name}, ${tierPrice(kind, tier.price).replace(/^From/, 'from')}`;
+  const named = sameWords(option.label, tier.name) ? option.label : `${option.label}: ${tier.name}`;
+  return `${named}, ${tierPrice(kind, tier.price).replace(/^From/, 'from')}`;
 }
 
 /** The answers as labelled lines: the preview rows, the email body and the confirmation all use these. */
