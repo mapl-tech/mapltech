@@ -124,3 +124,13 @@
   padding-top: clamp(18px, 2vw, 24px);
   border-top: 1px solid rgba(255, 255, 255, 0.24);
 }
+
+.proofLine {
+  margin-bottom: 0;
+  max-width: 40em;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $color-white; // small text on crimson: solid white only (7.56:1)
+
+  @include phone-floor;
+}

@@ -4,9 +4,10 @@ import { PROOF, PROOF_SECTION } from './content';
 import styles from './Proof.module.scss';
 
 /**
- * Why agencies choose us: the live homepage's published numbers and the logos
- * of clients shown on the site. The one approved client quote sits beside the
- * hero's ask, so it is not repeated here.
+ * Why agencies choose us: the reasons first (the white-label guarantees the
+ * FAQ makes, in its words), then the live homepage's published numbers and
+ * the logos of clients shown on the site. The one approved client quote sits
+ * beside the hero's ask, so it is not repeated here.
  */
 export default function Proof() {
   return (
@@ -17,6 +18,13 @@ export default function Proof() {
           <h2 id="proof-title" className={styles.title}>
             {PROOF_SECTION.title}
           </h2>
+          <ul className={styles.promises} role="list">
+            {PROOF_SECTION.promises.map((promise) => (
+              <li key={promise} className={styles.promise}>
+                {promise}
+              </li>
+            ))}
+          </ul>
         </header>
 
         <dl className={styles.stats}>

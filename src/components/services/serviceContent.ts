@@ -11,7 +11,9 @@
  *  - the one-line summary of each service and the "How it works" steps on
  *    /services: the homepage copy in src/components/flagship/content.ts
  *    (LAYERS, APPROACH), so the two pages describe both the same way;
- *  - case facts: src/components/case/stories.ts (listed projects only).
+ *  - case facts: src/components/case/stories.ts (listed projects only);
+ *  - the white-label questions (the client never knowing, who owns the code,
+ *    your timezone): the homepage FAQ, src/components/home/data.ts, word for word.
  * Every sentence written here is cited inline. Nothing is estimated.
  *
  * Voice: plain English for a diverse audience (short sentences, no jargon,
@@ -47,7 +49,10 @@ import {
   type SizeKey,
 } from '@/lib/estimate';
 import { findStory } from '@/components/case/stories';
-import { APPROACH, LAYERS } from '@/components/flagship/content';
+import { APPROACH, LAYERS, SPOTLIGHT } from '@/components/flagship/content';
+import { FAQ_ITEMS, type FaqEntry } from '@/components/home/data';
+import { PROJECT_HREF } from '@/components/layout/chrome';
+import type { Step } from './Steps';
 
 /** The date this family was rebuilt (JSON-LD dateModified); the sitemap uses routes.ts REDESIGN_DATE. */
 export const SERVICES_REVISED = '2026-11-02';
@@ -142,7 +147,7 @@ interface ServiceCopy {
   stackLabel: string | null;
   /** Case studies that prove this service, lead case first (stories.ts slugs); two at most. */
   proofSlugs: readonly string[];
-  /** The one case study the /services row links to (stories.ts slug); null when the service has none of its own. */
+  /** The one case study the /services row links to (stories.ts slug), with its first published result. */
   example: string | null;
   /** Cloud shows only MAPL Tours' published delivery facts. */
   proofFilter?: { headline: string; results: RegExp };
@@ -262,8 +267,9 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     buildPoints: ['Moving to the cloud', 'Tested updates', 'Monitoring', 'Predictable costs'],
     stackLabel: 'Built with',
     proofSlugs: ['mapl-tours'],
-    // No cloud case study exists: the /services row shows no example.
-    example: null,
+    // No cloud case study of its own: the row links the case this page already shows, MAPL Tours, with
+    // one of its delivery facts (proofFilter).
+    example: 'mapl-tours',
     // Only what stories.ts publishes about MAPL Tours' delivery and production: the tests every change passes
     // and live payments.
     proofFilter: {
@@ -406,6 +412,8 @@ export interface TierView {
   timeline: { label: string; min: number; max: number } | null;
   /** Estimator deep link with this tier preselected, or the project brief for Custom. */
   href: string;
+  /** The project brief with this service and tier already chosen (it opens at its third step). */
+  brief: string;
 }
 
 /**
@@ -441,6 +449,18 @@ export function tierEstimateHref(service: EstimateService, tierIndex: number): s
   return estimateHref({ services: [service], size });
 }
 
+/**
+ * The project brief (/contact-us) with this service already chosen: `?svc=web`,
+ * or `?svc=web&size.web=growth` with a tier (the brief then opens at its third
+ * step). Built by hand without a tier, because the estimator's encoder always
+ * adds a size and the brief would skip the size question.
+ */
+export function briefHref(service: EstimateService, tierIndex?: number): string {
+  const key = tierIndex === undefined ? undefined : sizeKeyFor(service, tierIndex);
+  if (!key) return `${PROJECT_HREF}?svc=${service}`;
+  return estimateHref({ services: [service], size: { [service]: key } as EstimateSize }, { path: PROJECT_HREF, hash: null });
+}
+
 export function tierViews(view: LayerView): TierView[] {
   const timelines = tierTimelines(view.record);
   return view.tiers.map((tier, index) => {
@@ -465,6 +485,7 @@ export function tierViews(view: LayerView): TierView[] {
       features: tier.features.filter((feature) => feature !== builds).map(cleanCopy),
       timeline: timeline ? { label: `${timeline.min}–${timeline.max} weeks`, ...timeline } : null,
       href: parsed.isCustom ? '/contact-us' : tierEstimateHref(view.service, index),
+      brief: briefHref(view.service, index),
     };
   });
 }
@@ -543,8 +564,18 @@ function priceList(view: LayerView, answer: string): FaqView['list'] {
   return undefined;
 }
 
+/** A homepage FAQ entry, by its question (home/data.ts FAQ_ITEMS); the words are never retyped here. */
+function homeFaq(question: string): FaqEntry {
+  const entry = FAQ_ITEMS.find((item) => item.question === question);
+  if (!entry) throw new Error(`No homepage FAQ "${question}"`);
+  return entry;
+}
+
+/** The white-label question every service page answers too, second, after the price. */
+export const WHITE_LABEL_FAQ = homeFaq('Will my client ever know MAPL TECH was involved?');
+
 export function faqItems(view: LayerView): FaqView[] {
-  return view.record.faqs.map((faq) => {
+  const items = view.record.faqs.map((faq): FaqView => {
     // Questions exactly as services.ts writes them; the JSON-LD carries the same words.
     const question = faq.question;
     const answer = cleanCopy(faq.answer);
@@ -553,6 +584,8 @@ export function faqItems(view: LayerView): FaqView[] {
     const words = [list.lead, ...list.points.map((point) => `${point}.`), list.close];
     return { question, answer: words.filter(Boolean).join(' '), list };
   });
+  const whiteLabel: FaqView = { question: WHITE_LABEL_FAQ.question, answer: cleanCopy(WHITE_LABEL_FAQ.answer) };
+  return [...items.slice(0, 1), whiteLabel, ...items.slice(1)];
 }
 
 /* ------------------------------------------------------------------ */
@@ -571,6 +604,8 @@ export interface ProofCase {
   url?: string;
   results: readonly { value: string; label: string }[];
   stages: readonly { name: string; text: string }[];
+  /** The case carries the site's one approved client quote (site.ts testimonials, LRO Staffing). */
+  clientQuote: boolean;
 }
 
 const listed = new Set(listedProjects().map((project) => project.slug));
@@ -586,11 +621,21 @@ function caseKind(tags: readonly string[]): string {
   return tags[0] === 'Our own product' ? [tags[0], sector].filter(Boolean).join(' · ') : sector;
 }
 
-/** The one real project beside a /services row: a listed case study, or null (Cloud has none of its own). */
-export function rowExample(view: LayerView): { client: string; href: string } | null {
+export interface RowExample {
+  client: string;
+  href: string;
+  /** The case's first published result, as evidence beside the link (a cloud row keeps to delivery facts); null when it has none. */
+  metric: { value: string; label: string } | null;
+}
+
+/** The one real project beside a /services row: a listed case study, or null when there is none. */
+export function rowExample(view: LayerView): RowExample | null {
   if (!view.example || !listed.has(view.example)) return null;
   const story = findStory(view.example);
-  return story ? { client: story.client, href: `/our-work/${view.example}` } : null;
+  if (!story) return null;
+  const filter = view.proofFilter;
+  const metric = (story.results ?? []).find((result) => !filter || filter.results.test(result.label)) ?? null;
+  return { client: story.client, href: `/our-work/${view.example}`, metric };
 }
 
 export function proofCases(view: LayerView): ProofCase[] {
@@ -611,6 +656,7 @@ export function proofCases(view: LayerView): ProofCase[] {
       results,
       // What was built, for a case with no published numbers (a filtered case keeps to its numbers).
       stages: filter ? [] : (story.built?.stages ?? []),
+      clientQuote: Boolean(story.quote && SPOTLIGHT && story.quote.name === SPOTLIGHT.name),
     });
   }
   return out.slice(0, 2);
@@ -621,7 +667,17 @@ export function proofCases(view: LayerView): ProofCase[] {
 /* ------------------------------------------------------------------ */
 
 /** The homepage's "How it works" (content.ts APPROACH): one process, described the same way on both pages. */
-export const INDEX_STEPS: readonly { title: string; text: string }[] = APPROACH.steps;
+export const INDEX_STEPS: readonly Step[] = APPROACH.steps;
+
+/**
+ * Before the close: the three questions an agency asks before handing work
+ * to a white-label partner, answered as on the homepage (home/data.ts).
+ */
+export const INDEX_FAQ: readonly FaqEntry[] = [
+  WHITE_LABEL_FAQ,
+  homeFaq('Who owns the code when the project ends?'),
+  homeFaq("Can you work in our client's timezone?"),
+];
 
 /** Lowest monthly partnership (site.ts `pricing.bundles`): "$4,000 a month". */
 export const PARTNERSHIP_FROM = `${formatMoney(

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { SERVICE_META, SIZE_OPTIONS, parsePriceLabel, recurringLinesFor, tiersFor } from '@/lib/estimate';
 import { cleanDash, priceText, type ServiceFacts } from './content';
+import EstimateBriefLink from './EstimateBriefLink';
 import LoadIntoEstimator from './LoadIntoEstimator';
 import PriceGroup from './PriceGroup';
 import TierDetails from './TierDetails';
@@ -11,8 +12,10 @@ import styles from './PriceList.module.scss';
  * One service in the price list, collapsed to its row (PriceGroup): opened,
  * an answer-first sentence, every package (name and price, what it is for,
  * everything included) and the monthly plans. All of it is server HTML, read
- * by search engines and by the OfferCatalog JSON-LD, and every priced package
- * can be added to the estimator.
+ * by search engines and by the OfferCatalog JSON-LD. Every priced package is
+ * one tap from the estimator ("Price this package", the same words as on the
+ * service pages); a package quoted after a call (Web Development's
+ * Enterprise) opens the brief with it chosen, carrying the visitor's estimate.
  */
 export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
   const tiers = tiersFor(facts.service);
@@ -66,15 +69,26 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
                     ))}
                   </ul>
                 </TierDetails>
-                {parsed.isCustom || !size ? (
+                {!size ? (
                   <Link href={PROJECT_HREF} className={styles.tierAction} data-cta-placement={`pricing_tier_${facts.service}_call`}>
                     {PROJECT_LABEL}
                     <span className="visually-hidden">: {tier.name}</span>
                     <span aria-hidden="true"> →</span>
                   </Link>
+                ) : parsed.isCustom ? (
+                  <EstimateBriefLink
+                    service={facts.service}
+                    size={size.key}
+                    className={styles.tierAction}
+                    placement={`pricing_tier_${facts.service}_call`}
+                  >
+                    {PROJECT_LABEL}
+                    <span className="visually-hidden">: {tier.name}</span>
+                    <span aria-hidden="true"> →</span>
+                  </EstimateBriefLink>
                 ) : (
                   <LoadIntoEstimator service={facts.service} size={size.key} className={styles.tierAction}>
-                    Add to my estimate<span className="visually-hidden">: {facts.name}, {tier.name}</span>
+                    Price this package<span className="visually-hidden">: {facts.name}, {tier.name}</span>
                     <span aria-hidden="true"> ↑</span>
                   </LoadIntoEstimator>
                 )}

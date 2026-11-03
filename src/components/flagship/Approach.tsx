@@ -5,7 +5,8 @@ import styles from './Approach.module.scss';
 /**
  * How it works: four short steps from the first message to launch, drawn by
  * the same Steps list as /services and every service page, so the process
- * looks the same wherever it appears. Plain list markup, no scroll effects.
+ * looks the same wherever it appears. The first step links to the brief, so it
+ * can be taken from here. Plain list markup, no scroll effects.
  */
 export default function Approach() {
   return (
@@ -19,7 +20,7 @@ export default function Approach() {
           <p className={styles.lede}>{APPROACH.lede}</p>
         </header>
 
-        <Steps steps={APPROACH.steps} tone="paper" />
+        <Steps steps={APPROACH.steps} tone="paper" placement="home_approach" />
       </div>
     </section>
   );

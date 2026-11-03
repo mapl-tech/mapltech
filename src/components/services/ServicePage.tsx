@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import CloseBand from '@/components/flagship/CloseBand';
+import { NDA_LINE } from '@/components/flagship/content';
 import JsonLd from '@/components/seo/JsonLd';
 import PageHeader from '@/components/ui/PageHeader';
 import type { ServiceSlug } from '@/config/services';
@@ -14,6 +15,7 @@ import TierSchedule from './TierSchedule';
 import {
   LAYER_VIEWS,
   SERVICES_REVISED,
+  briefHref,
   capabilityViews,
   faqItems,
   layerView,
@@ -41,16 +43,21 @@ const ESTIMATE_LABEL = 'Price your project';
  *   the service's name as the eyebrow and its promise as the H1 (the one
  *   dominant element), with the answer beside it at a quieter size (from
  *   price, what the entry tier includes, support, the quote) → what we build
- *   (paper, four points) → work we can show → what it costs (paper) → how it
- *   works → questions → the other services → the crimson close.
+ *   (paper, four points) → work we can show → what it costs (paper) → how we
+ *   deliver → questions → the other services, one quiet line → the crimson
+ *   close.
  *
- * Server Component, all copy in the HTML, no client island. JSON-LD is one
- * page graph built from the same arrays the page renders.
+ * Every "Start a project" (the hero's, the close's, and so the phone bar's,
+ * which repeats the hero's) opens the brief with this service chosen; the NDA
+ * line sits under the hero's pair. Server Component, all copy in the HTML, no
+ * client island. JSON-LD is one page graph built from the same arrays the
+ * page renders.
  */
 export default function ServicePage({ slug }: ServicePageProps) {
   const view = layerView(slug);
   const faqs = faqItems(view);
   const cases = proofCases(view);
+  const brief = briefHref(view.service);
 
   const graph = pageGraph({
     path: view.path,
@@ -83,7 +90,14 @@ export default function ServicePage({ slug }: ServicePageProps) {
         label={view.name}
         title={view.headline}
         lede={<p>{view.lede}</p>}
-        actions={<HeroActions page={view.slug} secondary={{ label: ESTIMATE_LABEL, href: view.estimate }} />}
+        actions={
+          <HeroActions
+            page={view.slug}
+            href={brief}
+            secondary={{ label: ESTIMATE_LABEL, href: view.estimate }}
+            note={NDA_LINE}
+          />
+        }
         aside={<HeroFacts view={view} />}
       />
 
@@ -98,6 +112,7 @@ export default function ServicePage({ slug }: ServicePageProps) {
         id="service-close-title"
         title={view.close.title}
         lede={view.close.lede}
+        href={brief}
         secondary={{ label: ESTIMATE_LABEL, href: view.estimate }}
         placement={`${view.slug}_close`}
       />
@@ -183,14 +198,18 @@ function WhatWeBuild({ view }: { view: LayerView }) {
   );
 }
 
-/** The four steps, as published for this service (services.ts processSteps). */
+/**
+ * The four delivery steps, as published for this service (services.ts
+ * processSteps). Labelled "How we deliver": the homepage's "How it works" is
+ * the engagement (brief, quote, build, launch), and the two must not share a name.
+ */
 function Process({ view }: { view: LayerView }) {
   const steps = stageViews(view).map((stage) => ({ title: stage.name, text: stage.text }));
   return (
     <section id="process" className={styles.process} aria-labelledby="process-title">
       <div className={styles.processInner}>
         <header className={styles.head}>
-          <p className={styles.label}>How it works</p>
+          <p className={styles.label}>How we deliver</p>
           <h2 id="process-title" className={styles.title}>
             {view.processTitle}
           </h2>
@@ -219,7 +238,10 @@ function Questions({ view, faqs }: { view: LayerView; faqs: readonly FaqView[] }
   );
 }
 
-/** Service to service, with the public "from" prices. */
+/**
+ * Service to service, with the public "from" prices: one quiet row of three
+ * links at body size, so the exits never outweigh the close that follows.
+ */
 function OtherServices({ current }: { current: LayerView }) {
   return (
     <nav className={styles.others} aria-labelledby="others-title">
@@ -239,9 +261,11 @@ function OtherServices({ current }: { current: LayerView }) {
                   {layer.name}
                   <span className="visually-hidden">, </span>
                 </span>
-                <span className={styles.otherPrice}>{layer.fromLabel}</span>
-                <span className={styles.otherGo} aria-hidden="true">
-                  →
+                <span className={styles.otherPrice}>
+                  {layer.fromLabel}
+                  <span className={styles.otherGo} aria-hidden="true">
+                    →
+                  </span>
                 </span>
               </Link>
             </li>

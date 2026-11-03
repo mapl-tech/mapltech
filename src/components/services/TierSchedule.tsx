@@ -38,13 +38,17 @@ function Amount({ label }: { label: string }) {
  * What the service costs, on paper: one card per tier with its name, public
  * price, who it is for and what it includes. A starting price reads "From
  * $5,000"; a range reads as a range. Tablets and desktops show the first three
- * inclusions and fold the rest into "What’s included"; phones fold them all,
- * with the tier's action, into the same "What’s included", so four tiers read
- * in under two screens. No tier is marked "recommended": nothing in the data
- * says which one most clients choose. Each card deep-links the estimator with
- * that package selected ("Price this package"); a Custom package goes to the project
- * brief ("Start a project"). Monthly plans and the hourly rate follow, one tap
- * away.
+ * inclusions and fold the rest into "What’s included"; phones fold them all
+ * into the same "What’s included", so four tiers read in under two screens.
+ * (The first three are written twice, one copy per width, and only one is ever
+ * displayed: a single list cannot show three items while its <details> is
+ * closed without client JS or ::details-content overrides.) No tier is marked
+ * "recommended": nothing in the data says which one most clients choose.
+ * Every card closes on its actions, on the row at every width: "Start with
+ * <package>" opens the project brief with the service and the package chosen,
+ * and "Price this package" opens the estimator with it selected (a Custom
+ * package has no price to show, so it has only the first). Monthly plans and
+ * the hourly rate follow, one tap away.
  */
 export default function TierSchedule({ view }: { view: LayerView }) {
   const tiers = tierViews(view);
@@ -137,22 +141,6 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
   const rest = tier.features.slice(TIER_HIGHLIGHTS);
   const builds = tier.builds ? <p className={styles.builds}>{tier.builds}, plus:</p> : null;
   const item = (feature: string) => <li key={feature}>{keepTogether(feature)}</li>;
-  const action = (
-    <Link href={tier.href} className={styles.tierLink} data-cta-placement={`${slug}_${tier.id}`}>
-      {tier.isCustom ? (
-        <>
-          Start a project<span className="visually-hidden"> at the {tier.name} tier</span>
-        </>
-      ) : (
-        <>
-          Price this package<span className="visually-hidden">: {tier.name}</span>
-        </>
-      )}
-      <span aria-hidden="true" className={styles.arrow}>
-        →
-      </span>
-    </Link>
-  );
 
   return (
     <li id={tier.id} className={styles.tier}>
@@ -180,17 +168,29 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
             <span className={styles.chevron} aria-hidden="true" />
           </summary>
           <div className={styles.moreBody}>
-            {/* Phones: every inclusion sits in here, the first three included, then the tier's action. */}
+            {/* Phones: every inclusion sits in here, the first three included. */}
             <div className={styles.phoneOnly}>
               {builds}
               <ul role="list">{top.map(item)}</ul>
             </div>
             {rest.length ? <ul role="list">{rest.map(item)}</ul> : null}
-            <p className={`${styles.phoneOnly} ${styles.innerAction}`}>{action}</p>
           </div>
         </details>
       </div>
-      <p className={styles.action}>{action}</p>
+      <div className={styles.actions}>
+        <Link href={tier.brief} className={styles.tierLink} data-cta-placement={`${slug}_${tier.id}_start`}>
+          {/* No-break hyphens and space: "AI‑Powered" never splits, and the arrow stays on its line. */}
+          Start with {tier.name.replace(/-/g, '\u2011')}{'\u00a0'}
+          <span aria-hidden="true" className={styles.arrow}>
+            →
+          </span>
+        </Link>
+        {tier.isCustom ? null : (
+          <Link href={tier.href} className={styles.priceLink} data-cta-placement={`${slug}_${tier.id}`}>
+            Price this package<span className="visually-hidden">: {tier.name}</span>
+          </Link>
+        )}
+      </div>
     </li>
   );
 }

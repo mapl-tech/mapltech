@@ -12,6 +12,9 @@
   @include section-pad;
   display: grid;
   gap: clamp(48px, 7vw, 96px);
+  // The FAQ that follows opens with its own full padding and rule: together
+  // they left 288px of ground at 1440.
+  padding-bottom: clamp(48px, 5vw, 72px);
 }
 
 .head {
@@ -41,6 +44,44 @@
   @include section-title;
   color: $color-fg;
   max-width: 13em;
+}
+
+// The guarantees, under the title in its column: two across from tablets, a
+// short crimson rule before each.
+.promises {
+  display: grid;
+  gap: 12px 40px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include lg {
+    grid-column: 2;
+    margin-top: 0;
+  }
+}
+
+.promise {
+  position: relative;
+  padding-left: 26px;
+  font-size: $font-size-lede;
+  line-height: 1.45;
+  color: $color-fg;
+  text-wrap: pretty;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 14px;
+    height: 2px;
+    background: $color-red;
+  }
 }
 
 // Three published numbers, as big as the page allows.

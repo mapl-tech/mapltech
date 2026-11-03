@@ -6,6 +6,10 @@
 // across the top and the copy beneath it.
 $portrait: '(max-aspect-ratio: 21/20)';
 $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+// Phones in portrait: the scene band's height, which the copy starts under.
+$phone-max: 639px;
+$phone-band: max(30svh, 232px);
+$short-band: max(30svh, 192px);
 
 .hero {
   position: relative;
@@ -63,16 +67,28 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     bottom: auto;
     height: max(41svh, 290px);
 
-    // Short phones (640-760px tall): a shorter band, so the primary CTA lands in
-    // the first viewport.
+    // Phones: a shorter band, so the ask, its reassurance and the client quote
+    // all land in the first screen (390x844: the quote ended at 975px).
+    @media (max-width: $phone-max) {
+      height: $phone-band;
+    }
+
+    // Short phones (640-760px tall): shorter still, so the ask and its
+    // reassurance land in the first screen and the quote starts in it.
     @media (max-height: 760px) {
-      height: max(34svh, 220px);
+      height: $short-band;
     }
 
     canvas {
       // Clear of the header at the top, fading out before the copy at the bottom.
       -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--header-height, 60px) + 28px), #000 58%, transparent 100%);
       mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--header-height, 60px) + 28px), #000 58%, transparent 100%);
+
+      // Phones: the band is shorter, so the rods stay solid further down before they fade.
+      @media (max-width: $phone-max) {
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--header-height, 60px) + 12px), #000 70%, transparent 100%);
+        mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--header-height, 60px) + 12px), #000 70%, transparent 100%);
+      }
     }
   }
 }
@@ -102,8 +118,13 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     gap: 40px;
     padding-top: max(44svh, 300px);
 
+    // Phones: just under the band, clear of its pause button.
+    @media (max-width: $phone-max) {
+      padding-top: calc(#{$phone-band} + 16px);
+    }
+
     @media (max-height: 760px) {
-      padding-top: max(36svh, 232px);
+      padding-top: calc(#{$short-band} + 12px);
     }
   }
 }
@@ -157,6 +178,11 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   margin: clamp(22px, 3.2vh, 32px) 0 0;
   max-width: 36em;
 
+  // Phones: tighter steps from the H1 to the quote, so all of it fits the first screen.
+  @media #{$portrait} and (max-width: $phone-max) {
+    margin-top: 18px;
+  }
+
   @include motion-ok {
     animation: rise 0.9s $ease-out 0.18s both;
   }
@@ -169,6 +195,16 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   gap: 12px 28px;
   margin-top: clamp(28px, 4vh, 40px);
 
+  // Phones: both actions stay on one row down to 360px (a second row cost 60px).
+  @media #{$portrait} and (max-width: $phone-max) {
+    margin-top: 24px;
+    column-gap: 20px;
+  }
+
+  @media (max-width: 380px) {
+    column-gap: 16px;
+  }
+
   @include motion-ok {
     animation: rise 0.9s $ease-out 0.28s both;
   }
@@ -176,11 +212,15 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
 .reassure {
   margin: 16px 0 0;
-  font-size: $font-size-sm;
+  font-size: 1rem;
   line-height: 1.5;
   color: $color-fg-muted;
 
   @include phone-floor;
+
+  @media #{$portrait} and (max-width: $phone-max) {
+    margin-top: 12px;
+  }
 
   @include motion-ok {
     animation: rise 0.9s $ease-out 0.34s both;
@@ -198,6 +238,11 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   margin: clamp(22px, 3vh, 32px) 0 0;
   padding-top: clamp(18px, 2.4vh, 24px);
   border-top: 1px solid $color-hairline;
+
+  @media #{$portrait} and (max-width: $phone-max) {
+    margin-top: 16px;
+    padding-top: 14px;
+  }
 
   @include motion-ok {
     animation: rise 0.9s $ease-out 0.4s both;
@@ -223,8 +268,10 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
+// 16px at every width, as the quote itself: the name never outsizes the words.
 .proofBy {
-  font-size: $font-size-sm;
+  font-size: 1rem;
+  line-height: 1.4;
   color: $color-fg-muted;
 }
 
@@ -234,6 +281,12 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   padding: 0 26px 0 30px;
   gap: 14px;
   font-size: 1.0625rem;
+
+  // The narrowest phones: a little less padding keeps "See the work" beside it.
+  @media (max-width: 380px) {
+    padding: 0 22px 0 24px;
+    gap: 10px;
+  }
 
   @include focus-ring;
 }

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import JsonLd from '@/components/seo/JsonLd';
 import ServicesIndex from '@/components/services/ServicesIndex';
-import { INDEX_META, LAYER_VIEWS, SERVICES_REVISED, indexMetadata } from '@/components/services/serviceContent';
-import { itemList, pageGraph, serviceId } from '@/lib/schema';
+import { INDEX_FAQ, INDEX_META, LAYER_VIEWS, SERVICES_REVISED, indexMetadata } from '@/components/services/serviceContent';
+import { faqPage, itemList, pageGraph, serviceId } from '@/lib/schema';
 
 /*
  * /services (Nov 2026 simplify pass): the four services, how it works, the
@@ -11,9 +11,10 @@ import { itemList, pageGraph, serviceId } from '@/lib/schema';
  *
  * Metadata: unique title, a 140-160 character description that answers "what
  * and how much", self-canonical, full Open Graph. Structured data: the page,
- * its breadcrumb and an ItemList of the four lines (the rows the page shows),
+ * its breadcrumb, an ItemList of the four lines (the rows the page shows),
  * each pointing at the Service entity its own page defines (prices live
- * there, beside the tiers).
+ * there, beside the tiers), and the FAQPage built from the same questions the
+ * page renders.
  */
 export const metadata: Metadata = {
   ...indexMetadata(),
@@ -45,6 +46,7 @@ const graph = pageGraph({
       })),
       { path: '/services', name: 'Our four services' },
     ),
+    faqPage(INDEX_FAQ, { path: '/services', name: 'Questions agencies ask' }),
   ],
 });
 

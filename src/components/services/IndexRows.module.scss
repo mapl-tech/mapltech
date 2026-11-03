@@ -37,11 +37,13 @@
   color: inherit;
   text-decoration: none;
 
+  // Wide: the price sits right under the summary it prices (it was across the row, ~450px away).
   @include lg {
     grid-template-areas:
-      'kicker meta'
+      'kicker kicker'
       'name go'
       'summary summary'
+      'meta meta'
       'media media';
     row-gap: 20px;
     column-gap: 40px;
@@ -58,9 +60,10 @@
 
     @include lg {
       grid-template-areas:
-        'kicker meta'
+        'kicker kicker'
         'name go'
-        'summary summary';
+        'summary summary'
+        'meta meta';
     }
   }
 
@@ -103,14 +106,14 @@
   }
 }
 
+// The public "from" price at body size (it was a 13px capitals label).
 .meta {
   grid-area: meta;
-  @include mono-label($color-fg);
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  line-height: 1.3;
+  color: $color-fg;
   @include tabular;
-
-  @include lg {
-    justify-self: end;
-  }
 }
 
 .go {
@@ -155,11 +158,11 @@
   }
 }
 
-// ---------------------------------------------------------------- the example
-// One real project per service, as its own small link under the row's link: never inside it (nested
-// links are invalid) and 8px clear of its hit area (the margin). The row's bottom space moves under
-// the example, so a row with one ends as far from the hairline as a row without.
-.row[data-example] .link {
+// ---------------------------------------------------------------- the row's foot
+// One real project per service with one of its published results beside it, and a quiet "Start a …
+// project", each its own small link under the row's link: never inside it (nested links are invalid)
+// and 8px clear of its hit area (the margin). The row's bottom space moves under the foot.
+.link {
   padding-bottom: 8px;
 
   @include lg {
@@ -167,14 +170,26 @@
   }
 }
 
-.example {
+.foot {
   display: flex;
-  margin: 8px 0 0;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 40px; // stacked on phones, the two links' 44px targets stay 8px apart
+  margin-top: 8px;
   padding-bottom: 12px;
 
   @include lg {
     padding-bottom: 28px;
   }
+}
+
+.example {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 20px;
+  margin: 0;
 }
 
 .exampleLink {
@@ -191,8 +206,41 @@
 .exampleArrow {
   transition: transform 0.4s $ease-out-expo;
 
-  .exampleLink:hover & {
+  .exampleLink:hover &,
+  .startLink:hover & {
     transform: translateX(4px);
+  }
+}
+
+// The evidence: the number at full ink, what it counts in body tone.
+.exampleMetric {
+  max-width: 34em;
+  font-size: $font-size-base;
+  line-height: 1.45;
+  color: $color-fg-muted;
+}
+
+.exampleValue {
+  font-family: $font-display;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: $color-fg;
+  @include tabular;
+}
+
+.start {
+  margin: 0;
+}
+
+// Quieter than the example: muted until hovered.
+.startLink {
+  @include text-action($color-fg-muted);
+  gap: 8px;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    color: $color-fg;
   }
 }
 

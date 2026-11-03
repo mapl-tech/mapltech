@@ -47,8 +47,8 @@ export default function HomePage() {
       <Approach />
       <Proof />
       <Faq items={FAQ_ITEMS} />
-      {/* The hero already carries the approved quote beside its ask. */}
-      <CloseBand proof={false} />
+      {/* The hero already carries the approved quote; the close names clients with published case studies. */}
+      <CloseBand proofLine="Clients include LRO Staffing, CHHA-NCR, FOCAS Canada and Crowned Spice." />
     </>
   );
 }

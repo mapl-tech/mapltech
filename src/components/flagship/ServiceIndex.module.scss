@@ -127,9 +127,15 @@ $rows-wide: 920px;
   max-width: 34em;
 }
 
+// The public "from" price, at body size (it was a 13px capitals label).
 .meta {
   grid-area: meta;
-  @include mono-label($color-ink-muted);
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  line-height: 1.3;
+  color: $color-ink;
+  white-space: nowrap;
+  @include tabular;
 
   @container service-rows (min-width: #{$rows-wide}) {
     justify-self: end;

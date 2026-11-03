@@ -32,7 +32,7 @@
 .note {
   flex-basis: 100%;
   margin: 4px 0 0;
-  font-size: $font-size-sm;
+  font-size: 1rem; // 16px, as the homepage hero's reassurance
   line-height: 1.5;
   color: $color-fg-muted;
 

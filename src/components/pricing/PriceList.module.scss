@@ -397,6 +397,7 @@ $accent: $color-red-ink;
   border-bottom: 1px solid $hair;
 }
 
+// 16px sentence case: easier to read than the 13px capitals it was.
 .detailsSummary {
   position: relative;
   display: flex;
@@ -405,7 +406,10 @@ $accent: $color-red-ink;
   gap: 12px;
   min-height: 48px;
   cursor: pointer;
-  @include mono-label($ink);
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1.3;
+  color: $ink;
   -webkit-tap-highlight-color: transparent;
 
   // ::after belongs to the global accordion rule (the red line that draws on open).

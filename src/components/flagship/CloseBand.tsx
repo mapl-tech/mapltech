@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import { CLOSE_BAND, PRIMARY_CTA } from './content';
+import CloseBandPrimary from './CloseBandPrimary';
 import QuoteLine from './QuoteLine';
 import styles from './CloseBand.module.scss';
 
@@ -22,6 +23,7 @@ export default function CloseBand({
   hero = false,
   href = PRIMARY_CTA.href,
   proof = true,
+  proofLine,
 }: {
   title?: string;
   lede?: string;
@@ -37,6 +39,8 @@ export default function CloseBand({
   href?: string;
   /** The approved client quote under the ask (off where the page already shows it nearby). */
   proof?: boolean;
+  /** A sourced proof line in place of the quote (the homepage, whose hero already has the quote). */
+  proofLine?: string;
 }) {
   return (
     <section className={styles.close} aria-labelledby={id} data-page-close="">
@@ -47,17 +51,12 @@ export default function CloseBand({
         </h2>
         {lede ? <p className={styles.lede}>{lede}</p> : null}
         <div className={styles.actions}>
-          <Link
-            href={href}
-            className={styles.primary}
-            data-cta-placement={`${placement}_primary`}
-            data-hero-cta={hero ? '' : undefined}
-          >
+          <CloseBandPrimary href={href} className={styles.primary} placement={`${placement}_primary`} hero={hero}>
             {PRIMARY_CTA.label}
             <span aria-hidden="true" className={styles.arrow}>
               →
             </span>
-          </Link>
+          </CloseBandPrimary>
           {secondary ? (
             <Link href={secondary.href} className={styles.secondary} data-cta-placement={`${placement}_secondary`}>
               {secondary.label}
@@ -65,7 +64,11 @@ export default function CloseBand({
           ) : null}
         </div>
         {note ? <p className={styles.note}>{note}</p> : null}
-        {proof ? <QuoteLine tone="band" className={styles.proof} /> : null}
+        {proofLine ? (
+          <p className={`${styles.proof} ${styles.proofLine}`}>{proofLine}</p>
+        ) : proof ? (
+          <QuoteLine tone="band" className={styles.proof} />
+        ) : null}
       </div>
     </section>
   );

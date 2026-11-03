@@ -147,6 +147,13 @@
   }
 }
 
+// The client's own words (QuoteLine), ruled off from the outcome above.
+.quote {
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid $color-hairline;
+}
+
 .read {
   @include text-action($color-fg);
   justify-self: start;

@@ -22,7 +22,8 @@ interface LoadIntoEstimatorProps {
 }
 
 /**
- * Interaction #10: package -> estimator hand-off ("Add to my estimate").
+ * Interaction #10: package -> estimator hand-off ("Price this package", the
+ * service pages' words for the same step).
  *
  * A real link (`/pricing?svc=web&size.web=growth#estimator`) that works with
  * no JavaScript. With JavaScript it merges the package into the current estimate

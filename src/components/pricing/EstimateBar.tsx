@@ -14,7 +14,8 @@ interface EstimateBarProps {
 
 /**
  * The bar's range springs exactly like the readout's (same LiveNumber), but
- * stays silent: the readout's live region is the one announcement, and the
+ * stays silent: the readout's live region is the one announcement (so the
+ * digits are decorative, with no live regions of their own), and the
  * button's accessible name comes from the visually hidden text.
  */
 function Range({ result }: { result: EstimateResult }) {
@@ -25,11 +26,11 @@ function Range({ result }: { result: EstimateResult }) {
       <span className="visually-hidden">{spoken === 'Custom' ? 'Custom quote' : spoken}</span>
       <span aria-hidden="true">
         {result.oneTimeHigh === null ? (
-          <LiveNumber value={result.oneTimeLow} format={formatMoney} suffix="+" />
+          <LiveNumber value={result.oneTimeLow} format={formatMoney} suffix="+" decorative />
         ) : (
           <>
-            <LiveNumber value={result.oneTimeLow} format={formatMoney} />–
-            <LiveNumber value={result.oneTimeHigh} format={formatMoney} suffix={result.isOpenEnded ? '+' : ''} />
+            <LiveNumber value={result.oneTimeLow} format={formatMoney} decorative />–
+            <LiveNumber value={result.oneTimeHigh} format={formatMoney} suffix={result.isOpenEnded ? '+' : ''} decorative />
           </>
         )}
       </span>

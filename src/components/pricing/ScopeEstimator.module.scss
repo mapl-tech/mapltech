@@ -21,6 +21,11 @@ $card: #121214;
   gap: 56px;
   align-items: start;
 
+  // Phones: the questions run long; every gap below is a step tighter (the page was 3,392px at 360).
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    gap: 40px;
+  }
+
   @include lg {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     gap: 56px;
@@ -44,6 +49,10 @@ $card: #121214;
   border: 0;
   border-bottom: 1px solid $color-hairline;
 
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    padding: 22px 0;
+  }
+
   &:last-of-type {
     border-bottom: 0;
   }
@@ -58,6 +67,10 @@ $card: #121214;
   gap: 16px;
   margin: 0 0 18px;
   padding: 0;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    margin-bottom: 14px;
+  }
 
   + * {
     clear: both;
@@ -93,6 +106,10 @@ $card: #121214;
   font-size: $font-size-base; // 17px: a sentence, never under the phone floor
   line-height: 1.5;
   color: $label-muted;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    margin-bottom: 12px;
+  }
 }
 
 // Sub-groups when several lines are priced (size per line).
@@ -216,6 +233,10 @@ $card: #121214;
   transition:
     box-shadow 160ms $ease,
     background-color 160ms $ease;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    padding-block: 11px;
+  }
 
   @include pointer-fine {
     &:hover {
@@ -412,6 +433,13 @@ $card: #121214;
   gap: 20px;
   min-height: 68px;
   padding: 14px 16px;
+
+  // Phones: a little more width for the effect line, so fewer of them wrap.
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    gap: 14px;
+    padding: 11px 14px;
+  }
+
   border-radius: 16px;
   background: $tile;
   box-shadow: inset 0 0 0 1px $tile-ring;
@@ -802,6 +830,13 @@ $card: #121214;
   color: $label-muted;
 }
 
+// The approved client quote under the ask (QuoteLine), ruled off from the note.
+.quote {
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid $color-hairline;
+}
+
 .secondary {
   @include button-secondary;
   min-height: 48px;
@@ -930,6 +965,7 @@ $card: #121214;
   }
 }
 
+// 16px sentence case: easier to read than the 13px capitals they were.
 .disclosureSummary {
   display: flex;
   align-items: center;
@@ -937,7 +973,10 @@ $card: #121214;
   gap: 12px;
   min-height: 52px;
   cursor: pointer;
-  @include mono-label(rgba(245, 242, 238, 0.86));
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1.3;
+  color: rgba(245, 242, 238, 0.86);
   -webkit-tap-highlight-color: transparent;
 
   &::after {

@@ -1,6 +1,7 @@
 import { ViewTransition, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { WORK_SECTION } from '@/components/flagship/content';
+import QuoteLine from '@/components/flagship/QuoteLine';
 import { BrowserFrame, DesktopShot, PhoneFrame } from './Frames';
 import PipelineDiagram from './PipelineDiagram';
 import { keepTogether } from './keepTogether';
@@ -14,7 +15,8 @@ import styles from './ProofBlock.module.scss';
  * at most. Cloud has no screen to show, so its exhibit is how a release runs
  * on infrastructure we set up, beside MAPL Tours' published delivery facts.
  * Every fact is from stories.ts; a case with no published numbers shows what
- * was built instead.
+ * was built instead. The lead case that carries the approved client quote
+ * (LRO Staffing) shows it, so the work has its client's voice beside it.
  */
 export default function ProofBlock({ view }: { view: LayerView }) {
   const cases = proofCases(view);
@@ -40,16 +42,22 @@ export default function ProofBlock({ view }: { view: LayerView }) {
             <ul className={styles.moreList} role="list">
               {more.map((item) => (
                 <li key={item.slug}>
-                  <Link href={item.href} className={styles.moreLink} data-cta-placement={`${view.slug}_case_${item.slug}`}>
-                    <span className={styles.moreKind}>
-                      {item.kind}
-                      <span className="visually-hidden">: </span>
-                    </span>
-                    <span className={styles.moreName}>
+                  {/* Named "CHHA-NCR case study"; the one-line outcome is the description. */}
+                  <Link
+                    href={item.href}
+                    className={styles.moreLink}
+                    aria-labelledby={`more-${item.slug}`}
+                    aria-describedby={`more-${item.slug}-line`}
+                    data-cta-placement={`${view.slug}_case_${item.slug}`}
+                  >
+                    <span className={styles.moreKind}>{item.kind}</span>
+                    <span id={`more-${item.slug}`} className={styles.moreName}>
                       {item.client}
-                      <span className="visually-hidden">. </span>
+                      <span className="visually-hidden"> case study</span>
                     </span>
-                    <span className={styles.moreLine}>{item.headline}</span>
+                    <span id={`more-${item.slug}-line`} className={styles.moreLine}>
+                      {item.headline}
+                    </span>
                     <span className={styles.moreGo} aria-hidden="true">
                       →
                     </span>
@@ -89,6 +97,7 @@ function LeadCase({ item, view }: { item: ProofCase; view: LayerView }) {
             ))}
           </ul>
         ) : null}
+        {item.clientQuote ? <QuoteLine className={styles.quote} /> : null}
         <Link href={item.href} className={styles.read} data-cta-placement={`${view.slug}_case_${item.slug}`}>
           Read the case study<span className="visually-hidden">: {item.client}</span>
           <span aria-hidden="true" className={styles.readArrow}>

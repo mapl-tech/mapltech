@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { BrowserFrame, DesktopShot } from './Frames';
 import IndexPreview from './IndexPreview';
 import PipelineDiagram from './PipelineDiagram';
-import { LAYER_VIEWS, rowExample, type LayerView } from './serviceContent';
+import { LAYER_VIEWS, briefHref, rowExample, type LayerView } from './serviceContent';
 import styles from './IndexRows.module.scss';
 
 /** "lrostaffing.com" for the preview's address bar, from the capture's case. */
@@ -25,12 +25,15 @@ function Exhibit({ layer, sizes }: { layer: LayerView; sizes: string }) {
 /**
  * The four services as a big index: what the service is in a few words, the
  * name as large as the row allows, the one-line summary, the public "from"
- * price and an arrow. Each row is one link to the service page. Under it, a
- * separate small link to one real project for that service (never nested in
- * the row's link, and 8px clear of it); Cloud has no case study of its own,
- * so its row has none. On desktop a preview of real work trails the cursor
- * (IndexPreview); wide touch screens and reduced motion get the same exhibit
- * inline in the row; phones and tablets keep the rows short.
+ * price right under it and an arrow. Each row is one link to the service
+ * page, named by the service and its price (the summary is its description,
+ * as on the homepage's index). Under it, two separate small links (never
+ * nested in the row's link, and 8px clear of it): one real project for that
+ * service with one of its published results beside it, and a quiet "Start a
+ * … project" that opens the brief with the service chosen. On desktop a
+ * preview of real work trails the cursor (IndexPreview); wide touch screens
+ * and reduced motion get the same exhibit inline in the row; phones and
+ * tablets keep the rows short.
  */
 export default function IndexRows({ labelId }: { labelId: string }) {
   return (
@@ -48,49 +51,78 @@ export default function IndexRows({ labelId }: { labelId: string }) {
   );
 }
 
+/** "a Web Development project", "an Automation & AI project". */
+const projectOf = (name: string) => `${/^[aeiou]/i.test(name) ? 'an' : 'a'} ${name} project`;
+
 function Row({ layer, index }: { layer: LayerView; index: number }) {
   const example = rowExample(layer);
+  const id = `index-${layer.service}`;
   return (
-    <li className={styles.row} data-index={index} data-example={example ? '' : undefined}>
-      <Link href={layer.path} className={styles.link} data-cta-placement={`services_index_${layer.service}`}>
-        <span className={styles.kicker}>
-          {layer.role}
-          <span className="visually-hidden">: </span>
-        </span>
+    <li className={styles.row} data-index={index}>
+      {/* Named "Web Development. From $5,000"; the summary is the description. */}
+      <Link
+        href={layer.path}
+        className={styles.link}
+        aria-labelledby={`${id}-name ${id}-meta`}
+        aria-describedby={`${id}-summary`}
+        data-cta-placement={`services_index_${layer.service}`}
+      >
+        <span className={styles.kicker}>{layer.role}</span>
         {/* A heading inside the row link: heading navigation lands on each service. */}
-        <h3 className={styles.name}>
+        <h3 id={`${id}-name`} className={styles.name}>
           {layer.name}
           <span className="visually-hidden">. </span>
         </h3>
-        <span className={styles.summary}>
+        <span id={`${id}-summary`} className={styles.summary}>
           {layer.summary}
-          <span className="visually-hidden"> </span>
         </span>
         <div className={styles.media} aria-hidden="true">
           <Exhibit layer={layer} sizes="560px" />
         </div>
-        <span className={styles.meta}>{layer.fromLabel}</span>
+        <span id={`${id}-meta`} className={styles.meta}>
+          {layer.fromLabel}
+        </span>
         <span className={styles.go} aria-hidden="true">
           →
         </span>
       </Link>
-      {example ? (
-        <p className={styles.example}>
+      <div className={styles.foot}>
+        {example ? (
+          <p className={styles.example}>
+            <Link
+              href={example.href}
+              className={styles.exampleLink}
+              data-cta-placement={`services_index_${layer.service}_example`}
+            >
+              <span>
+                <span className={styles.exampleLabel}>Example:</span> {example.client}
+              </span>
+              <span className="visually-hidden">, a case study for {layer.name}</span>
+              <span aria-hidden="true" className={styles.exampleArrow}>
+                →
+              </span>
+            </Link>
+            {/* One result the case study publishes, as the evidence beside the link. */}
+            {example.metric ? (
+              <span className={styles.exampleMetric}>
+                <span className={styles.exampleValue}>{example.metric.value}</span> {example.metric.label}
+              </span>
+            ) : null}
+          </p>
+        ) : null}
+        <p className={styles.start}>
           <Link
-            href={example.href}
-            className={styles.exampleLink}
-            data-cta-placement={`services_index_${layer.service}_example`}
+            href={briefHref(layer.service)}
+            className={styles.startLink}
+            data-cta-placement={`services_index_${layer.service}_start`}
           >
-            <span>
-              <span className={styles.exampleLabel}>Example:</span> {example.client}
-            </span>
-            <span className="visually-hidden">, a case study for {layer.name}</span>
+            Start {projectOf(layer.name)}
             <span aria-hidden="true" className={styles.exampleArrow}>
               →
             </span>
           </Link>
         </p>
-      ) : null}
+      </div>
     </li>
   );
 }

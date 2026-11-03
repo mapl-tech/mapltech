@@ -1,7 +1,7 @@
 import { ViewTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { WORK, WORK_SECTION } from './content';
+import { HERO_REASSURE, PRIMARY_CTA, WORK, WORK_SECTION } from './content';
 import styles from './Work.module.scss';
 
 /** Real captures per case (public/images/cases): the live desktop site and its phone view. */
@@ -13,8 +13,9 @@ const SHOTS: Record<string, { desktop: string; mobile: string; url: string }> = 
 
 /**
  * Selected work: the three featured cases as cards that stack as they
- * scroll, each one sliding over the last. Every number on a card is sourced
- * in content.ts.
+ * scroll, each one sliding over the last, then the ask while the proof is
+ * still on screen (with the hero's reassurance under it). Every number on a
+ * card is sourced in content.ts.
  */
 export default function Work() {
   return (
@@ -101,6 +102,19 @@ export default function Work() {
           );
         })}
       </ol>
+
+      <div className={styles.ask}>
+        <p className={styles.askTitle}>{WORK_SECTION.ask}</p>
+        <div className={styles.askAction}>
+          <Link href={PRIMARY_CTA.href} className={styles.askPrimary} data-cta-placement="home_work_ask">
+            {PRIMARY_CTA.label}
+            <span aria-hidden="true" className={styles.askArrow}>
+              →
+            </span>
+          </Link>
+          <p className={styles.askNote}>{HERO_REASSURE}</p>
+        </div>
+      </div>
     </section>
   );
 }

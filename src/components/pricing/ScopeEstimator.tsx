@@ -294,11 +294,16 @@ export default function ScopeEstimator() {
           <div className={styles.switches}>
             {applicableToggles.map((toggle) => {
               const on = input.toggles[toggle.key] === true;
+              const nameId = `${uid}-${toggle.param}-name`;
               const effectId = `${uid}-${toggle.param}-effect`;
+              // Named by the add-on alone and described by its price effect, so the effect is
+              // announced once (the wrapping label would otherwise put it in the name as well).
               return (
                 <label key={toggle.key} className={styles.switch} data-checked={on || undefined}>
                   <span className={styles.switchText}>
-                    <span className={styles.switchLabel}>{toggleName(toggle)}</span>
+                    <span id={nameId} className={styles.switchLabel}>
+                      {toggleName(toggle)}
+                    </span>
                     <span id={effectId} className={styles.switchEffect}>
                       {toggleEffect(toggle, input)}
                     </span>
@@ -309,6 +314,7 @@ export default function ScopeEstimator() {
                     role="switch"
                     name={`${uid}-${toggle.param}`}
                     checked={on}
+                    aria-labelledby={nameId}
                     aria-describedby={effectId}
                     onChange={(event) => setToggle(toggle.key, event.target.checked)}
                   />
@@ -398,7 +404,9 @@ export default function ScopeEstimator() {
         ) : null}
       </form>
 
-      <div ref={readoutRef} className={styles.rail}>
+      {/* data-header-quiet: the header's own "Start a project" stays an outline while the
+          readout, which carries the same ask with this estimate, is on screen. */}
+      <div ref={readoutRef} className={styles.rail} data-header-quiet="">
         <EstimateSummary input={input} result={result} />
       </div>
 

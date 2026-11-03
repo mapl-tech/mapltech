@@ -1,14 +1,19 @@
 import { describe, expect, it } from 'vitest';
+import { findStory } from '@/components/case/stories';
+import { FAQ_ITEMS } from '@/components/home/data';
 import { services } from '@/config/services';
 import { pricing } from '@/config/site';
 import { SERVICE_META } from '@/lib/estimate';
 import {
+  INDEX_FAQ,
   INDEX_META,
   INDEX_STEPS,
   LAYER_VIEWS,
   PARTNERSHIP_FROM,
   PRICE_SUMMARY,
   QUOTE_LINE,
+  WHITE_LABEL_FAQ,
+  briefHref,
   capabilityViews,
   cleanCopy,
   costTitle,
@@ -119,10 +124,12 @@ describe('service pages', () => {
       // Steps stay short: 15 words or fewer each.
       for (const stage of stageViews(view)) expect(words(stage.text), stage.text).toBeLessThanOrEqual(15);
       expect(stageViews(view)).toHaveLength(4);
-      // Names and labels use the canonical service name; FAQ questions and the JSON-LD carry the same words.
+      // Names and labels use the canonical service name; FAQ questions and the JSON-LD carry the same words,
+      // with the homepage's white-label question second, after the price.
       expect(view.name).toBe(SERVICE_META[view.service].label);
-      expect(faqItems(view).map((f) => f.question)).toEqual(view.record.faqs.map((f) => f.question));
-      expect(faqItems(view).length).toBeLessThanOrEqual(5);
+      const [priceQuestion, ...rest] = view.record.faqs.map((f) => f.question);
+      expect(faqItems(view).map((f) => f.question)).toEqual([priceQuestion, WHITE_LABEL_FAQ.question, ...rest]);
+      expect(faqItems(view).length).toBeLessThanOrEqual(6);
       expect(words(view.lede)).toBeLessThan(30);
       // Case labels carry the sector, never a short service name ("Website", "Internal tools").
       for (const item of proofCases(view))
@@ -236,7 +243,10 @@ describe('service pages', () => {
 
   it('lists price answers tier by tier, in the words the JSON-LD carries', () => {
     const automation = LAYER_VIEWS[1];
-    const [cost, support] = faqItems(automation);
+    const [cost, whiteLabel, support] = faqItems(automation);
+    // The white-label answer is the homepage's, word for word (the NDA, never approaching the client).
+    expect(whiteLabel).toEqual({ question: FAQ_ITEMS[0].question, answer: FAQ_ITEMS[0].answer });
+    expect(whiteLabel.answer).toMatch(/\bNDA\b/);
     expect(cost.list?.lead).toBe('From $3,500, across three tiers.');
     expect(cost.list?.points).toEqual(pricing.automation.tiers.map((t) => `${t.name}: ${cleanCopy(t.price)}`));
     expect(cost.list?.close).toBe(QUOTE_LINE);
@@ -282,12 +292,42 @@ describe('services index', () => {
     expect(PARTNERSHIP_FROM).toBe('$4,000 a month');
   });
 
-  it('links each row to one real project, and Cloud (no case study of its own) to none', () => {
-    expect(LAYER_VIEWS.map(rowExample)).toEqual([
+  it('links each row to one real project with a published result beside it, Cloud to the case its page shows', () => {
+    const examples = LAYER_VIEWS.map(rowExample);
+    expect(examples.map((example) => example && { client: example.client, href: example.href })).toEqual([
       { client: 'LRO Staffing', href: '/our-work/lro-staffing' },
       { client: 'MAPL Tours', href: '/our-work/mapl-tours' },
       { client: 'LRO Interactive Salary Guide', href: '/our-work/lro-salary-guide' },
-      null,
+      { client: 'MAPL Tours', href: '/our-work/mapl-tours' },
     ]);
+    // Every metric is one stories.ts publishes for that case; the salary guide publishes none.
+    LAYER_VIEWS.forEach((view, i) => {
+      const metric = examples[i]?.metric;
+      if (metric) expect(findStory(view.example ?? '')?.results).toContainEqual(metric);
+    });
+    expect(examples.map((example) => example?.metric?.value ?? null)).toEqual(['100', '~50%', null, '~2,000']);
+    // Cloud keeps to delivery facts, as its page does.
+    expect(examples[3]?.metric?.label).toMatch(/tests/);
+  });
+
+  it('starts each service in the brief with that service, and each tier with its package', () => {
+    expect(LAYER_VIEWS.map((view) => briefHref(view.service))).toEqual([
+      '/contact-us?svc=web',
+      '/contact-us?svc=automation',
+      '/contact-us?svc=tools',
+      '/contact-us?svc=cloud',
+    ]);
+    expect(tierViews(LAYER_VIEWS[0]).map((tier) => tier.brief)).toEqual([
+      '/contact-us?svc=web&size.web=starter',
+      '/contact-us?svc=web&size.web=growth',
+      '/contact-us?svc=web&size.web=advanced',
+      '/contact-us?svc=web&size.web=enterprise',
+    ]);
+  });
+
+  it('answers the white-label questions before the close in the homepage’s own words', () => {
+    expect(INDEX_FAQ).toHaveLength(3);
+    for (const item of INDEX_FAQ) expect(FAQ_ITEMS).toContain(item);
+    expect(INDEX_FAQ[0]).toBe(WHITE_LABEL_FAQ);
   });
 });

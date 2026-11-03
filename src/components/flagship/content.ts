@@ -212,8 +212,11 @@ export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') 
 /**
  * Beside the hero ask: the risk answer (both facts are the FAQ's own answers,
  * src/components/home/data.ts) and the first sentence of the approved quote.
+ * The NDA sentence also stands alone where the fixed quote is already said
+ * beside it (the service pages' hero facts).
  */
-export const HERO_REASSURE = 'A fixed quote after one 20-minute call. We sign an NDA before you share anything.';
+export const NDA_LINE = 'We sign an NDA before you share anything.';
+export const HERO_REASSURE = `A fixed quote after one 20-minute call. ${NDA_LINE}`;
 export const HERO_PROOF = SPOTLIGHT
   ? {
       quote: SPOTLIGHT.quote.match(/^[^.!?]+[.!?]/)?.[0] ?? SPOTLIGHT.quote,
@@ -249,6 +252,8 @@ export const WORK_SECTION = {
   title: 'Work we can show.',
   lede: 'Most of what we build carries our partners’ brands, not ours. These are projects we can show you.',
   all: { label: 'See all our work', href: '/our-work' },
+  /** The ask after the last card, while the proof is still on screen (its reassurance is HERO_REASSURE). */
+  ask: 'Want work like this under your brand?',
 } as const;
 
 export const APPROACH = {
@@ -256,16 +261,28 @@ export const APPROACH = {
   title: 'How it works.',
   lede: 'From your first message to launch day, you know what happens next.',
   steps: [
-    { title: 'Tell us what you need', text: 'Answer four short questions. Then we talk for 20 minutes.' },
+    // The first step can be taken from here: it links to the brief.
+    { title: 'Tell us what you need', text: 'Answer four short questions. Then we talk for 20 minutes.', href: PRIMARY_CTA.href },
     { title: 'Get a fixed quote', text: 'We agree what is included, and you get one fixed price.' },
     { title: 'We build it with you', text: 'Your brand on the work, and a check-in with your team every week.' },
     { title: 'Launch and support', text: 'We launch, hand over documented code, and support you after launch.' },
   ],
 } as const;
 
+/**
+ * The reasons, before the counts: the white-label guarantees the FAQ already
+ * makes (home/data.ts FAQ_ITEMS, "Will my client ever know MAPL TECH was
+ * involved?" and "Who owns the code when the project ends?"), in its words.
+ */
 export const PROOF_SECTION = {
   label: 'Our track record',
   title: 'Why agencies choose us.',
+  promises: [
+    NDA_LINE,
+    'We never approach your clients.',
+    'Everything we make carries your brand.',
+    'You and your client own the code.',
+  ],
 } as const;
 
 /** The close adds what the hero's reassurance does not: what the call is for (the contact page's own steps). */

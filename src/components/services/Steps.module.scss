@@ -17,6 +17,7 @@ $one-row: 880px;
   --ring: #{$color-red};
   --ink: #{$color-fg};
   --body: #{$color-text-body};
+  --underline: rgba(245, 242, 238, 0.35);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -28,6 +29,7 @@ $one-row: 880px;
     --ring: #{$color-red-ink};
     --ink: #{$color-ink};
     --body: #{$color-ink-muted};
+    --underline: rgba(11, 11, 12, 0.35);
   }
 
   @container steps (min-width: #{$two-up}) {
@@ -135,6 +137,37 @@ $one-row: 880px;
 
   @container steps (min-width: #{$one-row}) {
     padding-top: 0;
+  }
+}
+
+// A linked step title: underlined in the step's ink, crimson on hover; a 48px-tall target from the
+// smallest title (20px type, a 23px line on phones).
+.nameLink {
+  @include tall-target(22px);
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--underline);
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color 0.3s ease;
+
+  &:hover {
+    text-decoration-color: var(--ring);
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+.nameArrow {
+  display: inline-block;
+  transition: transform 0.4s $ease-out-expo;
+
+  .nameLink:hover & {
+    transform: translateX(4px);
   }
 }
 

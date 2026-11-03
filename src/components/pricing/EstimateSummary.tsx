@@ -19,6 +19,8 @@ import {
   type EstimateLine,
   type EstimateResult,
 } from '@/lib/estimate';
+import { NDA_LINE } from '@/components/flagship/content';
+import QuoteLine from '@/components/flagship/QuoteLine';
 import { PROJECT_LABEL } from '@/components/layout/chrome';
 import SendEstimateForm from './SendEstimateForm';
 import { QUOTE_NOTE, TOGGLE_LABELS, keepHyphens, priceText } from './content';
@@ -29,9 +31,11 @@ import styles from './ScopeEstimator.module.scss';
  * between values), what it is and what follows it, then the one next step.
  * The number is on screen before any contact field exists (reciprocity); the
  * email ask comes after it and is optional. The primary action is "Start a
- * project", and it opens the brief already filled in from these answers.
- * How the price adds up and what is included sit one tap away, each on a
- * native <details>, so the card stays short beside the questions.
+ * project", and it opens the brief already filled in from these answers; the
+ * NDA line and the approved client quote sit under it, so the decision has
+ * its risk answer and its proof beside it. How the price adds up and what is
+ * included sit one tap away, each on a native <details>, so the card stays
+ * short beside the questions.
  */
 
 interface SummaryProps {
@@ -86,11 +90,14 @@ function caveatsFor(input: EstimateInput, result: EstimateResult): string[] {
 }
 
 /**
- * Where the range comes from, in one plain sentence, exactly as estimate.ts
- * computes it: a Web Development package runs from its own price to the next
- * package's price (no top when the next one is a custom quote); any other
- * package shows its listed range; several packages are added together. Null
- * when nothing has a public price (the unit line covers "Custom").
+ * Where the range comes from, in plain sentences, exactly as estimate.ts
+ * computes it: a Web Development package runs from its own starting price to
+ * where the next package starts (no top when the next one is a custom quote);
+ * any other package shows its listed range; several packages are added
+ * together. The top of a Web Development range is named as the next
+ * package's start, so it never reads as the price of the visitor's own
+ * ("Starter up to $8,500"). Null when nothing has a public price (the unit
+ * line covers "Custom").
  */
 function rangeBasis(result: EstimateResult): string | null {
   const priced = result.lines.filter((line) => !line.isCustom);
@@ -99,9 +106,10 @@ function rangeBasis(result: EstimateResult): string | null {
   const [line] = priced;
   const name = keepHyphens(line.tierName);
   if (!line.startingAt) return `This is the listed price range for ${name}.`;
-  return line.high === null
-    ? `The range goes up from the price of ${name}. The next package is a custom quote.`
-    : `The range goes from the price of ${name} to the price of the next package.`;
+  const starts = line.low === null ? `${name} has a starting price.` : `${name} starts at ${formatMoney(line.low)}.`;
+  const next = tiersFor(line.service)[line.tierIndex + 1];
+  if (line.high === null || !next) return `${starts} The next package is a custom quote, so the range has no upper end.`;
+  return `${starts} The range ends at ${formatMoney(line.high)}, where ${keepHyphens(next.name)} starts.`;
 }
 
 /** "$5,000 to $8,500 one-time, plus $500 to $1,000 a month": what the live region reads out. */
@@ -139,7 +147,8 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
         </h3>
 
         {/* The total is the live region and the focus target of the package hand-off: one polite
-            announcement in words once the visitor pauses, while the springing digits stay silent. */}
+            announcement in words once the visitor pauses, while the springing digits stay silent
+            (decorative: no live regions of their own nested inside this one). */}
         <div className={styles.totalBox}>
           <p className={styles.total} id="estimate-total" tabIndex={-1} aria-live="polite" aria-atomic="true">
             <span className="visually-hidden">{announced}</span>
@@ -147,16 +156,17 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
               {allCustom ? (
                 <span className={styles.live}>Custom</span>
               ) : result.oneTimeHigh === null ? (
-                <LiveNumber value={result.oneTimeLow} format={formatMoney} suffix="+" className={styles.live} />
+                <LiveNumber value={result.oneTimeLow} format={formatMoney} suffix="+" className={styles.live} decorative />
               ) : (
                 <>
-                  <LiveNumber value={result.oneTimeLow} format={formatMoney} className={styles.live} />
+                  <LiveNumber value={result.oneTimeLow} format={formatMoney} className={styles.live} decorative />
                   <span className={styles.dash}>–</span>
                   <LiveNumber
                     value={result.oneTimeHigh}
                     format={formatMoney}
                     suffix={result.isOpenEnded ? '+' : ''}
                     className={styles.live}
+                    decorative
                   />
                 </>
               )}
@@ -199,7 +209,8 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
               →
             </span>
           </Link>
-          <p className={styles.nextNote}>Your answers are added to the project form for you.</p>
+          <p className={styles.nextNote}>Your answers are added to the project form for you. {NDA_LINE}</p>
+          <QuoteLine className={styles.quote} />
         </div>
 
         <SendEstimateForm result={result} placement="estimate" />
