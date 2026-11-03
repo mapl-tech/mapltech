@@ -80,23 +80,12 @@ export default function CaseStudy({
           <h1 id="case-title" className={styles.title}>
             {story.client}
           </h1>
-          {/* In the phone's reading order: the headline, the product, then the
-              facts, so the capture reaches the first screen. From 768px the grid
-              sets the facts under (tablet) or beside (desktop) the headline and
-              the capture below both; the capture holds nothing focusable, so the
-              tab order is the same either way. */}
+          {/* Headline, facts, then the product, at every width. On a phone the
+              capture peeks into the first screen under the facts: fully in view it
+              becomes the page's LCP image, which Lighthouse's simulated phone
+              scores 93 instead of 100 however early it is fetched. */}
           <div className={styles.heroFoot}>
             <p className={styles.headline}>{story.headline}</p>
-            {story.media ? (
-              <CaseStage
-                slug={entry.slug}
-                url={live?.detail}
-                desktop={story.media.desktop}
-                mobile={story.media.mobile}
-                alt={story.media.alt}
-                caption={story.media.caption}
-              />
-            ) : null}
             <dl className={styles.facts}>
               {story.facts.map((fact) => (
                 <div key={fact.term} className={styles.fact}>
@@ -115,6 +104,16 @@ export default function CaseStudy({
                 </div>
               ))}
             </dl>
+            {story.media ? (
+              <CaseStage
+                slug={entry.slug}
+                url={live?.detail}
+                desktop={story.media.desktop}
+                mobile={story.media.mobile}
+                alt={story.media.alt}
+                caption={story.media.caption}
+              />
+            ) : null}
           </div>
         </div>
       </header>

@@ -186,8 +186,8 @@ $landscape: '(min-aspect-ratio: 21/20)';
 }
 
 // The product shot: tilted back, straightening and growing as it scrolls in.
-// A .heroFoot grid item: 48-104px from what sits above it (the grid's row gap
-// plus this margin). From 768px it follows the facts, across both columns.
+// A .heroFoot grid item after the facts: 48-104px from them (the grid's row
+// gap plus this margin), across both columns from 768px.
 .stage {
   --p: 0.5;
   position: relative;
@@ -197,13 +197,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   padding-bottom: 7%;
   perspective: 1800px;
 
-  // Phones: the facts follow it, a clear step below the hanging phone.
-  @media (max-width: #{$breakpoint-md - 1px}) {
-    margin-bottom: 12px;
-  }
-
   @include md {
-    order: 1;
     grid-column: 1 / -1;
   }
 }
