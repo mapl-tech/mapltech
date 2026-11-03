@@ -42,6 +42,11 @@
   font-size: 0.9375rem;
   line-height: 1.25;
   color: rgba(246, 243, 239, 0.78);
+
+  // Under 360px the line would wrap beside the button: the button alone.
+  @media (max-width: 359px) {
+    display: none;
+  }
 }
 
 // The same crimson states as every primary button (white label 7.56, 9.06 and 10.8:1).

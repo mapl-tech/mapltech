@@ -328,12 +328,14 @@ function useHeroCtaView(pathname: string): 'in' | 'out' | undefined {
 function usePageBriefHref(pathname: string): string | null {
   const [found, setFound] = useState<{ path: string; href: string | null } | null>(null);
   useEffect(() => {
+    const brief = (href: string | null | undefined) => (href?.startsWith(`${PROJECT_HREF}?`) ? href : null);
     const cta = document.querySelector('[data-hero-cta]');
     const link = cta?.matches('a[href]') ? cta : cta?.querySelector('a[href]');
-    const href = link?.getAttribute('href') ?? null;
-    const frame = requestAnimationFrame(() =>
-      setFound({ path: pathname, href: href?.startsWith(`${PROJECT_HREF}?`) ? href : null }),
-    );
+    // A hero CTA that is not the brief (an article's "Price your project"): the
+    // close band's brief link carries the page's line instead.
+    const close = document.querySelector(`[data-page-close] a[href^="${PROJECT_HREF}?"]`);
+    const href = brief(link?.getAttribute('href')) ?? brief(close?.getAttribute('href'));
+    const frame = requestAnimationFrame(() => setFound({ path: pathname, href }));
     return () => cancelAnimationFrame(frame);
   }, [pathname]);
   return found?.path === pathname ? found.href : null;
