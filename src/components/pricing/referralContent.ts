@@ -39,8 +39,9 @@ export const REFERRAL_STEPS = [
 
 export const REFERRAL_FORM = {
   title: 'Refer an agency.',
-  // What the form asks of you (the required fields in ReferralSignup).
-  lede: 'Four fields are required: your name and email, and theirs. Everything else is optional.',
+  // What the form asks of you (the required fields in ReferralSignup): the
+  // second pair is a person's, its label "Contact person’s name".
+  lede: 'Four fields are required: your name and email, and the contact person’s. Everything else is optional.',
 } as const;
 
 /**
@@ -50,7 +51,10 @@ export const REFERRAL_FORM = {
  */
 export const REFERRAL_TERMS: FaqItem[] = [
   {
-    question: 'When do I get the referral bonus?',
+    // The answer says what the bonus is for, not when it is paid: no payment
+    // date or amount is published (the owner sets those terms), so the
+    // question does not ask for one.
+    question: 'What do I get for a referral?',
     answer: 'When the agency you referred becomes a client, we thank you with a referral bonus for making the introduction.',
   },
   {

@@ -18,21 +18,9 @@ $index-line: '(min-width: #{$breakpoint-lg}) and (hover: hover) and (pointer: fi
   }
 }
 
-// ===================================================================
-// The hero's proof
-// ===================================================================
-// The approved quote in PageHeader's actions row, ruled off from the ask;
-// where the row is too narrow it wraps under the buttons. Phones leave it out
-// so the first project's capture reaches the first screen: on this page the
-// work is the proof, and the client's full quote follows the index.
-.heroProof {
-  padding-left: clamp(20px, 2vw, 28px);
-  border-left: 1px solid $color-hairline-strong;
-
-  @media (max-width: #{$breakpoint-md - 1px}) {
-    display: none;
-  }
-}
+// The hero carries no quote line: on this page the work is the proof, and the
+// client's quote is said once, in full, after the index (the one-line version
+// in the hero repeated it a scroll above).
 
 // ===================================================================
 // The index

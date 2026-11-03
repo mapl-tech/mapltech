@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, type FocusEvent, type FormEvent, type ReactNode } from 'react';
 import Link from 'next/link';
 import { ESTIMATE_SERVICES, SERVICE_META } from '@/lib/estimate';
-import { field, isEmail, useContactSubmit } from './useContactSubmit';
+import { GENERIC_ERROR, field, isEmail, useContactSubmit } from './useContactSubmit';
 import styles from '@/components/pricing/ReferralForm.module.scss';
 import RecaptchaNotice from './RecaptchaNotice';
 
@@ -14,8 +14,10 @@ import RecaptchaNotice from './RecaptchaNotice';
  * company) folded behind "Add details (optional)", a native disclosure, so
  * the short form looks short. Required fields are validated on submit, then
  * again on blur once a first attempt has been made; their email must not be
- * your own. Each error sits under its field, is linked with aria-describedby,
- * and focus moves to the first one. Beside the button, the brief's own
+ * your own. Each error sits under its field in the brief's pattern (a "!"
+ * disc, then the sentence), is linked with aria-describedby, and focus moves
+ * to the first one; the button is aria-disabled while sending, so it keeps
+ * focus. Beside the button, the brief's own
  * privacy line, with the link to the policy. On success the form is replaced
  * by a status panel that takes focus. Posts to /api/contact with the subject
  * "Referral: <name>".
@@ -58,8 +60,12 @@ function Field({ id, label, error, wide = false, children }: FieldProps) {
         {label}
       </label>
       {children(describedBy)}
+      {/* The brief's error: a drawn "!" (state never rests on colour alone), then the sentence. */}
       {error ? (
         <p id={`${id}-error`} className={styles.fieldError}>
+          <span className={styles.errorIcon} aria-hidden="true">
+            !
+          </span>
           {error}
         </p>
       ) : null}
@@ -69,7 +75,7 @@ function Field({ id, label, error, wide = false, children }: FieldProps) {
 
 export default function ReferralSignup() {
   const uid = useId();
-  const { status, submit, warmUp, reset } = useContactSubmit();
+  const { status, error, submit, warmUp, reset } = useContactSubmit();
   const [need, setNeed] = useState('');
   const [errors, setErrors] = useState<Errors>({});
   const [attempted, setAttempted] = useState(false);
@@ -213,7 +219,8 @@ export default function ReferralSignup() {
       <fieldset className={styles.fieldset}>
         <legend className={styles.legend}>The agency you are introducing</legend>
         <div className={styles.fields}>
-          <Field id={id('refName')} label="Their name" error={errors.refName}>
+          {/* A person, not the agency (its name is an optional field below): the live page's "Contact person". */}
+          <Field id={id('refName')} label="Contact person’s name" error={errors.refName}>
             {(describedBy) => (
               <input
                 id={id('refName')}
@@ -310,15 +317,25 @@ export default function ReferralSignup() {
         </label>
       </div>
 
+      {/* As the brief says it: a titled box, the API's own words when it sent some, then the way out. */}
       {status === 'error' ? (
-        <p className={styles.formError} role="alert">
-          That didn&apos;t send. Check your connection and try again, or email the details to{' '}
-          <a href="mailto:contact@mapltech.com">contact@mapltech.com</a>.
-        </p>
+        <div className={styles.formError} role="alert">
+          <p className={styles.formErrorTitle}>That did not send.</p>
+          <p className={styles.formErrorText}>
+            {error && error !== GENERIC_ERROR ? `${error} ` : ''}Your answers are still here, so you can try again, or
+            email the details to <a href="mailto:contact@mapltech.com">contact@mapltech.com</a>.
+          </p>
+        </div>
       ) : null}
 
       <div className={styles.actions}>
-        <button type="submit" className={styles.primary} disabled={status === 'sending'} data-cta-placement="referral_signup_submit">
+        {/* aria-disabled while sending, as on the brief: a disabled button would drop keyboard focus. */}
+        <button
+          type="submit"
+          className={styles.primary}
+          aria-disabled={status === 'sending' ? true : undefined}
+          data-cta-placement="referral_signup_submit"
+        >
           {status === 'sending' ? 'Sending…' : 'Send referral'}
         </button>
         <p className={styles.note}>We mention your introduction when we reach out.</p>

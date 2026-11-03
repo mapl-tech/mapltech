@@ -5,6 +5,7 @@ import JsonLd from '@/components/seo/JsonLd';
 import { faqPage, howTo, pageGraph } from '@/lib/schema';
 import ReferralSignup from '@/components/convert/ReferralSignup';
 import Steps from '@/components/services/Steps';
+import { keepNumberWords } from '@/components/pricing/content';
 import {
   REFERRAL_CLOSE,
   REFERRAL_DESCRIPTION,
@@ -98,7 +99,9 @@ export default function ReferralPage() {
         </div>
       </section>
 
-      {/* Questions: the homepage's accordion; FAQPage JSON-LD from the same array. Then back to the form. */}
+      {/* Questions: the homepage's accordion; FAQPage JSON-LD from the same array
+          (on screen "20-minute" takes a no-break hyphen, U+2011; the JSON-LD
+          keeps the plain one, as on /pricing). Then back to the form. */}
       <section id="terms" className={`${sections.faq} ${styles.terms}`} aria-labelledby="terms-title">
         <div className={`${sections.faqInner} ${styles.termsInner}`}>
           <div className={sections.faqHead}>
@@ -113,7 +116,11 @@ export default function ReferralPage() {
               name="referral-terms"
               defaultOpen={0}
               className={sections.faqList}
-              items={REFERRAL_TERMS.map((item, index) => ({ id: `terms-${index + 1}`, question: item.question, answer: item.answer }))}
+              items={REFERRAL_TERMS.map((item, index) => ({
+                id: `terms-${index + 1}`,
+                question: item.question,
+                answer: keepNumberWords(item.answer),
+              }))}
             />
             <a href="#signup" className={styles.termsAction} data-cta-placement="referral_terms_refer">
               Refer an agency
@@ -127,7 +134,7 @@ export default function ReferralPage() {
         id="referral-close-title"
         placement="referral_close"
         title={REFERRAL_CLOSE.title}
-        lede={REFERRAL_CLOSE.lede}
+        lede={keepNumberWords(REFERRAL_CLOSE.lede)}
         proof={false}
       />
     </>

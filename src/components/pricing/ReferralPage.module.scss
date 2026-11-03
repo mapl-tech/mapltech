@@ -134,7 +134,8 @@ $pad-y: clamp(48px, 7vw, 104px);
   min-width: 0;
 }
 
-// After the last question, back up to the form (the arrow in CSS, pointing up).
+// After the last question, back up to the form (the drawn arrow in CSS,
+// pointing up: a mask, so nothing is read out, never a font "↑").
 .termsAction {
   justify-self: start;
   @include text-action($color-fg);
@@ -142,7 +143,7 @@ $pad-y: clamp(48px, 7vw, 104px);
   font-size: 1.0625rem;
 
   &::before {
-    content: '\2191';
+    @include arrow-glyph(up);
     color: $color-red-text;
     transition: transform 0.4s $ease-out-expo;
   }

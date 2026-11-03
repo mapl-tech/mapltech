@@ -46,12 +46,21 @@ export interface CaseStory {
   /** Full organisation name, when it differs from `client`. */
   legalName?: string;
   /**
-   * Short tags under the breadcrumb, e.g. ["Web Development", "Staffing and
-   * recruitment", "Ottawa and Toronto"]. A tag that names a service line uses
-   * its canonical name; one that names the kind of project ("Website
-   * relaunch", "Our own product") stays as it is.
+   * The project's short tags: [service line or kind of project, sector,
+   * place], e.g. ["Web Development", "Staffing and recruitment", "Ottawa and
+   * Toronto"]. A tag that names a service line uses its canonical name; one
+   * that names the kind of project ("Website relaunch", "Our own product")
+   * stays as it is. The /our-work rows and the service pages read the sector
+   * (`tags[1]`); the case hero shows only what its facts do not say (heroTags).
    */
   tags: readonly string[];
+  /**
+   * Tags the facts already say, in the same or other words: the hero leaves
+   * them out, so it never says one thing twice ("Ottawa and Toronto" beside
+   * "Where: Ottawa and Toronto"). A service line's name stays: no fact names
+   * the line.
+   */
+  tagsInFacts?: readonly string[];
   /** The one-line outcome under the H1. */
   headline: string;
   facts: readonly CaseFact[];
@@ -78,6 +87,8 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'lro-staffing',
     client: 'LRO Staffing',
     tags: ['Web Development', 'Staffing and recruitment', 'Ottawa and Toronto'],
+    // The Client fact says the sector ("full-service search and staffing"), Where the place.
+    tagsInFacts: ['Staffing and recruitment', 'Ottawa and Toronto'],
     headline: 'A staffing agency’s website, rebuilt for its two audiences: people looking for work and employers looking to hire.',
     facts: [
       { term: 'Client', detail: 'LRO Staffing, full-service search and staffing' },
@@ -130,6 +141,8 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'mapl-tours',
     client: 'MAPL Tours',
     tags: ['Our own product', 'Travel', 'Jamaica'],
+    // Owner: MAPL TECH; What it does: "Private airport transfers and tours in Jamaica".
+    tagsInFacts: ['Our own product', 'Travel', 'Jamaica'],
     headline: 'A travel company we built and run ourselves, to see how far software built with AI can go with real customers.',
     facts: [
       { term: 'Owner', detail: 'MAPL TECH' },
@@ -186,6 +199,9 @@ export const STORIES: readonly CaseStory[] = [
     client: 'CHHA-NCR',
     legalName: chha?.client ?? 'Canadian Hard of Hearing Association, National Capital Region',
     tags: ['Website relaunch', 'Non-profit', 'Ottawa'],
+    // The Relaunched and Sector facts. "Ottawa" stays: the Client fact says
+    // "National Capital Region", which not every reader knows as Ottawa.
+    tagsInFacts: ['Website relaunch', 'Non-profit'],
     headline: 'A relaunched website for people with hearing loss, most of them over 55, that the charity’s own volunteers can run.',
     facts: [
       { term: 'Client', detail: chha?.client ?? 'CHHA-NCR' },
@@ -258,6 +274,8 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'lro-salary-guide',
     client: 'LRO Interactive Salary Guide',
     tags: ['Custom Internal Tools', 'Staffing and recruitment', 'Ottawa and Toronto'],
+    // The Client fact ("LRO Staffing") says the sector, as on the LRO Staffing case.
+    tagsInFacts: ['Staffing and recruitment'],
     headline: 'An interactive salary guide that turns market data into a tool for comparing pay, made for recruiters and hiring managers.',
     facts: [
       { term: 'Client', detail: 'LRO Staffing' },
@@ -358,6 +376,8 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'crowned-spice',
     client: 'Crowned Spice',
     tags: ['Automation & AI', 'E-commerce'],
+    // Type: "E-commerce automation".
+    tagsInFacts: ['E-commerce'],
     headline: 'Online store automation, from stock levels to shipping to the messages customers get after they buy.',
     facts: [
       { term: 'Client', detail: 'Crowned Spice' },
@@ -382,4 +402,9 @@ export const STORIES: readonly CaseStory[] = [
 
 export function findStory(slug: string): CaseStory | undefined {
   return STORIES.find((story) => story.slug === slug);
+}
+
+/** The tags under the case hero's breadcrumb: the story's own, less those its facts already say. */
+export function heroTags(story: CaseStory): readonly string[] {
+  return story.tags.filter((tag) => !story.tagsInFacts?.includes(tag));
 }

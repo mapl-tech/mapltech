@@ -284,9 +284,10 @@ $accent: $color-red-ink;
   flex-direction: row-reverse;
   margin-top: -32px;
 
-  // The arrow lives in CSS so the link's text (which the mobile bar repeats) stays plain.
+  // The arrow lives in CSS so the link's text (which the mobile bar repeats)
+  // stays plain: the drawn one (a mask, so nothing is read out), not a font "↑".
   &::before {
-    content: '\2191';
+    @include arrow-glyph(up);
     color: $accent;
     transition: transform 0.4s $ease-out-expo;
   }

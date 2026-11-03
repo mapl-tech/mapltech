@@ -86,7 +86,8 @@ const KIND_DETAIL: Record<BriefKind, string> = {
   cloud: 'Cloud hosting that grows with your clients',
   // pricing/content.ts BUNDLES_ANSWER: "A monthly partnership covers several services for one monthly price."
   partner: 'Several services for one monthly price',
-  unsure: 'Tell us the goal in step 3',
+  // Not "in step 3": this path skips the size, so the details are its second question.
+  unsure: 'Tell us the goal in the next step',
 };
 
 /** Step 1: what are we building? Every option carries its real public floor price. */
@@ -193,7 +194,13 @@ export function readPrefill(search: string): BriefPrefill | null {
     if (match) return { kind: 'partner', size: bundleSlug(match.name), services: [], source: 'bundle' };
   }
 
-  if (!params.has('svc')) return null;
+  // Only a link that names a service fills the brief in: decodeEstimateParams
+  // falls back to the estimator's default (Web Development) when no `svc`
+  // value is one, and "?svc=partner" or "?svc=unsure" would then pre-pick it
+  // as "filled in from the page you came from". Links into the brief carry
+  // the canonical keys (encodeEstimateParams, scopingCallLinkFor).
+  const named = params.getAll('svc').some((value) => value.split(',').some((raw) => isEstimateService(raw.trim().toLowerCase())));
+  if (!named) return null;
   const input = decodeEstimateParams(search);
   const [first] = input.services;
   if (!first || !isEstimateService(first)) return null;

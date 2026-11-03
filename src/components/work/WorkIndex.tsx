@@ -28,7 +28,8 @@ import styles from './WorkIndex.module.scss';
  *   reaches the chosen one, the arrow keys move along the line; below 1024px
  *   the line scrolls sideways where it must, instead of wrapping. The choice
  *   lives in the URL (`?type=web`), read through useSyncExternalStore and
- *   written with history.replaceState, so a filtered view can be shared. Filtering is one
+ *   written with history.replaceState, so a filtered view can be shared (a
+ *   value that names no chip shows everything and leaves the URL). Filtering is one
  *   attribute on the root; CSS hides the rows of other lines, so nothing
  *   mounts or unmounts and the server HTML always holds every project. The
  *   result is announced politely.
@@ -164,6 +165,16 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
   // Only a line that has a chip can filter; anything else in the URL shows everything.
   const active: WorkFilterKey = filters.some((f) => f.key === fromUrl) ? fromUrl : 'all';
   const [message, setMessage] = useState('');
+
+  // ...and leaves the address too: a `?type=` naming no chip ("?type=cloud"
+  // with nothing listed in that line, or a mistyped value) is dropped, so a
+  // shared link never claims a filter the page is not applying. Read from the
+  // URL itself, not `active`, which still holds the server's "all" in the
+  // hydration pass.
+  useEffect(() => {
+    const type = new URLSearchParams(window.location.search).get('type');
+    if (type !== null && !filters.some((f) => f.key !== 'all' && f.key === type)) writeTypeParam('all');
+  }, [filters, fromUrl]);
 
   const fine = useFinePointer();
   const wide = useMediaQuery('(min-width: 1024px)');

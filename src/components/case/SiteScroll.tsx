@@ -61,8 +61,17 @@ export default function SiteScroll({
     ? ({ role: 'region', 'aria-label': label, tabIndex: 0 } as const)
     : ({ role: 'img', 'aria-label': label } as const);
 
+  // data-bar-stand-down: the pinned frame fills the phone screen down to its
+  // progress line, which the phone action bar would otherwise cover for the
+  // whole pin; the bar steps aside until the section has scrolled away.
   return (
-    <section ref={sectionRef} className={styles.siteScroll} data-still={reduceMotion ? '' : undefined} aria-labelledby="case-live">
+    <section
+      ref={sectionRef}
+      className={styles.siteScroll}
+      data-still={reduceMotion ? '' : undefined}
+      data-bar-stand-down=""
+      aria-labelledby="case-live"
+    >
       <div className={styles.siteSticky}>
         <div className={styles.siteHead}>
           <h2 id="case-live" className={styles.siteTitle}>

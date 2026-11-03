@@ -29,6 +29,15 @@ describe('prefill and composition', () => {
     expect(readPrefill('?nothing=1')).toBeNull();
   });
 
+  it('fills nothing in from a svc value that is not a service', () => {
+    // The estimator's decoder falls back to Web Development; the brief must not
+    // pre-pick it and say it came from the page the visitor was on.
+    for (const query of ['?svc=bogus', '?svc=partner', '?svc=unsure', '?svc=', '?svc=,', '?svc=bogus&size.web=growth']) {
+      expect(readPrefill(query), query).toBeNull();
+    }
+    expect(readPrefill('?svc=bogus,cloud')).toMatchObject({ kind: 'cloud', services: ['cloud'], source: 'service' });
+  });
+
   it('writes the subject from the answers', () => {
     const { subject, message } = composeBrief(
       { kind: 'tools', size: null, details: '', name: 'A', email: 'a@b.co', company: '', reply: 'email', phone: '' },

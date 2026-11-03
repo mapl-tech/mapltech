@@ -39,12 +39,13 @@ import Arrow from '@/components/ui/Arrow';
 /**
  * The contact brief: one question at a time, in one form. Since the Nov 2026
  * award pass it is set in ink on the paper sheet of /contact-us: a quiet step
- * count over a four-part progress track, the open question in display type
- * (the loudest thing in the form), answers as 60px+ rows, and a drawn tick on
- * "Brief sent.".
+ * count over a progress track with one part per question, the open question
+ * in display type (the loudest thing in the form), answers as 60px+ rows, and
+ * a drawn tick on "Brief sent.".
  *
  * 1 What are we building? (each answer shows its public floor price)
- * 2 How big is it? (sizes with the tier and price they map to; skipped for "Not sure yet")
+ * 2 How big is it? (sizes with the tier and price they map to; skipped for
+ *   "Not sure yet", whose path then counts and draws three steps, not four)
  * 3 What should we know? (optional free text)
  * 4 Where should we reply? (name, email, optional company, email or a call)
  *
@@ -185,6 +186,10 @@ export default function ProjectBrief({
   const needsSize = kind !== null && kind !== 'unsure';
   const defaultStep: Step = !prefill ? 1 : prefill.kind === 'unsure' || prefill.size ? 3 : 2;
   const step: Step = openStep ?? defaultStep;
+  // The questions this answer's path asks: "Not sure yet" skips the size, so
+  // the count and the bar show three steps, never a ticked one that was not asked.
+  const path: readonly Step[] = kind === 'unsure' ? [1, 3, 4] : [1, 2, 3, 4];
+  const position = path.filter((at) => at <= step).length;
   const sizes = sizeOptions(kind);
   const fromPrefill = Boolean(prefill) && kindChoice === null;
   // Say only what the link carried: an estimate (a size), a bundle, or just the service line.
@@ -473,15 +478,14 @@ export default function ProjectBrief({
         {/* Visual only: the progress list below carries "step 2 of 4" for assistive
             tech. A label beside "Your brief", never louder than the question. */}
         <p className={styles.count} aria-hidden="true">
-          Step {step} of 4
+          Step {position} of {path.length}
         </p>
       </div>
 
-      <ol className={styles.progress} aria-label={`Progress: step ${step} of 4`}>
-        {STEP_NAMES.map((label, index) => {
-          const at = (index + 1) as Step;
+      <ol className={styles.progress} aria-label={`Progress: step ${position} of ${path.length}`}>
+        {path.map((at) => {
+          const label = STEP_NAMES[at - 1];
           const state = at < step ? 'done' : at === step ? 'current' : 'todo';
-          const skipped = at === 2 && kind === 'unsure' && step > 2;
           return (
             <li
               key={label}
@@ -496,7 +500,7 @@ export default function ProjectBrief({
               <span className={styles.segmentLabel}>
                 {label}
                 <span className="visually-hidden">
-                  {state === 'done' ? (skipped ? ', not needed' : ', done') : state === 'current' ? ', current step' : ', to do'}
+                  {state === 'done' ? ', done' : state === 'current' ? ', current step' : ', to do'}
                 </span>
               </span>
             </li>

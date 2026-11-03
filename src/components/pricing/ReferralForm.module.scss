@@ -191,43 +191,67 @@ $paired: 420px;
   resize: vertical;
 }
 
-// #ff5c73 on the card: 5.5:1+.
+// The brief's error pattern on the dark card: a "!" disc, then the sentence,
+// in red-text (AAA on the card).
 .fieldError {
   display: flex;
+  align-items: flex-start;
   gap: 8px;
   margin: 0;
   font-size: 1rem;
   font-weight: $font-weight-medium;
-  line-height: 1.5;
+  line-height: 1.45;
   color: $color-red-text;
-
-  &::before {
-    content: '';
-    flex-shrink: 0;
-    width: 8px;
-    height: 8px;
-    margin-top: 0.55em;
-    border-radius: 50%;
-    background: $color-red-text;
-  }
 }
 
+// The brief's icon, inverted for the dark card: the ground on red-text, 8:1+
+// (the disc itself 7.9:1 against the card).
+.errorIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: $color-red-text;
+  font-size: 0.75rem;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  color: $color-ground;
+}
+
+// The brief's failure box: a title, then what to do. No tint behind it, so
+// the red-text link keeps its 7.9:1 on the card.
 .formError {
   margin: 0;
-  padding: 14px 16px;
+  padding: 16px 18px;
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba($color-red-text, 0.5);
-  font-size: 1rem;
-  line-height: 1.5;
   color: $color-fg;
 
   a {
+    font-weight: $font-weight-semibold;
     color: $color-red-text;
     text-decoration: underline;
-    text-underline-offset: 3px;
+    text-underline-offset: 4px;
 
     @include focus-ring;
   }
+}
+
+.formErrorTitle {
+  margin: 0;
+  font-weight: $font-weight-bold;
+  font-size: 1.0625rem;
+  color: $color-fg;
+}
+
+.formErrorText {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: $color-fg;
 }
 
 .actions {
@@ -243,6 +267,13 @@ $paired: 420px;
   min-height: 56px;
   font-size: 1.0625rem;
   @include focus-ring;
+
+  // Stays focusable while sending, as the brief's button does (a disabled
+  // button would drop keyboard focus).
+  &[aria-disabled='true'] {
+    opacity: 0.7;
+    cursor: progress;
+  }
 
   @media (max-width: #{$breakpoint-sm - 1px}) {
     justify-self: stretch;

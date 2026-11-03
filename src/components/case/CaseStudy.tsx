@@ -8,7 +8,7 @@ import CaseStage from './CaseStage';
 import ChapterNav from './ChapterNav';
 import SiteScroll from './SiteScroll';
 import { FULL_PAGES } from './fullPages';
-import type { CaseStory } from './stories';
+import { heroTags, type CaseStory } from './stories';
 import styles from './Case.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -45,6 +45,10 @@ export default function CaseStudy({
   const nextName = next ? (next.story?.client ?? next.entry.title) : '';
   // A real capture only, never a mockup: a project without one gets a text-only row.
   const nextShot = next?.story?.media?.desktop;
+  // The close's proof where the story's own quote keeps the band's quote line
+  // off: its first published result, in the words "At a glance" uses.
+  const firstResult = story.results?.[0];
+  const closeProof = story.quote && firstResult ? `${story.client}: ${firstResult.value} ${firstResult.label}.` : undefined;
 
   const chapters = [
     story.situation?.length ? { id: 'situation', label: 'The situation' } : null,
@@ -70,7 +74,7 @@ export default function CaseStudy({
           </nav>
           <p className={styles.tags}>
             <span className={styles.tagLead}>Case study</span>
-            {story.tags.map((tag) => (
+            {heroTags(story).map((tag) => (
               <span key={tag}>
                 <span aria-hidden="true"> · </span>
                 <span className="visually-hidden">, </span>
@@ -240,7 +244,8 @@ export default function CaseStudy({
 
       {/* ---------------------------------------------------------- matters: the ask, with the brief on this service line */}
       {/* The band's quote line only where the story has no client words of its
-          own: a case with a quote has just shown it in "What they said". */}
+          own: a case with a quote has shown it in "What they said", screens
+          above, so its ask gets the case's first result beside it instead. */}
       {story.matters ? (
         <CloseBand
           id="case-matters"
@@ -251,6 +256,7 @@ export default function CaseStudy({
           placement={`case_${entry.slug}`}
           note={HERO_REASSURE}
           proof={!story.quote}
+          proofLine={closeProof}
           hero
         />
       ) : null}

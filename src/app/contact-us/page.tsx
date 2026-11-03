@@ -53,7 +53,8 @@ const NEXT_STEPS = [
     text: 'By email or phone, whichever you chose, with questions or a time to talk.',
   },
   {
-    name: 'A 20-minute call',
+    // A no-break hyphen (U+2011), here and below: "20-" never ends a line at 320px.
+    name: 'A 20‑minute call',
     text: 'We agree what is included and what is not, so the quote matches the real work.',
   },
   {
@@ -67,7 +68,7 @@ const NEXT_STEPS = [
  * brief's button says it first, in the steps' own words (the reply step's
  * timing awaits the owner, so the line starts at the call).
  */
-const AFTER_LINE = 'After you send it: a 20-minute call, then a fixed quote.';
+const AFTER_LINE = 'After you send it: a 20‑minute call, then a fixed quote.';
 
 /** The one approved client quote (site.ts `testimonials`), beside the decision. */
 const PROOF = testimonials.find((entry) => entry.company === 'LRO Staffing') ?? null;
@@ -94,7 +95,7 @@ export default function ContactPage() {
         size="l"
         lede={
           <p>
-            Answer four short questions about your project. After a 20-minute call, you get a fixed quote. {NDA_LINE}
+            {`Answer four short questions about your project. After a 20‑minute call, you get a fixed quote. ${NDA_LINE}`}
           </p>
         }
       />
