@@ -1,18 +1,19 @@
 'use client';
 
 import { WORK_END, WORK_START, isOfficeOpen, useMinute, zoneTime } from '@/components/ui/officeTime';
-import { timeWords } from './timeWords';
+import { nextStateWords, timeWords } from './timeWords';
 import styles from './PlaceReadout.module.scss';
 
 /**
- * The branch's local time and whether the office is open right now, from the
- * shared minute ticker. The server has no clock, so the first paint shows the
- * fixed UTC offset in the same box; the clock takes over after hydration with
- * no layout shift. Times read as people say them ("5:22 pm"); `dateTime`
- * keeps the 24-hour value. Not a live region: a clock that announces itself
- * every minute is noise.
+ * The branch's local time, whether the office is open right now and when
+ * that changes ("Back at 9 am WAT": the published hours, never a reply time),
+ * from the shared minute ticker. The server has no clock, so the first paint
+ * shows the fixed UTC offset and the office hours in the same three lines;
+ * the clock takes over after hydration with no layout shift. Times read as
+ * people say them ("5:22 pm"); `dateTime` keeps the 24-hour value. Not a
+ * live region: a clock that announces itself every minute is noise.
  */
-export default function LocalTime({ timeZone, utcLabel }: { timeZone: string; utcLabel: string }) {
+export default function LocalTime({ timeZone, utcLabel, zoneAbbr }: { timeZone: string; utcLabel: string; zoneAbbr: string }) {
   const minute = useMinute();
   const t = minute !== 0 ? zoneTime(minute * 60_000, timeZone) : null;
   const open = t ? isOfficeOpen(t) : null;
@@ -26,13 +27,14 @@ export default function LocalTime({ timeZone, utcLabel }: { timeZone: string; ut
       <p className={styles.status} data-open={open ? 'true' : 'false'}>
         <span className={styles.dot} aria-hidden="true" />
         {open === null
-          ? `Office hours ${timeWords(WORK_START)} to ${timeWords(WORK_END)}, Monday to Friday`
+          ? `Office hours ${timeWords(WORK_START)} to ${timeWords(WORK_END)}`
           : open
             ? 'Open now'
             : weekend
               ? 'Closed for the weekend'
               : 'Closed now'}
       </p>
+      <p className={styles.next}>{t ? nextStateWords(t, Boolean(open), WORK_START, WORK_END, zoneAbbr) : 'Monday to Friday'}</p>
     </>
   );
 }

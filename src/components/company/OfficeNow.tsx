@@ -1,16 +1,17 @@
 'use client';
 
 import { WORK_END, WORK_START, isOfficeOpen, useMinute, zoneTime } from '@/components/ui/officeTime';
-import { timeWords } from './timeWords';
+import { nextStateWords, timeWords } from './timeWords';
 import styles from './OfficeList.module.scss';
 
 /**
- * One office's local time and whether it is open right now, from the shared
- * minute ticker. The server has no clock, so the first paint shows the
- * office hours in the same box; the clock takes over after hydration with no
- * layout shift. Times read as people say them ("9 am to 6 pm", "5:22 pm");
- * `dateTime` keeps the 24-hour value. Not a live region: a clock that
- * announces itself every minute is noise.
+ * One office's local time, whether it is open right now and when that
+ * changes ("Until 6 pm", "Back at 9 am"), from the shared minute ticker. The
+ * server has no clock, so the first paint shows the office hours in the same
+ * three lines; the clock takes over after hydration with no layout shift.
+ * Times read as people say them ("9 am to 6 pm", "5:22 pm"); `dateTime`
+ * keeps the 24-hour value. Not a live region: a clock that announces itself
+ * every minute is noise.
  */
 export default function OfficeNow({ timeZone }: { timeZone: string }) {
   const minute = useMinute();
@@ -34,6 +35,7 @@ export default function OfficeNow({ timeZone }: { timeZone: string }) {
         <span className={styles.dot} aria-hidden="true" />
         {open === null ? 'Monday to Friday' : open ? 'Open now' : weekend ? 'Closed for the weekend' : 'Closed now'}
       </p>
+      <p className={styles.next}>{t ? nextStateWords(t, Boolean(open), WORK_START, WORK_END) : 'Local time'}</p>
     </div>
   );
 }

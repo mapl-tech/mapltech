@@ -8,6 +8,10 @@
 
 // Rows switch to one line by the list's own width, not the viewport's: the
 // list sits full width on tablets and in a column beside the map on desktop.
+// One line needs 720px, so the note column keeps ~270px beside the clock's
+// "Back tomorrow at 9 am" and the link (tablets stack, like phones).
+$one-line: 720px;
+
 .wrap {
   container: office-list / inline-size;
 }
@@ -20,33 +24,42 @@
 
   // One line per office: the rows share the list's columns (subgrid), so the
   // clocks and the links line up whether or not a row has a link.
-  @container office-list (min-width: 640px) {
+  @container office-list (min-width: #{$one-line}) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto auto;
     column-gap: 40px;
   }
 }
 
+// Narrow lists (phones, tablets): the time beside the city, then the note,
+// the state and when it changes, each the full width of the row, so the note
+// never runs as a sliver beside the clock.
 .row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    'city now'
-    'note now'
+    'city time'
+    'note note'
+    'status status'
+    'next next'
     'link link';
-  align-items: start;
+  align-items: baseline;
   column-gap: 20px;
   padding: 22px 0 18px;
   border-bottom: 1px solid $color-hairline;
 
-  @container office-list (min-width: 640px) {
+  @container office-list (min-width: #{$one-line}) {
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
     column-gap: normal; // the list's gap
     grid-template-areas:
       'city now link'
       'note now link';
-    align-items: center;
+    // The clock's extra height goes under the note, not between it and the city.
+    grid-template-rows: auto 1fr;
+    // The city and the clock share a first baseline and everything hangs
+    // from it, so the clock's three lines never prise the city from its note.
+    align-items: baseline;
     padding: 26px 0;
   }
 }
@@ -69,18 +82,23 @@
   font-size: $font-size-base;
   line-height: 1.45;
   color: $color-fg-muted;
+  text-wrap: pretty;
 }
 
+// The clock (OfficeNow): on narrow lists its three lines join the row's grid
+// (above); on wide ones they stack as one block in the clock column.
 .now {
-  grid-area: now;
-  text-align: right;
+  display: contents;
 
-  @container office-list (min-width: 640px) {
-    text-align: left;
+  @container office-list (min-width: #{$one-line}) {
+    display: block;
+    grid-area: now;
   }
 }
 
 .time {
+  grid-area: time;
+  justify-self: end;
   margin: 0;
   font-family: $font-display;
   font-weight: $font-weight-extrabold;
@@ -89,20 +107,40 @@
   letter-spacing: -0.02em;
   color: $color-fg;
   @include tabular;
+
+  @container office-list (min-width: #{$one-line}) {
+    justify-self: auto;
+  }
 }
 
 .status {
+  grid-area: status;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 8px;
-  margin: 8px 0 0;
+  margin: 12px 0 0;
   font-size: 1rem;
   line-height: 1.3;
   color: rgba($color-fg, 0.84);
 
-  @container office-list (min-width: 640px) {
-    justify-content: flex-start;
+  @container office-list (min-width: #{$one-line}) {
+    margin-top: 8px;
+  }
+}
+
+// When the state changes ("Until 6 pm", "Back at 9 am"), under the words,
+// past the dot (8px dot + 8px gap). 15px in the one-line table, so the clock
+// column stays narrow beside the note.
+.next {
+  grid-area: next;
+  margin: 2px 0 0;
+  padding-left: 16px;
+  font-size: 1rem;
+  line-height: 1.35;
+  color: $color-fg-muted;
+
+  @container office-list (min-width: #{$one-line}) {
+    font-size: $font-size-sm;
   }
 }
 
@@ -125,7 +163,8 @@
   margin-top: 6px;
   @include text-action($color-fg);
 
-  @container office-list (min-width: 640px) {
+  @container office-list (min-width: #{$one-line}) {
+    align-self: center;
     justify-self: end;
     margin-top: 0;
   }

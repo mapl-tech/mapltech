@@ -7,6 +7,11 @@
 // paper sections for rhythm, the crimson close. Every component in the family
 // takes its section shell, label, title, lede and actions from here.
 
+// Reading measure for the family's running text: DM Sans averages ~0.48em a
+// character, so 31em holds a line to about 65 characters at any size (the
+// lede token's 56ch lets 21px text run to ~80, because `ch` is the wide "0").
+$measure-read: 31em;
+
 // ---------------------------------------------------------------- surfaces
 .dark {
   position: relative;
@@ -53,11 +58,6 @@
       grid-column: 2;
     }
   }
-}
-
-// A head that is the whole section: what follows the lede sits inside it.
-.headOnly {
-  margin-bottom: 0;
 }
 
 // Content that sits in the 9fr column under a section head.
@@ -127,6 +127,7 @@
 .lede {
   @include lede;
   margin: 0;
+  max-width: $measure-read;
 
   .paper & {
     color: $color-ink-muted;

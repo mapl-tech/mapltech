@@ -4,8 +4,7 @@ import JsonLd from '@/components/seo/JsonLd';
 import Accordion from '@/components/ui/Accordion';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import QuoteLine from '@/components/flagship/QuoteLine';
-import { WORK_SECTION } from '@/components/flagship/content';
+import { HERO_REASSURE } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from '@/components/layout/chrome';
 import { siteConfig } from '@/config/site';
 import { faqPage, getServiceLine, itemList, pageGraph, serviceId } from '@/lib/schema';
@@ -33,12 +32,13 @@ export interface RegionalPageProps {
  * review fixes).
  *
  * A sense of place without stock photography: the branch city's live local
- * time beside a to-scale drawing of the three offices. Then the market facts
+ * time (and when the office is next open) beside a to-scale drawing of the
+ * three offices, under the site's reassurance line. Then the market facts
  * (the working hours are said there, once), what the local team builds with
  * real "from" prices and a direct way to start each one (paper), a real
- * local project where one exists (otherwise the site-wide client quote and
- * the work page), the market questions with the branch's contact lines, and
- * the close.
+ * local project where one exists (no stand-in section where none does), the
+ * market questions with the branch's contact lines, and the close, which
+ * carries the approved client quote.
  *
  * Schema (unchanged): WebPage + BreadcrumbList + ItemList of the four
  * services + FAQPage, all built from the same arrays the page renders. No
@@ -94,6 +94,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: `${prefix}_hero_secondary` }}
           />
         }
+        note={HERO_REASSURE}
         aside={
           <div className={styles.place}>
             <OfficeMap focus={region.officeCity} captionHidden axes={false} draw="load" className={styles.placeMap} />
@@ -101,7 +102,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
               <p className={place.city}>
                 {region.officeCity}, {region.country}
               </p>
-              <LocalTime timeZone={region.timeZone} utcLabel={region.utcLabel} />
+              <LocalTime timeZone={region.timeZone} utcLabel={region.utcLabel} zoneAbbr={region.zoneAbbr} />
               <p className={place.zone}>
                 {region.zoneName} · {region.utcLabel}
               </p>
@@ -184,7 +185,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         </div>
       </section>
 
-      {/* A real local project where one exists; otherwise the site-wide proof in its place. */}
+      {/* A real local project where one exists; none is shown in its place where none does (the close carries the quote). */}
       {region.work ? (
         <section id="work" className={`${ed.dark} ${ed.ruled}`} aria-labelledby="work-title">
           <div className={ed.inner}>
@@ -237,31 +238,10 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             </article>
           </div>
         </section>
-      ) : (
-        <section id="work" className={`${ed.dark} ${ed.ruled}`} aria-labelledby="work-title">
-          <div className={ed.inner}>
-            <header className={`${ed.head} ${ed.headOnly}`}>
-              <p className={ed.label}>{WORK_SECTION.label}</p>
-              <h2 id="work-title" className={ed.title}>
-                {WORK_SECTION.title}
-              </h2>
-              <p className={ed.lede}>Most of what we build carries our partners’ names, not ours.</p>
-              <div className={styles.proof}>
-                <QuoteLine />
-                <Link href={WORK_SECTION.all.href} className={ed.action} data-cta-placement={`${prefix}_proof_work`}>
-                  {WORK_SECTION.all.label}
-                  <span aria-hidden="true" className={ed.arrow}>
-                    →
-                  </span>
-                </Link>
-              </div>
-            </header>
-          </div>
-        </section>
-      )}
+      ) : null}
 
-      {/* Market questions: native <details>, every answer in the HTML; FAQPage JSON-LD from the same items. */}
-      <section id="faq" className={`${ed.dark} ${ed.ruled}`} aria-labelledby="faq-title">
+      {/* Market questions: native <details>, every answer in the HTML; FAQPage JSON-LD from the same items. Ruled only after the dark work section. */}
+      <section id="faq" className={region.work ? `${ed.dark} ${ed.ruled}` : ed.dark} aria-labelledby="faq-title">
         <div className={`${ed.inner} ${styles.faqGrid}`}>
           <div className={styles.faqHead}>
             <p className={ed.label}>Before you sign</p>
@@ -310,8 +290,8 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         </div>
       </section>
 
-      {/* Where the quote already stands in for a local project, the close does not repeat it. */}
-      <CloseBand title={region.close.title} lede={region.close.lede} placement={`${prefix}_close`} proof={Boolean(region.work)} />
+      {/* The approved client quote under the last ask (the hero has the reassurance line, not the quote). */}
+      <CloseBand title={region.close.title} lede={region.close.lede} placement={`${prefix}_close`} />
     </>
   );
 }

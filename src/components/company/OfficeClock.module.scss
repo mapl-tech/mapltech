@@ -46,3 +46,8 @@ $signal-on-paper: #0b7a67;
     background: $signal-on-paper;
   }
 }
+
+// When the state changes, on a line of its own under the clock line.
+.next {
+  flex-basis: 100%;
+}

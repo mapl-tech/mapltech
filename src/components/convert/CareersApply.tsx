@@ -13,7 +13,10 @@ import RecaptchaNotice from './RecaptchaNotice';
  * Careers apply form: role (pre-selected from ?role=, which the board's
  * "Apply" links set), name, email, an optional link, a short note. Posts to
  * /api/contact with the subject "Application: <role>"; the API takes JSON, so
- * there is no upload, and the email fallback carries the same subject.
+ * there is no upload. The button row holds the one action (the page's rail
+ * offers email instead); a failed send offers email with the same subject.
+ * The URL is the only record of the chosen role: the select writes ?role=
+ * too, so a row's "Apply" always wins over an earlier pick.
  *
  * Accessibility: native labels; required fields say so in the label set-up
  * line, optional ones say "(optional)"; errors appear under their field,
@@ -39,9 +42,8 @@ const RULES: Record<string, FieldRule> = {
 const ORDER = ['name', 'email', 'link', 'note'] as const;
 
 export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply-role' }: CareersApplyProps) {
-  const [params] = useUrlParams();
+  const [params, setParams] = useUrlParams();
   const { status, submit, warmUp } = useContactSubmit();
-  const [roleChoice, setRoleChoice] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [summary, setSummary] = useState('');
   const [submittedRole, setSubmittedRole] = useState('');
@@ -49,7 +51,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
   const formRef = useRef<HTMLFormElement>(null);
 
   const fromUrl = params.get('role');
-  const selectedSlug = roleChoice ?? (fromUrl && roles.some((role) => role.slug === fromUrl) ? fromUrl : GENERAL);
+  const selectedSlug = fromUrl && roles.some((role) => role.slug === fromUrl) ? fromUrl : GENERAL;
   const selected = roles.find((role) => role.slug === selectedSlug);
   const roleLabel = selected ? `${selected.title}, ${selected.country}` : 'General application';
 
@@ -162,7 +164,10 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
           name="role"
           className={forms.select}
           value={selectedSlug}
-          onChange={(event) => setRoleChoice(event.target.value)}
+          onChange={(event) => {
+            const value = event.target.value;
+            setParams((next) => (value === GENERAL ? next.delete('role') : next.set('role', value)));
+          }}
         >
           {roles.map((role) => (
             <option key={role.slug} value={role.slug}>
@@ -281,13 +286,6 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
             →
           </span>
         </button>
-        <a
-          className={css.mail}
-          href={`mailto:${contactEmail}?subject=${encodeURIComponent(`Application: ${roleLabel}`)}`}
-          data-cta-placement="careers_apply_email"
-        >
-          Or apply by email
-        </a>
       </div>
 
       <RecaptchaNotice className={forms.recaptcha} />

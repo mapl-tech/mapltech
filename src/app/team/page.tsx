@@ -4,6 +4,7 @@ import { pageGraph, person } from '@/lib/schema';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
+import { HERO_REASSURE } from '@/components/flagship/content';
 import FactsBand from '@/components/company/FactsBand';
 import { FounderProfiles } from '@/components/company/Founders';
 import HeroActions from '@/components/company/HeroActions';
@@ -33,8 +34,10 @@ export const metadata: Metadata = {
  * with initials (those records are unconfirmed and carry placeholder photos,
  * so they get no photos, no bios and no Person nodes), under the office
  * hours, with the Nigeria and Jamaica groups linked to their branch pages.
- * The page talks to buyers (the facts end on the public price); job seekers
- * get one small line at the directory's foot. Then the close.
+ * The page talks to buyers: the hero's reassurance line under the ask, the
+ * facts ending on the public price (set large), and the directory ending on
+ * "Start a project", with one small line for job seekers under it. Then the
+ * close. The breadcrumb names the page, so the hero has no eyebrow.
  *
  * Structured data (unchanged): AboutPage + BreadcrumbList + one Person node
  * per founder, from the same records the page renders.
@@ -59,7 +62,6 @@ export default function TeamPage() {
 
       <PageHeader
         crumbs={[{ label: 'About', href: '/about-us' }, { label: 'Team' }]}
-        label={hero.label}
         title={hero.title.map((run) => (run.accent ? <em key={run.text}>{run.text}</em> : run.text))}
         lede={<p>{hero.lede}</p>}
         actions={
@@ -68,6 +70,7 @@ export default function TeamPage() {
             secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: 'team_hero_secondary' }}
           />
         }
+        note={HERO_REASSURE}
       />
 
       <FactsBand facts={TEAM.facts} label="The team at a glance" />

@@ -122,11 +122,6 @@
   }
 }
 
-.mail {
-  @include text-action($color-fg);
-  font-size: $font-size-sm;
-}
-
 // Beats the shared 15px hint regardless of stylesheet order.
 .form .hint {
   font-size: 1rem;

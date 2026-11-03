@@ -109,6 +109,9 @@ const LOWEST = formatMoney(LOWEST_PRICE);
 /** The public "from" price, the same words on every company page. */
 export const PRICE_FACT = { term: 'Public prices from', detail: `${LOWEST} USD` } as const;
 
+/** The same price with the figure set large (FactsBand `figure`), where the band leads with numbers. */
+const PRICE_FIGURE = { term: PRICE_FACT.term, figure: LOWEST, detail: 'USD' } as const;
+
 /** Every office's hours (ui/officeTime), in the words /about-us uses. */
 const OFFICE_HOURS = 'Every team works 9 am to 6 pm local time, Monday to Friday.';
 
@@ -126,14 +129,12 @@ export const ABOUT = {
     title: [{ text: 'We build the technology that ' }, { text: 'agencies sell.', accent: true }] as readonly TitleRun[],
     lede: 'That means websites, automation, internal tools and cloud systems for your clients. Your brand goes on the work. Our engineers stay behind it.',
   },
-  // The published figures lead, set large; then who, and where.
+  // The three published figures, set large. Who founded it and where the
+  // teams are get their own sections below, so the band does not repeat them.
   facts: [
     { term: 'Projects supported', figure: '200+' },
     { term: 'Experience', figure: '25+', detail: 'years combined' },
-    { term: PRICE_FACT.term, figure: LOWEST, detail: 'USD' },
-    { term: 'Founded by', detail: FOUNDER_NAMES },
-    { term: 'Home base', detail: 'Toronto, Canada' },
-    { term: 'Teams in', detail: 'Lagos, Nigeria · Kingston, Jamaica' },
+    PRICE_FIGURE,
   ],
   story: {
     label: 'Why MAPL TECH exists',
@@ -158,6 +159,8 @@ export const ABOUT = {
   },
   close: {
     title: 'Say yes to the project you would normally turn down.',
+    // The homepage close's line (app/page.tsx): the hero already carries the quote.
+    proofLine: 'Clients include LRO Staffing, CHHA-NCR, FOCAS Canada and Crowned Spice.',
   },
 } as const;
 
@@ -169,17 +172,18 @@ export const TEAM = {
   title: 'Leadership & Global Team',
   description:
     'Meet the people behind MAPL TECH: co-founders Leshan Patterson and Mercy Akuma, and our team in Canada, Nigeria and Jamaica.',
+  // No eyebrow: the breadcrumb (About / Team) already names the page.
   hero: {
-    label: 'Our team',
     title: [{ text: 'The people ' }, { text: 'behind the work.', accent: true }] as readonly TitleRun[],
     lede: `MAPL TECH is led by its co-founders, ${FOUNDER_NAMES}, with a team across Canada, Nigeria and Jamaica.`,
   },
-  // What a buyer checks first; the open roles are one small line at the foot of the directory.
+  // What a buyer checks first, the price set large as on /about-us; the open
+  // roles are one small line at the foot of the directory.
   facts: [
     { term: 'Co-founders', detail: FOUNDER_NAMES },
     { term: 'Home base', detail: 'Toronto, Canada' },
     { term: 'Offices', detail: 'Toronto · Lagos · Kingston' },
-    PRICE_FACT,
+    PRICE_FIGURE,
   ],
   founders: {
     label: 'Leadership',

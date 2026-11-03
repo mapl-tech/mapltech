@@ -49,8 +49,11 @@ export const metadata: Metadata = {
  * who came to see who would be doing the work. The form leads the apply
  * section's DOM, so phones and tablets meet it right under "How to apply.";
  * wide screens place the rail (steps, the team and work pages, email, the
- * talent list) beside it on the left. Once the hero is gone, the phone bar
- * offers "Apply" (to the form), not the roles the reader is already in.
+ * talent list) beside it, on the right. Once the hero is gone, the phone bar
+ * offers "Apply" (to the form), not the roles the reader is already in, and
+ * steps aside over the roles list, where every row has its own Apply. The
+ * one email fallback is the rail's (the form's button row holds only the
+ * send).
  */
 /** Display only: a spaced hyphen used as a dash in the source copy reads as a colon. */
 const tidy = (text: string) => text.replace(/\s+-\s+/, ': ');

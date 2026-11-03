@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { countries, teamMembers } from '@/config/team';
 import { slugify } from '@/lib/schema';
 import OfficeClock from './OfficeClock';
@@ -33,9 +34,10 @@ function initialsOf(name: string): string {
  * records carry placeholder photos and are not yet confirmed by the owner,
  * so nothing is added to them here (no bios, no Person JSON-LD, no claims)
  * and none of them is featured anywhere else on the site. The Nigeria and
- * Jamaica groups link to their branch pages; job seekers get one small line
- * at the foot. The `/team#canada`-style and `/team#name` anchors keep older
- * deep links working.
+ * Jamaica groups link to their branch pages. The sheet ends on the buyer's
+ * ask, with one small line in plain ink under it for job seekers. The
+ * `/team#canada`-style and `/team#name` anchors keep older deep links
+ * working.
  */
 export default function TeamDirectory() {
   const groups = countries
@@ -91,13 +93,21 @@ export default function TeamDirectory() {
           })}
         </div>
 
-        <p className={styles.careers}>
-          {careers.before}
-          <Link href={careers.href} data-cta-placement="team_directory_careers">
-            {careers.label}
+        <div className={styles.foot}>
+          <Link href={PROJECT_HREF} className={ed.primary} data-cta-placement="team_directory_primary">
+            {PROJECT_LABEL}
+            <span aria-hidden="true" className={ed.arrow}>
+              →
+            </span>
           </Link>
-          .
-        </p>
+          <p className={styles.careers}>
+            {careers.before}
+            <Link href={careers.href} data-cta-placement="team_directory_careers">
+              {careers.label}
+            </Link>
+            .
+          </p>
+        </div>
       </div>
     </section>
   );

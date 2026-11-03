@@ -12,7 +12,9 @@ import styles from './Founders.module.scss';
  *
  * - `FoundersSpread` (/about-us): on paper, beside the decision to get in
  *   touch: names, titles, one line from each bio, LinkedIn, and the ask
- *   itself ("Start a project" first, the team page beside it).
+ *   itself ("Start a project" first, the team page beside it). The ask
+ *   follows the two people in the DOM, so phones meet the people before
+ *   being asked; wide screens place it back under the lede, beside them.
  * - `FounderProfiles` (/team): one entry each with the full team.ts bios
  *   and the `/team#slug` anchors their Person JSON-LD points at.
  *
@@ -60,20 +62,6 @@ export function FoundersSpread() {
             {TEAM.founders.title}
           </h2>
           <p className={ed.lede}>{TEAM.founders.lede}</p>
-          <div className={ed.actions}>
-            <Link href={PROJECT_HREF} className={ed.primary} data-cta-placement="about_founders_primary">
-              {PROJECT_LABEL}
-              <span aria-hidden="true" className={ed.arrow}>
-                →
-              </span>
-            </Link>
-            <Link href="/team" className={ed.action} data-cta-placement="about_founders_team">
-              Meet the team
-              <span aria-hidden="true" className={ed.arrow}>
-                →
-              </span>
-            </Link>
-          </div>
         </div>
 
         <ul className={styles.people} role="list">
@@ -91,6 +79,21 @@ export function FoundersSpread() {
             </li>
           ))}
         </ul>
+
+        <div className={`${ed.actions} ${styles.spreadActions}`}>
+          <Link href={PROJECT_HREF} className={ed.primary} data-cta-placement="about_founders_primary">
+            {PROJECT_LABEL}
+            <span aria-hidden="true" className={ed.arrow}>
+              →
+            </span>
+          </Link>
+          <Link href="/team" className={ed.action} data-cta-placement="about_founders_team">
+            Meet the team
+            <span aria-hidden="true" className={ed.arrow}>
+              →
+            </span>
+          </Link>
+        </div>
       </div>
     </section>
   );

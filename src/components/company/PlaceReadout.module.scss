@@ -2,8 +2,10 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// The "you are here" card on a regional page: city, live local time, zone,
-// coordinates. A #121214 card; on wide screens it sits on the map's foot.
+// The "you are here" card on a regional page: city, live local time, whether
+// the office is open and when that changes, zone, coordinates (not on phones,
+// where the card is the hero's only figure). A #121214 card; on wide screens
+// it sits on the map's foot.
 // The numerals are plain text colour so the card never outshouts the hero's
 // button; the live state's teal is the status dot alone.
 
@@ -47,6 +49,15 @@
   color: $color-text-body;
 }
 
+// When the state changes ("Back at 9 am WAT"), under the words, past the dot.
+.next {
+  margin: 2px 0 0;
+  padding-left: 16px;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: $color-fg-muted;
+}
+
 .dot {
   flex: none;
   width: 8px;
@@ -69,8 +80,13 @@
 }
 
 .coords {
+  display: none;
   margin: 4px 0 0;
   font-size: $font-size-sm;
   color: $color-fg-muted;
   @include tabular;
+
+  @include md {
+    display: block;
+  }
 }

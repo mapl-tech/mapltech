@@ -71,6 +71,8 @@ export interface RegionConfig {
   /** Plain-language zone name and its fixed UTC offset (neither country observes daylight saving). */
   zoneName: string;
   utcLabel: string;
+  /** The zone's standard abbreviation, after times in the place readout ("Back at 9 am WAT"). */
+  zoneAbbr: string;
   /** Office city coordinates, for the place readout (public geographic fact). */
   coordinates: string;
   serves: readonly string[];
@@ -80,7 +82,7 @@ export interface RegionConfig {
   team: { heading: string; body: string; realitiesHeading: string; realities: readonly string[] };
   /** `heading` names the service list for assistive tech. */
   services: { heading: string; rows: readonly RegionServiceRow[] };
-  /** A real local project; without one the page shows the site-wide proof in its place. */
+  /** A real local project; without one the section is left out and the close carries the client quote. */
   work?: RegionWork;
   faq: { heading: string; items: readonly RegionFaq[] };
   close: { title: string; lede: string };
@@ -129,6 +131,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     officeCity: 'Lagos',
     zoneName: 'West Africa Time',
     utcLabel: 'UTC+1',
+    zoneAbbr: 'WAT',
     coordinates: '6.52° N, 3.38° E',
     serves: ['Lagos', 'Abuja', 'Port Harcourt'],
     hero: {
@@ -216,6 +219,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     officeCity: 'Kingston',
     zoneName: 'Eastern Standard Time',
     utcLabel: 'UTC−5',
+    zoneAbbr: 'EST',
     coordinates: '17.97° N, 76.79° W',
     serves: ['Kingston', 'Montego Bay'],
     hero: {

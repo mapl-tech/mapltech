@@ -104,7 +104,7 @@
 
 .rowText {
   grid-area: text;
-  max-width: 34em;
+  max-width: 31em; // about 65 characters a line (Company.module.scss $measure-read)
   font-size: $font-size-base;
   line-height: 1.5;
   color: $color-ink-muted;
@@ -343,18 +343,6 @@
   height: 100%;
   object-fit: cover;
   object-position: top;
-}
-
-// ---------------------------------------------------------------- proof (no local project yet)
-// The approved client quote and the work page, under the head's lede.
-.proof {
-  display: grid;
-  gap: 16px;
-  justify-items: start;
-  max-width: 44rem;
-  margin-top: clamp(4px, 1vw, 12px);
-  padding-top: clamp(20px, 2.6vw, 28px);
-  border-top: 1px solid $color-hairline;
 }
 
 // ---------------------------------------------------------------- faq

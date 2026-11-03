@@ -14,7 +14,9 @@ import styles from './CareersBoard.module.scss';
  * view is shareable and filtering only toggles `hidden`, never unmounts.
  * "Apply" is a real link (?role=slug#apply, works without JavaScript); with
  * JavaScript it selects the role in the apply form in place and moves focus
- * to it.
+ * to the first field left to fill (Name). The list carries
+ * `data-bar-stand-down`: every row has its own Apply, so the phone bar's
+ * general "Apply" steps aside while the list is on screen.
  */
 
 export interface BoardRole {
@@ -31,7 +33,7 @@ export interface CareersBoardProps {
   roles: BoardRole[];
   /** id of the apply section. */
   applyId?: string;
-  /** id of the role field in the apply form; it receives focus after "Apply". */
+  /** id of the apply form's first field left to fill (Name: the role is already chosen); it receives focus after "Apply". */
   applyFieldId?: string;
   /** id of the talent list, offered when a filter matches nothing. */
   talentId?: string;
@@ -41,7 +43,7 @@ const ALL = 'all';
 
 const isRemote = (role: BoardRole) => /remote/i.test(role.location);
 
-export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 'apply-role', talentId = 'talent' }: CareersBoardProps) {
+export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 'apply-name', talentId = 'talent' }: CareersBoardProps) {
   const [params, setParams] = useUrlParams();
   const reduceMotion = usePrefersReducedMotion();
   // Counts filter changes made here; its parity swaps the rows' entrance
@@ -97,9 +99,10 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
   const apply = (event: MouseEvent<HTMLAnchorElement>, role: BoardRole) => {
     event.preventDefault();
     setParams((next) => next.set('role', role.slug), { hash: applyId });
-    // Land on the form itself, not the apply section's heading above it.
+    // Land on the form itself, not the apply section's heading above it,
+    // with focus where typing starts.
     const field = document.getElementById(applyFieldId);
-    const target = (field instanceof HTMLSelectElement && field.form) || document.getElementById(applyId);
+    const target = (field instanceof HTMLInputElement && field.form) || document.getElementById(applyId);
     target?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     field?.focus({ preventScroll: true });
   };
@@ -154,7 +157,7 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
         </p>
       </div>
 
-      <ul className={styles.list} role="list" data-flip={changes === 0 ? undefined : changes % 2 ? 'a' : 'b'}>
+      <ul className={styles.list} role="list" data-flip={changes === 0 ? undefined : changes % 2 ? 'a' : 'b'} data-bar-stand-down="">
         {roles.map((role) => (
           <li key={role.slug} id={role.slug} className={styles.role} hidden={!shown.has(role.slug)}>
             <h3 className={styles.roleTitle}>{role.title}</h3>

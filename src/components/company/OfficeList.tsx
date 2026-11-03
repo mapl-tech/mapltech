@@ -24,7 +24,7 @@ const OFFICE_ROWS: readonly OfficeRow[] = [
     city: 'Lagos',
     country: 'Nigeria',
     timeZone: 'Africa/Lagos',
-    note: '5 hours ahead of Toronto in summer, 6 in winter',
+    note: '5\u00a0hours ahead of Toronto in summer, 6\u00a0in winter',
     href: '/nigeria',
     linkLabel: 'MAPL TECH Nigeria',
   },
@@ -32,7 +32,7 @@ const OFFICE_ROWS: readonly OfficeRow[] = [
     city: 'Kingston',
     country: 'Jamaica',
     timeZone: 'America/Jamaica',
-    note: 'Same time as Toronto in winter, 1 hour behind in summer',
+    note: 'Same time as Toronto in winter, 1\u00a0hour behind in summer',
     href: '/jamaica',
     linkLabel: 'MAPL TECH Jamaica',
   },
@@ -51,8 +51,9 @@ export interface OfficeListProps {
 
 /**
  * The three offices as a ruled list: city, country and how its clock sits
- * against Toronto's, the live local time with whether the office is open, and
- * a link to the office's own page. Server Component; only the clocks hydrate.
+ * against Toronto's, the live local time with whether the office is open (and
+ * when that changes), and a link to the office's own page. Server Component;
+ * only the clocks hydrate.
  */
 export default function OfficeList({ label, focus, current, placement }: OfficeListProps) {
   const rows = focus ? [...OFFICE_ROWS].sort((a, b) => Number(b.city === focus) - Number(a.city === focus)) : OFFICE_ROWS;

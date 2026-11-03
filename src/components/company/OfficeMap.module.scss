@@ -53,8 +53,11 @@
 }
 
 // The arcs wipe in, in sequence, as the figure scrolls into view (clip-path,
-// the one non-transform property the motion rules allow). Without scroll
-// timelines, or with reduced motion, they are simply there.
+// the one non-transform property the motion rules allow), and all three are
+// whole soon after the figure is fully on screen: at 1440x900 the last one
+// finishes with the section heading still ~180px below the top, so the
+// drawing is complete while it is being read, not as it leaves. Without
+// scroll timelines, or with reduced motion, they are simply there.
 @supports (animation-timeline: view()) {
   @include motion-ok {
     .arc {
@@ -63,15 +66,15 @@
 
       &[data-id='toronto-kingston'] {
         animation-name: wipe-down;
-        animation-range: entry 10% cover 32%;
+        animation-range: entry 10% cover 20%;
       }
 
       &[data-id='toronto-lagos'] {
-        animation-range: entry 30% cover 46%;
+        animation-range: entry 35% cover 26%;
       }
 
       &[data-id='kingston-lagos'] {
-        animation-range: entry 50% cover 56%;
+        animation-range: entry 60% cover 31%;
       }
     }
   }
