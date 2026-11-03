@@ -99,14 +99,16 @@
   line-height: 1.45;
 }
 
-// Selected clients: the label in the title's column, the five marks spread
-// edge to edge across the rest, one row at every width. --mark is a square
-// logo's height; each logo scales from it (content.ts balances them).
+// Selected clients (ClientsMarquee): the label and the loop's pause control
+// in the title's column, the marks flowing right to left across the rest.
+// --mark is a square logo's height; each logo scales from it (content.ts
+// balances them). --loop-gap is the space after every mark, seam included.
 .clients {
   --mark: clamp(34px, 28px + 2vw, 56px);
+  --loop-gap: clamp(40px, 5vw, 72px);
   display: grid;
-  gap: 24px;
-  padding-top: clamp(28px, 3vw, 40px);
+  gap: 16px;
+  padding-top: clamp(20px, 2.4vw, 32px);
   border-top: 1px solid $color-hairline;
 
   @include lg {
@@ -116,18 +118,68 @@
   }
 }
 
+.clientsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .clientsLabel {
   @include section-label;
+}
+
+// Three identical lists side by side, each sliding left by its own width, so
+// the seam never shows. Phones and tablets run it edge to edge of the screen;
+// from lg it stays in its column. The ends fade so marks glide in and out.
+.loop {
+  display: flex;
+  overflow: hidden;
+  margin-inline: calc(-1 * #{$editorial-gutter});
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+
+  @include lg {
+    margin-inline: 0;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
 }
 
 .logos {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 var(--loop-gap) 0 0;
   display: flex;
+  flex: none;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: var(--loop-gap);
+  // About 24px a second at every width (one list is ~420px on phones, ~700px on desktop).
+  animation: logo-loop 18s linear infinite;
+
+  @include md {
+    animation-duration: 22s;
+  }
+
+  @include lg {
+    animation-duration: 28s;
+  }
+
+  // Paused by the visitor (here or in the hero), or resting off screen.
+  .loop:is([data-paused], [data-idle]) & {
+    animation-play-state: paused;
+  }
+
+  // Hover holds it still for a closer look (mouse and trackpad only).
+  @include pointer-fine {
+    .loop:hover & {
+      animation-play-state: paused;
+    }
+  }
+}
+
+@keyframes logo-loop {
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
 }
 
 .logo {
@@ -140,33 +192,94 @@
     height: calc(var(--mark) * var(--scale, 1));
     opacity: 0.72;
   }
+}
 
-  // The marks rise in one after another as the row comes up the screen.
-  // Scroll-driven, on the wrapper (the mark keeps its tone); without support
-  // or with reduced motion they are simply there.
-  @include motion-ok {
-    @supports (animation-timeline: view()) {
-      animation: logo-in linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 8%;
-    }
+// The loop's control: the same "Pause motion" as the hero, drawn as an icon.
+.loopToggle {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-full;
+  background: transparent;
+  color: $color-fg-muted;
+  cursor: pointer;
+  transition: color $transition-fast, border-color $transition-fast;
+
+  &:hover {
+    color: $color-fg;
+    border-color: rgba($color-red, 0.6);
   }
 
-  // In one row the marks share a scroll position, so later ones start later.
-  // The whole run is over in the row's first ~120px on screen, so a pause in
-  // scrolling never leaves a mark half faded where anyone reads.
-  @supports (animation-timeline: view()) {
-    @for $i from 2 through 5 {
-      &:nth-child(#{$i}) {
-        animation-range: cover (($i - 1) * 1.5%) cover (8% + ($i - 1) * 1.5%);
-      }
+  @include focus-ring;
+}
+
+// Two bars (pause) or a triangle (play), as in the hero's toggle.
+.loopIcon {
+  position: relative;
+  width: 10px;
+  height: 12px;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    border-radius: 1px;
+    background: currentColor;
+  }
+
+  &::before {
+    left: 1px;
+  }
+
+  &::after {
+    right: 1px;
+  }
+
+  &[data-paused] {
+    &::before {
+      left: 1px;
+      width: 0;
+      height: 0;
+      border-radius: 0;
+      background: none;
+      border-style: solid;
+      border-width: 6px 0 6px 10px;
+      border-color: transparent transparent transparent currentColor;
+    }
+
+    &::after {
+      display: none;
     }
   }
 }
 
-@keyframes logo-in {
-  from {
-    opacity: 0;
-    translate: 0 16px;
+// Reduced motion: one still row spread edge to edge; no copies, fade or control.
+@media (prefers-reduced-motion: reduce) {
+  .loop {
+    margin-inline: 0;
+    mask-image: none;
+  }
+
+  .logos {
+    flex: 1;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0;
+    animation: none;
+
+    &[aria-hidden] {
+      display: none;
+    }
+  }
+
+  .loopToggle {
+    display: none;
   }
 }

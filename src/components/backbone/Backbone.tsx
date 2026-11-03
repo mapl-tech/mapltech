@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { setMotionPaused, useMotionPaused } from '@/components/ui/motionPause';
 import { usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
 import type { BackboneHandle } from './scene';
 import styles from './Backbone.module.scss';
@@ -14,32 +15,16 @@ import styles from './Backbone.module.scss';
  * forever without WebGL, the hero's CSS light is the whole picture.
  *
  * The pointer is read from window, so the copy and buttons layered over the
- * canvas never block it. Motion can be paused (WCAG 2.2.2) and the choice is
- * remembered; under prefers-reduced-motion the scene is a single still frame.
+ * canvas never block it. Motion can be paused (WCAG 2.2.2); the choice is
+ * shared with the rest of the page and remembered (motionPause.ts). Under
+ * prefers-reduced-motion the scene is a single still frame.
  */
 
-const PAUSE_KEY = 'mapl:motion-paused';
 /** Matches the hero's portrait layout (Hero.module.scss $portrait). */
 const PORTRAIT = '(max-aspect-ratio: 21/20)';
 /** Desktop starts almost at once; phones wait so the scene never competes with first paint. */
 const IDLE_DELAY_FINE = 250;
 const IDLE_DELAY_COARSE = 2200;
-
-function readPaused(): boolean {
-  try {
-    return window.localStorage.getItem(PAUSE_KEY) === '1';
-  } catch {
-    return false;
-  }
-}
-
-function writePaused(paused: boolean) {
-  try {
-    window.localStorage.setItem(PAUSE_KEY, paused ? '1' : '0');
-  } catch {
-    // Private mode or blocked storage: the toggle still works for this visit.
-  }
-}
 
 export default function Backbone({ className, toggleClassName }: { className?: string; toggleClassName?: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -47,9 +32,14 @@ export default function Backbone({ className, toggleClassName }: { className?: s
   const handleRef = useRef<BackboneHandle | null>(null);
   const reduceMotion = usePrefersReducedMotion();
   const [live, setLive] = useState(false);
-  // Read once on the client; nothing that depends on it renders before the scene is live.
-  const [paused, setPaused] = useState(() => typeof window !== 'undefined' && readPaused());
+  const paused = useMotionPaused();
   const pausedRef = useRef(paused);
+
+  // The choice can change anywhere on the page (the logo loop has its own control).
+  useEffect(() => {
+    pausedRef.current = paused;
+    handleRef.current?.setPaused(paused);
+  }, [paused]);
   const [touched, setTouched] = useState(false);
 
   useEffect(() => {
@@ -205,13 +195,7 @@ export default function Backbone({ className, toggleClassName }: { className?: s
     };
   }, [live, touched]);
 
-  const toggle = () => {
-    const next = !paused;
-    pausedRef.current = next;
-    setPaused(next);
-    writePaused(next);
-    handleRef.current?.setPaused(next);
-  };
+  const toggle = () => setMotionPaused(!paused);
 
   const interactive = live && !reduceMotion;
 
@@ -224,12 +208,8 @@ export default function Backbone({ className, toggleClassName }: { className?: s
     >
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
       {interactive ? (
-        <button
-          type="button"
-          className={[styles.toggle, toggleClassName].filter(Boolean).join(' ')}
-          aria-pressed={paused}
-          onClick={toggle}
-        >
+        // The label says what a press does, so no aria-pressed (it would announce "Play motion, pressed").
+        <button type="button" className={[styles.toggle, toggleClassName].filter(Boolean).join(' ')} onClick={toggle}>
           <span className={styles.toggleIcon} data-paused={paused ? '' : undefined} aria-hidden="true" />
           {paused ? 'Play motion' : 'Pause motion'}
         </button>
