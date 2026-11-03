@@ -6,6 +6,7 @@ import { BUNDLES_ANSWER, BUNDLES_FROM, canonicalCopy, priceText } from './conten
 import PriceGroup from './PriceGroup';
 import TierDetails from './TierDetails';
 import styles from './PriceList.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * Monthly partnerships from `pricing.bundles`: several services for one
@@ -65,7 +66,7 @@ export default function BundleTiers() {
                 >
                   {PROJECT_LABEL}
                   <span className="visually-hidden">: {bundle.name}</span>
-                  <span aria-hidden="true"> →</span>
+                   <Arrow />
                 </Link>
               </div>
             </li>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import ed from './Company.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 export interface HeroAction {
   label: string;
@@ -19,7 +20,7 @@ function ActionLink({ action, className, hero }: { action: HeroAction; className
       {action.label}
       {hero ? (
         <span aria-hidden="true" className={ed.arrow}>
-          →
+          <Arrow />
         </span>
       ) : null}
     </>

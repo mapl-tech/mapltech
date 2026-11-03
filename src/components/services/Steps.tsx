@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import styles from './Steps.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 export interface Step {
   title: string;
@@ -45,7 +46,7 @@ export default function Steps({
                 >
                   {step.title}{' '}
                   <span aria-hidden="true" className={styles.nameArrow}>
-                    →
+                    <Arrow />
                   </span>
                 </Link>
               ) : (

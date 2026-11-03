@@ -8,6 +8,7 @@ import { field, useContactSubmit } from './useContactSubmit';
 import type { BoardRole } from './CareersBoard';
 import forms from './forms.module.scss';
 import RecaptchaNotice from './RecaptchaNotice';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * Careers apply form: role (pre-selected from ?role=, which the board's
@@ -283,7 +284,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
         <button type="submit" className={css.submit} disabled={status === 'sending'} data-cta-placement="careers_apply_submit">
           {status === 'sending' ? 'Sending…' : 'Send application'}
           <span aria-hidden="true" className={css.submitArrow}>
-            →
+            <Arrow />
           </span>
         </button>
       </div>

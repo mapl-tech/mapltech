@@ -14,6 +14,7 @@ import ArticleToc from './ArticleToc';
 import { SERVICE_LIST, serviceFrom, topicLabel } from './services';
 import TocDisclosure from './TocDisclosure';
 import styles from './Post.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The blog post template (Nov 2026 award pass), reading first:
@@ -166,7 +167,7 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                       >
                         {ESTIMATE_LABEL}
                         <span aria-hidden="true" className={styles.arrow}>
-                          →
+                          <Arrow />
                         </span>
                       </Link>
                       {service && serviceName ? (
@@ -263,7 +264,7 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
               {older ? (
                 <Link href={`/blog/${older.slug}`} className={styles.adjacentLink}>
                   <span className={styles.adjacentLabel}>
-                    <span aria-hidden="true">← </span>Older
+                    <Arrow direction="left" /> Older
                   </span>
                   <span className={styles.adjacentTitle}>{older.title}</span>
                 </Link>
@@ -273,14 +274,14 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
               {newer ? (
                 <Link href={`/blog/${newer.slug}`} className={`${styles.adjacentLink} ${styles.adjacentNext}`}>
                   <span className={styles.adjacentLabel}>
-                    Newer<span aria-hidden="true"> →</span>
+                    Newer <Arrow />
                   </span>
                   <span className={styles.adjacentTitle}>{newer.title}</span>
                 </Link>
               ) : (
                 <Link href="/blog" className={`${styles.adjacentLink} ${styles.adjacentNext}`}>
                   <span className={styles.adjacentLabel}>
-                    All articles<span aria-hidden="true"> →</span>
+                    All articles <Arrow />
                   </span>
                   <span className={styles.adjacentTitle}>Back to the blog</span>
                 </Link>

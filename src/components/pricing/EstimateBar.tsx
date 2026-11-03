@@ -5,6 +5,7 @@ import LiveNumber from '@/components/ui/LiveNumber';
 import { formatEstimateMonthly, formatEstimateRange, formatMoney, type EstimateResult } from '@/lib/estimate';
 import { TOTAL_SPRING } from './content';
 import styles from './ScopeEstimator.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 interface EstimateBarProps {
   result: EstimateResult;
@@ -79,7 +80,7 @@ export default function EstimateBar({ result, visible, onJump }: EstimateBarProp
         <span className={styles.barAction}>
           Details
           <span aria-hidden="true" className={styles.barArrow}>
-            ↓
+            <Arrow direction="down" />
           </span>
         </span>
       </button>

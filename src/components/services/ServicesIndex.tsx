@@ -10,6 +10,7 @@ import Steps from './Steps';
 import { keepTogether } from './keepTogether';
 import { INDEX_FAQ, INDEX_STEPS, PARTNERSHIPS_HREF, PARTNERSHIP_FROM } from './serviceContent';
 import styles from './ServicesIndex.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * /services (Nov 2026 simplify pass): one page, three ideas.
@@ -63,7 +64,7 @@ export default function ServicesIndex() {
             <Link href={PARTNERSHIPS_HREF} className={styles.textLink} data-cta-placement="services_partner_pricing">
               Compare monthly partnerships
               <span aria-hidden="true" className={styles.arrow}>
-                →
+                <Arrow />
               </span>
             </Link>
           </div>

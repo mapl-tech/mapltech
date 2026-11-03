@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { LAYERS, SERVICES_INTRO, SERVICE_PREVIEWS } from './content';
 import styles from './ServiceIndex.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /** The cloud row has no screenshot to show; its preview is how an update goes live (PipelineDiagram's stages). */
 const PIPELINE = ['Change', 'Tests', 'Preview', 'Review', 'Live', 'Monitoring'] as const;
@@ -77,7 +78,7 @@ export default function ServiceIndex() {
             <Link href={SERVICES_INTRO.estimate.href} className={styles.ledeLink} data-cta-placement="home_services_estimate">
               {SERVICES_INTRO.estimate.label}
               <span aria-hidden="true" className={styles.ledeArrow}>
-                {'\u00a0'}→
+                {'\u00a0'}<Arrow />
               </span>
             </Link>
           </p>
@@ -108,7 +109,7 @@ export default function ServiceIndex() {
                     {layer.fromPrice}
                   </span>
                   <span className={styles.go} aria-hidden="true">
-                    →
+                    <Arrow />
                   </span>
                 </Link>
               </li>

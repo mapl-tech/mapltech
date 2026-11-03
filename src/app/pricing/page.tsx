@@ -28,6 +28,7 @@ import {
 import sections from '@/components/pricing/PricingSections.module.scss';
 import { keepTogether } from '@/components/services/keepTogether';
 import styles from './page.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /*
  * /pricing (Nov 2026 award pass, simplified). Answer first: the H1 names the
@@ -115,7 +116,7 @@ function StartingPrices() {
               <span id={`ledger-${facts.service}-more`} className={styles.cellMore}>
                 All {facts.tierCount} packages
                 <span className={styles.cellArrow} aria-hidden="true">
-                  ↓
+                  <Arrow direction="down" />
                 </span>
               </span>
             </a>

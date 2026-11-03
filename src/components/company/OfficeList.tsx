@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { OfficeCity } from './OfficeMap';
 import OfficeNow from './OfficeNow';
 import styles from './OfficeList.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 interface OfficeRow {
   city: OfficeCity;
@@ -71,7 +72,7 @@ export default function OfficeList({ label, focus, current, placement }: OfficeL
               <Link href={row.href} className={styles.link} data-cta-placement={`${placement}_${row.city.toLowerCase()}`}>
                 {row.linkLabel}
                 <span aria-hidden="true" className={styles.arrow}>
-                  →
+                  <Arrow />
                 </span>
               </Link>
             ) : null}

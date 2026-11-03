@@ -16,6 +16,7 @@ import {
   type TierView,
 } from './serviceContent';
 import styles from './TierSchedule.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /** Tier descriptions in site.ts have no closing punctuation. */
 function sentence(text: string): string {
@@ -113,7 +114,7 @@ export default function TierSchedule({ view }: { view: LayerView }) {
             <Link href={PRICING_HREF} className={styles.textLink} data-cta-placement={`${view.slug}_tiers_pricing`}>
               {PRICING_LABEL}
               <span aria-hidden="true" className={styles.arrow}>
-                →
+                <Arrow />
               </span>
             </Link>
           </p>
@@ -182,7 +183,7 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
           {/* No-break hyphens and space: "AI‑Powered" never splits, and the arrow stays on its line. */}
           Choose {tier.name.replace(/-/g, '\u2011')}{'\u00a0'}
           <span aria-hidden="true" className={styles.arrow}>
-            →
+            <Arrow />
           </span>
         </Link>
         {tier.isCustom ? null : (

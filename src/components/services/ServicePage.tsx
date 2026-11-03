@@ -28,6 +28,7 @@ import {
   type LayerView,
 } from './serviceContent';
 import styles from './ServicePage.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 export interface ServicePageProps {
   slug: ServiceSlug;
@@ -268,7 +269,7 @@ function OtherServices({ current }: { current: LayerView }) {
                 <span className={styles.otherPrice}>
                   {layer.fromLabel}
                   <span className={styles.otherGo} aria-hidden="true">
-                    →
+                    <Arrow />
                   </span>
                 </span>
               </Link>
@@ -279,7 +280,7 @@ function OtherServices({ current }: { current: LayerView }) {
           <Link href="/services" className={styles.textLink} data-cta-placement={`${current.slug}_other_all`}>
             See all services
             <span aria-hidden="true" className={styles.arrow}>
-              →
+              <Arrow />
             </span>
           </Link>
         </p>

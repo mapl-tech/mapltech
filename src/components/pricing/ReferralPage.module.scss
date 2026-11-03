@@ -38,8 +38,7 @@ $pad-y: clamp(48px, 7vw, 104px);
 
   // The arrow lives in CSS: the mobile bar repeats this link's text.
   &::after {
-    content: '\2193';
-    display: inline-block;
+    @include arrow-glyph(down);
     transition: transform 0.4s $ease-out-expo;
   }
 

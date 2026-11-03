@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import styles from './Rows.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 export interface ArticleRowProps {
   href: string;
@@ -52,7 +53,7 @@ export default function ArticleRow({
         <span>{readTime} min read</span>
       </p>
       <span className={styles.go} aria-hidden="true">
-        →
+        <Arrow />
       </span>
     </article>
   );

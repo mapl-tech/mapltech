@@ -6,6 +6,7 @@ import PipelineDiagram from './PipelineDiagram';
 import { keepTogether } from './keepTogether';
 import { proofCases, type LayerView, type ProofCase } from './serviceContent';
 import styles from './ProofBlock.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * Proof for one service, staged like the homepage's work cards: the lead case
@@ -58,7 +59,7 @@ export default function ProofBlock({ view }: { view: LayerView }) {
                       {item.headline}
                     </span>
                     <span className={styles.moreGo} aria-hidden="true">
-                      →
+                      <Arrow />
                     </span>
                   </Link>
                 </li>
@@ -99,7 +100,7 @@ function LeadCase({ item, view }: { item: ProofCase; view: LayerView }) {
         <Link href={item.href} className={styles.read} data-cta-placement={`${view.slug}_case_${item.slug}`}>
           Read the case study<span className="visually-hidden">: {item.client}</span>
           <span aria-hidden="true" className={styles.readArrow}>
-            →
+            <Arrow />
           </span>
         </Link>
       </div>

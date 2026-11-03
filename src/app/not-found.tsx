@@ -7,6 +7,7 @@ import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { SERVICE_KEYS, SERVICE_NAMES } from '@/components/editorial/services';
 import NotFoundHint, { BrokenLinkReport, type HintPage } from '@/components/editorial/NotFoundHint';
 import styles from '@/components/editorial/NotFound.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The site-wide 404 (any unmatched URL and every notFound() call), kept light:
@@ -68,7 +69,7 @@ export default function NotFound() {
               <Link href={PROJECT_HREF} className={styles.primary} data-cta-placement="not_found_project">
                 {PROJECT_LABEL}
                 <span aria-hidden="true" className={styles.arrow}>
-                  →
+                  <Arrow />
                 </span>
               </Link>
               <Link href="/" className={styles.textLink} data-cta-placement="not_found_home">
@@ -92,7 +93,7 @@ export default function NotFound() {
                   <span className={styles.placeNote}>{place.note}</span>
                 </span>
                 <span className={styles.placeArrow} aria-hidden="true">
-                  →
+                  <Arrow />
                 </span>
               </li>
             ))}

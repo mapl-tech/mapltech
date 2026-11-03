@@ -13,6 +13,7 @@ import { categoryService, firstSentence, topicSlug } from '@/components/convert/
 import { SERVICE_LIST, serviceFrom, serviceLinks, topicLabel } from '@/components/editorial/services';
 import { SERVICE_META } from '@/lib/estimate';
 import styles from './blog-index.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * /blog (Nov 2026, simplified): the page hero → the newest article presented
@@ -144,7 +145,7 @@ export default function BlogPage() {
                 </p>
                 <span className={styles.read} aria-hidden="true">
                   Read the article
-                  <span className={styles.readArrow}>→</span>
+                  <span className={styles.readArrow}><Arrow /></span>
                 </span>
               </div>
             </div>

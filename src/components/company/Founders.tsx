@@ -4,6 +4,7 @@ import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { ABOUT, FOUNDERS, TEAM, type Founder } from './content';
 import ed from './Company.module.scss';
 import styles from './Founders.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The two founders, the only people on the site with photographs, in the
@@ -46,7 +47,7 @@ function LinkedIn({ founder, placement }: { founder: Founder; placement: string 
       {founder.name.split(' ')[0]} on LinkedIn
       <span className="visually-hidden"> (opens in a new tab)</span>
       <span aria-hidden="true" className={styles.external}>
-        ↗
+        <Arrow direction="up-right" />
       </span>
     </a>
   );
@@ -84,13 +85,13 @@ export function FoundersSpread() {
           <Link href={PROJECT_HREF} className={ed.primary} data-cta-placement="about_founders_primary">
             {PROJECT_LABEL}
             <span aria-hidden="true" className={ed.arrow}>
-              →
+              <Arrow />
             </span>
           </Link>
           <Link href="/team" className={ed.action} data-cta-placement="about_founders_team">
             Meet the team
             <span aria-hidden="true" className={ed.arrow}>
-              →
+              <Arrow />
             </span>
           </Link>
         </div>

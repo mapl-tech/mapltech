@@ -18,6 +18,7 @@ import { REPLY_TIME, rolesIn, startingFrom, type RegionConfig } from './regions'
 import ed from './Company.module.scss';
 import place from './PlaceReadout.module.scss';
 import styles from './RegionalPage.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 export interface RegionalPageProps {
   region: RegionConfig;
@@ -134,7 +135,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
               <Link href={PRICING_HREF} className={ed.action} data-cta-placement={`${prefix}_services_pricing`}>
                 See all prices
                 <span aria-hidden="true" className={ed.arrow}>
-                  →
+                  <Arrow />
                 </span>
               </Link>
             </div>
@@ -152,7 +153,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
                     </Link>
                     <p className={styles.rowText}>{row.description}</p>
                     <span className={styles.rowGo} aria-hidden="true">
-                      →
+                      <Arrow />
                     </span>
                   </div>
                   <div className={styles.rowFoot}>
@@ -165,7 +166,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
                       {PROJECT_LABEL}
                       <span className="visually-hidden">: {name}</span>
                       <span aria-hidden="true" className={ed.arrow}>
-                        →
+                        <Arrow />
                       </span>
                     </Link>
                   </div>
@@ -206,7 +207,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
                 <Link href={region.work.href} className={ed.action} data-cta-placement={`${prefix}_work`}>
                   Read the case study<span className="visually-hidden">: {region.work.client}</span>
                   <span aria-hidden="true" className={ed.arrow}>
-                    →
+                    <Arrow />
                   </span>
                 </Link>
               </div>

@@ -13,6 +13,7 @@ import { findProject } from '@/components/work/work-data';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { creativeWork, imageObject, itemList, pageGraph } from '@/lib/schema';
 import styles from './work.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /*
  * /our-work (Nov 2026 simplify pass): four parts, in reading order. The page
@@ -248,7 +249,7 @@ function Row({ item }: { item: CatalogItem }) {
       </dl>
 
       <span className={styles.go} aria-hidden="true">
-        →
+        <Arrow />
       </span>
     </li>
   );

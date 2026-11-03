@@ -34,6 +34,7 @@ import {
 } from './brief';
 import styles from './ProjectBrief.module.scss';
 import RecaptchaNotice from './RecaptchaNotice';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The contact brief: one question at a time, in one form. Since the Nov 2026
@@ -712,7 +713,7 @@ export default function ProjectBrief({
           {step < 4 ? 'Continue' : status === 'sending' ? 'Sending…' : 'Send the brief'}
           {status === 'sending' && step === 4 ? null : (
             <span className={styles.arrow} aria-hidden="true">
-              →
+              <Arrow />
             </span>
           )}
         </button>

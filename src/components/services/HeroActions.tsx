@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { keepTogether } from './keepTogether';
 import styles from './HeroActions.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The page hero's two actions, styled as the homepage hero's: "Start a
@@ -31,7 +32,7 @@ export default function HeroActions({
       <Link href={href} className={styles.primary} data-hero-cta="" data-cta-placement={`${page}_hero_primary`}>
         {PROJECT_LABEL}
         <span aria-hidden="true" className={styles.arrow}>
-          →
+          <Arrow />
         </span>
       </Link>
       <Link href={secondary.href} className={styles.secondary} data-cta-placement={`${page}_hero_secondary`}>

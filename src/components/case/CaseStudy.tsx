@@ -10,6 +10,7 @@ import SiteScroll from './SiteScroll';
 import { FULL_PAGES } from './fullPages';
 import type { CaseStory } from './stories';
 import styles from './Case.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The case-study template (Nov 2026, simplified). Written for the next buyer:
@@ -95,7 +96,7 @@ export default function CaseStudy({
                       <a href={fact.href} target="_blank" rel="noopener noreferrer">
                         {fact.detail}
                         <span className="visually-hidden"> (opens in a new tab)</span>
-                        <span aria-hidden="true"> ↗</span>
+                         <Arrow direction="up-right" />
                       </a>
                     ) : (
                       fact.detail
@@ -136,7 +137,7 @@ export default function CaseStudy({
               ))}
             </dl>
             <Link href={estimateHref} className={styles.resultsAction} data-cta-placement={`case_${entry.slug}_results`}>
-              Price a project like this<span aria-hidden="true"> →</span>
+              Price a project like this <Arrow />
             </Link>
           </div>
         </section>
@@ -287,7 +288,7 @@ export default function CaseStudy({
                 </span>
               </span>
               <span className={styles.nextGo} aria-hidden="true">
-                →
+                <Arrow />
               </span>
             </Link>
           </div>

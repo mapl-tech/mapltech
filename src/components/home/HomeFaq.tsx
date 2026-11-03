@@ -3,6 +3,7 @@ import Accordion from '@/components/ui/Accordion';
 import { keepTogether } from '@/components/services/keepTogether';
 import type { FaqEntry } from './data';
 import styles from './HomeFaq.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The five questions agencies ask, on the native <details name="faq">
@@ -39,7 +40,7 @@ function Actions({ actions }: { actions: NonNullable<FaqEntry['actions']> }) {
         >
           {action.label}
           <span aria-hidden="true" className={styles.arrow}>
-            →
+            <Arrow />
           </span>
         </Link>
       ))}

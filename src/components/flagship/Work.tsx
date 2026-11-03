@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { HERO_REASSURE, PRIMARY_CTA, WORK, WORK_SECTION } from './content';
 import styles from './Work.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /** Real captures per case (public/images/cases): the live desktop site and its phone view. */
 const SHOTS: Record<string, { desktop: string; mobile: string; url: string }> = {
@@ -29,7 +30,7 @@ export default function Work() {
           <p className={styles.lede}>{WORK_SECTION.lede}</p>
           <Link href={WORK_SECTION.all.href} className={styles.all} data-cta-placement="home_work_all">
             {WORK_SECTION.all.label}
-            <span aria-hidden="true">→</span>
+            <Arrow />
           </Link>
         </div>
       </div>
@@ -58,7 +59,7 @@ export default function Work() {
                   <Link href={card.href} className={styles.read} data-cta-placement={`home_work_${card.slug}`}>
                     Read the case study<span className="visually-hidden">: {card.client}</span>
                     <span aria-hidden="true" className={styles.readArrow}>
-                      →
+                      <Arrow />
                     </span>
                   </Link>
                 </div>
@@ -112,7 +113,7 @@ export default function Work() {
           <Link href={PRIMARY_CTA.href} className={styles.askPrimary} data-cta-placement="home_work_ask">
             {PRIMARY_CTA.label}
             <span aria-hidden="true" className={styles.askArrow}>
-              →
+              <Arrow />
             </span>
           </Link>
           <p className={styles.askNote}>{HERO_REASSURE}</p>

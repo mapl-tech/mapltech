@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import styles from './Cta.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * CTAs for the work family (/our-work, /labs), in the homepage's idiom: plain
@@ -30,7 +31,7 @@ export function PrimaryCta({ href, placement, children, className, hero = false 
     >
       {children}
       <span aria-hidden="true" className={styles.arrow}>
-        →
+        <Arrow />
       </span>
     </Link>
   );
@@ -59,7 +60,7 @@ export function TextCta({
         {children}
         <span className="visually-hidden"> (opens in a new tab)</span>
         <span aria-hidden="true" className={styles.arrow}>
-          ↗
+          <Arrow direction="up-right" />
         </span>
       </a>
     );
@@ -69,7 +70,7 @@ export function TextCta({
       {children}
       {arrow ? (
         <span aria-hidden="true" className={styles.arrow}>
-          →
+          <Arrow />
         </span>
       ) : null}
     </Link>

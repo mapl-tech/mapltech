@@ -5,6 +5,7 @@ import IndexPreview from './IndexPreview';
 import PipelineDiagram from './PipelineDiagram';
 import { LAYER_VIEWS, briefHref, rowExample, type LayerView } from './serviceContent';
 import styles from './IndexRows.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /** "lrostaffing.com" for the preview's address bar, from the capture's case. */
 const PREVIEW_URL: Partial<Record<string, string>> = {
@@ -88,7 +89,7 @@ function Row({ layer, index }: { layer: LayerView; index: number }) {
           {layer.fromLabel}
         </span>
         <span className={styles.go} aria-hidden="true">
-          →
+          <Arrow />
         </span>
       </Link>
       <div className={styles.foot}>
@@ -104,7 +105,7 @@ function Row({ layer, index }: { layer: LayerView; index: number }) {
               </span>
               <span className="visually-hidden">, a case study for {layer.name}</span>
               <span aria-hidden="true" className={styles.exampleArrow}>
-                →
+                <Arrow />
               </span>
             </Link>
             {/* One result the case study publishes, as the evidence beside the link, or one thing it built. */}
@@ -125,7 +126,7 @@ function Row({ layer, index }: { layer: LayerView; index: number }) {
           >
             Start {projectOf(layer.name)}
             <span aria-hidden="true" className={styles.startArrow}>
-              →
+              <Arrow />
             </span>
           </Link>
           <Link href={layer.estimate} className={styles.priceLink} data-cta-placement={`services_index_${layer.service}_price`}>

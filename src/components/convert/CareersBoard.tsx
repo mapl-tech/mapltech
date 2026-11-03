@@ -5,6 +5,7 @@ import { placeWords } from '@/components/company/places';
 import { usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
 import { useUrlParams } from './useUrlState';
 import styles from './CareersBoard.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The open roles from `careers` in site.ts, every one in the server HTML, set
@@ -183,7 +184,7 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
             >
               Apply
               <span aria-hidden="true" className={styles.applyArrow}>
-                →
+                <Arrow />
               </span>
             </a>
           </li>

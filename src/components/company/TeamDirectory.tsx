@@ -7,6 +7,7 @@ import { TEAM, keepBrand } from './content';
 import { regions } from './regions';
 import ed from './Company.module.scss';
 import styles from './TeamDirectory.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /** Each country's office (Toronto, Lagos, Kingston): Toronto is headquarters. */
 const OFFICE_OF: Record<string, { city: string; timeZone: string }> = {
@@ -70,7 +71,7 @@ export default function TeamDirectory() {
                       <Link href={branch.path} className={ed.action} data-cta-placement={`team_directory_${branch.slug}`}>
                         {keepBrand(branch.brandName)}
                         <span aria-hidden="true" className={ed.arrow}>
-                          →
+                          <Arrow />
                         </span>
                       </Link>
                     </div>
@@ -97,7 +98,7 @@ export default function TeamDirectory() {
           <Link href={PROJECT_HREF} className={ed.primary} data-cta-placement="team_directory_primary">
             {PROJECT_LABEL}
             <span aria-hidden="true" className={ed.arrow}>
-              →
+              <Arrow />
             </span>
           </Link>
           <p className={styles.careers}>

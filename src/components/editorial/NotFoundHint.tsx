@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useIsClient } from '@/components/ui/useMediaQuery';
 import styles from './NotFound.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * Path-aware recovery for the 404. A missing /services/... or /our-work/...
@@ -144,7 +145,7 @@ export default function NotFoundHint({ services = [], cases = [] }: Partial<Hint
         <Link href={hint.href} className={styles.hintButton} data-cta-placement="not_found_hint">
           {hint.label}
           <span aria-hidden="true" className={styles.arrow}>
-            →
+            <Arrow />
           </span>
         </Link>
       ) : (

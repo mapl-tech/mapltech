@@ -7,6 +7,7 @@ import LoadIntoEstimator from './LoadIntoEstimator';
 import PriceGroup from './PriceGroup';
 import TierDetails from './TierDetails';
 import styles from './PriceList.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * One service in the price list, collapsed to its row (PriceGroup): opened,
@@ -28,7 +29,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
         <p className={styles.groupAnswer}>{facts.answer}</p>
         <Link href={facts.href} className={styles.textLink} data-cta-placement={`pricing_service_${facts.service}`}>
           {facts.linkLabel}
-          <span aria-hidden="true"> →</span>
+           <Arrow />
         </Link>
       </div>
 
@@ -73,7 +74,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
                   <Link href={PROJECT_HREF} className={styles.tierAction} data-cta-placement={`pricing_tier_${facts.service}_call`}>
                     {PROJECT_LABEL}
                     <span className="visually-hidden">: {tier.name}</span>
-                    <span aria-hidden="true"> →</span>
+                     <Arrow />
                   </Link>
                 ) : parsed.isCustom ? (
                   <EstimateBriefLink
@@ -84,7 +85,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
                   >
                     {PROJECT_LABEL}
                     <span className="visually-hidden">: {tier.name}</span>
-                    <span aria-hidden="true"> →</span>
+                     <Arrow />
                   </EstimateBriefLink>
                 ) : (
                   <LoadIntoEstimator service={facts.service} size={size.key} className={styles.tierAction}>

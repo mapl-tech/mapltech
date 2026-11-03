@@ -6,6 +6,7 @@ import PageHeader from '@/components/ui/PageHeader';
 import ArticleToc from './ArticleToc';
 import TocDisclosure from './TocDisclosure';
 import styles from './Legal.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 export interface LegalSection {
   id: string;
@@ -235,11 +236,11 @@ export default function LegalDocument({
                 </a>
                 <Link href={sibling.href} className={styles.textLink}>
                   {sibling.label}
-                  <span aria-hidden="true">→</span>
+                  <Arrow />
                 </Link>
                 <Link href="/" className={styles.textLink}>
                   Back to the homepage
-                  <span aria-hidden="true">→</span>
+                  <Arrow />
                 </Link>
               </p>
             </aside>

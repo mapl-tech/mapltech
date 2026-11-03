@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useScrollProgress } from '@/components/ui/useScrollProgress';
 import type { FullCapture } from './fullPages';
 import styles from './Case.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * "Scroll the real site": the section pins and the live homepage, captured
@@ -75,7 +76,7 @@ export default function SiteScroll({
           {skipTo ? (
             <a href={`#${skipTo}`} className={styles.siteSkip}>
               Skip the live site
-              <span aria-hidden="true">↓</span>
+              <Arrow direction="down" />
             </a>
           ) : null}
         </div>

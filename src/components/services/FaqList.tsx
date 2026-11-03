@@ -3,6 +3,7 @@ import Accordion from '@/components/ui/Accordion';
 import { keepTogether } from './keepTogether';
 import type { FaqView } from './serviceContent';
 import styles from './FaqList.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /** The direct answer (first sentence) and the detail after it. Same words, same order as the JSON-LD. */
 function splitAnswer(answer: string): [string, string] {
@@ -47,7 +48,7 @@ function Actions({ actions, name }: { actions: NonNullable<FaqView['actions']>; 
         >
           {action.label}
           <span aria-hidden="true" className={styles.arrow}>
-            →
+            <Arrow />
           </span>
         </Link>
       ))}

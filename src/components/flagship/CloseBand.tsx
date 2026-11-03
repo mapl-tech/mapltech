@@ -4,6 +4,7 @@ import { CLOSE_BAND, PRIMARY_CTA } from './content';
 import CloseBandPrimary from './CloseBandPrimary';
 import QuoteLine from './QuoteLine';
 import styles from './CloseBand.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The close: a full crimson band with the one ask. Every page ends on one;
@@ -55,7 +56,7 @@ export default function CloseBand({
           <CloseBandPrimary href={href} className={styles.primary} placement={`${placement}_primary`} hero={hero}>
             {PRIMARY_CTA.label}
             <span aria-hidden="true" className={styles.arrow}>
-              →
+              <Arrow />
             </span>
           </CloseBandPrimary>
           {secondary ? (

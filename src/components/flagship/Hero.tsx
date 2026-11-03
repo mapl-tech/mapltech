@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Backbone from '@/components/backbone/Backbone';
 import { HERO, HERO_PROOF, HERO_REASSURE, PRIMARY_CTA, SECONDARY_CTA } from './content';
 import styles from './Hero.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * Homepage hero. The purpose is the live site's, word for word: the
@@ -48,7 +49,7 @@ export default function Hero() {
             >
               {PRIMARY_CTA.label}
               <span aria-hidden="true" className={styles.arrow}>
-                →
+                <Arrow />
               </span>
             </Link>
             <Link href={SECONDARY_CTA.href} className={styles.secondary} data-cta-placement="home_hero_secondary">

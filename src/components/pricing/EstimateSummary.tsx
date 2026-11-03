@@ -26,6 +26,7 @@ import { keepTogether } from '@/components/services/keepTogether';
 import SendEstimateForm from './SendEstimateForm';
 import { QUOTE_NOTE, TOGGLE_LABELS, TOTAL_SPRING, addOnsMoving, keepHyphens, listWords, priceText } from './content';
 import styles from './ScopeEstimator.module.scss';
+import Arrow from '@/components/ui/Arrow';
 
 /**
  * The estimate readout. The live range first (teal, tabular, springing
@@ -238,7 +239,7 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
           <Link href={callHref} className={styles.primary} data-cta-placement="pricing_estimate_call">
             {PROJECT_LABEL}
             <span className={styles.primaryArrow} aria-hidden="true">
-              →
+              <Arrow />
             </span>
           </Link>
           <p className={styles.nextNote}>Your answers are added to the project form for you. {NDA_LINE}</p>
