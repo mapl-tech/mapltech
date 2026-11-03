@@ -1,7 +1,11 @@
+import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import CountUp from '@/components/ui/CountUp';
 import { PROOF, PROOF_SECTION } from './content';
 import styles from './Proof.module.scss';
+
+/** A square mark's height on wide screens: the cap of --mark in Proof.module.scss. */
+const MARK_MAX = 56;
 
 /**
  * Why agencies choose us: the live homepage's published numbers and the logos
@@ -31,20 +35,27 @@ export default function Proof() {
           ))}
         </dl>
 
-        <ul className={styles.logos} aria-label="Clients">
-          {PROOF.logos.map((logo) => (
-            <li key={logo.name} className={styles.logo}>
-              <Image
-                src={logo.src}
-                alt={logo.name}
-                width={logo.width}
-                height={logo.height}
-                className={logo.invert ? styles.invert : undefined}
-                style={{ width: 'auto', height: logo.height }}
-              />
-            </li>
-          ))}
-        </ul>
+        <div className={styles.clients}>
+          <p id="clients-label" className={styles.clientsLabel}>
+            {PROOF.clientsLabel}
+          </p>
+          <ul className={styles.logos} aria-labelledby="clients-label">
+            {PROOF.logos.map((logo) => {
+              // Requested at the largest size shown; the CSS sizes it from --mark.
+              const height = Math.round(MARK_MAX * logo.scale);
+              return (
+                <li key={logo.name} className={styles.logo} style={{ '--scale': logo.scale } as CSSProperties}>
+                  <Image
+                    src={logo.src}
+                    alt={logo.name}
+                    width={Math.round((height * logo.width) / logo.height)}
+                    height={height}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </section>
   );

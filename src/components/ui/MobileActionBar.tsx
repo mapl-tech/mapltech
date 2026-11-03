@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { usePrefersReducedMotion } from './useMediaQuery';
+import { useMediaQuery, usePrefersReducedMotion } from './useMediaQuery';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { MOBILE_BAR_CONTEXT } from '@/components/flagship/content';
 import styles from './MobileActionBar.module.scss';
@@ -60,6 +60,8 @@ export default function MobileActionBar({
 }: MobileActionBarProps) {
   const pathname = usePathname();
   const reduceMotion = usePrefersReducedMotion();
+  // The bar is display:none from md (768px), so wider screens reserve no room for it.
+  const onPhone = useMediaQuery('(max-width: 767.98px)');
   const [heroGone, setHeroGone] = useState(false);
   const [formInView, setFormInView] = useState(false);
   const [keyboardUp, setKeyboardUp] = useState(false);
@@ -154,14 +156,14 @@ export default function MobileActionBar({
   // Keep focused controls clear of the bar while it covers the bottom edge.
   // Restores whatever was there before (the pricing estimate bar sets its own).
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || !onPhone) return;
     const root = document.documentElement;
     const previous = root.style.scrollPaddingBottom;
     root.style.scrollPaddingBottom = FOCUS_CLEARANCE;
     return () => {
       root.style.scrollPaddingBottom = previous;
     };
-  }, [visible]);
+  }, [visible, onPhone]);
 
   const transition = reduceMotion
     ? 'none'

@@ -53,14 +53,17 @@ function money(n: number): string {
 
 /** Proof strip. Numbers as published on the live homepage (Projects Supported, Years Combined Experience). */
 export const PROOF = {
-  // Sizes keep each file's own aspect ratio (LRO 400x273, FOCAS 300x86, CHHA 184x192,
-  // Loop and Crowned Spice square), optically balanced around a 34px height.
+  clientsLabel: 'Selected clients',
+  // One-colour versions of each client's own file in the page's off-white (mono/), so
+  // five palettes read as one row. width/height are the files' pixels; scale balances
+  // each mark against a square one: wordmarks run shorter, the solid Loop disc a touch
+  // smaller, the line-drawn Crowned Spice badge a touch larger.
   logos: [
-    { name: 'LRO Staffing', src: '/images/clients/lro-staffing.png', width: 50, height: 34, invert: true },
-    { name: 'Loop', src: '/images/clients/loop.webp', width: 34, height: 34, invert: false },
-    { name: 'FOCAS Canada', src: '/images/clients/focas-canada.png', width: 84, height: 24, invert: true },
-    { name: 'CHHA-NCR', src: '/images/clients/chha-ncr.svg', width: 33, height: 34, invert: true },
-    { name: 'Crowned Spice', src: '/images/clients/crowned-spice.png', width: 34, height: 34, invert: false },
+    { name: 'LRO Staffing', src: '/images/clients/mono/lro-staffing.png', width: 384, height: 252, scale: 0.78 },
+    { name: 'Loop', src: '/images/clients/mono/loop.png', width: 399, height: 400, scale: 0.88 },
+    { name: 'FOCAS Canada', src: '/images/clients/mono/focas-canada.png', width: 300, height: 82, scale: 0.56 },
+    { name: 'CHHA-NCR', src: '/images/clients/mono/chha-ncr.svg', width: 184, height: 192, scale: 1 },
+    { name: 'Crowned Spice', src: '/images/clients/mono/crowned-spice.png', width: 320, height: 320, scale: 1.04 },
   ],
   stats: [
     { value: 200, suffix: '+', label: 'projects supported' },
