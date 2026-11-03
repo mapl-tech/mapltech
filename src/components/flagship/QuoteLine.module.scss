@@ -66,3 +66,52 @@
     color: $color-ink-muted;
   }
 }
+
+// A column of its own (size="large", the close band's right column), from
+// 1024px: the quote in the display face as the column's statement (24px at
+// 1024, 30px from 1440), and the avatar beside who said it on the row under
+// it. Below 1024px it is the line every other ask carries.
+.quote[data-size='large'] {
+  @include lg {
+    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-areas:
+      'quote quote'
+      'avatar by';
+    row-gap: 18px;
+
+    .avatar {
+      grid-area: avatar;
+    }
+
+    .text {
+      grid-area: quote;
+    }
+
+    .text p {
+      font-family: $font-display;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 0.6rem + 1.4vw, 1.875rem);
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+
+    .by {
+      grid-area: by;
+    }
+
+    // The name on its own line, the role balanced under it ("Operations
+    // Director, / LRO Staffing" in a narrow column, never "Staffing" alone).
+    .role {
+      display: block;
+      text-wrap: balance;
+    }
+
+    &:not(:has(img)) {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        'quote'
+        'by';
+    }
+  }
+}

@@ -32,7 +32,8 @@ export const metadata: Metadata = {
  * /about-us, Nov 2026 simplify pass. What the company does, said plainly, as
  * the first screen, with the site's reassurance line and the approved client
  * quote under the ask (a fixed quote after one 20-minute call, an NDA first),
- * then the three published figures, then: why MAPL TECH exists, in the
+ * and the three published figures in the hero's aside (beside the copy from
+ * 1024px, under it on phones), then: why MAPL TECH exists, in the
  * founders' voice -> the two founders (paper), with the ask after them -> the
  * three offices -> the crimson close, which says what the call is for (the
  * homepage's close) and names the clients instead of repeating the quote.
@@ -74,9 +75,9 @@ export default function AboutPage() {
         }
         note={HERO_REASSURE}
         proof
+        asideAlign="body"
+        aside={<FactsBand facts={ABOUT.facts} label="MAPL TECH at a glance" placement="aside" />}
       />
-
-      <FactsBand facts={ABOUT.facts} label="MAPL TECH at a glance" />
 
       <Story />
 

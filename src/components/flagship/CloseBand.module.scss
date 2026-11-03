@@ -35,6 +35,37 @@
   display: grid;
   gap: clamp(24px, 3vw, 36px);
   justify-items: start;
+
+  // From 1024px, with proof: the title runs across (it keeps its lines), the
+  // lede and buttons sit under it on the left and the proof takes a column of
+  // its own on the right, its last line level with the ask's, so the band's
+  // right half carries the evidence instead of standing empty (the page
+  // heroes' asideAlign="body" layout). The last twelfth is the bar's lane:
+  // the bar crosses it at the proof's height from 1024px up, so no line of
+  // the proof runs over the bar. Phones keep the proof under the buttons.
+  &[data-has-proof] {
+    @include lg {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr) minmax(0, 1fr);
+      column-gap: clamp(48px, 6vw, 96px);
+
+      > .title {
+        grid-column: 1 / -1;
+      }
+
+      > .ask {
+        grid-column: 1;
+        align-self: start;
+      }
+    }
+  }
+}
+
+// The lede, buttons and note: the column the ask reads down.
+.ask {
+  display: grid;
+  gap: clamp(24px, 3vw, 36px);
+  justify-items: start;
+  min-width: 0;
 }
 
 .title {
@@ -121,11 +152,21 @@
   }
 }
 
-// The quote under the ask, ruled off in white (a rule, not text).
+// The quote under the ask, ruled off in white (a rule, not text). Beside the
+// ask it fills its column, the rule across the column's top.
 .proof {
   margin-top: clamp(8px, 1.4vw, 16px);
   padding-top: clamp(18px, 2vw, 24px);
   border-top: 1px solid rgba(255, 255, 255, 0.24);
+
+  .inner[data-has-proof] > & {
+    @include lg {
+      grid-column: 2;
+      align-self: end;
+      justify-self: stretch;
+      margin-top: 0;
+    }
+  }
 }
 
 .proofLine {
@@ -136,4 +177,10 @@
   color: $color-white; // small text on crimson: solid white only (7.56:1)
 
   @include phone-floor;
+
+  // Beside the ask: the lede's size, so the line holds its column.
+  @include lg {
+    font-size: $font-size-lede;
+    text-wrap: pretty;
+  }
 }

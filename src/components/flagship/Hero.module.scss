@@ -143,16 +143,28 @@ $short-band: max(30svh, 192px);
   margin: 0;
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(2.5rem, 0.95rem + 4.3vw, 5.75rem); // 40px at 360, 77px at 1440, 92px cap
+  // 48px at 768, 64px at 1024, 90px at 1440, 96px from 1536: a clear step above
+  // the 36-76px section titles, and the inner pages' H1 at 1440. Each line
+  // stays inside the copy column (the widest, "backbone behind", is ~7.5em),
+  // and the copy sits at the hero's foot, so a larger title grows upward into
+  // the space under the header, not down past the fold.
+  font-size: clamp(2.5rem, 6.25vw, 6rem);
   line-height: 0.96;
   letter-spacing: -0.035em;
   color: $color-fg;
   text-wrap: balance;
 
+  // Phones in portrait: as large as that widest line allows (it still fits
+  // 320px of copy at 360), 44px from 390, so the title is not one step from
+  // the 36px section titles; the quote still ends inside a 390x844 screen.
+  @media #{$portrait} and (max-width: $phone-max) {
+    font-size: clamp(2.5rem, 11.3vw, 2.75rem);
+  }
+
   // Short phones: a 34px floor, so the line under it and the primary CTA fit
   // the first viewport (with the shorter scene band).
   @media #{$portrait} and (max-height: 760px) {
-    font-size: clamp(2.125rem, 0.95rem + 4.3vw, 5.75rem);
+    font-size: clamp(2.125rem, 6.25vw, 6rem);
   }
 
   // Transform only: the H1 is painted at full opacity in the first frame (LCP).

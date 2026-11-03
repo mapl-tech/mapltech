@@ -8,14 +8,50 @@ import HeroActions from './HeroActions';
 import IndexRows from './IndexRows';
 import Steps from './Steps';
 import { keepNumberWords, keepTogether, withLastWord } from './keepTogether';
-import { INDEX_FAQ, INDEX_STEPS, PARTNERSHIPS_HREF, PARTNERSHIP_FROM } from './serviceContent';
+import { INDEX_FAQ, INDEX_STEPS, LAYER_VIEWS, PARTNERSHIPS_HREF, PARTNERSHIP_FROM } from './serviceContent';
 import styles from './ServicesIndex.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
 /**
+ * The hero's aside on wide screens: the four services and their public
+ * "from" prices, each row a link to that service's page (the /pricing hero's
+ * price list, a row a service), so a service and a price are in the first
+ * screen beside the ask. Below 1024px the aside would sit under the hero's
+ * copy, directly above the same four rows in the index, so it is left out.
+ */
+function ServicePrices() {
+  return (
+    <section className={styles.prices} aria-labelledby="services-prices-title">
+      <h2 id="services-prices-title" className={styles.pricesLabel}>
+        What each service costs
+      </h2>
+      <ul className={styles.priceRows} role="list">
+        {LAYER_VIEWS.map((layer) => (
+          <li key={layer.slug}>
+            {/* Named "Web Development, From $5,000". */}
+            <Link href={layer.path} className={styles.priceRow} data-cta-placement={`services_hero_${layer.service}`}>
+              <span className={styles.priceName}>
+                {layer.name}
+                <span className="visually-hidden">,</span>
+              </span>
+              <span className={styles.price}>
+                <span className={styles.priceFrom}>From </span>
+                <span className={styles.priceAmount}>{layer.fromMoney}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <p className={styles.pricesNote}>All prices are in US dollars.</p>
+    </section>
+  );
+}
+
+/**
  * /services (Nov 2026 simplify pass): one page, three ideas.
  *
- *   what we build (PageHeader) → the four services, one row and one link
+ *   what we build (PageHeader, with the four services' "from" prices beside
+ *   the ask on wide screens) → the four services, one row and one link
  *   each, with one real project and one of its results beside it, and a
  *   quiet way to start that service (real work trailing the cursor on
  *   desktop) → how it works, on paper, in the homepage's four steps → the
@@ -48,6 +84,8 @@ export default function ServicesIndex() {
           <HeroActions page="services" secondary={{ label: PRICING_LABEL, href: PRICING_HREF }} note={HERO_REASSURE} />
         }
         proof
+        asideAlign="body"
+        aside={<ServicePrices />}
       />
 
       <section className={styles.index} aria-labelledby="lines-title">

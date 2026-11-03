@@ -97,10 +97,12 @@ export const STORIES: readonly CaseStory[] = [
       { term: 'Built with', detail: 'WordPress, custom theme, PHP' },
       { term: 'Live', detail: 'lrostaffing.com', href: 'https://www.lrostaffing.com/' },
     ],
+    // The two 100s are not side by side, so the band does not open on two
+    // identical tiles. The first stays first: /our-work and the services rows quote it.
     results: [
       { value: '100', label: 'Google Lighthouse accessibility score, on mobile and desktop' },
-      { value: '100', label: 'Google Lighthouse SEO score, on mobile and desktop' },
       { value: '8', label: 'industry expertise pages, one click from the menu' },
+      { value: '100', label: 'Google Lighthouse SEO score, on mobile and desktop' },
     ],
     situation: [
       'LRO Staffing places people across Ottawa and Toronto. Its website has two very different visitors: someone looking for their next role, and an employer trying to fill one.',

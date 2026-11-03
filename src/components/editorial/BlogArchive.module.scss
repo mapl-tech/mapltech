@@ -402,6 +402,13 @@ $chips-fade: 48px;
   list-style: none;
 }
 
+// Each row rises 24px into place as it scrolls in (the site's scroll-driven
+// rise, half its section distance: rows arrive many to a screen). On the row's
+// item, so it composes with the article's settle below; transform only.
+.item {
+  @include rise-in($distance: 24px);
+}
+
 // Rows that appear (after a filter, a search or "Show more") settle up into
 // place; rows that stay visible do not replay. Transform only (text is never
 // faded), the first eight in a group 30ms apart, nothing under reduced motion.

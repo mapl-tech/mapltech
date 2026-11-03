@@ -7,12 +7,14 @@ import styles from './Story.module.scss';
 /**
  * Why MAPL TECH exists, in the founders' voice: the reason, set large and
  * fully lit from the first frame, then the two paragraphs that explain it,
- * signed by the two people who wrote it.
+ * signed by the two people who wrote it. It follows the page hero directly
+ * (the figures sit in the hero's aside), so the seam takes the family's
+ * hairline, as /pricing's estimator does under its hero.
  */
 export default function Story() {
   const { story } = ABOUT;
   return (
-    <section id="why" className={ed.dark} aria-labelledby="story-title">
+    <section id="why" className={`${ed.dark} ${ed.ruled}`} aria-labelledby="story-title">
       <div className={`${ed.inner} ${styles.grid}`}>
         {/* The reason is the section's heading; the small label above it is a kicker. */}
         <p className={ed.label}>{story.label}</p>

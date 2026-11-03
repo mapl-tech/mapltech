@@ -15,27 +15,45 @@ export interface Fact {
  * are the lines a buyer scans first and an assistant quotes; every value is
  * computed or sourced in content.ts / regions.ts. A fact with a `figure`
  * sets it in the display face, so the published numbers are what the eye
- * meets first. Server Component.
+ * meets first. `placement="aside"` sets the same list in the hero's aside
+ * (PageHeader `aside`, /about-us): a ruled column beside the copy from
+ * 1024px, the band's grid under the copy below that. Server Component.
  */
-export default function FactsBand({ facts, label }: { facts: readonly Fact[]; label: string }) {
+export default function FactsBand({
+  facts,
+  label,
+  placement = 'band',
+}: {
+  facts: readonly Fact[];
+  label: string;
+  placement?: 'band' | 'aside';
+}) {
   if (!facts.length) return null;
   const style = { '--cols': Math.min(facts.length, 6) } as CSSProperties;
-  return (
+  const aside = placement === 'aside';
+  const list = (
+    <dl
+      className={aside ? `${ed.factsGrid} ${ed.asideFacts}` : ed.factsGrid}
+      style={style}
+      data-count={facts.length}
+    >
+      {facts.map((fact) => (
+        <div key={fact.term} className={ed.fact}>
+          <dt>{fact.term}</dt>
+          <dd className={fact.figure ? ed.figured : undefined}>
+            {fact.figure ? <span className={ed.figure}>{fact.figure}</span> : null}
+            {fact.figure && fact.detail ? ' ' : null}
+            {fact.detail}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+  return aside ? (
+    <section aria-label={label}>{list}</section>
+  ) : (
     <section className={ed.facts} aria-label={label}>
-      <div className={ed.factsInner}>
-        <dl className={ed.factsGrid} style={style} data-count={facts.length}>
-          {facts.map((fact) => (
-            <div key={fact.term} className={ed.fact}>
-              <dt>{fact.term}</dt>
-              <dd className={fact.figure ? ed.figured : undefined}>
-                {fact.figure ? <span className={ed.figure}>{fact.figure}</span> : null}
-                {fact.figure && fact.detail ? ' ' : null}
-                {fact.detail}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+      <div className={ed.factsInner}>{list}</div>
     </section>
   );
 }

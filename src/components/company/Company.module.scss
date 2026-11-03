@@ -285,6 +285,40 @@ $measure-read: 31em;
   @include tabular;
 }
 
+// The same facts in the hero's aside (FactsBand placement="aside", /about-us).
+// From 1024px they fill the hero's right column: one fact a row under the
+// band's rule, hairlines between, the figure as large as the column allows
+// and its unit on the figure's baseline, so the three rows read as one even
+// ledger beside the copy (the /pricing hero's starting prices are the model)
+// and the last figure ends level with the quote. Below 1024px the aside sits
+// under the copy and keeps the band's grid.
+.factsGrid.asideFacts {
+  @include lg {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-top: 0;
+
+    .fact {
+      gap: 8px;
+      padding: clamp(16px, 1.5vw, 22px) 0;
+
+      & + .fact {
+        border-top: 1px solid $color-hairline;
+      }
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+
+    .figure {
+      display: inline;
+      margin: 0 6px 0 0;
+      font-size: clamp(3rem, 0.6rem + 3.75vw, 4rem); // 48px at 1024, 64px from 1440
+    }
+  }
+}
+
 // ---------------------------------------------------------------- cards
 // When a card is right: #121214, a 1px ring, 22-36px radius.
 .card {

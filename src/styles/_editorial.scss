@@ -102,9 +102,14 @@ $color-red-ink: #8F162C; // was #B81D38 (5.5:1)
 }
 
 // Entrance for blocks below the fold: transform only, never opacity on text.
-@mixin rise-in($delay: 0s) {
+// $distance: how far it rises, 48px by default (sections, cards); less for
+// the rows of a long list, which arrive many to a screen.
+@mixin rise-in($delay: 0s, $distance: null) {
   @include motion-ok {
     @supports (animation-timeline: view()) {
+      @if $distance {
+        --rise-distance: #{$distance};
+      }
       animation: editorial-rise linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 60%;
@@ -114,7 +119,7 @@ $color-red-ink: #8F162C; // was #B81D38 (5.5:1)
 
 @keyframes editorial-rise {
   from {
-    transform: translate3d(0, 48px, 0);
+    transform: translate3d(0, var(--rise-distance, 48px), 0);
   }
   to {
     transform: none;
