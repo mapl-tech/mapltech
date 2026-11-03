@@ -109,10 +109,10 @@
     line-height: 0.95;
   }
 
-  // Accent words (<em>) in crimson: large text, 3.66:1 clears the 3:1 floor.
+  // Accent words (<em>) in crimson: large text, red-display 6.4:1 (AAA 4.5:1).
   em {
     font-style: normal;
-    color: $color-red;
+    color: $color-red-display;
   }
 
   @include motion-ok {

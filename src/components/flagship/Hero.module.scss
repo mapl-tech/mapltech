@@ -149,7 +149,7 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .accent {
-  color: $color-red; // 3.66:1 on the ground: large text only (AA 3:1), which this is
+  color: $color-red-display; // red-display: 6.4:1, large text (AAA 4.5:1)
 }
 
 .lede {

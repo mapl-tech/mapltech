@@ -308,9 +308,9 @@ $measure: 34em;
   }
 
   a {
-    color: $color-red-text; // #ff5c73, 5.5:1 on the ground
+    color: $color-red-text; // 8.4:1 on the ground (AAA)
     text-decoration: underline;
-    text-decoration-color: rgba(255, 92, 115, 0.45);
+    text-decoration-color: rgba($color-red-text, 0.45);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.22em;
     transition: text-decoration-color 160ms ease;

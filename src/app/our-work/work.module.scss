@@ -306,14 +306,14 @@
     color 0.3s ease;
 }
 
-// Hover and keyboard focus: the name steps right in crimson (large text, 3.66:1).
+// Hover and keyboard focus: the name steps right in crimson (large text, red-display 6.4:1).
 .row:focus-within .nameText {
-  color: $color-red;
+  color: $color-red-display;
 }
 
 @include pointer-fine-motion {
   .row:hover .nameText {
-    color: $color-red;
+    color: $color-red-display;
     transform: translateX(12px);
   }
 }

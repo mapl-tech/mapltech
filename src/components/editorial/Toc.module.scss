@@ -182,7 +182,7 @@
   @include mono-label($color-fg-dim);
 
   [aria-current='location'] > & {
-    color: $color-red-text; // 5.5:1 on the ground (brand red is 3.66:1, too low at 13px)
+    color: $color-red-text; // 8.4:1 on the ground (AAA at 13px)
   }
 
   .rail[data-tone='paper'] & {

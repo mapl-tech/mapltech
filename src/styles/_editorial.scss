@@ -13,13 +13,14 @@ $editorial-pad-y: clamp(64px, 10vw, 144px); // phones 64px, desktop caps at 144p
 $ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
 // Light surface for rhythm against the dark ground ("paper").
-//   ink on paper ~17.6:1 · ink-muted 6.4:1 · crimson-ink (#B81D38) 5.5:1
+//   ink on paper ~17.6:1 · ink-muted 8.1:1 (7.7:1 on paper-2) · crimson-ink
+//   (#8F162C) 7.8:1 (7.1:1 on paper-2): every pair WCAG AAA
 $color-paper: #F1EDE7;
 $color-paper-2: #E8E3DC;
 $color-ink: #0B0B0C;
-$color-ink-muted: rgba(11, 11, 12, 0.68);
+$color-ink-muted: rgba(11, 11, 12, 0.74); // was 0.68 (6.5:1)
 $color-ink-hairline: rgba(11, 11, 12, 0.14);
-$color-red-ink: #B81D38;
+$color-red-ink: #8F162C; // was #B81D38 (5.5:1)
 
 @mixin shell {
   width: 100%;

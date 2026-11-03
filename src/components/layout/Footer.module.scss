@@ -120,7 +120,7 @@
 
 .heading {
   margin: 0 0 12px;
-  @include mono-label(rgba($color-fg, 0.55));
+  @include mono-label($color-fg-muted);
   font-family: $font-body;
 }
 
@@ -190,7 +190,7 @@
   gap: 8px;
   padding: 6px;
   border-radius: 999px;
-  border: 1px solid $color-hairline-strong;
+  border: 1px solid rgba($color-fg, 0.4); // the field edge, 3.5:1 (WCAG 1.4.11)
   background: rgba($color-fg, 0.03);
 
   &:focus-within {
@@ -218,7 +218,7 @@
   font-size: 1rem; // 16px: no iOS zoom on focus
 
   &::placeholder {
-    color: rgba($color-fg, 0.5);
+    color: $color-fg-dim; // 7.9:1, AAA (placeholder text is text)
   }
 
   &:focus {

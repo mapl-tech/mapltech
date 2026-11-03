@@ -386,7 +386,7 @@
 .other:hover,
 .other:focus-visible {
   .otherName {
-    color: $color-red;
+    color: $color-red-display;
 
     @include motion-ok {
       transform: translateX(10px);

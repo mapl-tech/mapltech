@@ -853,7 +853,7 @@ $card: #121214;
   line-height: 1.2;
 
   &::placeholder {
-    color: rgba(245, 242, 238, 0.52);
+    color: $color-fg-dim; // 7.3:1 on surface-3, AAA
   }
 
   &:focus-visible {
@@ -944,7 +944,7 @@ $card: #121214;
     content: '+';
     font-size: 1.25rem;
     line-height: 1;
-    color: $color-red;
+    color: $color-red-text;
   }
 
   .disclosure[open] > &::after {
@@ -1101,5 +1101,5 @@ $card: #121214;
 }
 
 .barArrow {
-  color: $color-red;
+  color: $color-red-text;
 }

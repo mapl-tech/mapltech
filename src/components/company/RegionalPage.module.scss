@@ -210,7 +210,7 @@
   max-width: 30em;
   font-size: $font-size-lede;
   line-height: 1.45;
-  color: $color-text-body;
+  color: $color-fg; // full white: on phones the browser frame's grey sits right under it
 }
 
 // The live site in a browser, its phone view overlapping the corner (homepage Work).

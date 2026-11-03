@@ -350,7 +350,7 @@
 .moreLink:hover,
 .moreLink:focus-visible {
   .moreName {
-    color: $color-red;
+    color: $color-red-display;
 
     @include motion-ok {
       transform: translateX(10px);

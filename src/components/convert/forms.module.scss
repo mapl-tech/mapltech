@@ -82,7 +82,8 @@
   min-height: 48px;
   padding: 0.75rem 1rem;
   background: $color-surface-2;
-  border: 1px solid $color-hairline-strong;
+  // 40% warm white: the field's edge is 3.7:1 against the page (WCAG 1.4.11).
+  border: 1px solid rgba($color-fg, 0.4);
   border-radius: $radius-md;
   color: $color-fg;
   font-size: $font-size-base; // 17px: no zoom on iOS
@@ -94,7 +95,7 @@
   }
 
   &:hover {
-    border-color: rgba($color-fg, 0.2);
+    border-color: rgba($color-fg, 0.6);
   }
 
   &:focus {
@@ -146,7 +147,7 @@
   gap: $space-8;
   min-height: 44px;
   padding: 0.625rem 1rem;
-  border: 1px solid $color-hairline-strong;
+  border: 1px solid rgba($color-fg, 0.4); // 3.5:1 on the ground (WCAG 1.4.11)
   border-radius: $radius-pill;
   background: transparent;
   color: $color-fg;

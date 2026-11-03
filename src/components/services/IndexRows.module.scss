@@ -196,11 +196,11 @@
   }
 }
 
-// Hover and keyboard focus: the name steps right in crimson (large text, 3.66:1), the arrow fills.
+// Hover and keyboard focus: the name steps right in crimson (large text, red-display 6.4:1), the arrow fills.
 .link:hover,
 .link:focus-visible {
   .name {
-    color: $color-red;
+    color: $color-red-display;
 
     @include motion-ok {
       transform: translateX(14px);

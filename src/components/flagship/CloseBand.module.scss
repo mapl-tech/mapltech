@@ -2,7 +2,7 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// White on #D91C3F is 5.01:1 (AA at every size); ink on paper buttons 17:1.
+// White on #A51832 is 7.56:1 (AAA at every size); ink on paper buttons 17:1.
 .close {
   position: relative;
   isolation: isolate;
@@ -12,8 +12,9 @@
 }
 
 // The wordmark's bar, enormous, drifting in from the right edge. On a phone
-// it runs under the lede and the actions, so it stays at 8% white: small white
-// text over it still clears 4.6:1 (at 14% it fell to 4.28:1).
+// it runs under the lede and the actions, so it is a shade DARKER than the
+// band: white text over it only gains contrast (a white tint would eat into
+// the margin small text keeps above 7:1).
 .bar {
   position: absolute;
   z-index: -1;
@@ -21,7 +22,7 @@
   right: clamp(24px, 9vw, 160px);
   width: clamp(18px, 2.2vw, 34px);
   height: 120%;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.16);
   border-radius: 999px;
   transform: rotate(14deg);
 }
@@ -53,14 +54,14 @@
   max-width: 34em;
   font-size: $font-size-lede;
   line-height: 1.5;
-  color: $color-white; // 5.01:1 on the crimson; any transparency drops it under 4.5
+  color: $color-white; // 7.56:1 on the crimson; transparency would erode it
 }
 
 .note {
   margin: 0;
   font-size: $font-size-sm;
   line-height: 1.5;
-  color: $color-white; // small text on crimson: solid white only (5.01:1)
+  color: $color-white; // small text on crimson: solid white only (7.56:1)
 
   @include phone-floor;
 }

@@ -93,7 +93,7 @@ $muted: $color-fg-muted;
   transition: border-color 150ms $ease;
 
   &::placeholder {
-    color: rgba(245, 242, 238, 0.52);
+    color: $color-fg-dim; // 7.3:1 on surface-3, AAA
   }
 
   @include pointer-fine {

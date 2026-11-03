@@ -170,7 +170,7 @@
   font-weight: $font-weight-semibold;
   color: $color-red-text;
   text-decoration: underline;
-  text-decoration-color: rgba(255, 92, 115, 0.45);
+  text-decoration-color: rgba($color-red-text, 0.45);
   text-underline-offset: 4px;
   overflow-wrap: anywhere;
 
@@ -270,11 +270,11 @@
   transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.6s $ease-out-expo;
 }
 
-// A real mouse: the name lights crimson (large text, 3.66:1) and the arrow fills.
+// A real mouse: the name lights crimson (large text, red-display 6.4:1) and the arrow fills.
 @include pointer-fine {
   .place:hover {
     .placeName {
-      color: $color-red;
+      color: $color-red-display;
     }
 
     .placeArrow {

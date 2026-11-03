@@ -890,7 +890,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
 // Hover and keyboard focus: the name in crimson (large text), the arrow filled.
 .next:focus-visible {
   .nextName {
-    color: $color-red;
+    color: $color-red-display;
   }
 
   .nextGo {
@@ -903,7 +903,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
 @include pointer-fine-motion {
   .next:hover {
     .nextName {
-      color: $color-red;
+      color: $color-red-display;
       transform: translateX(12px);
     }
 

@@ -2,8 +2,8 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// The homepage hero's filled pill: crimson #D91C3F, hover #C4213C, pressed
-// #A81B33 (the white label passes AA in every state).
+// The homepage hero's filled pill: crimson #A51832, hover #8F162C, pressed
+// #7A1226 (the white label passes AAA in every state).
 .primary {
   @include button-primary;
   min-height: 56px;
