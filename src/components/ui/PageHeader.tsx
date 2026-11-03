@@ -35,6 +35,11 @@ export default function PageHeader({
   /** xl: 48 -> 136px, for pages that lead with a statement; l: 44 -> 104px for long titles. */
   size?: 'xl' | 'l';
 }) {
+  // The label names the page's section; when the breadcrumb already ends on
+  // that same name ("Pricing / Pricing"), the label is left out.
+  const lastCrumb = crumbs?.[crumbs.length - 1]?.label;
+  const showLabel = Boolean(label) && label?.trim().toLowerCase() !== lastCrumb?.trim().toLowerCase();
+
   return (
     <header className={styles.header} aria-labelledby={id}>
       <div className={styles.light} aria-hidden="true" />
@@ -51,7 +56,7 @@ export default function PageHeader({
               </ol>
             </nav>
           ) : null}
-          {label ? <p className={styles.label}>{label}</p> : null}
+          {showLabel ? <p className={styles.label}>{label}</p> : null}
           <h1 id={id} className={styles.title} data-size={size}>
             {title}
           </h1>

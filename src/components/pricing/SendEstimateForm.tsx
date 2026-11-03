@@ -108,42 +108,46 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
   const errorId = `${id}-error`;
 
   return (
-    <form action={formAction} className={styles.send} noValidate aria-labelledby={`${id}-title`}>
-      <p id={`${id}-title`} className={styles.sendTitle}>
+    // Closed until asked for, like the card's other two disclosures: the total
+    // and "Start a project" are the only things competing at the decision point.
+    <details className={styles.disclosure} data-send="">
+      <summary id={`${id}-title`} className={styles.disclosureSummary}>
         Want it in writing?
-      </p>
-      <label htmlFor={`${id}-email`} className={styles.sendLabel}>
-        Your email <span className={styles.optional}>(optional)</span>
-      </label>
-      <div className={styles.sendRow}>
-        <input
-          id={`${id}-email`}
-          className={styles.input}
-          type="email"
-          name="email"
-          inputMode="email"
-          autoComplete="email"
-          placeholder="you@agency.com"
-          aria-describedby={state.status === 'error' ? errorId : undefined}
-          aria-invalid={state.status === 'error' || undefined}
-        />
-        <button type="submit" className={styles.secondary} disabled={pending} data-cta-placement={`pricing_${placement}_send`}>
-          {pending ? 'Sending…' : 'Get it in writing'}
-        </button>
-      </div>
-      <div className={styles.honeypot} aria-hidden="true">
-        <label>
-          Website
-          <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+      </summary>
+      <form action={formAction} className={styles.send} noValidate aria-labelledby={`${id}-title`}>
+        <label htmlFor={`${id}-email`} className={styles.sendLabel}>
+          Your email <span className={styles.optional}>(optional)</span>
         </label>
-      </div>
-      {state.status === 'error' ? (
-        <p id={errorId} className={styles.error} role="alert">
-          {state.message}
-        </p>
-      ) : null}
-      {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}
-      <RecaptchaNotice className={styles.recaptcha} />
-    </form>
+        <div className={styles.sendRow}>
+          <input
+            id={`${id}-email`}
+            className={styles.input}
+            type="email"
+            name="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="you@agency.com"
+            aria-describedby={state.status === 'error' ? errorId : undefined}
+            aria-invalid={state.status === 'error' || undefined}
+          />
+          <button type="submit" className={styles.secondary} disabled={pending} data-cta-placement={`pricing_${placement}_send`}>
+            {pending ? 'Sending…' : 'Get it in writing'}
+          </button>
+        </div>
+        <div className={styles.honeypot} aria-hidden="true">
+          <label>
+            Website
+            <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+          </label>
+        </div>
+        {state.status === 'error' ? (
+          <p id={errorId} className={styles.error} role="alert">
+            {state.message}
+          </p>
+        ) : null}
+        {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}
+        <RecaptchaNotice className={styles.recaptcha} />
+      </form>
+    </details>
   );
 }

@@ -181,7 +181,7 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     meta: {
       title: 'Custom Web Development for Agencies',
       description:
-        'Web Development for agencies from $5,000: custom-coded sites, Starter typically live in 3–4 weeks. Four public tiers, real case studies, a fixed quote.',
+        'Web Development for agencies from $5,000: custom-coded sites, Starter typically live in 3–4 weeks. Four public packages, real case studies, a fixed quote.',
     },
     og: {
       src: '/images/cases/lro-desktop.jpg',
@@ -211,7 +211,7 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     meta: {
       title: 'Automation & AI Workflow Setup for Agencies',
       description:
-        'Automation & AI for agencies from $3,500: CRM setup, lead routing, AI intake and custom agents. Public tiers, real work and a fixed quote after one call.',
+        'Automation & AI for agencies from $3,500: CRM setup, lead routing, AI intake and custom agents. Public packages, real work and a fixed quote after one call.',
     },
     og: {
       src: '/images/cases/tours-desktop.jpg',
@@ -240,7 +240,7 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     meta: {
       title: 'Custom Internal Tools for Agencies',
       description:
-        'Custom Internal Tools for agencies from $5,000: dashboards, client portals and ops systems with role-based access. Public tiers and a fixed quote.',
+        'Custom Internal Tools for agencies from $5,000: dashboards, client portals and ops systems with role-based access. Public packages and a fixed quote.',
     },
     og: {
       src: '/images/cases/salary-desktop.jpg',
@@ -375,9 +375,9 @@ export const LOWEST_MONTHLY = Math.min(
   ...LAYER_VIEWS.map((view) => view.lowestMonthly?.amount ?? Number.POSITIVE_INFINITY),
 );
 
-/** Support after launch stated for web builds ("30–90 days"), without its "depending on tier" tail. */
+/** Support after launch stated for web builds ("30–90 days"), without its "depending on the package" tail. */
 export function supportWindow(view: LayerView): string | null {
-  return view.record.postLaunchSupport ? cleanCopy(view.record.postLaunchSupport.replace(/ depending on tier/, '')) : null;
+  return view.record.postLaunchSupport ? cleanCopy(view.record.postLaunchSupport.replace(/ depending on the package/, '')) : null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -469,10 +469,10 @@ export function tierViews(view: LayerView): TierView[] {
   });
 }
 
-/** "What it costs" heading, from the table: "Four tiers, from $5,000." */
+/** "What it costs" heading, from the table: "Four packages, from $5,000." */
 export function costTitle(view: LayerView): string {
   const count = COUNT_WORDS[view.tiers.length] ?? String(view.tiers.length);
-  return `${count} tiers, from ${view.fromMoney}.`;
+  return `${count} packages, from ${view.fromMoney}.`;
 }
 
 /* ------------------------------------------------------------------ */

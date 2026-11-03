@@ -79,8 +79,8 @@ export default function ContactPage() {
         title="Start a project."
         lede={
           <p>
-            Answer four short questions about your project. After a 20-minute call, you get a fixed quote. Need an NDA
-            first? Just ask.
+            Answer four short questions about your project. After a 20-minute call, you get a fixed quote. We sign an NDA
+            before you share anything confidential.
           </p>
         }
       />

@@ -212,8 +212,8 @@ export const services: readonly ServiceRecord[] = [
       },
       pricing: {
         label: 'What it costs',
-        title: 'Four tiers, every price public',
-        subtitle: 'Pick the tier closest to your project. Every plan includes support after launch.',
+        title: 'Four packages, every price public',
+        subtitle: 'Pick the package closest to your project. Every package includes support after launch.',
       },
     },
     buyerSituations: situationsFrom('webDevelopment'),
@@ -291,12 +291,12 @@ export const services: readonly ServiceRecord[] = [
       {
         question: 'What happens after launch?',
         answer:
-          'Every plan includes 30–90 days of support after launch, depending on the tier. After that, a monthly plan keeps your site secure, fast and up to date.',
+          'Every package includes 30–90 days of support after launch, depending on the package. After that, a monthly plan keeps your site secure, fast and up to date.',
       },
       PAYMENT_PLANS_FAQ,
     ],
     typicalTimeline: '3–4 weeks Starter · 5–8 weeks Growth / E-Commerce · 8–14 weeks Advanced and Enterprise',
-    postLaunchSupport: '30–90 days depending on tier',
+    postLaunchSupport: '30–90 days depending on the package',
     ctaBand: {
       heading: 'Ready to build your next website?',
       body: 'Tell us about the project, and we will show you how we can help.',
@@ -329,7 +329,7 @@ export const services: readonly ServiceRecord[] = [
       },
       pricing: {
         label: 'What it costs',
-        title: 'Three tiers, every price public',
+        title: 'Three packages, every price public',
         subtitle: 'From a first CRM setup to AI that runs whole workflows.',
       },
     },
@@ -430,7 +430,7 @@ export const services: readonly ServiceRecord[] = [
       },
       pricing: {
         label: 'What it costs',
-        title: 'Three tiers, every price public',
+        title: 'Three packages, every price public',
         subtitle: 'From one dashboard to a system that runs your whole agency.',
       },
     },
@@ -530,7 +530,7 @@ export const services: readonly ServiceRecord[] = [
       },
       pricing: {
         label: 'What it costs',
-        title: 'Three tiers, every price public',
+        title: 'Three packages, every price public',
         subtitle: 'From a first cloud setup to platforms that run in several regions.',
       },
     },

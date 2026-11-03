@@ -42,7 +42,7 @@ function Amount({ label }: { label: string }) {
  * with the tier's action, into the same "What’s included", so four tiers read
  * in under two screens. No tier is marked "recommended": nothing in the data
  * says which one most clients choose. Each card deep-links the estimator with
- * that tier selected ("Price this tier"); a Custom tier goes to the project
+ * that package selected ("Price this package"); a Custom package goes to the project
  * brief ("Start a project"). Monthly plans and the hourly rate follow, one tap
  * away.
  */
@@ -145,7 +145,7 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
         </>
       ) : (
         <>
-          Price this tier<span className="visually-hidden">: {tier.name}</span>
+          Price this package<span className="visually-hidden">: {tier.name}</span>
         </>
       )}
       <span aria-hidden="true" className={styles.arrow}>

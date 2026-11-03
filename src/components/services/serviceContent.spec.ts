@@ -181,8 +181,8 @@ describe('service pages', () => {
   it('prices every tier from site.ts', () => {
     const webView = LAYER_VIEWS[0];
     expect(tierViews(webView).map((t) => t.price)).toEqual(pricing.webDevelopment.tiers.map((t) => cleanCopy(t.price)));
-    expect(costTitle(webView)).toBe('Four tiers, from $5,000.');
-    expect(costTitle(LAYER_VIEWS[1])).toBe('Three tiers, from $3,500.');
+    expect(costTitle(webView)).toBe('Four packages, from $5,000.');
+    expect(costTitle(LAYER_VIEWS[1])).toBe('Three packages, from $3,500.');
     expect(tierViews(webView).map((t) => t.timeline?.label ?? null)).toEqual([
       '3–4 weeks',
       '5–8 weeks',

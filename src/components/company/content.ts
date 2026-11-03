@@ -141,8 +141,8 @@ export const ABOUT = {
   },
   offices: {
     label: 'Where we work',
-    title: 'Three offices. One team.',
-    lede: 'Toronto is our headquarters. We also have teams in Lagos, Nigeria and Kingston, Jamaica. Every office works 9\u00a0am to 6\u00a0pm local time, Monday to Friday.',
+    title: 'Three cities. One team.',
+    lede: 'Toronto is our headquarters. We also have teams in Lagos, Nigeria and Kingston, Jamaica. Every team works 9\u00a0am to 6\u00a0pm local time, Monday to Friday.',
   },
   founders: {
     label: 'Who leads it',

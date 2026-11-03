@@ -819,12 +819,6 @@ $card: #121214;
   border-top: 1px solid $color-hairline;
 }
 
-.sendTitle {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: $font-weight-semibold;
-  color: $color-fg;
-}
 
 .sendLabel {
   font-size: 1rem;
@@ -917,13 +911,22 @@ $card: #121214;
 // ---------------------------------------------------------------- disclosures
 // "How this price adds up" and "What's included": a tap away on every screen.
 .disclosure {
-  // 4px either side of the hairline keeps the two summaries' hit areas 8px apart.
+  // 4px either side of the hairline keeps the summaries' hit areas 8px apart.
   padding: 4px 0;
   border-top: 1px solid $color-hairline;
 
-  .send + &,
+  // The first of the three (the email form) keeps its distance from the action above.
+  &[data-send],
   .sent + & {
     margin-top: 26px;
+  }
+
+  // Inside its disclosure the email form drops its own rule and top gap.
+  > .send {
+    margin-top: 0;
+    padding-top: 4px;
+    padding-bottom: 16px;
+    border-top: 0;
   }
 }
 

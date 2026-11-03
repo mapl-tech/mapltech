@@ -117,7 +117,7 @@ export default function CaseStudy({
         <section className={styles.results} aria-labelledby="case-results">
           <div className={styles.shell}>
             <h2 id="case-results" className={styles.sectionLabel}>
-              Key results
+              At a glance
             </h2>
             <dl className={styles.resultGrid} data-count={story.results.length}>
               {story.results.map((result) => (

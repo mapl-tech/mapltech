@@ -57,10 +57,11 @@ function Row({ layer, index }: { layer: LayerView; index: number }) {
           {layer.role}
           <span className="visually-hidden">: </span>
         </span>
-        <span className={styles.name}>
+        {/* A heading inside the row link: heading navigation lands on each service. */}
+        <h3 className={styles.name}>
           {layer.name}
           <span className="visually-hidden">. </span>
-        </span>
+        </h3>
         <span className={styles.summary}>
           {layer.summary}
           <span className="visually-hidden"> </span>

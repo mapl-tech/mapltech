@@ -40,7 +40,9 @@
   max-width: 13em;
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(2.5rem, 1rem + 5.4vw, 6.5rem); // 40px -> 104px
+  // The section-heading scale (36px -> 76px): bold, but always below the
+  // page's H1, so the outline reads top-down at every width.
+  font-size: clamp(2.25rem, 1rem + 4vw, 4.75rem);
   line-height: 0.95;
   letter-spacing: -0.04em;
   text-wrap: balance;

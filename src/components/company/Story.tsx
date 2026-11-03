@@ -14,12 +14,11 @@ export default function Story() {
   return (
     <section id="why" className={ed.dark} aria-labelledby="story-title">
       <div className={`${ed.inner} ${styles.grid}`}>
-        <h2 id="story-title" className={ed.label}>
-          {story.label}
-        </h2>
+        {/* The reason is the section's heading; the small label above it is a kicker. */}
+        <p className={ed.label}>{story.label}</p>
 
         <div className={styles.body}>
-          <p className={styles.lead}>
+          <h2 id="story-title" className={styles.lead}>
             {story.lead.map((run) =>
               run.accent ? (
                 <span key={run.text} className={styles.accent}>
@@ -29,7 +28,7 @@ export default function Story() {
                 run.text
               ),
             )}
-          </p>
+          </h2>
 
           <div className={styles.columns}>
             {story.paragraphs.map((paragraph, i) => (

@@ -18,8 +18,9 @@ import styles from './MobileActionBar.module.scss';
  * is the hero CTA's `data-bar-context` if set, else the public price floor for
  * pricing actions, else nothing.
  *
- * Appears once the hero CTA (fallback: the page H1) has left the viewport;
- * hides while any <form> is in view or the keyboard is up. While it shows, the
+ * Appears once the page H1 and the hero CTA have both left the viewport (so
+ * a hero without its own action is never covered at load); hides while that
+ * CTA, any <form> or the keyboard is up. While it shows, the
  * page gets bottom scroll padding so a focused control is never hidden under
  * it (WCAG 2.4.11). Clicks dispatch `cta_click` on window with
  * { placement: 'sticky_bar', action, href }.
@@ -84,13 +85,24 @@ export default function MobileActionBar({
         : null;
     const actionFrame = requestAnimationFrame(() => setPageAction(action));
 
-    const hero = heroCta ?? document.querySelector('main h1') ?? document.querySelector('h1');
-    if (hero) {
+    // The bar waits until the page's H1 has scrolled away and stands down while
+    // the page's own action is on screen. Where that action sits further down
+    // (a case study's close band), the bar no longer covers the hero at load.
+    const heading = document.querySelector('main h1') ?? document.querySelector('h1');
+    const watched = [heading, heroCta].filter((el): el is Element => Boolean(el));
+    if (watched.length > 0) {
+      const onScreen = new Set<Element>();
       const heroIO = new IntersectionObserver(
-        ([entry]) => setHeroGone(!entry.isIntersecting),
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) onScreen.add(entry.target);
+            else onScreen.delete(entry.target);
+          }
+          setHeroGone(onScreen.size === 0);
+        },
         { threshold: 0 },
       );
-      heroIO.observe(hero);
+      watched.forEach((el) => heroIO.observe(el));
       observers.push(heroIO);
     } else {
       raf = requestAnimationFrame(() => setHeroGone(true));
