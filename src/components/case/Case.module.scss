@@ -197,6 +197,14 @@ $landscape: '(min-aspect-ratio: 21/20)';
   padding-bottom: 7%;
   perspective: 1800px;
 
+  // Phones: the capture may only peek (about 50px) into the first screen. Any
+  // more and its visible area outgrows the headline, it becomes the page's
+  // LCP image, and Lighthouse's simulated phone drops the page to 92
+  // (measured on LRO: a 93px peek, 30,329px2 of image vs ~26-30k of text).
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    margin-top: calc(clamp(48px, 7vw, 104px) - clamp(28px, 4vw, 48px) + 44px);
+  }
+
   @include md {
     grid-column: 1 / -1;
   }
