@@ -62,6 +62,13 @@ const NEXT_STEPS = [
   },
 ] as const;
 
+/**
+ * Below 1024px, "What happens next" follows the whole form: one line under the
+ * brief's button says it first, in the steps' own words (the reply step's
+ * timing awaits the owner, so the line starts at the call).
+ */
+const AFTER_LINE = 'After you send it: a 20-minute call, then a fixed quote.';
+
 /** The one approved client quote (site.ts `testimonials`), beside the decision. */
 const PROOF = testimonials.find((entry) => entry.company === 'LRO Staffing') ?? null;
 
@@ -102,7 +109,7 @@ export default function ContactPage() {
                 <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a> instead.
               </p>
             </noscript>
-            <ProjectBrief reassure={NDA_LINE} />
+            <ProjectBrief reassure={NDA_LINE} after={AFTER_LINE} />
             {/* Below 1024px the aside (and its quote) follows the whole form: the quote moves up to the brief's button. */}
             <QuoteLine tone="paper" className={styles.formProof} />
           </div>

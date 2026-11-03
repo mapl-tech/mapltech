@@ -3,15 +3,19 @@
 @use '../../styles/editorial' as *;
 
 // The referral form (Nov 2026 award pass), inside the dark form card: single
-// column on phones, paired fields from 640px, labels above inputs, 56px
-// fields with 16px+ text, errors under the field they belong to.
+// column where the card is narrow (phones, and beside the /referral hero copy
+// on desktop), paired fields once the form itself is 420px wide, labels above
+// inputs, 56px fields with 16px+ text, errors under the field they belong to.
 
 $ease: cubic-bezier(0.23, 1, 0.32, 1);
 $muted: $color-fg-muted;
+$paired: 420px;
 
 .form {
   display: grid;
-  gap: 36px;
+  gap: 32px;
+  // Fields pair up by the room the card gives them, not by the viewport.
+  container-type: inline-size;
 }
 
 .fieldset {
@@ -33,6 +37,7 @@ $muted: $color-fg-muted;
   font-family: $font-display;
   font-weight: $font-weight-bold;
   font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  line-height: 1.2;
   letter-spacing: -0.02em;
   color: $color-fg;
 
@@ -45,7 +50,7 @@ $muted: $color-fg-muted;
   display: grid;
   gap: 20px;
 
-  @include sm {
+  @container (min-width: #{$paired}) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 16px;
   }
@@ -59,9 +64,71 @@ $muted: $color-fg-muted;
 }
 
 .wide {
-  @include sm {
+  @container (min-width: #{$paired}) {
     grid-column: 1 / -1;
   }
+}
+
+// ---------------------------------------------------------------- the optional fields
+// A native disclosure under the required ones: the summary is a 52px row with
+// a plus that turns to a cross when open; the fields sit under it. The
+// actions' rule below closes it.
+.more {
+  min-width: 0;
+  margin-top: -8px;
+  border-top: 1px solid $color-hairline;
+}
+
+.moreToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  font-size: 1.0625rem;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  list-style: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  // The plus, drawn in CSS: crimson (a shape, 3:1+ on the card), a cross when open.
+  &::before {
+    content: '';
+    flex: none;
+    width: 14px;
+    height: 14px;
+    background:
+      linear-gradient($color-red-text, $color-red-text) center / 14px 2px no-repeat,
+      linear-gradient($color-red-text, $color-red-text) center / 2px 14px no-repeat;
+
+    @include motion-ok {
+      transition: transform 0.3s $ease;
+    }
+  }
+
+  .more[open] > &::before {
+    transform: rotate(45deg);
+  }
+
+  @include pointer-fine {
+    &:hover {
+      color: $color-white;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+}
+
+.moreFields {
+  padding: 8px 0 24px;
 }
 
 .label {
@@ -69,11 +136,6 @@ $muted: $color-fg-muted;
   font-weight: $font-weight-semibold;
   line-height: 1.4;
   color: $color-fg;
-}
-
-.optional {
-  font-weight: $font-weight-regular;
-  color: $muted;
 }
 
 .input,

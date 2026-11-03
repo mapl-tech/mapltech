@@ -238,6 +238,8 @@ export default function CaseStudy({
       ) : null}
 
       {/* ---------------------------------------------------------- matters: the ask, with the brief on this service line */}
+      {/* The band's quote line only where the story has no client words of its
+          own: a case with a quote has just shown it in "What they said". */}
       {story.matters ? (
         <CloseBand
           id="case-matters"
@@ -247,6 +249,7 @@ export default function CaseStudy({
           secondary={{ label: 'Price a project like this', href: estimateHref }}
           placement={`case_${entry.slug}`}
           note={HERO_REASSURE}
+          proof={!story.quote}
           hero
         />
       ) : null}

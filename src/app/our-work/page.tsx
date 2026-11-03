@@ -4,7 +4,7 @@ import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE } from '@/components/flagship/content';
+import { HERO_REASSURE, WORK_SECTION } from '@/components/flagship/content';
 import QuoteLine from '@/components/flagship/QuoteLine';
 import { PrimaryCta, TextCta } from '@/components/work/Cta';
 import WorkIndex from '@/components/work/WorkIndex';
@@ -147,11 +147,17 @@ export default function OurWorkPage() {
         </section>
       ) : null}
 
-      {/* The band's own quote line stays off: the client voice sits right above it. */}
+      {/* The homepage's ask after its work, with the hero's risk answer under it.
+          The lede carries the two white-label promises the title does not
+          (the homepage's "Why agencies choose us", from the FAQ), so the band
+          never says the fixed quote twice. The band's own quote line stays
+          off: the client voice sits right above it. */}
       <CloseBand
         id="work-close-title"
         placement="work_close"
-        title="Ready to start your project?"
+        title={WORK_SECTION.ask}
+        lede="We never approach your clients. You and your client own the code."
+        note={HERO_REASSURE}
         proof={!voice}
       />
     </>
@@ -177,12 +183,14 @@ function Row({ item }: { item: CatalogItem }) {
                 </span>
                 {item.address ? <span className={styles.url}>{item.address}</span> : null}
               </div>
+              {/* One line per project (264px at most) from 1280px, and from 1024px
+                  with a mouse; touch tablets keep the large tablet capture. */}
               <Image
                 src={item.desktop}
                 alt=""
                 width={1800}
                 height={1125}
-                sizes="(min-width: 1024px) 264px, (min-width: 768px) 44vw, 92vw"
+                sizes="(min-width: 1280px) 264px, (min-width: 1024px) and (hover: hover) and (pointer: fine) 264px, (min-width: 768px) 44vw, 92vw"
                 className={styles.shot}
               />
             </div>
@@ -222,14 +230,6 @@ function Row({ item }: { item: CatalogItem }) {
           <dt>Sector</dt>
           <dd>{item.sector}</dd>
         </div>
-        {item.year ? (
-          <div className={styles.fact} data-field="year">
-            <dt>Year</dt>
-            <dd>
-              <time dateTime={item.year}>{item.year}</time>
-            </dd>
-          </div>
-        ) : null}
         {item.note ? (
           <div className="visually-hidden">
             <dt>About the screenshot</dt>

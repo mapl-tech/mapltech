@@ -45,7 +45,12 @@ export interface CaseStory {
   client: string;
   /** Full organisation name, when it differs from `client`. */
   legalName?: string;
-  /** Short tags under the breadcrumb, e.g. ["Website", "Staffing", "Ottawa and Toronto"]. */
+  /**
+   * Short tags under the breadcrumb, e.g. ["Web Development", "Staffing and
+   * recruitment", "Ottawa and Toronto"]. A tag that names a service line uses
+   * its canonical name; one that names the kind of project ("Website
+   * relaunch", "Our own product") stays as it is.
+   */
   tags: readonly string[];
   /** The one-line outcome under the H1. */
   headline: string;
@@ -72,7 +77,7 @@ export const STORIES: readonly CaseStory[] = [
   {
     slug: 'lro-staffing',
     client: 'LRO Staffing',
-    tags: ['Website', 'Staffing and recruitment', 'Ottawa and Toronto'],
+    tags: ['Web Development', 'Staffing and recruitment', 'Ottawa and Toronto'],
     headline: 'A staffing agency’s website, rebuilt for its two audiences: people looking for work and employers looking to hire.',
     facts: [
       { term: 'Client', detail: 'LRO Staffing, full-service search and staffing' },
@@ -90,30 +95,21 @@ export const STORIES: readonly CaseStory[] = [
       'LRO Staffing places people across Ottawa and Toronto. Its website has two very different visitors: someone looking for their next role, and an employer trying to fill one.',
       'Both needed to find their way from the first screen. The agency’s industry expertise, recruitment advice and salary data also had to be one click away, not buried at the bottom of the page.',
     ],
+    // Each part is said once. "What changed" only repeated these stages (and the
+    // results' count of expertise pages), so it is folded in: its one outcome
+    // opens the chapter, its "not a rented template" and "a blog the team
+    // publishes to" join the stages they describe. The facts name the theme.
     built: {
-      intro: 'One website, organised around its two kinds of visitor, with every part made for this brand.',
+      intro: 'One website, organised around its two kinds of visitor: job seekers and employers are each one click from the main menu.',
       stages: [
-        { name: 'Foundation', text: 'A custom WordPress theme built specifically for the LRO Staffing brand.' },
+        { name: 'Foundation', text: 'Every part made for the LRO Staffing brand, not a rented template.' },
         { name: 'Find', text: 'Job search with keyword, industry, location and job type filters.' },
         { name: 'Apply', text: 'Job alerts and resume submission, so a visit can end in an application.' },
-        { name: 'Expertise', text: 'Eight industry expertise pages, from technology and government to legal services and finance.' },
-        { name: 'Insight', text: 'A recruitment insights blog and an interactive salary guide for the Ottawa and Toronto markets.' },
+        { name: 'Expertise', text: 'Industry expertise pages, from technology and government to legal services and finance.' },
+        { name: 'Insight', text: 'A recruitment insights blog the team publishes to, and an interactive salary guide for the Ottawa and Toronto markets.' },
         { name: 'Access', text: 'Parts like the “How We Work With You” panels work with a keyboard and tell screen readers when they open and close.' },
       ],
     },
-    impact: [
-      {
-        heading: 'What the website does',
-        items: [
-          'Job seekers and employers are each one click from the main menu',
-          'Job search, alerts and resume submission work as one flow',
-        ],
-      },
-      {
-        heading: 'What LRO Staffing owns',
-        items: ['A custom theme, not a rented template', 'Eight expertise pages and a blog the team publishes to', 'An interactive salary guide for its two markets'],
-      },
-    ],
     quote: alita ? { text: alita.quote, name: alita.name, role: `${alita.role}, ${alita.company}`, image: alita.image || undefined } : undefined,
     matters: {
       heading: 'Why this matters if your agency sells websites',
@@ -200,7 +196,7 @@ export const STORIES: readonly CaseStory[] = [
       { term: 'Live', detail: 'chhancr.ca', href: 'https://www.chhancr.ca/' },
     ],
     results: [
-      { value: 'AA', label: 'WCAG accessibility level for colour contrast, on every pair the audit checked' },
+      { value: 'AA', label: 'accessibility rating for colour contrast, on every colour pair the audit checked' },
       { value: '5', label: 'stages that guide visitors: Noticing, Finding Out, Choosing, Living with it, Giving back' },
     ],
     situation: chha ? [chha.challenge] : undefined,
@@ -261,7 +257,7 @@ export const STORIES: readonly CaseStory[] = [
   {
     slug: 'lro-salary-guide',
     client: 'LRO Interactive Salary Guide',
-    tags: ['Custom internal tool', 'Staffing and recruitment', 'Ottawa and Toronto'],
+    tags: ['Custom Internal Tools', 'Staffing and recruitment', 'Ottawa and Toronto'],
     headline: 'An interactive salary guide that turns market data into a tool for comparing pay, made for recruiters and hiring managers.',
     facts: [
       { term: 'Client', detail: 'LRO Staffing' },
@@ -328,7 +324,7 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'unsvcc',
     client: 'UNSVCC',
     legalName: 'United Senior Citizen Voice for Change Coalition',
-    tags: ['Internal tools', 'Non-profit', 'Canada'],
+    tags: ['Custom Internal Tools', 'Non-profit', 'Canada'],
     headline: 'A private dashboard for a Canadian seniors’ advocacy coalition, with live numbers, access by role and automatic reports.',
     facts: [
       { term: 'Client', detail: 'United Senior Citizen Voice for Change Coalition' },
@@ -361,7 +357,7 @@ export const STORIES: readonly CaseStory[] = [
   {
     slug: 'crowned-spice',
     client: 'Crowned Spice',
-    tags: ['Automation', 'E-commerce'],
+    tags: ['Automation & AI', 'E-commerce'],
     headline: 'Online store automation, from stock levels to shipping to the messages customers get after they buy.',
     facts: [
       { term: 'Client', detail: 'Crowned Spice' },

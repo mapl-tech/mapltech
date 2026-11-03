@@ -71,15 +71,22 @@ function serviceFrom(service: EstimateService): string {
 const partnerLow = lowest(pricing.bundles.map((bundle) => bundle.price));
 
 /**
- * One plain line under the two answers whose names say least, in the words the
- * site already uses for them (kept here as text, so the brief's bundle does not
- * carry the service pages' copy).
+ * One plain line under every answer, so no answer is only a name and a price,
+ * in the words the site already uses for it (kept here as text, so the brief's
+ * bundle does not carry the service pages' copy).
  */
-const KIND_DETAIL: Partial<Record<BriefKind, string>> = {
+const KIND_DETAIL: Record<BriefKind, string> = {
+  // config/services.ts, Web Development `heroTitle`.
+  web: 'Fast, accessible websites under your brand',
+  // config/services.ts, Automation & AI `oneLiner`: "From simple automations to custom AI agents."
+  automation: 'From simple automations to custom AI agents',
+  // config/services.ts, Custom Internal Tools `oneLiner`: "Dashboards, client portals and reporting tools built around how your team works…"
+  tools: 'Dashboards, client portals and reporting tools',
   // config/services.ts, Cloud Engineering `heroTitle`.
   cloud: 'Cloud hosting that grows with your clients',
   // pricing/content.ts BUNDLES_ANSWER: "A monthly partnership covers several services for one monthly price."
   partner: 'Several services for one monthly price',
+  unsure: 'Tell us the goal in step 3',
 };
 
 /** Step 1: what are we building? Every option carries its real public floor price. */
@@ -96,7 +103,7 @@ export const KIND_OPTIONS: readonly ChoiceOption[] = [
     detail: KIND_DETAIL.partner,
     price: partnerLow === null ? undefined : `From ${money(partnerLow)} a month`,
   },
-  { key: 'unsure', label: KIND_LABEL.unsure, detail: 'Tell us the goal in step 3' },
+  { key: 'unsure', label: KIND_LABEL.unsure, detail: KIND_DETAIL.unsure },
 ];
 
 export function kindLabel(kind: BriefKind): string {

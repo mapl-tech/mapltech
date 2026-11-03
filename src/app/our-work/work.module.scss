@@ -6,6 +6,18 @@
 // the homepage services index on the dark ground: big names on hairlines, each
 // with its real capture. Then one client quote and the crimson close.
 
+// One line per project (capture · name · facts · arrow) where a mouse can open
+// the trailing preview (WorkIndex), and from 1280px at any pointer. A touch
+// tablet at 1024-1279px keeps the tablet row, so its capture stays large
+// (184px wide in the one-line row at 1024) rather than a thumbnail.
+$index-line: '(min-width: #{$breakpoint-lg}) and (hover: hover) and (pointer: fine), (min-width: #{$breakpoint-xl})';
+
+@mixin index-line {
+  @media #{$index-line} {
+    @content;
+  }
+}
+
 // ===================================================================
 // The hero's proof
 // ===================================================================
@@ -54,8 +66,9 @@
 }
 
 // Phones: the capture, then name · arrow, then the facts under the name.
-// Tablets: capture left, words right. Desktop: one line per project,
-// capture · name · facts · arrow, like the homepage services index.
+// Tablets (touch ones up to 1279px): capture left, words right. Desktop: one
+// line per project, capture · name · facts · arrow, like the homepage
+// services index ($index-line).
 .row {
   position: relative;
   display: grid;
@@ -80,7 +93,7 @@
     padding: 32px 0;
   }
 
-  @include lg {
+  @include index-line {
     grid-template-columns: clamp(184px, 18vw, 264px) minmax(0, 1.1fr) minmax(0, 1fr) 48px;
     grid-template-areas: 'media name facts go';
     grid-template-rows: auto;
@@ -148,7 +161,7 @@
     0 0 0 1px rgba(255, 255, 255, 0.08);
   transition: transform 0.8s $ease-out-expo;
 
-  @include lg {
+  @include index-line {
     border-radius: 10px;
   }
 }
@@ -169,7 +182,7 @@
   background: $color-surface-2;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
-  @include lg {
+  @include index-line {
     gap: 8px;
     height: 18px;
     padding: 0 8px;
@@ -187,7 +200,7 @@
     background: rgba(255, 255, 255, 0.16);
   }
 
-  @include lg {
+  @include index-line {
     gap: 4px;
 
     i {
@@ -202,7 +215,7 @@
   letter-spacing: 0.02em;
   color: $color-fg-muted;
 
-  @include lg {
+  @include index-line {
     display: none;
   }
 }
@@ -233,7 +246,7 @@
     0 0 0 1px rgba(255, 255, 255, 0.08);
   transition: transform 0.8s $ease-out-expo;
 
-  @include lg {
+  @include index-line {
     gap: 10px;
     padding: 12px 14px;
     border-radius: 10px;
@@ -243,7 +256,7 @@
 .diagramLabel {
   @include mono-label;
 
-  @include lg {
+  @include index-line {
     font-size: 0.6875rem;
   }
 }
@@ -287,7 +300,7 @@
     }
   }
 
-  @include lg {
+  @include index-line {
     gap: 6px;
 
     li {
@@ -362,63 +375,35 @@
   }
 }
 
-// Fixed order, no printed field names (each <dt> stays for assistive tech):
-// what we built, then sector and year on one muted line, then the result.
+// Every row in one schema, each field under its printed name (the case hero's
+// facts voice): what we built, the sector, then the result where the case
+// story publishes one.
 .facts {
   grid-area: facts;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  row-gap: 8px;
-  margin: 14px 0 0;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  margin: 16px 0 0;
 
-  @include md {
-    margin-top: 16px;
-  }
-
-  @include lg {
+  @include index-line {
     margin: 0;
   }
 }
 
 .fact {
+  display: grid;
+  gap: 4px;
   min-width: 0;
 
   dt {
-    @include sr-only;
+    @include mono-label;
   }
 
   dd {
     margin: 0;
     font-size: $font-size-base;
     line-height: 1.45;
-  }
-
-  &[data-field='built'],
-  &[data-field='result'] {
-    flex-basis: 100%;
-  }
-
-  &[data-field='built'] dd {
     color: $color-text-body;
-  }
-
-  &[data-field='sector'] dd,
-  &[data-field='year'] dd {
-    color: $color-fg-muted;
-    @include tabular;
-  }
-
-  // A dot between sector and year (a shape, so nothing extra is read aloud).
-  &[data-field='year'] dd::before {
-    content: '';
-    display: inline-block;
-    width: 3px;
-    height: 3px;
-    margin: 0 10px;
-    border-radius: 50%;
-    background: currentColor;
-    vertical-align: middle;
   }
 }
 
@@ -428,7 +413,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 2px 12px;
-  margin-top: 6px;
+  margin-top: 2px;
   padding-left: 14px;
   border-left: 2px solid $color-red;
 }
@@ -464,7 +449,7 @@
     border-color 0.3s ease,
     transform 0.6s $ease-out-expo;
 
-  @include lg {
+  @include index-line {
     width: 48px;
     height: 48px;
   }

@@ -17,14 +17,16 @@
 }
 
 // ---------------------------------------------------------------- toolbar
-// The section label on the left, the chips on the right (stacked on phones).
+// The section label on the left, the chips on the right (stacked below
+// 1024px). The label takes only its own width, so the four chips keep one
+// row (681px) even in a 1024px window.
 .toolbar {
   display: grid;
   gap: 16px;
   padding-bottom: clamp(16px, 1.8vw, 24px);
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    grid-template-columns: auto minmax(0, 1fr);
     column-gap: 48px;
     align-items: center;
   }
@@ -40,11 +42,12 @@
   padding: 0;
   border: 0;
 
-  // Phones: one line that scrolls sideways, running out to the screen edges
-  // (the cut-off chip says there is more), instead of three wrapped lines. The
-  // 6px above and below keep a focused chip's ring clear of the scroll clip;
-  // a chip reached with the arrow keys scrolls into view clear of the gutter.
-  @media (max-width: #{$breakpoint-md - 1px}) {
+  // Phones and tablets: one line that scrolls sideways where it has to,
+  // running out to the screen edges (a cut-off chip says there is more),
+  // never a wrapped second row. At 768px all four fit. The 6px above and
+  // below keep a focused chip's ring clear of the scroll clip; a chip reached
+  // with the arrow keys scrolls into view clear of the gutter.
+  @media (max-width: #{$breakpoint-lg - 1px}) {
     flex-wrap: nowrap;
     overflow-x: auto;
     overscroll-behavior-x: contain;
@@ -69,9 +72,9 @@
   flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-height: 44px;
-  padding: 0 16px 0 18px;
+  padding: 0 14px 0 16px;
   border-radius: $radius-pill;
   border: 1px solid rgba($color-fg, 0.22);
   background: transparent;

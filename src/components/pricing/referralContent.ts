@@ -38,7 +38,6 @@ export const REFERRAL_STEPS = [
 ] as const;
 
 export const REFERRAL_FORM = {
-  label: 'Your referral',
   title: 'Refer an agency.',
   // What the form asks of you (the required fields in ReferralSignup).
   lede: 'Four fields are required: your name and email, and theirs. Everything else is optional.',

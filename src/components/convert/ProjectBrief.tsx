@@ -37,9 +37,10 @@ import RecaptchaNotice from './RecaptchaNotice';
 
 /**
  * The contact brief: one question at a time, in one form. Since the Nov 2026
- * award pass it is set in ink on the paper sheet of /contact-us: a large step
- * counter over a four-part progress track, the open question in display type,
- * answers as 64px+ rows, and a drawn tick on "Brief sent.".
+ * award pass it is set in ink on the paper sheet of /contact-us: a quiet step
+ * count over a four-part progress track, the open question in display type
+ * (the loudest thing in the form), answers as 60px+ rows, and a drawn tick on
+ * "Brief sent.".
  *
  * 1 What are we building? (each answer shows its public floor price)
  * 2 How big is it? (sizes with the tier and price they map to; skipped for "Not sure yet")
@@ -49,10 +50,12 @@ import RecaptchaNotice from './RecaptchaNotice';
  * - Answered questions fold into rows you can reopen ("Change"), so nothing
  *   has to be remembered between steps; the segmented progress bar starts on
  *   step one, partly filled, and fills further once the step is answered.
- * - A pointer pick advances by itself after a short beat (the hint under the
- *   first question says so, WCAG 3.2.2); keyboard users choose with the arrow
- *   keys and continue with Enter or the button, so arrowing never jumps away.
- *   Each new step moves focus to its question.
+ * - A pointer pick advances by itself after a short beat, long enough to see
+ *   the answer take (the hint under the first question says so, WCAG 3.2.2);
+ *   keyboard users choose with the arrow keys and continue with Enter or the
+ *   button, so arrowing never jumps away. Each new step moves focus to its
+ *   question, which announces it. The choices of steps 1 and 2 are marked
+ *   required for assistive tech (the form validates itself: noValidate).
  * - Links from the estimator (?svc=&size.<svc>=...), the pricing bundles
  *   (?bundle=) and the service and case pages (?svc= alone) prefill the first
  *   answers, echoed back with where they came from: "your estimate" only when
@@ -84,7 +87,8 @@ interface Draft {
 }
 
 const STEP_NAMES = ['What', 'Size', 'Details', 'Reply'] as const;
-const ADVANCE_DELAY = 180;
+// The radio's fill (200ms) and the row's ring finish, then a beat to read them.
+const ADVANCE_DELAY = 320;
 const FOLD_EASE = 'cubic-bezier(0.23, 1, 0.32, 1)';
 
 const MESSAGES: Record<FieldName, string> = {
@@ -102,9 +106,16 @@ function emailError(value: string): string | undefined {
 
 export default function ProjectBrief({
   reassure,
+  after,
 }: {
   /** One sourced line added to the reply line beside "Send the brief" (the page's NDA promise). */
   reassure?: string;
+  /**
+   * One plain line under the button saying what happens once the brief is
+   * sent, shown below 1024px only: there the page's own "What happens next"
+   * comes after the whole form instead of beside it.
+   */
+  after?: string;
 } = {}) {
   const search = useSearchString();
   const prefill = useMemo(() => readPrefill(search), [search]);
@@ -458,11 +469,10 @@ export default function ProjectBrief({
         <h2 id="brief-title" className={styles.title}>
           Your brief
         </h2>
-        {/* Visual only: the progress list below carries "step 2 of 4" for assistive tech. */}
+        {/* Visual only: the progress list below carries "step 2 of 4" for assistive
+            tech. A label beside "Your brief", never louder than the question. */}
         <p className={styles.count} aria-hidden="true">
-          <span className={styles.countLabel}>Step</span>
-          <span className={styles.countNow}>{String(step).padStart(2, '0')}</span>
-          <span className={styles.countOf}>/ 04</span>
+          Step {step} of 4
         </p>
       </div>
 
@@ -534,6 +544,7 @@ export default function ProjectBrief({
           value={kind}
           onChange={chooseKind}
           onPick={(event, option) => pointerPick(event, option.key === 'unsure' ? 3 : 2)}
+          required
         />
         {errors.kind ? <FieldError id="brief-kind-error" message={errors.kind} alert /> : null}
       </fieldset>
@@ -559,6 +570,7 @@ export default function ProjectBrief({
           value={size}
           onChange={chooseSize}
           onPick={(event) => pointerPick(event, 3)}
+          required={needsSize}
         />
         {errors.size ? <FieldError id="brief-size-error" message={errors.size} alert /> : null}
       </fieldset>
@@ -711,6 +723,7 @@ export default function ProjectBrief({
         ) : (
           <p className={styles.trust}>Nothing is sent until the last step.</p>
         )}
+        {after ? <p className={styles.after}>{after}</p> : null}
       </div>
 
       {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}
@@ -727,12 +740,15 @@ function Options({
   value,
   onChange,
   onPick,
+  required = false,
 }: {
   name: string;
   options: readonly ChoiceOption[];
   value: string | null;
   onChange: (value: string) => void;
   onPick: (event: MouseEvent<HTMLLabelElement>, option: ChoiceOption) => void;
+  /** Announced as required (the brief checks the answer itself on Continue). */
+  required?: boolean;
 }) {
   return (
     <div className={styles.options}>
@@ -749,6 +765,7 @@ function Options({
             value={option.key}
             checked={value === option.key}
             onChange={() => onChange(option.key)}
+            required={required}
             className={styles.radio}
           />
           <span className={styles.optionText}>

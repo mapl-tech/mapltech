@@ -8,14 +8,17 @@ import styles from '@/components/pricing/ReferralForm.module.scss';
 import RecaptchaNotice from './RecaptchaNotice';
 
 /**
- * The referral form (the live page's fields, kept: you, and the agency you
- * are introducing: their name and email, then the agency's name if it is not
- * the same). Required fields are validated on submit, then again on blur once
- * a first attempt has been made; each error sits under its field, is linked
- * with aria-describedby, and focus moves to the first one. Beside the button,
- * the brief's own privacy line, with the link to the policy. On success the
- * form is replaced by a status panel that takes focus. Posts to /api/contact
- * with the subject "Referral: <name>".
+ * The referral form (the live page's fields, kept): the four required ones on
+ * show, you and the person you are introducing (name and email each); the
+ * four optional ones (their agency's name, what they need, notes, your
+ * company) folded behind "Add details (optional)", a native disclosure, so
+ * the short form looks short. Required fields are validated on submit, then
+ * again on blur once a first attempt has been made; their email must not be
+ * your own. Each error sits under its field, is linked with aria-describedby,
+ * and focus moves to the first one. Beside the button, the brief's own
+ * privacy line, with the link to the policy. On success the form is replaced
+ * by a status panel that takes focus. Posts to /api/contact with the subject
+ * "Referral: <name>".
  */
 
 type FieldKey = 'name' | 'email' | 'refName' | 'refEmail';
@@ -33,24 +36,26 @@ function validate(data: FormData): Errors {
   const refEmail = field(data, 'refEmail');
   if (!refEmail) errors.refEmail = 'Enter their email address so we can reach them.';
   else if (!isEmail(refEmail)) errors.refEmail = 'Enter an email address like name@agency.com.';
+  // The introduction goes to them, so their address cannot be the one you gave for yourself.
+  else if (isEmail(email) && refEmail.toLowerCase() === email.toLowerCase())
+    errors.refEmail = 'That is your own email. Enter theirs, so we can reach them.';
   return errors;
 }
 
 interface FieldProps {
   id: string;
   label: string;
-  optional?: boolean;
   error?: string;
   wide?: boolean;
   children: (describedBy: string | undefined) => ReactNode;
 }
 
-function Field({ id, label, optional = false, error, wide = false, children }: FieldProps) {
+function Field({ id, label, error, wide = false, children }: FieldProps) {
   const describedBy = error ? `${id}-error` : undefined;
   return (
     <div className={`${styles.field} ${wide ? styles.wide : ''}`.trim()}>
       <label htmlFor={id} className={styles.label}>
-        {label} {optional ? <span className={styles.optional}>(optional)</span> : null}
+        {label}
       </label>
       {children(describedBy)}
       {error ? (
@@ -202,18 +207,6 @@ export default function ReferralSignup() {
               />
             )}
           </Field>
-          <Field id={id('yourCompany')} label="Your company" optional wide>
-            {(describedBy) => (
-              <input
-                id={id('yourCompany')}
-                name="yourCompany"
-                type="text"
-                autoComplete="organization"
-                className={styles.input}
-                aria-describedby={describedBy}
-              />
-            )}
-          </Field>
         </div>
       </fieldset>
 
@@ -250,7 +243,16 @@ export default function ReferralSignup() {
               />
             )}
           </Field>
-          <Field id={id('refCompany')} label="Agency name" optional>
+        </div>
+      </fieldset>
+
+      {/* The optional fields, folded: still in the form (and in what it sends)
+          when closed. The summary is the control; it says optional, so the
+          labels inside do not repeat it. */}
+      <details className={styles.more}>
+        <summary className={styles.moreToggle}>Add details (optional)</summary>
+        <div className={`${styles.fields} ${styles.moreFields}`}>
+          <Field id={id('refCompany')} label="Their agency’s name">
             {(describedBy) => (
               <input
                 id={id('refCompany')}
@@ -262,7 +264,7 @@ export default function ReferralSignup() {
               />
             )}
           </Field>
-          <Field id={id('refNeed')} label="What do they need?" optional>
+          <Field id={id('refNeed')} label="What do they need?">
             {(describedBy) => (
               <select
                 id={id('refNeed')}
@@ -281,13 +283,25 @@ export default function ReferralSignup() {
               </select>
             )}
           </Field>
-          <Field id={id('refNotes')} label="Anything that would help us reach out?" optional wide>
+          <Field id={id('refNotes')} label="Anything that would help us reach out?" wide>
             {(describedBy) => (
               <textarea id={id('refNotes')} name="refNotes" rows={4} className={styles.textarea} aria-describedby={describedBy} />
             )}
           </Field>
+          <Field id={id('yourCompany')} label="Your company" wide>
+            {(describedBy) => (
+              <input
+                id={id('yourCompany')}
+                name="yourCompany"
+                type="text"
+                autoComplete="organization"
+                className={styles.input}
+                aria-describedby={describedBy}
+              />
+            )}
+          </Field>
         </div>
-      </fieldset>
+      </details>
 
       <div className={styles.honeypot} aria-hidden="true">
         <label>

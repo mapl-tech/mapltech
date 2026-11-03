@@ -2,8 +2,9 @@
  * The /our-work index (Nov 2026 award pass).
  *
  * One editorial row per listed project, every row in the same schema and
- * order: client, what we built, sector, year (only where a source dates it),
- * one result (only where the case story publishes one), and the real capture.
+ * order: client, what we built, sector, one result (only where the case story
+ * publishes one), and the real capture. No year: only two projects have a
+ * dated source, and a field shown on two rows of seven reads as a gap.
  * Display order and visibility come from `workEntries()`, which reads
  * `listedProjects()`, so the owner's order (LRO Staffing first, CHHA-NCR
  * second) holds and hidden projects can never appear.
@@ -12,8 +13,6 @@
  * - `built`: condensed from the project's own copy (site.ts description,
  *   stories.ts facts); each line cites its source below.
  * - `sector`: the case story's sector tag (`tags[1]`).
- * - `year`: read from a dated story fact ("Relaunched July 2026", "2026
- *   edition"). Undated projects carry no year rather than a guess.
  * - `result`: the case story's first published result, verbatim.
  * - `line`: the service line, from site.ts `category` (the filter chips).
  * - captures: the real screenshots listed in each story's `media`. When a
@@ -44,7 +43,6 @@ export interface CatalogItem {
   sector: string;
   /** The service line the filter chips match on. */
   line: EstimateService;
-  year?: string;
   result?: { value: string; label: string };
   /** Real desktop capture (1800×1125), shown in a browser frame. */
   desktop?: string;
@@ -78,13 +76,6 @@ const BUILT: Partial<Record<string, string>> = {
   unsvcc: 'An internal operations dashboard',
 };
 
-const DATED_FACT = /^(year|relaunched|launched|delivered)$/i;
-
-function yearOf(story: CaseStory | undefined): string | undefined {
-  const fact = story?.facts.find((f) => DATED_FACT.test(f.term));
-  return fact?.detail.match(/\b(20\d{2})\b/)?.[1];
-}
-
 /** The address shown in the browser frame ("lrostaffing.com"). */
 function addressOf(story: CaseStory | undefined, entry: WorkEntry): string | undefined {
   return story?.facts.find((f) => f.term === 'Live')?.detail ?? entry.host;
@@ -104,7 +95,6 @@ function toItem(entry: WorkEntry): CatalogItem {
     built: BUILT[entry.slug] ?? story?.tags[0] ?? entry.serviceLabel,
     sector: story?.tags[1] ?? entry.category,
     line: entry.service,
-    year: yearOf(story),
     result: story?.results?.[0],
     desktop: media?.desktop,
     mobile: media?.mobile,

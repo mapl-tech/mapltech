@@ -67,7 +67,11 @@ export default function SiteScroll({
           <h2 id="case-live" className={styles.siteTitle}>
             The live site, top to bottom.
           </h2>
-          <p className={styles.siteNote}>Keep scrolling: this is the real site, captured in full, not a mock-up.</p>
+          {/* Still (reduced motion), the page does not drive the capture: the reader scrolls the frame. */}
+          <p className={styles.siteNote}>
+            {reduceMotion ? 'Scroll inside the frame' : 'Keep scrolling'}: this is the real site, captured in full, not a
+            mock-up.
+          </p>
           {skipTo ? (
             <a href={`#${skipTo}`} className={styles.siteSkip}>
               Skip the live site

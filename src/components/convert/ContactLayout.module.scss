@@ -18,11 +18,12 @@ $accent: $color-red-ink;
 
 // ---------------------------------------------------------------- the sheet
 // The sheet rises into PageHeader's bottom padding (clamp(64px, 9vw, 128px),
-// kept in step here), 24-40px under the lede, and opens close to its top edge,
-// so the first answers of the brief are on the first screen.
+// kept in step here), 24-32px under the lede, and opens close to its top edge,
+// so the first answers of the brief are on the first screen (three of six at
+// 1440×900).
 .sheet {
   position: relative;
-  margin-top: calc(clamp(24px, 2.6vw, 40px) - clamp(64px, 9vw, 128px));
+  margin-top: calc(clamp(24px, 2vw, 32px) - clamp(64px, 9vw, 128px));
   background: $color-paper;
   color: $ink;
   border-radius: clamp(24px, 3vw, 40px);
@@ -38,7 +39,7 @@ $accent: $color-red-ink;
     'aside'
     'back';
   row-gap: clamp(64px, 9vw, 112px);
-  padding-top: clamp(28px, 3.4vw, 48px);
+  padding-top: clamp(24px, 2.6vw, 36px);
   padding-bottom: clamp(56px, 9vw, 128px);
 
   // Short screens: the brief opens nearer the sheet's edge (see ProjectBrief's $short).

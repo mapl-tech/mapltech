@@ -25,10 +25,10 @@ import styles from './WorkIndex.module.scss';
  *
  * - Filter chips with live counts: one choice out of several, so they are
  *   native radios (a fieldset named for assistive tech), styled as chips. Tab
- *   reaches the chosen one, the arrow keys move along the line; on phones the
- *   line scrolls sideways instead of wrapping. The choice lives in the URL
- *   (`?type=web`), read through useSyncExternalStore and written with
- *   history.replaceState, so a filtered view can be shared. Filtering is one
+ *   reaches the chosen one, the arrow keys move along the line; below 1024px
+ *   the line scrolls sideways where it must, instead of wrapping. The choice
+ *   lives in the URL (`?type=web`), read through useSyncExternalStore and
+ *   written with history.replaceState, so a filtered view can be shared. Filtering is one
  *   attribute on the root; CSS hides the rows of other lines, so nothing
  *   mounts or unmounts and the server HTML always holds every project. The
  *   result is announced politely.
@@ -79,7 +79,7 @@ function writeTypeParam(key: WorkFilterKey) {
 const serverFilter = (): WorkFilterKey => 'all';
 
 /**
- * On phones the chips are one line that scrolls sideways: bring `chip` fully
+ * Below 1024px the chips are one line that can scroll sideways: bring `chip` fully
  * into it, clear of the gutter (scrollIntoView ignores the line's scroll
  * padding, so the offset is set by hand). No-op where the line does not scroll.
  */

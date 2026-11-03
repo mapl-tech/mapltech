@@ -4,16 +4,29 @@
 
 // /referral (Nov 2026 award pass, simplified). The shared section grammar
 // lives in PricingSections.module.scss; this module adds the hero's two-line
-// title and actions, the steps band and the form section.
+// title and actions, the form card in the hero, the steps band and the
+// questions' way back to the form.
 //
 // A short page, so a tighter rhythm than the long ones' 64-144px: 48px of
 // air on phones, 104px at most.
 $pad-y: clamp(48px, 7vw, 104px);
 
 // ---------------------------------------------------------------- hero
-// Each sentence of the H1 on its own line; the condition in crimson (PageHeader's <em>).
+// Each sentence of the H1 on its own line; the condition in crimson (large
+// text: red-display, 6.4:1).
 .titleLine {
   display: block;
+}
+
+.titleAccent {
+  color: $color-red-display;
+}
+
+// PageHeader sets its aside level with the copy's last line; the form is the
+// taller of the two, so from 1024px both start at the top, the card's edge in
+// line with the breadcrumb.
+[data-has-aside]:has(> * > .formCard) {
+  align-items: start;
 }
 
 .primary {
@@ -37,6 +50,11 @@ $pad-y: clamp(48px, 7vw, 104px);
   @media (max-width: #{$breakpoint-sm - 1px}) {
     width: 100%;
   }
+
+  // From 1024px the form is beside it: nothing to jump to.
+  @include lg {
+    display: none;
+  }
 }
 
 .trust {
@@ -44,6 +62,42 @@ $pad-y: clamp(48px, 7vw, 104px);
   font-size: $font-size-base; // 17px: a sentence, never under the phone floor
   line-height: 1.5;
   color: $color-fg-muted;
+}
+
+// ---------------------------------------------------------------- the form, in the hero
+.formCard {
+  min-width: 0;
+  padding: clamp(24px, 3.4vw, 44px) clamp(20px, 3vw, 40px);
+  border-radius: clamp(22px, 2.4vw, 32px);
+  background:
+    radial-gradient(70% 50% at 100% 0%, rgba(217, 28, 63, 0.12) 0%, transparent 65%),
+    #121214;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07);
+  // In-page jumps leave a little air above the card, under the header.
+  scroll-margin-top: 16px;
+}
+
+// The card's heading: a step under the hero's H1, over the form.
+.formTitle {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem); // 28px -> 40px
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: $color-fg;
+}
+
+.formLede {
+  margin: 12px 0 28px;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-fg-muted;
+}
+
+// Focus is never hidden under the fixed header (WCAG 2.4.11).
+.formCard :is(a, button, input, select, textarea, summary) {
+  scroll-margin-top: 8px;
 }
 
 // ---------------------------------------------------------------- how it works
@@ -67,78 +121,34 @@ $pad-y: clamp(48px, 7vw, 104px);
   }
 }
 
-// ---------------------------------------------------------------- the form
-.signup {
-  position: relative;
-  background: $color-ground;
-  border-top: 1px solid $color-hairline;
-}
-
-.signupInner {
-  @include shell;
-  padding-top: $pad-y;
-  padding-bottom: $pad-y;
-  display: grid;
-  gap: 48px;
-
-  @include lg {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 72px;
-    align-items: start;
-  }
-}
-
-.signupHead {
-  min-width: 0;
-
-  > h2 {
-    margin-top: 22px;
-  }
-
-  > p:not(:first-child) {
-    margin-top: 24px;
-  }
-
-  @include lg {
-    position: sticky;
-    top: calc(var(--header-height, 72px) + 40px);
-  }
-}
-
-.signupLabel {
-  @include section-label;
-
-  &::before {
-    @include section-label-rule;
-  }
-}
-
-.formCard {
-  min-width: 0;
-  padding: clamp(24px, 4vw, 48px) clamp(20px, 4vw, 48px);
-  border-radius: clamp(22px, 2.4vw, 32px);
-  background:
-    radial-gradient(70% 50% at 100% 0%, rgba(217, 28, 63, 0.12) 0%, transparent 65%),
-    #121214;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07);
-}
-
-// The approved quote under the section's lede, ruled off like the heroes'.
-.signupProof {
-  margin-top: clamp(28px, 3vw, 40px);
-  padding-top: clamp(18px, 2vw, 24px);
-  border-top: 1px solid $color-hairline;
-}
-
-// Focus is never hidden under the fixed header (WCAG 2.4.11).
-.signup :is(a, button, input, select, textarea, summary) {
-  scroll-margin-top: 8px;
-}
-
 // ---------------------------------------------------------------- questions
 // The shared FAQ section (PricingSections), on this page's rhythm. Two classes,
 // so this wins over the shared section-pad whatever order the sheets load in.
 .terms .termsInner {
   padding-top: $pad-y;
   padding-bottom: $pad-y;
+}
+
+.termsBody {
+  display: grid;
+  gap: clamp(20px, 2.4vw, 28px);
+  min-width: 0;
+}
+
+// After the last question, back up to the form (the arrow in CSS, pointing up).
+.termsAction {
+  justify-self: start;
+  @include text-action($color-fg);
+  flex-direction: row-reverse;
+  font-size: 1.0625rem;
+
+  &::before {
+    content: '\2191';
+    color: $color-red-text;
+    transition: transform 0.4s $ease-out-expo;
+  }
+
+  &:hover::before {
+    transform: translateY(-3px);
+  }
 }

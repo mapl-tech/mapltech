@@ -31,9 +31,11 @@ $short: '(max-height: 760px)';
 }
 
 // ---------------------------------------------------------------- head + progress
+// One quiet line: "Your brief" and "Step 1 of 4", both labels, so the open
+// question stays the loudest thing in the form.
 .head {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
@@ -41,7 +43,6 @@ $short: '(max-height: 760px)';
 // "Your brief" in the section-label voice (an h2, so the size is set here).
 .title {
   @include section-label($muted);
-  padding-bottom: 6px;
 
   &::before {
     @include section-label-rule($accent);
@@ -49,49 +50,21 @@ $short: '(max-height: 760px)';
 }
 
 .count {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
+  @include mono-label($ink);
   margin: 0;
-  color: $ink;
-}
-
-.countLabel {
-  @include mono-label($muted);
-}
-
-.countNow {
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2.25rem, 1.7rem + 1.6vw, 3.25rem);
-  line-height: 0.86;
-  letter-spacing: -0.045em;
-  @include tabular;
-
-  @media #{$short} {
-    font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem);
-  }
-}
-
-.countOf {
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
-  color: $muted;
-  @include tabular;
+  white-space: nowrap;
 }
 
 .progress {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
-  margin: 18px 0 0;
+  margin: 14px 0 0;
   padding: 0;
   list-style: none;
 
   @media #{$short} {
-    margin-top: 12px;
+    margin-top: 10px;
   }
 }
 
@@ -263,18 +236,20 @@ $short: '(max-height: 760px)';
 }
 
 // ---------------------------------------------------------------- steps
+// Spacing is kept tight enough that at 1440×900 the head, the question and
+// the first three answers share the first screen with the page hero.
 .step {
   min-width: 0;
-  margin: 28px 0 0;
+  margin: 24px 0 0;
   padding: 0;
   border: 0;
 
   @include md {
-    margin-top: 36px;
+    margin-top: 28px;
   }
 
   @media #{$short} {
-    margin-top: 20px;
+    margin-top: 18px;
   }
 
   @include motion-ok {
@@ -294,14 +269,14 @@ $short: '(max-height: 760px)';
   }
 }
 
-// The one decision on screen, as large as the column allows.
+// The one decision on screen, the largest type in the form.
 .question {
   display: block;
   width: 100%;
   padding: 0;
   font-family: $font-display;
   font-weight: $font-weight-bold;
-  font-size: clamp(1.875rem, 1.25rem + 2vw, 3rem); // 30px -> 48px
+  font-size: clamp(1.875rem, 1.3rem + 1.6vw, 2.625rem); // 30px -> 42px
   line-height: 1.02;
   letter-spacing: -0.032em;
   color: $ink;
@@ -319,7 +294,7 @@ $short: '(max-height: 760px)';
 }
 
 .hint {
-  margin: 14px 0 0;
+  margin: 10px 0 0;
   max-width: 52ch;
   font-size: 1.0625rem;
   line-height: 1.5;
@@ -333,7 +308,7 @@ $short: '(max-height: 760px)';
 .options {
   display: grid;
   gap: 8px;
-  margin: 26px 0 0;
+  margin: 20px 0 0;
   // The rows lay out by the space the column gives them, not by the viewport.
   container-type: inline-size;
 
@@ -351,8 +326,8 @@ $short: '(max-height: 760px)';
     'radio price';
   align-items: center;
   gap: 2px 16px;
-  min-height: 64px;
-  padding: 14px 18px;
+  min-height: 60px;
+  padding: 12px 18px;
   border-radius: 16px;
   background: $tile;
   box-shadow: inset 0 0 0 1px $tile-ring;
@@ -383,7 +358,7 @@ $short: '(max-height: 760px)';
   @container (min-width: 440px) {
     grid-template-columns: 24px minmax(0, 1fr) auto;
     grid-template-areas: 'radio text price';
-    min-height: 68px;
+    min-height: 64px;
     padding-inline: 22px;
   }
 
@@ -786,6 +761,33 @@ $short: '(max-height: 760px)';
       outline: 2px solid $accent;
       outline-offset: 2px;
     }
+  }
+}
+
+// What happens once it is sent, on its own line under the button; below
+// 1024px only, where the page's "What happens next" follows the whole form.
+.after {
+  flex-basis: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $ink;
+  @include phone-floor;
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 14px;
+    height: 2px;
+    transform: translateY(-4px);
+    background: $accent;
+  }
+
+  @include lg {
+    display: none;
   }
 }
 
