@@ -297,9 +297,10 @@ export const services: readonly ServiceRecord[] = [
     ],
     typicalTimeline: '3–4 weeks Starter · 5–8 weeks Growth / E-Commerce · 8–14 weeks Advanced and Enterprise',
     postLaunchSupport: '30–90 days depending on the package',
+    // Voice pass (Nov 3, 2026): the close speaks to an agency with a client project, and says what we do together.
     ctaBand: {
-      heading: 'Ready to build your next website?',
-      body: 'Tell us about the project, and we will show you how we can help.',
+      heading: 'Building a website for a client?',
+      body: 'Tell us about the project. We will agree the scope with you and build it under your brand.',
       submitLabel: 'Get Started',
     },
     portfolioCategory: 'Web Development',
@@ -398,7 +399,7 @@ export const services: readonly ServiceRecord[] = [
       PAYMENT_PLANS_FAQ,
     ],
     ctaBand: {
-      heading: 'Tired of copying data between tools?',
+      heading: 'Have a client still copying data between tools?',
       body: 'Tell us what your team does by hand. We will build the automation that does it for you.',
       submitLabel: "Let's Automate",
     },
@@ -500,8 +501,9 @@ export const services: readonly ServiceRecord[] = [
       PAYMENT_PLANS_FAQ,
     ],
     ctaBand: {
-      heading: 'Tired of workarounds and spreadsheets?',
-      body: 'Tell us what slows your team down. We will build the tool that fixes it, for good.',
+      heading: 'Have a client still running on spreadsheets?',
+      // "Built around how your team works": the oneLiner above.
+      body: 'Tell us what slows your client’s team down. We build the tool around how they work.',
       submitLabel: "Let's Build",
     },
     portfolioCategory: 'Custom Internal Tools',
@@ -599,8 +601,8 @@ export const services: readonly ServiceRecord[] = [
       PAYMENT_PLANS_FAQ,
     ],
     ctaBand: {
-      heading: 'Ready to move to the cloud?',
-      body: 'Tell us about your hosting today, and we will plan a setup that can grow with your clients.',
+      heading: 'Planning a cloud move for a client?',
+      body: 'Tell us about your hosting today. We will plan a setup with you that can grow with your clients.',
       submitLabel: "Let's Build",
     },
     // No portfolioProjects entry is categorised as cloud work today.

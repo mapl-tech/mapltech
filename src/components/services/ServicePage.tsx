@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import CloseBand from '@/components/flagship/CloseBand';
-import { CLIENTS_LINE, NDA_LINE } from '@/components/flagship/content';
+import { CLIENTS_LINE, WHITE_LABEL_NOTE } from '@/components/flagship/content';
 import JsonLd from '@/components/seo/JsonLd';
 import PageHeader from '@/components/ui/PageHeader';
 import type { ServiceSlug } from '@/config/services';
@@ -49,8 +49,9 @@ export interface ServicePageProps {
  * Every "Start a project" (the hero's, the close's, and so the phone bar's,
  * which repeats the hero's) opens the brief with this service chosen, and
  * every way into the estimator with it selected says "Price your project"
- * (ESTIMATE_LABEL: the hero's, the first answer's, the close's); the NDA
- * line and the approved client quote sit under the hero's pair, so every
+ * (ESTIMATE_LABEL: the hero's, the first answer's, the close's); the
+ * white-label note (the NDA, never approaching your clients; the fixed quote
+ * is in the hero facts) and the approved client quote sit under the hero's pair, so every
  * service page shows the same proof in its first screen, and the close names
  * the clients instead of repeating the quote. Server Component, all copy in
  * the HTML, no client island. JSON-LD is one page graph built from the same
@@ -98,7 +99,7 @@ export default function ServicePage({ slug }: ServicePageProps) {
             page={view.slug}
             href={brief}
             secondary={{ label: ESTIMATE_LABEL, href: view.estimate }}
-            note={NDA_LINE}
+            note={WHITE_LABEL_NOTE}
           />
         }
         aside={<HeroFacts view={view} />}

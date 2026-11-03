@@ -60,9 +60,12 @@
 
 .note {
   margin: 0;
+  // PageHeader's note measure, so the trust line never runs past the lede and the rule under it.
+  max-width: 38em;
   font-size: $font-size-base;
   line-height: 1.5;
   color: $color-white; // small text on crimson: solid white only (7.56:1)
+  text-wrap: balance;
 
   @include phone-floor;
 }

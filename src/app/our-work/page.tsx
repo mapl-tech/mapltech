@@ -145,15 +145,15 @@ export default function OurWorkPage() {
       ) : null}
 
       {/* The homepage's ask after its work, with the hero's risk answer under it.
-          The lede carries the two white-label promises the title does not
-          (the homepage's "Why agencies choose us", from the FAQ), so the band
-          never says the fixed quote twice. The band's own quote line stays
-          off: the client voice sits right above it. */}
+          The lede carries the two white-label promises the note does not
+          (the homepage's "Why agencies work with us", from the FAQ), so the
+          band never says the fixed quote or "never approach" twice. The band's
+          own quote line stays off: the client voice sits right above it. */}
       <CloseBand
         id="work-close-title"
         placement="work_close"
         title={WORK_SECTION.ask}
-        lede="We never approach your clients. You and your client own the code."
+        lede="Your brand goes on the work. You and your client own the code."
         note={HERO_REASSURE}
         proof={!voice}
       />

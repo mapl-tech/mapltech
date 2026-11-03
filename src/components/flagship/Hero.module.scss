@@ -215,6 +215,8 @@ $short-band: max(30svh, 192px);
   font-size: $font-size-base; // 17px at every width, as the quote line beside every other ask
   line-height: 1.5;
   color: $color-fg-muted;
+  // Three promises in two sentences: even lines, never "approach your clients." left alone on the last one.
+  text-wrap: balance;
 
   @media #{$portrait} and (max-width: $phone-max) {
     margin-top: 12px;

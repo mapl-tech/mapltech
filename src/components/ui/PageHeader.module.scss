@@ -155,6 +155,7 @@
   font-size: $font-size-base;
   line-height: 1.5;
   color: $color-fg-muted;
+  text-wrap: balance;
 
   @include phone-floor;
 }

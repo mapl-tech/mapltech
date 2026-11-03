@@ -592,8 +592,8 @@ export default function ProjectBrief({
           What should we know?
         </label>
         <p id="brief-details-hint" className={styles.hint}>
-          Optional. {kind === 'unsure' ? 'What are you trying to get done?' : 'The goal, what exists today, any deadline.'} A
-          few lines is plenty.
+          Optional. {kind === 'unsure' ? 'What are you trying to get done?' : 'The goal, what exists today and any deadline.'} A
+          few lines is enough.
         </p>
         <textarea
           id="brief-details"

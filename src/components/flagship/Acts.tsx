@@ -12,7 +12,7 @@ export function Faq({ items }: { items: readonly FaqEntry[] }) {
           <h2 id="faq-title" className={styles.title}>
             Questions agencies ask.
           </h2>
-          <p className={styles.lede}>Short, honest answers to what agency owners ask us before they sign.</p>
+          <p className={styles.lede}>What agency owners ask us before they sign, with short answers.</p>
         </div>
         <HomeFaq items={items} />
       </div>

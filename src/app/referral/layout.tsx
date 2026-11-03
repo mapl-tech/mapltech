@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     locale: 'en_CA',
     title: SOCIAL_TITLE,
     description: REFERRAL_DESCRIPTION,
-    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'MAPL TECH: The engineering backbone behind agencies that refuse to cut corners. A spine of crimson, graphite and chrome rods beside the headline.' }],
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'MAPL TECH: The engineering backbone behind your agency. A spine of crimson, graphite and chrome rods beside the headline.' }],
   },
   twitter: { card: 'summary_large_image', title: SOCIAL_TITLE, description: REFERRAL_DESCRIPTION, images: [OG_IMAGE] },
 };

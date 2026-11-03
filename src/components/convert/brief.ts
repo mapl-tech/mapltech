@@ -169,7 +169,7 @@ export function sizeOptions(kind: BriefKind | null): readonly ChoiceOption[] {
 }
 
 export function sizeQuestion(kind: BriefKind | null): string {
-  return kind === 'partner' ? 'Which partnership fits?' : 'How big is it?';
+  return kind === 'partner' ? 'Which partnership fits?' : 'How big is the project?';
 }
 
 // ---------------------------------------------------------------- prefill

@@ -189,8 +189,8 @@ export default function BlogPage() {
 
       {/* The primary opens the brief, so the lede and note say what happens there (the contact page's own words). */}
       <CloseBand
-        title="Need it built, not just explained?"
-        lede="Answer four short questions about your project."
+        title="Have a client project in mind?"
+        lede="Answer four short questions. Then we agree the scope with you."
         note={HERO_REASSURE}
         placement="blog_close"
         id="blog-close-title"

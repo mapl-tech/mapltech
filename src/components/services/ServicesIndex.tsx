@@ -40,7 +40,7 @@ export default function ServicesIndex() {
         }
         lede={
           <p>
-            Websites, automation, custom tools and cloud hosting, built by engineers who understand agency work. Every
+            Websites, automation, custom tools and cloud hosting, built alongside your team and under your brand. Every
             price is public.
           </p>
         }
@@ -93,7 +93,7 @@ export default function ServicesIndex() {
       <CloseBand
         id="services-close-title"
         title="Not sure which service fits?"
-        lede="Tell us about the project, and we will help you pick the right service."
+        lede="Tell us about the project. We will help you choose the right service and agree the scope with you."
         note={keepNumberWords(HERO_REASSURE)}
         placement="services_close"
         proofLine={CLIENTS_LINE}

@@ -32,7 +32,10 @@
 .note {
   flex-basis: 100%;
   margin: 4px 0 0;
+  // PageHeader's note measure: the three-promise trust line wraps into two even lines, never one 110-character line.
+  max-width: 38em;
   font-size: $font-size-base; // 17px at every width, as the close band's note and PageHeader's
   line-height: 1.5;
   color: $color-fg-muted;
+  text-wrap: balance;
 }

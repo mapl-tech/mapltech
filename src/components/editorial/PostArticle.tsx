@@ -6,7 +6,7 @@ import { SERVICE_META, estimateHref, formatMoney } from '@/lib/estimate';
 import { ESTIMATE_HREF, PROJECT_HREF } from '@/components/layout/chrome';
 import CloseBand from '@/components/flagship/CloseBand';
 import QuoteLine from '@/components/flagship/QuoteLine';
-import { HERO_REASSURE, LOWEST_PRICE, NDA_LINE } from '@/components/flagship/content';
+import { CLOSE_BAND, HERO_REASSURE, LOWEST_PRICE, WHITE_LABEL_NOTE } from '@/components/flagship/content';
 import { layerView, proofCases } from '@/components/services/serviceContent';
 import { categoryService, firstSentence, preparePost, topicSlug } from '@/components/convert/blog-utils';
 import ArticleRow from './ArticleRow';
@@ -38,16 +38,16 @@ import Arrow from '@/components/ui/Arrow';
  * (`data-hero-cta`), so mid-read the bar offers this post's estimate rather
  * than a generic brief. The estimator has one label across the ask (inline,
  * bar, close): ESTIMATE_LABEL. The close's primary opens the brief with the
- * post's service already chosen (`?svc=`), its lede says what that opens (the
- * blog index close's words), the NDA line under it. A Lighthouse result in the
+ * post's service already chosen (`?svc=`), its lede says what that opens and
+ * what follows (the homepage close's words), the white-label note under it. A Lighthouse result in the
  * proof reads on its own scale ("100/100").
  */
 
 /** The estimator's one label across the post's ask, as on the service pages and /pricing. */
 const ESTIMATE_LABEL = 'Price your project';
 
-/** What "Start a project" opens, in the blog index close's words. */
-const BRIEF_LINE = 'Answer four short questions about your project';
+/** What "Start a project" opens, in the homepage close's words. */
+const BRIEF_LINE = 'Answer four short questions';
 
 /** A Lighthouse score reads on its own 0-100 scale ("100/100"), not as a bare number. */
 function resultValue(result: { value: string; label: string }): string {
@@ -167,7 +167,7 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                     </p>
                     <p className={styles.inlineText}>
                       {serviceName && from
-                        ? `Our ${serviceName} service is delivered under your brand, from ${from}. The estimator shows your price before we ask for anything.`
+                        ? `We deliver ${serviceName} under your brand, from ${from}. The estimator shows your price before we ask for anything.`
                         : 'Our prices are public. The estimator shows your price before we ask for anything.'}
                     </p>
                     <div className={styles.inlineActions}>
@@ -305,17 +305,19 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
       ) : null}
 
       {/* ---------------------------------------------------------- the close */}
-      {/* The lede ends on what "Start a project" opens (the brief's four questions). Its
-          "20-minute" uses a no-break hyphen (U+2011), so "20-" never ends a line. */}
+      {/* The lede ends on what "Start a project" opens (the brief's four questions) and what
+          follows it: the homepage close's next step (CLOSE_BAND). Its "20 minutes" keeps the
+          number on the line (a no-break space). Without a service the note is the site's trust
+          line (the call and the fixed quote), so the lede stops at the brief. */}
       <CloseBand
-        title={serviceName ? 'Want help putting this into practice?' : 'Have a project in mind?'}
+        title={serviceName ? 'Want us to build this with your team?' : CLOSE_BAND.title}
         lede={
           serviceName
-            ? `Our ${serviceName} service is delivered under your brand, for agencies and the businesses they serve. ${BRIEF_LINE}, then a 20\u2011minute call turns it into a fixed quote.`
-            : `We offer ${SERVICE_LIST} for agencies, under your brand, and every price is public. ${BRIEF_LINE}.`
+            ? `We deliver ${serviceName} for agencies, under your brand. ${BRIEF_LINE}. We talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote.`
+            : `We offer ${SERVICE_LIST} for agencies, under your brand, and every price is public. ${BRIEF_LINE} to start.`
         }
         href={briefHref}
-        note={serviceName ? NDA_LINE : HERO_REASSURE}
+        note={serviceName ? WHITE_LABEL_NOTE : HERO_REASSURE}
         secondary={{ label: ESTIMATE_LABEL, href: askHref }}
         placement="blog_post_close"
         id="post-close-title"

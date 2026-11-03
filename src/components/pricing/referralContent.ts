@@ -81,9 +81,11 @@ export const REFERRAL_TERMS_COPY = {
 
 /**
  * The close band, for the visitor who is an agency with a build of its own.
- * Lede: the homepage close's own promise (a fixed quote after a 20-minute call).
+ * Lede: the homepage close's own next step (a 20-minute call, the scope agreed
+ * with you, a fixed quote). Display only: "20 minutes" keeps its number on the
+ * line with a no-break space.
  */
 export const REFERRAL_CLOSE = {
   title: 'Have a project of your own in mind?',
-  lede: 'Tell us what you are building. You get a fixed quote after a 20-minute call.',
+  lede: 'Tell us what you are building. We talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote.',
 } as const;

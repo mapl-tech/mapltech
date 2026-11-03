@@ -19,18 +19,19 @@ interface TitleRun {
 }
 
 /**
- * The hero keeps the live site's purpose and words: "The engineering backbone
- * behind agencies that refuse to cut corners." Broken into the four lines it
- * sets at desktop widths (phones let it wrap freely).
+ * The hero keeps the live site's brand line, "the engineering backbone", and
+ * says whose: "The engineering backbone behind your agency." (voice pass, Nov 3
+ * 2026; the old "agencies that refuse to cut corners" read as combative to the
+ * directors it is written for). Broken into the three lines it sets at desktop
+ * widths (phones let it wrap freely); "engineering backbone" is the accent run.
  */
 export const HERO = {
   titleLines: [
     [{ text: 'The ' }, { text: 'engineering', accent: true }],
     [{ text: 'backbone', accent: true }, { text: ' behind' }],
-    [{ text: 'agencies that refuse' }],
-    [{ text: 'to cut corners.' }],
+    [{ text: 'your agency.' }],
   ] as readonly (readonly TitleRun[])[],
-  lede: 'We build the websites, automation, software and cloud systems that agencies sell, and we deliver them under your brand.',
+  lede: 'We work alongside your team to build the websites, automation, software and cloud systems your clients buy from you, under your brand.',
 } as const;
 
 /** Lowest public "from" price across the four service lines (site.ts `pricing`). */
@@ -125,7 +126,7 @@ export const LAYERS: readonly Layer[] = [
     service: 'tools',
     name: 'Custom Internal Tools',
     linkLabel: 'How we build internal tools',
-    summary: 'Dashboards, client portals and admin systems, built around how your client’s team really works.',
+    summary: 'Dashboards, client portals and admin systems, built around how your client’s team works.',
     fromPrice: from(pricing.internalTools.tiers[0].price),
     href: '/services/custom-internal-tools',
     image: {
@@ -211,13 +212,20 @@ export const WORK: readonly WorkCard[] = (
 export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') ?? null;
 
 /**
- * Beside the hero ask: the risk answer (both facts are the FAQ's own answers,
- * src/components/home/data.ts) and the first sentence of the approved quote.
- * The NDA sentence also stands alone where the fixed quote is already said
- * beside it (the service pages' hero facts).
+ * Beside the hero ask: the risk answer (all three facts are the FAQ's own
+ * answers, src/components/home/data.ts) and the first sentence of the approved
+ * quote. HERO_REASSURE is the site-wide trust line, under the hero ask and as
+ * the `note` beside other asks; it is display copy only (never JSON-LD), so
+ * "20‑minute" carries a non-breaking hyphen (U+2011) and never splits, even
+ * where a note renders without keepTogether(). The NDA sentence stands alone
+ * in the home "Why agencies work with us" list (beside "We never approach your
+ * clients."); WHITE_LABEL_NOTE joins the two where the fixed quote is already
+ * said beside it (the service pages' hero facts, the article close's lede).
  */
 export const NDA_LINE = 'We sign an NDA before you share anything.';
-export const HERO_REASSURE = `A fixed quote after one 20-minute call. ${NDA_LINE}`;
+export const HERO_REASSURE = 'A fixed quote after one 20\u2011minute call. An NDA before you share anything, and we never approach your clients.';
+/** The trust line without the quote, where the fixed quote is already said beside it (service heroes, article closes). */
+export const WHITE_LABEL_NOTE = 'We sign an NDA before you share anything, and we never approach your clients.';
 export const HERO_PROOF = SPOTLIGHT
   ? {
       quote: SPOTLIGHT.quote.match(/^[^.!?]+[.!?]/)?.[0] ?? SPOTLIGHT.quote,
@@ -243,7 +251,8 @@ export const CLIENTS_LINE = 'Clients include LRO Staffing, CHHA-NCR, FOCAS Canad
 
 export const SERVICES_INTRO = {
   label: 'What we do',
-  title: 'What we build for agencies.',
+  // Whose work it is: the agency's clients buy it (the hero lede), we build it.
+  title: 'What we build for your clients.',
   lede: 'Four services, each with a public starting price. Use one, or combine them.',
   /** The rows' prices lead here: the estimator, for one service or several (the label /pricing uses for it). */
   estimate: { label: 'Price your project', href: ESTIMATE_HREF },
@@ -260,7 +269,8 @@ export const SERVICE_PREVIEWS: Record<string, { src: string; width: number; heig
 export const WORK_SECTION = {
   label: 'Selected work',
   title: 'Work we can show.',
-  lede: 'Most of what we build carries our partners’ brands, not ours. These are projects we can show you.',
+  // Also the service pages' proof block (ProofBlock), where some cases publish stages, not numbers.
+  lede: 'Most of what we build carries our partners’ brands, not ours. These are the projects we can show you.',
   all: { label: 'See all our work', href: '/our-work' },
   /** The ask after the last card, while the proof is still on screen (its reassurance is HERO_REASSURE). */
   ask: 'Want work like this under your brand?',
@@ -273,7 +283,7 @@ export const APPROACH = {
   steps: [
     // The first step can be taken from here: it links to the brief.
     { title: 'Tell us what you need', text: 'Answer four short questions. Then we talk for 20 minutes.', href: PRIMARY_CTA.href },
-    { title: 'Get a fixed quote', text: 'We agree what is included, and you get one fixed price.' },
+    { title: 'Get a fixed quote', text: 'We agree the scope with you, then send one fixed price.' },
     { title: 'We build it with you', text: 'Your brand on the work, and a check-in with your team every week.' },
     { title: 'Launch and support', text: 'We launch, hand over documented code, and support you after launch.' },
   ],
@@ -286,7 +296,7 @@ export const APPROACH = {
  */
 export const PROOF_SECTION = {
   label: 'Our track record',
-  title: 'Why agencies choose us.',
+  title: 'Why agencies work with us.',
   promises: [
     NDA_LINE,
     'We never approach your clients.',
@@ -295,8 +305,12 @@ export const PROOF_SECTION = {
   ],
 } as const;
 
-/** The close adds what the hero's reassurance does not: what the call is for (the contact page's own steps). */
+/**
+ * The close adds what the hero's reassurance does not: what the call is for
+ * (the contact page's own steps), as one collaborative next step. Display
+ * only: "20 minutes" keeps its number on the line with a no-break space.
+ */
 export const CLOSE_BAND = {
-  title: 'Have a project your clients are waiting on?',
-  lede: 'Answer four short questions. Then we talk for 20 minutes, agree what is included, and send you a fixed quote.',
+  title: 'Let’s build your next client project together.',
+  lede: 'Answer four short questions. We talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote.',
 } as const;

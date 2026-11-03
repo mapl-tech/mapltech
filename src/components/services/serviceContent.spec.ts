@@ -177,10 +177,12 @@ describe('service pages', () => {
   it('states each process heading and close in plain words', () => {
     const [, automation, tools, cloud] = LAYER_VIEWS;
     expect(cloud.processTitle).toBe('Four steps to reliable hosting.');
-    expect(automation.close.title).toBe('Tired of copying data between tools?');
+    expect(automation.close.title).toBe('Have a client still copying data between tools?');
     expect(tools.close.lede).toBe(
-      'Tell us what slows your team down. We will build the tool that fixes it, for good. You get a fixed quote after a 20-minute call.',
+      'Tell us what slows your client’s team down. We build the tool around how they work. You get a fixed quote after a 20-minute call.',
     );
+    // Every close speaks to an agency with a client project, as a peer: no "Ready to…?" or "Tired of…?" openers.
+    for (const view of LAYER_VIEWS) expect(view.close.title, view.slug).not.toMatch(/^(Ready to|Tired of)\b/);
     expect(QUOTE_LINE).toBe('You get a fixed quote after a 20-minute call.');
     for (const view of LAYER_VIEWS) expect(services.some((s) => s.slug === view.slug)).toBe(true);
   });

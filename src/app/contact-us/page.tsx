@@ -55,7 +55,7 @@ const NEXT_STEPS = [
   {
     // A no-break hyphen (U+2011), here and below: "20-" never ends a line at 320px.
     name: 'A 20‑minute call',
-    text: 'We agree what is included and what is not, so the quote matches the real work.',
+    text: 'We agree the scope with you, so the quote matches the real work.',
   },
   {
     name: 'A fixed quote',
@@ -95,7 +95,7 @@ export default function ContactPage() {
         size="l"
         lede={
           <p>
-            {`Answer four short questions about your project. After a 20‑minute call, you get a fixed quote. ${NDA_LINE}`}
+            {`Answer four short questions. We talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote. ${NDA_LINE}`}
           </p>
         }
       />

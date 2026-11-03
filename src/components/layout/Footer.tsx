@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
+import { CLOSE_BAND } from '@/components/flagship/content';
 import MagneticButton from '@/components/ui/MagneticButton';
 import FooterLink from './FooterLink';
 import NewsletterForm from './NewsletterForm';
@@ -25,7 +26,8 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.ask}>
-          <p className={styles.askLine}>Have a project your clients are waiting on?</p>
+          {/* The homepage close's line (flagship/content.ts CLOSE_BAND), on pages without a close of their own. */}
+          <p className={styles.askLine}>{CLOSE_BAND.title}</p>
           <div className={styles.askActions}>
             <span data-cta-placement="footer_project">
               <MagneticButton href={PROJECT_HREF} size="medium" placement="footer_project">
@@ -102,7 +104,7 @@ export default function Footer() {
         <div className={styles.newsletter}>
           <div>
             <h2 className={styles.newsTitle}>Get our newsletter</h2>
-            <p className={styles.newsText}>Practical tips on websites, automation and software for agencies.</p>
+            <p className={styles.newsText}>Practical notes on websites, automation and software, written for agency teams.</p>
           </div>
           <NewsletterForm />
         </div>

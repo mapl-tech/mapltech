@@ -136,7 +136,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     serves: ['Lagos', 'Abuja', 'Port Harcourt'],
     hero: {
       titleLines: ['Engineering for', 'Nigerian agencies.'],
-      lede: 'We build websites, automation, internal tools and cloud systems for agencies in Lagos, Abuja and Port Harcourt. Our team works in West Africa Time.',
+      lede: 'We work alongside agencies in Lagos, Abuja and Port Harcourt to build websites, automation, internal tools and cloud systems. Our team works in West Africa Time.',
     },
     facts: [
       { term: 'Branch', detail: 'Lagos, Nigeria' },
@@ -206,7 +206,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     },
     close: {
       title: 'Building something for a Nigerian client?',
-      lede: 'Tell us what you are building. We reply within 24 hours. After a 20-minute call, you get a fixed quote in USD.',
+      lede: 'Tell us what you are building. We reply within 24 hours, then talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote in USD.',
     },
   },
 
@@ -224,7 +224,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     serves: ['Kingston', 'Montego Bay'],
     hero: {
       titleLines: ['Engineering for', 'Jamaican agencies.'],
-      lede: 'We build websites, automation, internal tools and cloud systems for agencies in Kingston and Montego Bay. Kingston is within an hour of our Toronto headquarters all year.',
+      lede: 'We work alongside agencies in Kingston and Montego Bay to build websites, automation, internal tools and cloud systems. Kingston is within an hour of our Toronto headquarters all year.',
     },
     facts: [
       { term: 'Branch', detail: 'Kingston, Jamaica' },
@@ -308,7 +308,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     },
     close: {
       title: 'Building something for a Jamaican client?',
-      lede: 'Tell us what you are building. We reply within 24 hours. After a 20-minute call, you get a fixed quote in USD.',
+      lede: 'Tell us what you are building. We reply within 24 hours, then talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote in USD.',
     },
   },
 };

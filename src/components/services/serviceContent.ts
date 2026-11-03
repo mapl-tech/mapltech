@@ -189,7 +189,7 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     role: 'Websites and web apps',
     // FAQ "we build them exactly from Figma, Sketch or XD files" · the live lede "Built from your designs, shipped
     // under your brand." (speed, accessibility and the brand are the H1's promise).
-    lede: 'We build each site exactly from your designs. Your client gets a site that is easy to use and easy to update.',
+    lede: 'We build each site exactly from your team’s designs. Your client gets a site that is easy to use and easy to update.',
     // Starter features: "Custom-coded website that works on every screen (up to 7 pages)", "Designed for phones first"
     entryIncludes: 'Up to 7 custom-coded pages, built for phones first',
     // Out: "Phones first" (says "we design", but agencies bring the designs) and "Solid behind the scenes" (weakest).
@@ -252,8 +252,8 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
   'custom-internal-tools': {
     name: SERVICE_META.tools.label,
     role: 'Dashboards and portals',
-    // services.ts oneLiner (dashboards, client portals and reporting tools) · ctaBand "Tired of workarounds and
-    // spreadsheets? ... We will build the tool that fixes it, for good." (fitting how you work is the H1's promise).
+    // services.ts oneLiner (dashboards, client portals and reporting tools) · ctaBand "Still running on
+    // spreadsheets? ... We will build the tool around how they work." (fitting how you work is the H1's promise).
     lede: 'Dashboards, client portals and reporting tools that replace spreadsheets and workarounds.',
     // Internal Dashboards features: "Live reports", "Access levels for each role"
     entryIncludes: 'Live reports, with access levels for each role',

@@ -7,8 +7,8 @@ import styles from './Hero.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
 /**
- * Homepage hero. The purpose is the live site's, word for word: the
- * engineering backbone behind agencies that refuse to cut corners. The stage
+ * Homepage hero. The purpose is the live site's brand line, said to the
+ * reader: the engineering backbone behind your agency. The stage
  * is new: the Backbone, a real-time spine of capsules (the bar from the MA|PL
  * wordmark) that visitors can push, swipe and shake, and that always settles
  * back into line.

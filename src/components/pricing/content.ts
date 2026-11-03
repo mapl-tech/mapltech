@@ -193,8 +193,8 @@ export const HERO = {
   title: 'What it costs, before you ask.',
   // The starting prices follow at once (the ledger); the lede says how to use them. 17 words.
   lede: 'Every price is public. Answer five questions to get a price range for your project. No email needed.',
-  // What happens after the range (QUOTE_NOTE; one price for the agreed work).
-  trust: 'After a 20-minute call, you get one fixed price for the agreed work.',
+  // What happens after the range (QUOTE_NOTE; one price for the scope agreed with you).
+  trust: 'On a 20-minute call, we agree the scope with you. Then we send one fixed price.',
 } as const;
 
 /** "22 September 2026", formatted without Intl so server and client agree byte for byte. */
@@ -312,5 +312,6 @@ export const FAQ_COPY = {
  */
 export const CLOSE = {
   title: 'Turn your range into a fixed quote.',
-  lede: 'Tell us about the project. After a 20-minute call, we quote one fixed price, and the work goes out under your brand.',
+  // Display only (not JSON-LD): "20 minutes" keeps its number on the line with a no-break space.
+  lede: 'Tell us about the project. We talk for 20\u00a0minutes, agree the scope with you, and send one fixed price. The work goes out under your brand.',
 } as const;
