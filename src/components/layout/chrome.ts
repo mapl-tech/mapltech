@@ -51,7 +51,8 @@ export const FOOTER_COMPANY: readonly ChromeLink[] = [
 
 /** Footer · "Offices": the three country pages. */
 export const OFFICE_LINKS: readonly ChromeLink[] = [
-  { label: 'Toronto (HQ)', href: '/about-us' },
+  // The offices section, so the footer never marks it and "About MAPL TECH" current together.
+  { label: 'Toronto (HQ)', href: '/about-us#offices' },
   { label: 'MAPL TECH Nigeria', href: '/nigeria' },
   { label: 'MAPL TECH Jamaica', href: '/jamaica' },
 ];

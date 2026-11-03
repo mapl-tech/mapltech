@@ -118,8 +118,9 @@ export default function MobileActionBar({
       raf = requestAnimationFrame(() => setHeroGone(true));
     }
 
-    // Forms and the close band: the page is already asking, so the bar stands down.
-    const forms = Array.from(document.querySelectorAll('form, [data-page-close]'));
+    // Forms, the close band and any region marked data-bar-stand-down (a list with
+    // its own per-row actions): the page is already asking, so the bar stands down.
+    const forms = Array.from(document.querySelectorAll('form, [data-page-close], [data-bar-stand-down]'));
     if (forms.length > 0) {
       const inView = new Set<Element>();
       const formIO = new IntersectionObserver(

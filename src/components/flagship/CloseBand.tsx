@@ -50,7 +50,8 @@ export default function CloseBand({
           {title}
         </h2>
         {lede ? <p className={styles.lede}>{lede}</p> : null}
-        <div className={styles.actions}>
+        {/* data-header-quiet: while this ask is on screen the header's own steps back to an outline. */}
+        <div className={styles.actions} data-header-quiet="">
           <CloseBandPrimary href={href} className={styles.primary} placement={`${placement}_primary`} hero={hero}>
             {PRIMARY_CTA.label}
             <span aria-hidden="true" className={styles.arrow}>

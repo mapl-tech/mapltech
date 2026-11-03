@@ -280,7 +280,7 @@ export const pricing = {
 export const testimonials = [
   {
     quote:
-      'They don\'t feel like an outside vendor. MAPL TECH embedded into our workflow, learned our tools, and shipped production-ready code that our own devs could maintain.',
+      'They don’t feel like an outside vendor. MAPL TECH embedded into our workflow, learned our tools, and shipped production-ready code that our own devs could maintain.',
     name: 'Alita Fabiano',
     company: 'LRO Staffing',
     role: 'Operations Director',

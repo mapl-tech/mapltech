@@ -31,27 +31,28 @@
 
   p {
     margin: 0;
-    font-size: 1rem;
+    font-size: $font-size-base;
     line-height: 1.4;
     color: $color-fg;
-
-    @include phone-floor;
   }
 }
 
 .by {
-  font-size: 1rem;
+  font-size: $font-size-base;
   line-height: 1.4;
   color: $color-fg-muted;
-
-  @include phone-floor;
 }
 
-// On the crimson close band small text is solid white only (7.56:1).
+// On the crimson close band small text is solid white only (7.56:1), so the
+// quote is set apart from who said it by weight, not by a fainter colour.
 .quote[data-tone='band'] {
   .text p,
   .by {
     color: $color-white;
+  }
+
+  .text p {
+    font-weight: $font-weight-semibold;
   }
 }
 

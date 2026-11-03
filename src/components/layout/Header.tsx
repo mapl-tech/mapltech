@@ -19,7 +19,7 @@ import { siteConfig } from '@/config/site';
 import MagneticButton from '@/components/ui/MagneticButton';
 import { useEstimateBriefHref } from '@/components/ui/useEstimateBriefHref';
 import MobileNav from './MobileNav';
-import { PROJECT_HREF, PROJECT_LABEL } from './chrome';
+import { OFFICE_LINKS, PROJECT_HREF, PROJECT_LABEL } from './chrome';
 import styles from './Header.module.scss';
 
 /**
@@ -71,9 +71,16 @@ function useCompact(): boolean {
 const firstSegment = (path: string) => `/${path.split('/')[1] ?? ''}`;
 
 /** A nav item is active on its own route, any child route, or a route in the same section. */
+/** The office pages sit under About (their breadcrumbs say so). */
+const UNDER_ABOUT = OFFICE_LINKS.map((link) => link.href.split('#')[0]);
+
 export function isActiveItem(item: NavItem, pathname: string): boolean {
   if (item.href === '/') return pathname === '/';
-  const hrefs = [item.href, ...(item.children?.map((child) => child.href) ?? [])];
+  const hrefs = [
+    item.href,
+    ...(item.children?.map((child) => child.href) ?? []),
+    ...(item.href === '/about-us' ? UNDER_ABOUT : []),
+  ];
   return hrefs.some((href) => pathname === href || firstSegment(pathname) === firstSegment(href));
 }
 
