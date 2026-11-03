@@ -43,15 +43,15 @@ export default function CloseBand({
   proofLine?: string;
 }) {
   return (
-    <section className={styles.close} aria-labelledby={id} data-page-close="">
+    // data-header-quiet: while any of the band is on screen the header's ask is an outline.
+    <section className={styles.close} aria-labelledby={id} data-page-close="" data-header-quiet="">
       <div className={styles.bar} aria-hidden="true" />
       <div className={styles.inner}>
         <h2 id={id} className={styles.title}>
           {title}
         </h2>
         {lede ? <p className={styles.lede}>{lede}</p> : null}
-        {/* data-header-quiet: while this ask is on screen the header's own steps back to an outline. */}
-        <div className={styles.actions} data-header-quiet="">
+        <div className={styles.actions}>
           <CloseBandPrimary href={href} className={styles.primary} placement={`${placement}_primary`} hero={hero}>
             {PRIMARY_CTA.label}
             <span aria-hidden="true" className={styles.arrow}>
