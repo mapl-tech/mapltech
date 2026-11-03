@@ -145,19 +145,17 @@ $measure: 34em;
   }
 }
 
-// The post's own summary. Phones show its first three lines (the article's
-// opening paragraph follows right after); screen readers get all of it.
+// The post's own summary, in full at every width (a clamp cut it mid-sentence
+// on phones, with no way to read the rest).
 .dek {
   @include lede;
   margin: clamp(22px, 2.8vw, 32px) 0 0;
   max-width: 40em;
-
-  @media (max-width: #{$breakpoint-sm - 0.02px}) {
-    @include line-clamp(3);
-  }
 }
 
-// One row of facts (the case study's hero facts): 2 x 2 on phones, 4 across from md.
+// One row of facts (the case study's hero facts): 2 x 2 from 640px, 4 across
+// from md. Phones win back the space the full summary takes: one line of
+// values (below), the labels read but not shown.
 .facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -201,6 +199,76 @@ $measure: 34em;
     }
 
     @include focus-ring;
+  }
+}
+
+// The date's short form ("Sep 7, 2026") is the phone line's; screen readers
+// always get the full date.
+.dateShort {
+  display: none;
+}
+
+// Phones: "Sep 7, 2026 · 8 min read · By MAPL TECH" on one line under the
+// summary. The topic is read, not shown (the trail above the title names it);
+// the dots and "By" are decoration (empty alternative text: "Written by" is
+// the label read out).
+@media (max-width: #{$breakpoint-sm - 0.02px}) {
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 0;
+    margin-top: 22px;
+    padding-top: 14px;
+
+    > div {
+      display: block;
+    }
+
+    > div + div::before {
+      content: '·';
+      content: '·' / '';
+      margin: 0 9px;
+      color: $color-fg-muted;
+    }
+
+    dt {
+      @include sr-only;
+    }
+
+    dd {
+      display: inline;
+      font-size: $font-size-sm;
+      color: $color-text-body;
+    }
+
+    a {
+      color: $color-fg;
+    }
+  }
+
+  .factTopic {
+    @include sr-only;
+  }
+
+  .factAuthor dd::before {
+    content: 'By ';
+    content: 'By ' / '';
+  }
+
+  .dateLong {
+    @include sr-only;
+  }
+
+  .dateShort {
+    display: inline;
+  }
+}
+
+// Narrow phones: "By" goes, so the three facts still share one line.
+@media (max-width: 359.98px) {
+  .factAuthor dd::before {
+    content: none;
   }
 }
 
@@ -562,13 +630,21 @@ $measure: 34em;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 28px;
-  margin-top: 8px;
+  gap: 12px 28px;
+  margin-top: 20px;
 }
 
-.inlineLink {
-  @include text-action($color-fg);
+// The ask's main action is a button (the filled crimson the site uses for its
+// asks; while it is on screen the header's own steps back to an outline, as it
+// is marked data-hero-cta). The service page beside it stays a text link.
+.inlineButton {
+  @include button-primary;
+  min-height: 52px;
+  padding: 0 22px 0 26px;
+  gap: 12px;
   font-size: $font-size-base;
+
+  @include focus-ring;
 }
 
 // The service page: a quieter, underlined second action.
@@ -593,7 +669,7 @@ $measure: 34em;
 .arrow {
   transition: transform 0.4s $ease-out-expo;
 
-  .inlineLink:hover & {
+  .inlineButton:hover & {
     @include motion-ok {
       transform: translateX(4px);
     }

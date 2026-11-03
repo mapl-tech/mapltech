@@ -8,7 +8,8 @@
 // sits beside them on wide screens, and the six destinations follow as
 // editorial rows. Short phones (a 360x640 screen) get smaller numerals and a
 // tighter stack, so the path hint, the way home and the first destination all
-// sit in the first screen.
+// sit in the first screen; tablets in portrait get smaller numerals too, so the
+// first destinations are not pushed to the bottom of the screen.
 
 .page {
   position: relative;
@@ -67,6 +68,13 @@
     column-gap: 48px;
     align-items: end;
   }
+
+  // Small laptops and tablets in landscape: half and half, so both actions
+  // share one row (in 5fr they wrapped, pushing the destinations to the
+  // bottom edge of a 768px-tall screen).
+  @media (min-width: $breakpoint-lg) and (max-width: #{$breakpoint-xl - 0.02px}) {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+  }
 }
 
 // ---------------------------------------------------------------- numerals
@@ -89,6 +97,16 @@
 
   @include short-phone {
     font-size: clamp(4rem, 18vw, 8rem); // 65px at 360
+  }
+
+  // Tablets in portrait (768-1023, stacked): 200px at 768, was 352px.
+  @media (min-width: $breakpoint-md) and (max-width: #{$breakpoint-lg - 0.02px}) {
+    font-size: clamp(10rem, 26vw, 15rem);
+  }
+
+  // The half-width column (1024-1279): ~1.7em of digits fit inside it.
+  @media (min-width: $breakpoint-lg) and (max-width: #{$breakpoint-xl - 0.02px}) {
+    font-size: clamp(13rem, 24vw - 20px, 16rem);
   }
 
   > span {
@@ -174,10 +192,24 @@
   @include focus-ring;
 }
 
+// When the hint is specific it is the filled button, and the brief steps back
+// to an outline (one filled ask at a time; the header's is quiet here too).
+.copy:has(.hintButton) .primary {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba($color-fg, 0.4); // 3.5:1 edge (WCAG 1.4.11)
+  color: $color-fg;
+
+  &:hover {
+    background: $color-red-fill-hover;
+    box-shadow: none;
+  }
+}
+
 .arrow {
   transition: transform 0.4s $ease-out-expo;
 
-  .primary:hover & {
+  .primary:hover &,
+  .hintButton:hover & {
     @include motion-ok {
       transform: translateX(4px);
     }
@@ -189,14 +221,28 @@
 }
 
 // Path-aware recovery line under the lede (NotFoundHint). The browser swaps
-// the generic line for the path's own after load, inside two reserved lines,
-// so the actions below never move.
+// the generic line for the path's own after load, inside two reserved lines
+// (a one-line button fills the same 52px), so the actions below never move.
 .hint {
   min-height: calc(2em * 1.55);
   margin: 16px 0 0;
   font-size: $font-size-base;
   line-height: 1.55;
   color: $color-text-body;
+}
+
+// The specific hint: the filled button. A long name wraps inside it rather
+// than overflow a phone, set tight enough (two lines: 56px) to stay close to
+// the two reserved lines it replaces.
+.hintButton {
+  @include button-primary;
+  min-height: 52px;
+  padding: 6px 22px 6px 26px;
+  gap: 12px;
+  line-height: 1.3;
+  white-space: normal;
+  text-align: left;
+  @include focus-ring;
 }
 
 .hintLink {
@@ -216,7 +262,7 @@
 
 // ---------------------------------------------------------------- destinations
 .places {
-  margin-top: clamp(40px, 9vw, 120px);
+  margin-top: clamp(40px, 6vw, 96px);
 
   @include short-phone {
     margin-top: 32px;
@@ -289,12 +335,11 @@
   @include focus-ring;
 }
 
+// Sentence copy: 17px at every width (it was 15px from 641px).
 .placeNote {
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   line-height: 1.45;
   color: $color-fg-muted;
-
-  @include phone-floor;
 }
 
 // The report link, after the destinations.

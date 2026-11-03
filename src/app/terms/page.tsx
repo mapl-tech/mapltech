@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import JsonLd from '@/components/seo/JsonLd';
 import { pageGraph } from '@/lib/schema';
 import { absoluteUrl } from '@/config/routes';
-import LegalDocument, { type LegalFact, type LegalSection } from '@/components/editorial/LegalDocument';
+import LegalDocument, { legalMailto, type LegalFact, type LegalSection } from '@/components/editorial/LegalDocument';
 
 /**
  * /terms. The terms text is unchanged from the current terms (headings set in
@@ -11,6 +11,8 @@ import LegalDocument, { type LegalFact, type LegalSection } from '@/components/e
  */
 
 const PATH = '/terms';
+/** One subject and prompt for every email link on the page. */
+const QUESTION_SUBJECT = 'Question about the terms of use';
 const LAST_UPDATED = { iso: '2026-03-01', label: 'March 1, 2026' };
 const DESCRIPTION =
   'The terms for using mapltech.com: website content, pricing guidance, project agreements, confidentiality, liability and Ontario law, summarised up front.';
@@ -235,7 +237,7 @@ const SECTIONS: LegalSection[] = [
         <p>
           <strong>MAPL TECH</strong>
           <br />
-          Email: <a href="mailto:contact@mapltech.com">contact@mapltech.com</a>
+          Email: <a href={legalMailto(QUESTION_SUBJECT)}>contact@mapltech.com</a>
           <br />
           Phone: <a href="tel:+16473756724">+1 (647) 375-6724</a>
         </p>
@@ -262,7 +264,7 @@ export default function TermsPage() {
         facts={FACTS}
         sections={SECTIONS}
         questions="Questions about these terms?"
-        mailSubject="Question about the terms of use"
+        mailSubject={QUESTION_SUBJECT}
         sibling={{ label: 'Read the privacy policy', href: '/privacy' }}
       />
     </>

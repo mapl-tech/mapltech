@@ -3,10 +3,10 @@ import type { BlogPost } from '@/data/blog-posts';
 import type { ServiceSlug } from '@/config/services';
 import { toISODate } from '@/config/routes';
 import { SERVICE_META, estimateHref, formatMoney } from '@/lib/estimate';
-import { ESTIMATE_HREF, PRICING_LABEL } from '@/components/layout/chrome';
+import { ESTIMATE_HREF, PROJECT_HREF } from '@/components/layout/chrome';
 import CloseBand from '@/components/flagship/CloseBand';
 import QuoteLine from '@/components/flagship/QuoteLine';
-import { LOWEST_PRICE } from '@/components/flagship/content';
+import { HERO_REASSURE, LOWEST_PRICE, NDA_LINE } from '@/components/flagship/content';
 import { layerView, proofCases } from '@/components/services/serviceContent';
 import { categoryService, firstSentence, preparePost, topicSlug } from '@/components/convert/blog-utils';
 import ArticleRow from './ArticleRow';
@@ -30,11 +30,17 @@ import styles from './Post.module.scss';
  * (blog-posts.ts): preparePost() anchors every <h2>, repairs legacy internal
  * links, makes tables scroll inside the measure and splits the body before its
  * third section for one quiet inline ask: the service's real public price, the
- * estimator, the service page, and proof beside it (the service's lead case
- * study, or the approved client quote when the post has no service). The ask
- * is the page's hero action for the phone bar (`data-hero-cta`), so mid-read
- * the bar offers this post's estimate rather than a generic brief.
+ * estimator (a filled button), the service page, and proof beside it (the
+ * service's lead case study, or the approved client quote when the post has no
+ * service). The ask is the page's hero action for the phone bar
+ * (`data-hero-cta`), so mid-read the bar offers this post's estimate rather
+ * than a generic brief. The estimator has one label across the ask (inline,
+ * bar, close): ESTIMATE_LABEL. The close's primary opens the brief with the
+ * post's service already chosen (`?svc=`), the NDA line under it.
  */
+
+/** The estimator's one label across the post's ask, as on the service pages and /pricing. */
+const ESTIMATE_LABEL = 'Price your project';
 
 export interface PostArticleProps {
   post: BlogPost;
@@ -60,11 +66,12 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
   const serviceName = service ? SERVICE_META[service].label : null;
   const from = service ? serviceFrom(service) : undefined;
   const askHref = service ? estimateHref({ services: [service] }) : ESTIMATE_HREF;
+  // The brief with the post's service filled in (brief.ts readPrefill accepts ?svc=web and friends).
+  const briefHref = service ? `${PROJECT_HREF}?svc=${service}` : PROJECT_HREF;
   // The service's lead case study (serviceContent.ts proofCases: listed projects only).
   const lead = service ? proofCases(layerView(SERVICE_META[service].slug as ServiceSlug))[0] : undefined;
   const leadResult = lead?.results[0];
-  // The phone bar repeats this ask as "Price a project" beside the price it
-  // starts from (both short, so they share one line at 360px).
+  // The phone bar repeats this ask, its label beside the price it starts from.
   const barContext = `From ${from ?? formatMoney(LOWEST_PRICE)}`;
   const isOrgAuthor = post.author.name.trim().toLowerCase() === 'mapl tech';
   const hasToc = headings.length > 1;
@@ -96,22 +103,29 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                 {post.title}
               </h1>
               <p className={styles.dek}>{post.excerpt}</p>
+              {/* Phones: one line of values ("Sep 7, 2026 · 8 min read · By MAPL TECH"); the labels
+                  are read, not shown, and the topic is already in the trail above the title. */}
               <dl className={styles.facts}>
                 <div>
                   <dt>Published</dt>
                   <dd>
-                    <time dateTime={iso}>{post.date}</time>
+                    <time dateTime={iso}>
+                      <span className={styles.dateLong}>{post.date}</span>
+                      <span className={styles.dateShort} aria-hidden="true">
+                        {shortDate(post.date)}
+                      </span>
+                    </time>
                   </dd>
                 </div>
                 <div>
                   <dt>Reading time</dt>
                   <dd>{post.readTime} min read</dd>
                 </div>
-                <div>
+                <div className={styles.factTopic}>
                   <dt>Topic</dt>
                   <dd>{topicName}</dd>
                 </div>
-                <div>
+                <div className={styles.factAuthor}>
                   <dt>Written by</dt>
                   <dd>
                     <a href="#author">{post.author.name}</a>
@@ -145,13 +159,12 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                     <div className={styles.inlineActions}>
                       <Link
                         href={askHref}
-                        className={styles.inlineLink}
+                        className={styles.inlineButton}
                         data-cta-placement="blog_post_inline"
                         data-hero-cta="below"
-                        data-bar-label="Price a project"
                         data-bar-context={barContext}
                       >
-                        Price a project like this
+                        {ESTIMATE_LABEL}
                         <span aria-hidden="true" className={styles.arrow}>
                           →
                         </span>
@@ -278,14 +291,17 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
       ) : null}
 
       {/* ---------------------------------------------------------- the close */}
+      {/* The lede's "20-minute" uses a no-break hyphen (U+2011), so "20-" never ends a line. */}
       <CloseBand
         title={serviceName ? 'Want help putting this into practice?' : 'Have a project in mind?'}
         lede={
           serviceName
-            ? `Our ${serviceName} service is delivered under your brand, for agencies and the businesses they serve. Every price is public, and a 20-minute call turns yours into a fixed quote.`
+            ? `Our ${serviceName} service is delivered under your brand, for agencies and the businesses they serve. Every price is public, and a 20\u2011minute call turns yours into a fixed quote.`
             : `We offer ${SERVICE_LIST} for agencies, under your brand. Every price is public.`
         }
-        secondary={{ label: PRICING_LABEL, href: askHref }}
+        href={briefHref}
+        note={serviceName ? NDA_LINE : HERO_REASSURE}
+        secondary={{ label: ESTIMATE_LABEL, href: askHref }}
         placement="blog_post_close"
         id="post-close-title"
       />

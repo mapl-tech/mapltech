@@ -18,10 +18,20 @@ $ink-body: rgba(11, 11, 12, 0.86);
   background: $color-ground;
 }
 
-// ---------------------------------------------------------------- hero extras
-.heroAction {
-  @include button-secondary;
+// ---------------------------------------------------------------- the request
+// The page's one ask, the same filled button wherever it is a button (the
+// hero and the closing panel, both on a dark ground; the summary keeps the
+// address as a link in its sentence). While it is on screen the header's own
+// ask steps back to an outline (data-hero-cta, data-header-quiet).
+.requestButton {
+  @include button-primary;
+  min-height: 52px;
   @include focus-ring;
+}
+
+// The second route beside it: the contact form.
+.heroLink {
+  @include text-action($color-fg);
 }
 
 .heroFacts {
@@ -173,7 +183,6 @@ $ink-body: rgba(11, 11, 12, 0.86);
 
 .factLink {
   @include ink-link;
-  white-space: nowrap;
   font-weight: $font-weight-semibold;
 }
 
@@ -347,27 +356,7 @@ $ink-body: rgba(11, 11, 12, 0.86);
   margin: 26px 0 0;
 }
 
-.questionsButton {
-  @include button-base;
-  min-height: 52px;
-  background: $color-paper;
-  color: $color-ink;
-
-  &:hover {
-    background: $color-white;
-  }
-
-  @include motion-ok {
-    &:active {
-      transform: scale(0.97);
-    }
-  }
-
-  &:focus-visible {
-    outline: $focus-ring-width solid $color-paper;
-    outline-offset: 3px;
-  }
-
+.questions .requestButton {
   @media (max-width: #{$breakpoint-sm - 1px}) {
     width: 100%;
     white-space: normal;
@@ -439,5 +428,137 @@ $ink-body: rgba(11, 11, 12, 0.86);
   100% {
     opacity: 0;
     transform: scaleX(1);
+  }
+}
+
+// ---------------------------------------------------------------- print
+// Printed or saved as a PDF, the document is ink on white: the site chrome
+// (header, footer, phone bar, skip link, grain), the hero light, the contents
+// and the buttons are left out; links stay underlined, and the closing panel
+// keeps its email address and phone number as text.
+@media print {
+  // A light scheme too: the page margins print in the canvas colour, which
+  // the site's dark scheme would paint near-black.
+  :global(html):has(.legal),
+  :global(body):has(.legal) {
+    color-scheme: light;
+    background: #fff !important;
+    color: #000;
+  }
+
+  :global(body):has(.legal) {
+    &::before {
+      display: none;
+    }
+
+    > :global(header),
+    > :global(footer),
+    > :global(.mobile-action-bar),
+    > :global(.skip-to-content) {
+      display: none !important;
+    }
+  }
+
+  .legal {
+    background: none;
+
+    // The hero (PageHeader): its light goes, its text turns to ink, and the
+    // room it keeps for the fixed site header closes up.
+    > header {
+      background: none;
+
+      > [aria-hidden='true'] {
+        display: none;
+      }
+
+      > :not([aria-hidden='true']) {
+        padding: 0 0 32px;
+      }
+
+      * {
+        color: #000 !important;
+        text-shadow: none !important;
+      }
+    }
+  }
+
+  .requestButton,
+  .heroLink,
+  .rail,
+  .questionsActions {
+    display: none !important;
+  }
+
+  .heroFacts {
+    border-top-color: #000;
+
+    a {
+      color: #000;
+      text-decoration-color: currentColor;
+    }
+  }
+
+  .doc {
+    background: none;
+    border-radius: 0;
+  }
+
+  .docGrid {
+    display: block;
+    padding: 0;
+  }
+
+  // The summary may run across a page; each fact stays whole.
+  .summary {
+    padding: 16px 20px;
+    border: 1px solid #000;
+    border-radius: 0;
+    background: none;
+  }
+
+  .summaryTitle,
+  .fact dt,
+  .sectionTitle,
+  .prose h3,
+  .prose strong {
+    color: #000;
+  }
+
+  .summaryNote,
+  .fact dd,
+  .prose {
+    color: #000;
+  }
+
+  .fact {
+    break-inside: avoid;
+  }
+
+  .sectionTitle,
+  .prose h3 {
+    break-after: avoid;
+  }
+
+  .factLink,
+  .factMail,
+  .prose a,
+  .questionsText a {
+    color: #000;
+    text-decoration-color: currentColor;
+  }
+
+  .questions {
+    margin-top: 24px;
+    padding: 16px 0 0;
+    border-top: 1px solid #000;
+    border-radius: 0;
+    background: none;
+    color: #000;
+    break-inside: avoid;
+  }
+
+  .questionsTitle,
+  .questionsText {
+    color: #000;
   }
 }

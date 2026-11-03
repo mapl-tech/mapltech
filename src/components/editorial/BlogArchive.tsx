@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { flushSync } from 'react-dom';
 import Link from 'next/link';
 import { useUrlParams } from '@/components/convert/useUrlState';
 import { useIsClient } from '@/components/ui/useMediaQuery';
 import { searchable } from '@/components/convert/blog-utils';
 import ArticleRow from './ArticleRow';
+import type { ServiceLink } from './services';
 import styles from './BlogArchive.module.scss';
 
 /**
@@ -23,12 +24,16 @@ import styles from './BlogArchive.module.scss';
  *   month headings are derived here, and the search text is built in the
  *   browser from the rows.
  * - The post shown large above the archive (`featured`) is left out of the
- *   default list; a topic or a search covers every post.
+ *   default list; a topic or a search covers every post. It still counts as
+ *   shown, so the totals ("25 of 101") match the "All" chip.
  * - A service topic adds one line linking to that service, with its public
- *   starting price.
+ *   starting price; the views without a service (All, Industry) name all four
+ *   (`services`), so a service is one tap away from the first rows.
  * - Progressive reveal: 24 rows, then "Show 24 more", a button that moves focus
- *   to the first new row. Without JavaScript the same control is a link to
- *   #archive-all, and :target reveals every row.
+ *   to the first new row. Before hydration the same control is a link to
+ *   #archive-all, and :target reveals every row. Without JavaScript at all a
+ *   <noscript> style shows every row and drops the controls that need script
+ *   (search, topics, paging).
  * - Topic counts are facets: they follow the current search.
  * - One polite live region reports the result count; the empty state says what
  *   to try next.
@@ -59,6 +64,8 @@ export interface ArchiveTopic {
 interface BlogArchiveProps {
   rows: readonly ArchiveRow[];
   topics: readonly ArchiveTopic[];
+  /** The four service lines in site order, with their pages and public prices (services.ts serviceLinks()). */
+  services?: readonly ServiceLink[];
   /** Slug of the post presented above the archive: not repeated in the default list. */
   featured?: string;
   pageSize?: number;
@@ -71,12 +78,24 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
+/**
+ * The no-script view: every row and month shows (the post presented above
+ * stays out), and the search, topic chips, result line, paging and the month
+ * counts (rendered for the first page) are dropped, since none of them holds
+ * without script. The hero's "Search all articles" link points at the search
+ * field, so it goes too.
+ */
+const noscriptCss = [
+  `.${styles.group}[hidden]:not([data-featured]),.${styles.item}[hidden]:not([data-featured]){display:block}`,
+  `.${styles.controls},.${styles.status},.${styles.more},.${styles.monthCount},a[href="#archive-q"]{display:none!important}`,
+].join('');
+
 /** "September 2026" from "2026-09-07". */
 const monthOf = (iso: string) => `${MONTHS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
 /** "Sep 7" from "2026-09-07". */
 const dayOf = (iso: string) => `${MONTHS[Number(iso.slice(5, 7)) - 1].slice(0, 3)} ${Number(iso.slice(8, 10))}`;
 
-export default function BlogArchive({ rows, topics, featured, pageSize = 24 }: BlogArchiveProps) {
+export default function BlogArchive({ rows, topics, services = [], featured, pageSize = 24 }: BlogArchiveProps) {
   const [params, setParams] = useUrlParams();
   // Until hydration the no-script reveal (#archive-all:target) is live; after it, state owns the list.
   const hydrated = useIsClient();
@@ -104,10 +123,13 @@ export default function BlogArchive({ rows, topics, featured, pageSize = 24 }: B
   );
   // Browsing (no topic, no search): the featured post already sits above the archive.
   const browsing = topic === ALL && terms.length === 0;
+  const browseRows = useMemo(() => (featured ? rows.filter((row) => row.slug !== featured) : rows), [featured, rows]);
+  // The post above counts as shown while browsing, so every total matches "All".
+  const above = rows.length - browseRows.length;
   const matches = useMemo(() => {
-    if (browsing) return featured ? rows.filter((row) => row.slug !== featured) : rows;
+    if (browsing) return browseRows;
     return topic === ALL ? searched : searched.filter((row) => row.topic === topic);
-  }, [browsing, featured, rows, searched, topic]);
+  }, [browsing, browseRows, searched, topic]);
 
   // Paging resets whenever the filter changes (derived, no effect).
   const filterKey = `${topic}|${terms.join(' ')}`;
@@ -116,6 +138,7 @@ export default function BlogArchive({ rows, topics, featured, pageSize = 24 }: B
   const limit = pages * pageSize;
   const shown = Math.min(limit, matches.length);
   const remaining = matches.length - shown;
+  const lead = browsing ? above : 0;
 
   const visible = useMemo(() => new Set(matches.slice(0, limit).map((row) => row.slug)), [matches, limit]);
 
@@ -143,8 +166,7 @@ export default function BlogArchive({ rows, topics, featured, pageSize = 24 }: B
   const describe = (text: string): string => {
     const words = searchable(text).split(/\s+/).filter(Boolean);
     if (topic === ALL && !words.length) {
-      const earlier = featured ? rows.length - 1 : rows.length;
-      return `Showing ${Math.min(limit, earlier)} of ${earlier} ${featured ? 'earlier articles' : 'articles'}, newest first`;
+      return `Showing ${Math.min(limit, browseRows.length) + above} of ${rows.length} articles, newest first`;
     }
     const pool = words.length ? rows.filter((row) => words.every((word) => index.get(row)?.includes(word))) : rows;
     const found = topic === ALL ? pool : pool.filter((row) => row.topic === topic);
@@ -294,24 +316,52 @@ export default function BlogArchive({ rows, topics, featured, pageSize = 24 }: B
           <Link href={current.service.href} className={styles.serviceLink} data-cta-placement="blog_topic_service">
             {current.label}
           </Link>{' '}
-          service is delivered under your brand, from {current.service.from}.
+          service is delivered under your brand, from&nbsp;{current.service.from}.
+        </p>
+      ) : services.length ? (
+        // All and Industry: the four services, each one tap away, with its public price.
+        <p className={styles.service}>
+          Our services, delivered under your brand:{' '}
+          {services.map((entry, i) => (
+            <Fragment key={entry.href}>
+              {i === 0 ? null : i === services.length - 1 ? ' and ' : ', '}
+              <Link href={entry.href} className={styles.serviceLink} data-cta-placement="blog_archive_service">
+                {entry.name}
+              </Link>{' '}
+              from&nbsp;{entry.from}
+            </Fragment>
+          ))}
+          .
         </p>
       ) : null}
 
       <div id="archive-all" className={styles.groups}>
         {groups.map((group) => {
           const inView = group.rows.filter((row) => visible.has(row.slug)).length;
+          // A month holding only the post shown above stays hidden without JavaScript too.
+          const onlyFeatured = group.rows.every((row) => row.slug === featured);
           return (
-            <div key={group.key} className={styles.group} hidden={inView === 0}>
-              <h3 className={styles.month}>
-                {group.label}
-                <span className={styles.monthCount}>
+            <div
+              key={group.key}
+              className={styles.group}
+              hidden={inView === 0}
+              data-featured={onlyFeatured ? '' : undefined}
+            >
+              {/* The heading is the month alone; the count beside it is its own line of text. */}
+              <div className={styles.monthHead}>
+                <h3 className={styles.month}>{group.label}</h3>
+                <p className={styles.monthCount}>
                   {inView} {inView === 1 ? 'article' : 'articles'}
-                </span>
-              </h3>
+                </p>
+              </div>
               <ol className={styles.list} role="list">
                 {group.rows.map((row) => (
-                  <li key={row.slug} className={styles.item} hidden={!visible.has(row.slug)}>
+                  <li
+                    key={row.slug}
+                    className={styles.item}
+                    hidden={!visible.has(row.slug)}
+                    data-featured={row.slug === featured ? '' : undefined}
+                  >
                     <ArticleRow
                       href={`/blog/${row.slug}`}
                       title={row.title}
@@ -357,9 +407,14 @@ export default function BlogArchive({ rows, topics, featured, pageSize = 24 }: B
           </a>
         )}
         <span className={styles.moreCount}>
-          {shown} of {matches.length}
+          {shown + lead} of {matches.length + lead}
         </span>
       </div>
+
+      {/* No JavaScript: every row (the post above excepted), and none of the controls that need script. */}
+      <noscript>
+        <style>{noscriptCss}</style>
+      </noscript>
     </div>
   );
 }

@@ -327,3 +327,12 @@
     color: $color-red-ink;
   }
 }
+
+// Printed: the document needs no contents controls or reading line.
+@media print {
+  .bar,
+  .rail,
+  .disclosure {
+    display: none !important;
+  }
+}

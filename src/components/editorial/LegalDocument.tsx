@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
-import { telHref } from '@/components/layout/chrome';
+import { PROJECT_HREF, telHref } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import ArticleToc from './ArticleToc';
 import TocDisclosure from './TocDisclosure';
@@ -38,18 +38,40 @@ export interface LegalDocumentProps {
   action?: { label: string; subject: string; section: string; rights: string };
 }
 
-function mailto(subject: string): string {
-  return `mailto:${siteConfig.email}?subject=${encodeURIComponent(subject)}`;
+function mailto(subject: string, body?: string): string {
+  const query = `subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`;
+  return `mailto:${siteConfig.email}?${query}`;
+}
+
+/**
+ * A neutral prompt in the email body: what to put in it, nothing promised.
+ * A request names the right (in the policy's own list); a question just
+ * leaves room for it. Lines end in CRLF, as mailto bodies should (RFC 6068).
+ */
+function mailBody(rights?: string): string {
+  const lines = rights
+    ? [`Request (${rights}):`, '', '', 'Name:', 'Email address used with MAPL TECH:']
+    : ['Question:', '', '', 'Name:'];
+  return `${lines.join('\r\n')}\r\n`;
+}
+
+/**
+ * Every email route on a legal page: the subject, and the body prompt (a
+ * request names its rights). The pages use it for the links inside their own
+ * text too, so the wording stays as written while every link opens the same way.
+ */
+export function legalMailto(subject: string, rights?: string): string {
+  return mailto(subject, mailBody(rights));
 }
 
 /** The summary's email address, as a link (same text, now one tap). */
-function withEmailLink(text: string, subject: string): ReactNode {
+function withEmailLink(text: string, href: string): ReactNode {
   const at = text.indexOf(siteConfig.email);
   if (at === -1) return text;
   return (
     <>
       {text.slice(0, at)}
-      <a href={mailto(subject)} className={styles.factMail}>
+      <a href={href} className={styles.factMail}>
         {siteConfig.email}
       </a>
       {text.slice(at + siteConfig.email.length)}
@@ -68,9 +90,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
  * numbered, anchored and listed in a sticky contents rail (phones and
  * tablets: a contents disclosure above the short version, so it is in reach
  * at the top of the document). The page's task, when it has one, is the
- * phone bar's action too (`data-hero-cta` on the hero's email link). The
- * closing panel offers the sibling document and the way back into the site.
- * The legal wording is unchanged.
+ * phone bar's action too (`data-hero-cta` on the hero's email link). Each way
+ * to ask has a second route, the contact form, and every email opens with a
+ * neutral prompt in its body. The request looks the same wherever it is a
+ * button (the hero, the closing panel). The closing panel is the page's close
+ * (`data-page-close`: the phone bar stands down beside it and the footer drops
+ * its own ask), with the sibling document and the way back into the site.
+ * Printed, the document is ink on white with the site chrome, the contents
+ * and the buttons left out. The legal wording is unchanged.
  */
 export default function LegalDocument({
   title,
@@ -85,6 +112,10 @@ export default function LegalDocument({
 }: LegalDocumentProps) {
   const toc = sections.map((section) => ({ id: section.id, text: section.title }));
   const number = (id: string) => sections.findIndex((section) => section.id === id) + 1;
+  const titleOf = (id: string) => sections.find((section) => section.id === id)?.title ?? '';
+  // One request link everywhere it appears (hero, summary, closing panel), and one for questions.
+  const requestHref = action ? legalMailto(action.subject, action.rights) : null;
+  const questionHref = legalMailto(mailSubject);
 
   return (
     <article className={styles.legal} aria-labelledby="legal-title">
@@ -96,10 +127,15 @@ export default function LegalDocument({
         title={title}
         lede={intro}
         actions={
-          action ? (
-            <a href={mailto(action.subject)} className={styles.heroAction} data-hero-cta="">
-              {action.label}
-            </a>
+          action && requestHref ? (
+            <>
+              <a href={requestHref} className={styles.requestButton} data-hero-cta="">
+                {action.label}
+              </a>
+              <Link href={PROJECT_HREF} className={styles.heroLink} data-cta-placement="legal_hero_form">
+                Or use the contact form
+              </Link>
+            </>
           ) : undefined
         }
         aside={
@@ -113,7 +149,7 @@ export default function LegalDocument({
             <div>
               <dt>Questions</dt>
               <dd>
-                <a href={mailto(mailSubject)}>{siteConfig.email}</a>
+                <a href={questionHref}>{siteConfig.email}</a>
               </dd>
             </div>
           </dl>
@@ -140,9 +176,10 @@ export default function LegalDocument({
                   <div key={fact.label} className={styles.fact}>
                     <dt>{fact.label}</dt>
                     <dd>
-                      {withEmailLink(fact.text, action ? action.subject : mailSubject)}{' '}
+                      {withEmailLink(fact.text, requestHref ?? questionHref)}{' '}
+                      {/* Named for where it goes: "Section 2: Information we collect". */}
                       <a href={`#${fact.section}`} className={styles.factLink}>
-                        Section {number(fact.section)}
+                        Section&nbsp;{number(fact.section)}: {titleOf(fact.section)}
                       </a>
                     </dd>
                   </div>
@@ -165,15 +202,17 @@ export default function LegalDocument({
               ))}
             </div>
 
-            <aside className={styles.questions} aria-labelledby="questions-title">
+            {/* The page's close: the phone bar stands down beside it and the footer drops its ask. */}
+            <aside className={styles.questions} aria-labelledby="questions-title" data-page-close="">
               <h2 id="questions-title" className={styles.questionsTitle}>
                 {questions}
               </h2>
               {action ? (
                 <p className={styles.questionsText}>
                   To use a right from <a href={`#${action.section}`}>section {number(action.section)}</a> (
-                  {action.rights}), email us and say which one. Anything else:{' '}
-                  <a href={mailto(mailSubject)}>{siteConfig.email}</a> or{' '}
+                  {action.rights}), email us and say which one, or use the{' '}
+                  <Link href={PROJECT_HREF}>contact form</Link>. Anything else:{' '}
+                  <a href={questionHref}>{siteConfig.email}</a> or{' '}
                   <a href={telHref(siteConfig.phone)} className={styles.phone}>
                     {siteConfig.phone}
                   </a>
@@ -181,15 +220,17 @@ export default function LegalDocument({
                 </p>
               ) : (
                 <p className={styles.questionsText}>
-                  Email <a href={mailto(mailSubject)}>{siteConfig.email}</a> or call{' '}
+                  Email <a href={questionHref}>{siteConfig.email}</a>, call{' '}
                   <a href={telHref(siteConfig.phone)} className={styles.phone}>
                     {siteConfig.phone}
-                  </a>
-                  . Our Toronto office is open 9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
+                  </a>{' '}
+                  or use the <Link href={PROJECT_HREF}>contact form</Link>. Our Toronto office is open 9&nbsp;am to
+                  6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               )}
-              <p className={styles.questionsActions}>
-                <a href={mailto(action ? action.subject : mailSubject)} className={styles.questionsButton}>
+              {/* data-header-quiet: while this filled ask is on screen the header's steps back to an outline. */}
+              <p className={styles.questionsActions} data-header-quiet="">
+                <a href={requestHref ?? questionHref} className={styles.requestButton}>
                   {action ? action.label : 'Email your question'}
                 </a>
                 <Link href={sibling.href} className={styles.textLink}>

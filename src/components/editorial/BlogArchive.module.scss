@@ -15,26 +15,28 @@ $control-border: rgba(11, 11, 12, 0.5);
 }
 
 // ---------------------------------------------------------------- controls
+// The search, then the topics under it, at every width: side by side the
+// topic column was 582-832px for ~1,030px of chips, so they wrapped to two
+// rows. Stacked, the chips get the full measure and stay one row (all six
+// fit from ~1,100px; narrower, the row scrolls under an edge fade).
 .controls {
   display: grid;
-  gap: 28px;
+  gap: 24px;
   padding-bottom: clamp(28px, 3vw, 40px);
   border-bottom: 1px solid $color-ink-hairline;
-
-  @include lg {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-    gap: 48px;
-    align-items: start;
-  }
 }
 
+// A block box for both: the search's <label> is inline by default, which set
+// it 6px lower than the topic label beside it.
 .label {
+  display: block;
   margin: 0 0 12px;
   @include mono-label($color-ink-muted);
 }
 
 .search {
   min-width: 0;
+  max-width: 36rem;
 }
 
 .field {
@@ -145,31 +147,96 @@ $control-border: rgba(11, 11, 12, 0.5);
   min-width: 0;
 }
 
+// The edge fade's widths: registered so the scroll timeline can animate them.
+@property --chips-fade-start {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --chips-fade-end {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+$chips-fade: 48px;
+
+// One row at every width that scrolls sideways when the chips do not fit. The
+// padding keeps the focus ring clear of the clip (the negative margin gives
+// the space back); the browser scrolls each chip into view as Tab reaches it,
+// clear of the fade (scroll-padding).
 .chips {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  margin: -6px;
+  padding: 6px;
+  scroll-padding-inline: $chips-fade;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(11, 11, 12, 0.3) transparent;
 
-  // Phones: one row that scrolls sideways (wrapped, the six chips took four
-  // rows), bled to the screen edges so a chip cut at the edge says there is
-  // more. The padding keeps the first chip on the text edge and the focus ring
-  // clear of the clip; the browser scrolls each chip into view as Tab reaches it.
+  // The edge fade says the row scrolls: it shows only on a side with more
+  // chips (the scroll timeline drives the widths; a row that fits has no
+  // active timeline, so both stay 0 and nothing fades).
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--chips-fade-start, 0px),
+    #000 calc(100% - var(--chips-fade-end, 0px)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--chips-fade-start, 0px),
+    #000 calc(100% - var(--chips-fade-end, 0px)),
+    transparent
+  );
+
+  @supports (animation-timeline: scroll()) {
+    animation: chips-edge linear both;
+    animation-timeline: scroll(self inline);
+  }
+
+  // Phones: bled to the screen edges, so a chip cut at the edge says there is
+  // more too. Without scroll timelines the row always overflows here, so the
+  // far edge fades at rest.
   @media (max-width: #{$breakpoint-md - 0.02px}) {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
     margin: -6px calc(-1 * #{$editorial-gutter});
     padding: 6px $editorial-gutter;
-    scroll-padding-inline: $editorial-gutter;
-    scroll-snap-type: x proximity;
 
-    @include pointer-coarse {
-      scrollbar-width: none;
-
-      &::-webkit-scrollbar {
-        display: none;
-      }
+    @supports not (animation-timeline: scroll()) {
+      --chips-fade-end: #{$chips-fade};
     }
+  }
+
+  @include pointer-coarse {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+@keyframes chips-edge {
+  0% {
+    --chips-fade-start: 0px;
+    --chips-fade-end: #{$chips-fade};
+  }
+  6% {
+    --chips-fade-start: #{$chips-fade};
+  }
+  94% {
+    --chips-fade-end: #{$chips-fade};
+  }
+  100% {
+    --chips-fade-start: #{$chips-fade};
+    --chips-fade-end: 0px;
   }
 }
 
@@ -260,7 +327,8 @@ $control-border: rgba(11, 11, 12, 0.5);
   scroll-margin-top: 8px;
 }
 
-.month {
+// The month (the h3) and its count on one rule; the count is not part of the heading.
+.monthHead {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -268,6 +336,14 @@ $control-border: rgba(11, 11, 12, 0.5);
   margin: clamp(48px, 6vw, 80px) 0 0;
   padding-bottom: 16px;
   border-bottom: 1px solid $color-ink;
+}
+
+.group:first-child .monthHead {
+  margin-top: 28px;
+}
+
+.month {
+  margin: 0;
   font-family: $font-display;
   font-weight: 800;
   font-size: clamp(1.375rem, 1rem + 1vw, 2rem); // 22px -> 32px
@@ -276,12 +352,9 @@ $control-border: rgba(11, 11, 12, 0.5);
   color: $color-ink;
 }
 
-.group:first-child .month {
-  margin-top: 28px;
-}
-
 .monthCount {
   flex: none;
+  margin: 0;
   @include mono-label($color-ink-muted);
 }
 

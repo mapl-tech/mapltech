@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import JsonLd from '@/components/seo/JsonLd';
 import { pageGraph } from '@/lib/schema';
 import { absoluteUrl } from '@/config/routes';
-import LegalDocument, { type LegalFact, type LegalSection } from '@/components/editorial/LegalDocument';
+import LegalDocument, { legalMailto, type LegalFact, type LegalSection } from '@/components/editorial/LegalDocument';
 
 /**
  * /privacy. The policy text is unchanged from the current policy (headings set
@@ -11,6 +11,14 @@ import LegalDocument, { type LegalFact, type LegalSection } from '@/components/e
  */
 
 const PATH = '/privacy';
+/** The page's task (using a right) and its general questions: one subject and prompt each, for every link. */
+const REQUEST = {
+  label: 'Email a privacy request',
+  subject: 'Privacy request',
+  section: 'your-rights',
+  rights: 'access, correction, deletion, opting out of marketing or withdrawing consent',
+};
+const QUESTION_SUBJECT = 'Privacy question';
 const LAST_UPDATED = { iso: '2026-03-01', label: 'March 1, 2026' };
 const DESCRIPTION =
   'How MAPL TECH collects, uses, shares and protects personal information from mapltech.com and our services, with a plain summary of your rights up front.';
@@ -183,7 +191,8 @@ const SECTIONS: LegalSection[] = [
           <li>Withdraw consent where processing is based on consent</li>
         </ul>
         <p>
-          To exercise any of these rights, please contact us at <a href="mailto:contact@mapltech.com">contact@mapltech.com</a>.
+          To exercise any of these rights, please contact us at{' '}
+          <a href={legalMailto(REQUEST.subject, REQUEST.rights)}>contact@mapltech.com</a>.
         </p>
       </>
     ),
@@ -239,7 +248,7 @@ const SECTIONS: LegalSection[] = [
         <p>
           <strong>MAPL TECH</strong>
           <br />
-          Email: <a href="mailto:contact@mapltech.com">contact@mapltech.com</a>
+          Email: <a href={legalMailto(QUESTION_SUBJECT)}>contact@mapltech.com</a>
           <br />
           Phone: <a href="tel:+16473756724">+1 (647) 375-6724</a>
         </p>
@@ -266,13 +275,8 @@ export default function PrivacyPage() {
         facts={FACTS}
         sections={SECTIONS}
         questions="Questions about your data?"
-        mailSubject="Privacy question"
-        action={{
-          label: 'Email a privacy request',
-          subject: 'Privacy request',
-          section: 'your-rights',
-          rights: 'access, correction, deletion, opting out of marketing or withdrawing consent',
-        }}
+        mailSubject={QUESTION_SUBJECT}
+        action={REQUEST}
         sibling={{ label: 'Read the terms of use', href: '/terms' }}
       />
     </>

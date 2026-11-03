@@ -34,3 +34,24 @@ export function topicLabel(category: BlogCategory): string {
 export function serviceFrom(service: EstimateService): string | undefined {
   return startingPrice(getServiceLine(SERVICE_META[service].slug as ServiceSlug));
 }
+
+export interface ServiceLink {
+  /** Canonical service name. */
+  name: string;
+  /** The service page. */
+  href: string;
+  /** Public "from" price, "$5,000". */
+  from: string;
+}
+
+/**
+ * The four service lines in site order, each with its page and public "from"
+ * price: the blog archive's line for the views without a service of their own
+ * (All, Industry). Server-side only, like topicLabel().
+ */
+export function serviceLinks(): ServiceLink[] {
+  return SERVICE_KEYS.flatMap((key) => {
+    const from = serviceFrom(key);
+    return from ? [{ name: SERVICE_META[key].label, href: SERVICE_META[key].path, from }] : [];
+  });
+}

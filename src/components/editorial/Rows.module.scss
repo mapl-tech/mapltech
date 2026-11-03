@@ -10,12 +10,16 @@
 .row {
   position: relative;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  // Phones: the date as a short kicker, the title and its answer, then
+  // topic and reading time on one line under it (they used to stack in a
+  // two-line block beside the date, above the title).
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
-    'date meta'
-    'main main';
+    'date'
+    'main'
+    'meta';
   align-items: baseline;
-  gap: 12px 14px;
+  gap: 12px;
   padding: 26px 0 28px;
   border-bottom: 1px solid $color-ink-hairline;
 
@@ -87,23 +91,42 @@
   text-wrap: pretty;
 }
 
-// Topic over reading time, right-aligned: beside the date on phones, its own
-// column from md. A stack never breaks mid-phrase the way a wrapped line does.
+// Phones: topic, a dot (decoration: its alternative text is empty), reading
+// time, each fact kept whole. From md: topic over reading time in their own
+// right-aligned column, where a stack never breaks mid-phrase the way a
+// wrapped line does.
 .meta {
   grid-area: meta;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
+  flex-wrap: wrap;
+  align-items: baseline;
   margin: 0;
-  text-align: right;
   @include mono-label($color-ink-muted);
 
-  @include md {
-    gap: 8px;
+  > span {
+    white-space: nowrap;
+  }
 
-    > span {
-      white-space: nowrap;
+  > span + span::before {
+    content: '·';
+    content: '·' / '';
+    margin: 0 8px;
+  }
+
+  // The longest pair, "CUSTOM INTERNAL TOOLS · 10 MIN READ", is ~298px at
+  // the label's tracking: a touch tighter keeps it on one line at 320.
+  @media (max-width: 359.98px) {
+    letter-spacing: 0.04em;
+  }
+
+  @include md {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    text-align: right;
+
+    > span + span::before {
+      content: none;
     }
   }
 }

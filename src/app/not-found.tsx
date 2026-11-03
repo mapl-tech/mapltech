@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { blogPosts } from '@/data/blog-posts';
-import { siteConfig } from '@/config/site';
+import { listedProjects, siteConfig } from '@/config/site';
+import { SERVICE_META } from '@/lib/estimate';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
-import { SERVICE_NAMES } from '@/components/editorial/services';
-import NotFoundHint, { BrokenLinkReport } from '@/components/editorial/NotFoundHint';
+import { SERVICE_KEYS, SERVICE_NAMES } from '@/components/editorial/services';
+import NotFoundHint, { BrokenLinkReport, type HintPage } from '@/components/editorial/NotFoundHint';
 import styles from '@/components/editorial/NotFound.module.scss';
 
 /**
@@ -15,8 +16,10 @@ import styles from '@/components/editorial/NotFound.module.scss';
  * reserved line, the one primary action and the way home, then the six places
  * people usually want, as plain rows, and a way to report the broken link.
  * The ask is the page's own close (`data-page-close`): the footer drops its
- * ask and the phone bar stands down beside it. Next.js marks the response
- * noindex.
+ * ask and the phone bar stands down beside it. The hint gets the real service
+ * and case study pages (slug and name only), so a mistyped /services/... or
+ * /our-work/... link can point to the page it nearly was. Next.js marks the
+ * response noindex.
  */
 
 export const metadata: Metadata = {
@@ -35,6 +38,10 @@ const PLACES = [
   { href: '/about-us', name: 'About', note: 'Who we are, in Toronto, Lagos and Kingston.' },
   { href: '/contact-us', name: 'Contact', note: 'Send a brief, email or call.' },
 ] as const;
+
+/** The pages a mistyped link most likely meant: the four services and every listed case study. */
+const SERVICE_PAGES: HintPage[] = SERVICE_KEYS.map((key) => ({ slug: SERVICE_META[key].slug, name: SERVICE_META[key].label }));
+const CASE_PAGES: HintPage[] = listedProjects().map((project) => ({ slug: project.slug, name: project.title }));
 
 export default function NotFound() {
   return (
@@ -56,7 +63,7 @@ export default function NotFound() {
             <p className={styles.lede}>
               The link may be out of date, or the page has moved. These are the places most people are looking for.
             </p>
-            <NotFoundHint />
+            <NotFoundHint services={SERVICE_PAGES} cases={CASE_PAGES} />
             <div className={styles.actions} data-hero-cta="" data-page-close="">
               <Link href={PROJECT_HREF} className={styles.primary} data-cta-placement="not_found_project">
                 {PROJECT_LABEL}

@@ -10,7 +10,7 @@ import CloseBand from '@/components/flagship/CloseBand';
 import { HERO_REASSURE } from '@/components/flagship/content';
 import BlogArchive, { type ArchiveRow, type ArchiveTopic } from '@/components/editorial/BlogArchive';
 import { categoryService, firstSentence, topicSlug } from '@/components/convert/blog-utils';
-import { SERVICE_LIST, serviceFrom, topicLabel } from '@/components/editorial/services';
+import { SERVICE_LIST, serviceFrom, serviceLinks, topicLabel } from '@/components/editorial/services';
 import { SERVICE_META } from '@/lib/estimate';
 import styles from './blog-index.module.scss';
 
@@ -19,8 +19,11 @@ import styles from './blog-index.module.scss';
  * large (its title in the first screen on desktop) → every other article on
  * paper, grouped by month as editorial rows, with topic facets and instant
  * search (BlogArchive) → the crimson close. All post links are in the server
- * HTML; the archive island gets only the fields a row shows. Structured data:
- * a CollectionPage with the Blog node and its newest posts (schema.ts blog()).
+ * HTML; the archive island gets only the fields a row shows, plus the four
+ * services with their public prices (its line for the views without a service
+ * of their own). The close says what its button opens: the four-question brief,
+ * then a fixed quote after one call. Structured data: a CollectionPage with the
+ * Blog node and its newest posts (schema.ts blog()).
  */
 
 const MONTHS = [
@@ -161,13 +164,14 @@ export default function BlogPage() {
               {posts.length} articles since {firstMonth}, newest first. Choose a topic, or search the titles and summaries.
             </p>
           </header>
-          <BlogArchive rows={rows} topics={topics} featured={latest.slug} />
+          <BlogArchive rows={rows} topics={topics} services={serviceLinks()} featured={latest.slug} />
         </div>
       </section>
 
+      {/* The primary opens the brief, so the lede and note say what happens there (the contact page's own words). */}
       <CloseBand
         title="Need it built, not just explained?"
-        lede="Our prices are public: you see your number before we ask for anything."
+        lede="Answer four short questions about your project."
         note={HERO_REASSURE}
         placement="blog_close"
         id="blog-close-title"
