@@ -41,7 +41,9 @@ const LENIS_OPTIONS: LenisOptions = {
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   smoothWheel: true,
   syncTouch: false,
-  autoRaf: true,
+  // Driven by LenisSingleton's own loop, which runs only while a glide is in
+  // progress: Lenis's autoRaf ticks every frame forever, even on an idle page.
+  autoRaf: false,
   // In-page anchors are handled in LenisSingleton, not by Lenis's `anchors`
   // option: that scrolls with offset 0 and ignores the header clearance, which
   // parked headings under the fixed header.
@@ -93,6 +95,48 @@ function LenisSingleton() {
     };
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
+  }, []);
+
+  // The frame loop, only while Lenis is gliding: a wheel turn or any scrollTo
+  // (anchors, the estimator) wakes it, and it stops when the glide ends, so an
+  // idle page runs no frames. Every glide steps exactly as autoRaf did.
+  useEffect(() => {
+    let frame = 0;
+    let tries = 0;
+    let cleanup: (() => void) | undefined;
+    const attach = () => {
+      const lenis = ref.current?.lenis;
+      if (!lenis) {
+        if (tries++ < 60) frame = requestAnimationFrame(attach);
+        return;
+      }
+      frame = 0;
+      const tick = (time: number) => {
+        lenis.raf(time);
+        frame = lenis.isScrolling ? requestAnimationFrame(tick) : 0;
+      };
+      const wake = () => {
+        if (frame) return;
+        // Restart Lenis's clock, so the first step after a pause is one frame, not the pause.
+        lenis.time = performance.now();
+        frame = requestAnimationFrame(tick);
+      };
+      const scrollTo = lenis.scrollTo.bind(lenis);
+      lenis.scrollTo = ((...args: Parameters<typeof scrollTo>) => {
+        scrollTo(...args);
+        wake();
+      }) as typeof lenis.scrollTo;
+      window.addEventListener('wheel', wake, { passive: true });
+      cleanup = () => {
+        window.removeEventListener('wheel', wake);
+        lenis.scrollTo = scrollTo;
+      };
+    };
+    attach();
+    return () => {
+      cancelAnimationFrame(frame);
+      cleanup?.();
+    };
   }, []);
 
   // Route change: jump to the top instead of destroying and recreating the
