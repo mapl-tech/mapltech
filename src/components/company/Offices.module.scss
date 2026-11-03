@@ -2,97 +2,24 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
+// The list leads; wide screens set the to-scale drawing beside it.
 .body {
   display: grid;
   gap: clamp(40px, 5vw, 56px);
 
   @include lg {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    column-gap: 48px;
-    align-items: start;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: 56px;
+    align-items: center;
   }
 }
 
-.place {
+// The drawing repeats the list, so phones and tablets skip it.
+.map {
+  display: none;
   min-width: 0;
 
-  // Wide screens: the map stays in view while the instrument beside it scrolls.
   @include lg {
-    position: sticky;
-    top: calc(var(--header-height, 72px) + 32px);
-  }
-}
-
-.footnote {
-  margin: 20px 0 0;
-  max-width: 34rem;
-  font-size: $font-size-base;
-  line-height: 1.55;
-  color: $color-fg-muted;
-}
-
-// The two branch pages, as ruled rows with a turning arrow (the services index idiom).
-.branches {
-  margin: 28px 0 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid $color-hairline-strong;
-
-  // 4px of non-link space each side of the hairline: 8px between the two targets.
-  li {
-    padding: 4px 0;
-    border-bottom: 1px solid $color-hairline;
-  }
-}
-
-.branch {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-height: 56px;
-  color: $color-fg;
-  text-decoration: none;
-
-  @include focus-ring;
-}
-
-.branchName {
-  font-family: $font-display;
-  font-weight: $font-weight-bold;
-  font-size: 1.25rem;
-  letter-spacing: -0.015em;
-  transition: transform 0.6s $ease-out-expo;
-
-  .branch:hover & {
-    @include motion-ok {
-      transform: translateX(8px);
-    }
-  }
-}
-
-.branchNote {
-  font-size: $font-size-sm;
-  color: $color-fg-muted;
-}
-
-.branchGo {
-  display: inline-grid;
-  place-items: center;
-  flex: none;
-  width: 40px;
-  height: 40px;
-  margin-left: auto;
-  border-radius: 50%;
-  border: 1px solid $color-hairline-strong;
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.6s $ease-out-expo;
-
-  .branch:hover & {
-    background: $color-fg;
-    border-color: $color-fg;
-    color: $color-ground;
-
-    @include motion-ok {
-      transform: rotate(-45deg);
-    }
+    display: block;
   }
 }

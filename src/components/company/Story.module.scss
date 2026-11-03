@@ -30,6 +30,11 @@
   text-wrap: pretty;
 }
 
+// Crimson on the ground is 3.66:1: large text only (AA 3:1), which this is.
+.accent {
+  color: $color-red;
+}
+
 .columns {
   display: grid;
   gap: 20px;

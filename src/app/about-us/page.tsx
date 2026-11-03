@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import JsonLd from '@/components/seo/JsonLd';
 import { absoluteUrl } from '@/config/routes';
-import { aboutPage, breadcrumb, graph, howTo, orgId, personRef } from '@/lib/schema';
+import { aboutPage, breadcrumb, graph, orgId, personRef } from '@/lib/schema';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
@@ -9,7 +9,6 @@ import FactsBand from '@/components/company/FactsBand';
 import { FoundersSpread } from '@/components/company/Founders';
 import HeroActions from '@/components/company/HeroActions';
 import Offices from '@/components/company/Offices';
-import Process from '@/components/company/Process';
 import Story from '@/components/company/Story';
 import { ABOUT, FOUNDERS } from '@/components/company/content';
 
@@ -29,18 +28,17 @@ export const metadata: Metadata = {
 };
 
 /*
- * /about-us, Nov 2026 award pass. The live site's purpose as the first
+ * /about-us, Nov 2026 simplify pass. The live site's purpose as the first
  * screen (the engineering backbone behind agencies that refuse to cut
  * corners), the answer-first facts, then: why MAPL TECH exists, in the
- * founders' voice -> how it works behind your brand, with the client's words
- * as proof (paper) -> the three offices against your working day -> the two
- * founders, beside the ask (paper) -> the crimson close.
+ * founders' voice -> the two founders (paper) -> the three offices -> the
+ * crimson close. How the work runs is told once, on the homepage.
  *
- * Structured data (unchanged): AboutPage (mainEntity: the Organization from
- * the root layout) + BreadcrumbList + the two founders + HowTo, from the same
- * arrays the page renders. The founders here are compact Person nodes (name,
- * title, photo, LinkedIn) because the page shows those, not the full bios;
- * the full Person nodes live on /team, where the bios are on screen.
+ * Structured data: AboutPage (mainEntity: the Organization from the root
+ * layout) + BreadcrumbList + the two founders, from the same arrays the page
+ * renders. The founders here are compact Person nodes (name, title, photo,
+ * LinkedIn) because the page shows those, not the full bios; the full Person
+ * nodes live on /team, where the bios are on screen.
  */
 const aboutGraph = graph([
   aboutPage({ name: ABOUT.title, description: ABOUT.description }),
@@ -51,10 +49,6 @@ const aboutGraph = graph([
     sameAs: [founder.linkedin],
     worksFor: orgId(),
   })),
-  howTo(
-    ABOUT.howWeWork.stages.map((stage) => ({ name: stage.name, text: stage.text, url: `/about-us#${stage.id}` })),
-    { name: ABOUT.howWeWork.title.replace(/\.$/, ''), description: ABOUT.howWeWork.lede, path: '/about-us' },
-  ),
 ]);
 
 export default function AboutPage() {
@@ -80,11 +74,9 @@ export default function AboutPage() {
 
       <Story />
 
-      <Process />
+      <FoundersSpread />
 
       <Offices />
-
-      <FoundersSpread />
 
       <CloseBand title={ABOUT.close.title} placement="about_close" />
     </>

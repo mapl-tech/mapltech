@@ -291,7 +291,7 @@ $tile-ring: rgba(11, 11, 12, 0.13);
   letter-spacing: -0.032em;
   color: $ink;
   text-wrap: balance;
-  scroll-margin-top: 112px;
+  scroll-margin-top: 24px;
 
   // A programmatic focus target, not a control: no ring.
   &:focus {

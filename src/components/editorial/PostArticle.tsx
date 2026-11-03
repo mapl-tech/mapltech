@@ -128,15 +128,15 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                 <>
                   <aside className={styles.inline} aria-labelledby="inline-ask">
                     <p id="inline-ask" className={styles.inlineTitle}>
-                      {serviceName ? 'Building this for a client?' : 'Planning a build?'}
+                      {serviceName ? 'Building this for a client?' : 'Planning a project?'}
                     </p>
                     <p className={styles.inlineText}>
                       {serviceName && from
-                        ? `Our ${serviceName} work ships under your brand, from ${from}. The estimator shows your number before we ask for anything.`
-                        : 'Our prices are public. The estimator shows your number before we ask for anything.'}
+                        ? `Our ${serviceName} service is delivered under your brand, from ${from}. The estimator shows your price before we ask for anything.`
+                        : 'Our prices are public. The estimator shows your price before we ask for anything.'}
                     </p>
                     <Link href={askHref} className={styles.inlineLink} data-cta-placement="blog_post_inline">
-                      Price a build like this
+                      Price a project like this
                       <span aria-hidden="true" className={styles.arrow}>
                         →
                       </span>
@@ -159,7 +159,7 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                 </p>
                 <p className={styles.authorBio}>
                   {isOrgAuthor
-                    ? `A white-label engineering team for digital agencies: ${SERVICE_LIST}, from offices in Toronto, Lagos and Kingston.`
+                    ? `Engineers who build for digital agencies, under the agency’s brand: ${SERVICE_LIST}. Offices in Toronto, Lagos and Kingston.`
                     : post.author.role}
                 </p>
                 <p className={styles.authorLinks}>
@@ -233,11 +233,11 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
 
       {/* ---------------------------------------------------------- the close */}
       <CloseBand
-        title={serviceName ? 'Put it into practice.' : 'Have a build in mind?'}
+        title={serviceName ? 'Want help putting this into practice?' : 'Have a project in mind?'}
         lede={
           serviceName
-            ? `Our ${serviceName} work ships under your brand, for agencies and the businesses they serve. Every price is public; a 20-minute scoping call turns yours into a fixed quote.`
-            : `${SERVICE_LIST}, for agencies and shipped under your brand. Every price is public.`
+            ? `Our ${serviceName} service is delivered under your brand, for agencies and the businesses they serve. Every price is public, and a 20-minute call turns yours into a fixed quote.`
+            : `We offer ${SERVICE_LIST} for agencies, under your brand. Every price is public.`
         }
         secondary={{ label: PRICING_LABEL, href: askHref }}
         placement="blog_post_close"

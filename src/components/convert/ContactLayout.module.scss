@@ -2,10 +2,10 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// /contact-us (Nov 2026 award pass). Under the standard PageHeader, one paper
-// sheet: the brief (7fr) beside what happens next and the direct line (5fr),
-// with the two diligence answers across the foot. Phones read it in DOM
-// order: brief, next steps, direct line, answers, then a way back up.
+// /contact-us (Nov 2026, simplified). Under the standard PageHeader, one paper
+// sheet: the brief (7fr) beside what happens next, one client quote and the
+// direct line (5fr). Phones read it in DOM order: brief, next steps, quote,
+// direct line, then a way back up.
 //
 // On paper #F1EDE7: ink 17.6:1, ink-muted 6.4:1, crimson-ink 5.5:1. The direct
 // line is a dark card on the sheet (fg on #121214 about 17:1, fg-muted 7.2:1).
@@ -23,7 +23,6 @@ $accent: $color-red-ink;
   color: $ink;
   border-radius: clamp(24px, 3vw, 40px);
   // In-page jumps (the mobile bar, "Back to the brief") land the sheet under the header.
-  scroll-margin-top: calc(var(--header-height, 72px) + 8px);
 }
 
 .inner {
@@ -33,7 +32,6 @@ $accent: $color-red-ink;
   grid-template-areas:
     'form'
     'aside'
-    'faq'
     'back';
   row-gap: clamp(64px, 9vw, 112px);
   padding-top: clamp(32px, 6vw, 88px);
@@ -41,9 +39,7 @@ $accent: $color-red-ink;
 
   @include lg {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    grid-template-areas:
-      'form aside'
-      'faq faq';
+    grid-template-areas: 'form aside';
     column-gap: clamp(56px, 6vw, 112px);
     align-items: start;
   }
@@ -96,51 +92,6 @@ $accent: $color-red-ink;
   &::before {
     @include section-label-rule($accent);
   }
-}
-
-.steps {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid $hair;
-}
-
-.stepRow {
-  @include rise-in;
-  display: grid;
-  grid-template-columns: 60px minmax(0, 1fr);
-  column-gap: 12px;
-  padding: 22px 0;
-  border-bottom: 1px solid $hair;
-}
-
-// Outline numerals in crimson-ink, decorative (aria-hidden).
-.stepNo {
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: 2.625rem;
-  line-height: 0.86;
-  letter-spacing: -0.04em;
-  color: transparent;
-  -webkit-text-stroke: 1.25px $accent;
-  @include tabular;
-}
-
-.stepName {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: clamp(1.3125rem, 1.1rem + 0.6vw, 1.625rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  color: $ink;
-}
-
-.stepText {
-  margin: 8px 0 0;
-  font-size: 1.0625rem;
-  line-height: 1.55;
-  color: $muted;
 }
 
 // ---------------------------------------------------------------- proof (one client, in her words)
@@ -296,98 +247,14 @@ $accent: $color-red-ink;
   @include focus-ring;
 }
 
-.hours {
-  display: grid;
-  gap: 14px;
-  padding-top: 18px;
-  border-top: 1px solid $color-hairline;
-}
-
 .hoursText {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: $color-fg-muted;
-}
-
-.clocks {
-  margin: 0;
-}
-
-.priceFirst {
-  margin: 0;
-  padding-top: 16px;
+  padding-top: 18px;
   border-top: 1px solid $color-hairline;
   font-size: 1rem;
   line-height: 1.5;
   color: $color-fg-muted;
-}
-
-.priceLink {
-  @include text-action($color-fg);
-  margin-left: 4px;
-}
-
-// ---------------------------------------------------------------- diligence answers
-.diligence {
-  grid-area: faq;
-  display: grid;
-  gap: 24px;
-  min-width: 0;
-
-  @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
-    padding-top: clamp(40px, 5vw, 64px);
-    border-top: 1px solid $hair;
-
-    .blockLabel {
-      align-self: start;
-      padding-top: 0.5em;
-    }
-  }
-}
-
-.answers {
-  display: grid;
-  margin: 0;
-  border-top: 1px solid $hair;
-
-  @include md {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: clamp(32px, 4vw, 56px);
-    border-top: 0;
-  }
-}
-
-.answer {
-  @include rise-in;
-  min-width: 0;
-  padding: 22px 0;
-  border-bottom: 1px solid $hair;
-
-  @include md {
-    padding: 0;
-    border-bottom: 0;
-  }
-}
-
-.question {
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: clamp(1.3125rem, 1.1rem + 0.7vw, 1.75rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  color: $ink;
-  text-wrap: balance;
-}
-
-.reply {
-  margin: 12px 0 0;
-  max-width: 40em;
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  color: $muted;
+  @include phone-floor;
 }
 
 // ---------------------------------------------------------------- back to the brief (phones)

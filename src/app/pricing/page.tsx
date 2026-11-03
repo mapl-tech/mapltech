@@ -8,7 +8,6 @@ import { faqPage, offerCatalog, pageGraph } from '@/lib/schema';
 import { REDESIGN_DATE, routeLastModified } from '@/config/routes';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import ScopeEstimator from '@/components/pricing/ScopeEstimator';
-import QuoteSteps from '@/components/pricing/QuoteSteps';
 import PriceList from '@/components/pricing/PriceList';
 import { pricingFaq } from '@/components/pricing/pricingFaq';
 import {
@@ -29,12 +28,13 @@ import sections from '@/components/pricing/PricingSections.module.scss';
 import styles from './page.module.scss';
 
 /*
- * /pricing (Nov 2026 award pass). Answer first: the H1 names the question and
- * the lede is the price list in one sentence, then the four starting prices
- * as a ledger of very large numerals. The estimator is the hero action
- * (#estimator, deep-linkable as /pricing?svc=web#estimator, URL state and
- * engine untouched), then what happens after it, the full price list on
- * paper, the FAQ and the crimson close.
+ * /pricing (Nov 2026 award pass, simplified). Answer first: the H1 names the
+ * question, the lede says how to use the page and the trust line says what
+ * happens after the range (a 20-minute call, one fixed price). Then the four
+ * starting prices as a ledger of very large numerals, the estimator (the hero
+ * action: #estimator, deep-linkable as /pricing?svc=web#estimator, URL state
+ * and engine untouched), the full price list on paper with every service
+ * collapsed to one row, the FAQ and the crimson close.
  *
  * Every price is read from site.ts through src/lib/estimate.ts. Structured
  * data is one page graph: WebPage + BreadcrumbList + the OfferCatalog of every
@@ -101,7 +101,7 @@ export default function PricingPage() {
       <section className={styles.starting} aria-labelledby="starting-title">
         <div className={styles.startingInner}>
           <h2 id="starting-title" className={styles.startingLabel}>
-            Starting prices, per service line
+            Starting prices
           </h2>
           <dl className={styles.ledger}>
             {SERVICES.map((facts) => (
@@ -113,17 +113,20 @@ export default function PricingPage() {
                 </dd>
                 <dd className={styles.cellNote}>{facts.entry}</dd>
                 <dd className={styles.cellLink}>
-                  {/* Visible words first, context after (2.5.3): "All 4 tiers of Web Development". */}
+                  {/* Visible words first, context after (2.5.3); OpenTarget opens the row it points at. */}
                   <a href={`#${facts.id}`} data-cta-placement={`pricing_ledger_${facts.service}`}>
-                    All {facts.tierCount} tiers<span className="visually-hidden"> of {facts.name}</span>
+                    All {facts.tierCount} packages<span className="visually-hidden"> for {facts.name}</span>
+                    <span className={styles.cellArrow} aria-hidden="true">
+                      ↓
+                    </span>
                   </a>
                 </dd>
               </div>
             ))}
           </dl>
           <p className={styles.asOf}>
-            Partner bundles from {BUNDLES_FROM} a month. Hourly work from {HOURLY_FROM} an hour. Page last updated{' '}
-            <time dateTime={LAST_REVIEWED}>{longDate(LAST_REVIEWED)}</time>.
+            Bundles of several services from {BUNDLES_FROM} a month. Hourly work from {HOURLY_FROM} an hour. Prices last
+            updated <time dateTime={LAST_REVIEWED}>{longDate(LAST_REVIEWED)}</time>.
           </p>
         </div>
       </section>
@@ -141,8 +144,6 @@ export default function PricingPage() {
           <ScopeEstimator />
         </div>
       </section>
-
-      <QuoteSteps />
 
       <PriceList />
 

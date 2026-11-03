@@ -2,7 +2,7 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// The services index: four numbered rows, the names as large as a row allows.
+// The services index: four rows, the names as large as a row allows.
 .body {
   position: relative;
 }
@@ -30,7 +30,6 @@
     'kicker kicker'
     'name name'
     'summary summary'
-    'media media'
     'meta go';
   align-items: center;
   gap: 16px 24px;
@@ -74,19 +73,7 @@
 
 .kicker {
   grid-area: kicker;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  @include mono-label;
-}
-
-// 13px label: #FF5C73 is 5.5:1 on the ground (#F03350 is for large text only).
-.numeral {
-  color: $color-red-text;
-}
-
-.role {
-  color: $color-fg-muted;
+  @include mono-label($color-fg-muted);
 }
 
 .name {
@@ -149,12 +136,19 @@
   }
 }
 
-// Touch and reduced motion: the exhibit sits in the row. Mouse with motion: the trailing preview instead.
+// Wide screens without the trailing preview (touch laptops, reduced motion): the exhibit sits in the
+// row. Mouse with motion: the trailing preview instead. Phones and tablets: no exhibit, so the four
+// rows stay short and scannable.
 .media {
   grid-area: media;
+  display: none;
   width: 100%;
   max-width: 560px;
   margin-top: 4px;
+
+  @include lg {
+    display: block;
+  }
 
   @include pointer-fine-motion {
     display: none;

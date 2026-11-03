@@ -23,11 +23,11 @@ function Exhibit({ layer, sizes }: { layer: LayerView; sizes: string }) {
 }
 
 /**
- * The four service lines as a big numbered index: numeral and what the line
- * is, the name as large as the row allows, the one-line summary, the public
- * "from" price and an arrow. Each row is one link to the service page. On
- * desktop a preview of real work trails the cursor (IndexPreview); touch and
- * reduced motion get the same exhibit inline in the row.
+ * The four services as a big index: what the service is in a few words, the
+ * name as large as the row allows, the one-line summary, the public "from"
+ * price and an arrow. Each row is one link to the service page. On desktop a
+ * preview of real work trails the cursor (IndexPreview); tablets and reduced
+ * motion get the same exhibit inline in the row; phones keep the rows short.
  */
 export default function IndexRows({ labelId }: { labelId: string }) {
   return (
@@ -41,13 +41,8 @@ export default function IndexRows({ labelId }: { labelId: string }) {
           <li key={layer.slug} className={styles.row} data-index={i}>
             <Link href={layer.path} className={styles.link} data-cta-placement={`services_index_${layer.service}`}>
               <span className={styles.kicker}>
-                <span className={styles.numeral} aria-hidden="true">
-                  {layer.numeral}
-                </span>
-                <span className={styles.role}>
-                  {layer.role}
-                  <span className="visually-hidden">: </span>
-                </span>
+                {layer.role}
+                <span className="visually-hidden">: </span>
               </span>
               <span className={styles.name}>
                 {layer.name}
@@ -58,7 +53,7 @@ export default function IndexRows({ labelId }: { labelId: string }) {
                 <span className="visually-hidden"> </span>
               </span>
               <div className={styles.media} aria-hidden="true">
-                <Exhibit layer={layer} sizes="(min-width: 768px) 560px, 92vw" />
+                <Exhibit layer={layer} sizes="560px" />
               </div>
               <span className={styles.meta}>{layer.fromLabel}</span>
               <span className={styles.go} aria-hidden="true">

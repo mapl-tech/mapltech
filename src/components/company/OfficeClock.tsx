@@ -1,6 +1,6 @@
 'use client';
 
-import { isOfficeOpen, useMinute, zoneTime } from '@/components/ui/TimezoneOverlap';
+import { isOfficeOpen, useMinute, zoneTime } from '@/components/ui/officeTime';
 import styles from './OfficeClock.module.scss';
 
 /**

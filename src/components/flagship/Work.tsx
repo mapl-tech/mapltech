@@ -1,7 +1,6 @@
 import { ViewTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Reel from './Reel';
 import { WORK, WORK_SECTION } from './content';
 import styles from './Work.module.scss';
 
@@ -13,9 +12,9 @@ const SHOTS: Record<string, { desktop: string; mobile: string; url: string }> = 
 };
 
 /**
- * Selected work: the reel (a wall of everything shipped), then the three
- * featured cases as cards that stack as they scroll, each one sliding over
- * the last. Every number on a card is sourced in content.ts.
+ * Selected work: the three featured cases as cards that stack as they
+ * scroll, each one sliding over the last. Every number on a card is sourced
+ * in content.ts.
  */
 export default function Work() {
   return (
@@ -34,8 +33,6 @@ export default function Work() {
         </div>
       </div>
 
-      <Reel />
-
       <ol className={styles.stack}>
         {WORK.map((card, i) => {
           const shots = SHOTS[card.slug];
@@ -43,12 +40,7 @@ export default function Work() {
             <li key={card.slug} className={styles.slot} style={{ ['--i' as string]: i }}>
               <article className={styles.card} aria-labelledby={`work-${card.slug}`}>
                 <div className={styles.copy}>
-                  <p className={styles.kind}>
-                    <span className={styles.count} aria-hidden="true">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    {card.kind}
-                  </p>
+                  <p className={styles.kind}>{card.kind}</p>
                   <h3 id={`work-${card.slug}`} className={styles.client}>
                     {card.client}
                   </h3>

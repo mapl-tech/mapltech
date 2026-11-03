@@ -132,7 +132,7 @@ export function sizeOptions(kind: BriefKind | null): readonly ChoiceOption[] {
 }
 
 export function sizeQuestion(kind: BriefKind | null): string {
-  return kind === 'partner' ? 'Which arrangement fits?' : 'How big is it?';
+  return kind === 'partner' ? 'Which plan fits?' : 'How big is it?';
 }
 
 // ---------------------------------------------------------------- prefill
@@ -221,7 +221,7 @@ export function briefLines(answers: BriefAnswers, prefill: BriefPrefill | null):
         : KIND_LABEL[kind],
   });
   const size = sizeLine(kind, answers.size, prefill);
-  if (size) lines.push({ label: kind === 'partner' ? 'Arrangement' : 'Size', value: size });
+  if (size) lines.push({ label: kind === 'partner' ? 'Plan' : 'Size', value: size });
 
   if (estimateApplies && prefill?.input) {
     const others = prefill.services.slice(1).map((service) => {
@@ -249,7 +249,7 @@ export interface ComposedBrief {
 export function composeBrief(answers: BriefAnswers, prefill: BriefPrefill | null): ComposedBrief {
   const kind = answers.kind ?? 'unsure';
   const lines = briefLines({ ...answers, kind }, prefill);
-  const size = lines.find((line) => line.label === 'Size' || line.label === 'Arrangement');
+  const size = lines.find((line) => line.label === 'Size' || line.label === 'Plan');
   const subject = size ? `Brief: ${KIND_LABEL[kind]}, ${size.value}` : `Brief: ${KIND_LABEL[kind]}`;
 
   const body: string[] = ['Project brief from mapltech.com/contact-us', ''];

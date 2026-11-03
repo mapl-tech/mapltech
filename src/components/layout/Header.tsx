@@ -27,15 +27,15 @@ import styles from './Header.module.scss';
  * - A 72px bar that sits on the hero photograph at the top of the page and
  *   gains the brand ground, blur and hairline (compressing to 60px) once the
  *   page has scrolled 24px.
- * - Five nav items in DM Sans 15px (siteConfig.nav): Services / Work / About
- *   open inline dropdowns on desktop. Each
+ * - Five nav items in DM Sans 15px (siteConfig.nav): Services and About open
+ *   inline dropdowns on desktop. Each
  *   dropdown is a disclosure: hover opens it for a mouse, a chevron button with
  *   aria-expanded / aria-controls opens it for keyboards, Arrow keys move
  *   through it, Escape closes it and returns focus, focus or a click leaving
  *   the item closes it. Closed menus are visibility:hidden, so they are never
  *   in the tab order.
- * - Mobile (< 1024px): 56px bar, compact "Price it" CTA (its accessible name
- *   is its visible label, WCAG 2.5.3), 44px hamburger that opens the vaul
+ * - Mobile (< 1024px): 56px bar, compact "Start a project" CTA (its accessible
+ *   name is its visible label, WCAG 2.5.3), 44px hamburger that opens the vaul
  *   bottom sheet in MobileNav (interaction #9).
  * - While the page's own hero CTA is on screen, the header's CTA steps back to
  *   an outline, so each first viewport leads with one filled button.

@@ -59,53 +59,51 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'lro-staffing',
     client: 'LRO Staffing',
     tags: ['Website', 'Staffing and recruitment', 'Ottawa and Toronto'],
-    headline:
-      'A full-service staffing agency’s website, rebuilt around its two audiences: people looking for their next role and employers looking to hire.',
+    headline: 'A staffing agency’s website, rebuilt for its two audiences: people looking for work and employers looking to hire.',
     facts: [
       { term: 'Client', detail: 'LRO Staffing, full-service search and staffing' },
       { term: 'Where', detail: 'Ottawa and Toronto' },
       { term: 'What we built', detail: 'The complete website' },
-      { term: 'Stack', detail: 'WordPress, custom theme, PHP' },
+      { term: 'Built with', detail: 'WordPress, custom theme, PHP' },
       { term: 'Live', detail: 'lrostaffing.com', href: 'https://www.lrostaffing.com/' },
     ],
     results: [
-      { value: '100', label: 'Lighthouse accessibility, on mobile and desktop' },
-      { value: '100', label: 'Lighthouse SEO, on mobile and desktop' },
-      { value: '8', label: 'industry expertise hubs, one click from the menu' },
+      { value: '100', label: 'Google Lighthouse accessibility score, on mobile and desktop' },
+      { value: '100', label: 'Google Lighthouse SEO score, on mobile and desktop' },
+      { value: '8', label: 'industry expertise pages, one click from the menu' },
     ],
     situation: [
       'LRO Staffing places people across Ottawa and Toronto. Its website has two very different visitors: someone looking for their next role, and an employer trying to fill one.',
-      'Both had to find their path from the first screen, and the agency’s depth (industry expertise, recruitment insight, salary data) had to be one click away rather than buried in a footer.',
+      'Both needed to find their way from the first screen. The agency’s industry expertise, recruitment advice and salary data also had to be one click away, not buried at the bottom of the page.',
     ],
     built: {
-      intro: 'One build, organised around the two journeys, with every component written for this brand.',
+      intro: 'One website, organised around its two kinds of visitor, with every part made for this brand.',
       stages: [
         { name: 'Foundation', text: 'A custom WordPress theme built specifically for the LRO Staffing brand.' },
         { name: 'Find', text: 'Job search with keyword, industry, location and job type filters.' },
         { name: 'Apply', text: 'Job alerts and resume submission, so a visit can end in an application.' },
-        { name: 'Expertise', text: 'Eight industry expertise hubs, from technology and government to legal services and finance.' },
+        { name: 'Expertise', text: 'Eight industry expertise pages, from technology and government to legal services and finance.' },
         { name: 'Insight', text: 'A recruitment insights blog and an interactive salary guide for the Ottawa and Toronto markets.' },
-        { name: 'Access', text: 'Keyboard-accessible components with proper ARIA states, such as the “How We Work With You” accordion.' },
+        { name: 'Access', text: 'Parts like the “How We Work With You” panels work with a keyboard and tell screen readers when they open and close.' },
       ],
     },
     impact: [
       {
-        heading: 'What the build delivers',
+        heading: 'What the website does',
         items: [
-          'Job seekers and employers each one click from the main navigation',
-          'A perfect Lighthouse score for accessibility and SEO, on mobile and desktop',
-          'Job search, alerts and resume submission in one flow',
+          'Job seekers and employers are each one click from the main menu',
+          'Job search, alerts and resume submission work as one flow',
         ],
       },
       {
         heading: 'What LRO Staffing owns',
-        items: ['A custom theme, not a rented page-builder template', 'Eight expertise hubs and an insights blog the team publishes to', 'An interactive salary guide for its two markets'],
+        items: ['A custom theme, not a rented template', 'Eight expertise pages and a blog the team publishes to', 'An interactive salary guide for its two markets'],
       },
     ],
     quote: alita ? { text: alita.quote, name: alita.name, role: `${alita.role}, ${alita.company}`, image: alita.image || undefined } : undefined,
     matters: {
       heading: 'Why this matters if your agency sells websites',
-      text: 'Two-audience sites are where builds usually go wrong: one audience gets the homepage and the other gets a footer link. We plan the information architecture with you before anything is designed, then build to pass the same audits your client will run after launch.',
+      text: 'Sites with two audiences often go wrong: one audience gets the homepage and the other gets a link at the bottom. We plan the structure with you before any design starts, then build it to pass the same checks your client will run after launch.',
     },
     sources: 'Lighthouse results for lrostaffing.com as published on leshanpatterson.com (November 2026). Client quote approved for publication.',
     media: {
@@ -118,46 +116,45 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'mapl-tours',
     client: 'MAPL Tours',
     tags: ['Our own product', 'Travel', 'Jamaica'],
-    headline: 'A travel company we built and run ourselves, to find out how far AI-built software can go in production.',
+    headline: 'A travel company we built and run ourselves, to see how far software built with AI can go with real customers.',
     facts: [
-      { term: 'Owner', detail: 'MAPL TECH (MAPL Labs)' },
+      { term: 'Owner', detail: 'MAPL TECH' },
       { term: 'What it does', detail: 'Private airport transfers and tours in Jamaica' },
-      { term: 'Stack', detail: 'Next.js, MCP and WebMCP tools, CI/CD' },
+      { term: 'Built with', detail: 'Next.js, MCP and WebMCP tools, automated testing and deployment' },
       { term: 'Status', detail: 'Live, taking real payments' },
       { term: 'Live', detail: 'mapltours.com', href: 'https://mapltours.com/' },
     ],
     results: [
       { value: '~50%', label: 'of customers now arrive through ChatGPT' },
-      { value: '~2,000', label: 'automated tests run before any change reaches production' },
+      { value: '~2,000', label: 'automated tests run before any change goes live' },
       { value: 'Live', label: 'real payments, for rides run by a licensed transportation provider' },
     ],
     situation: [
-      'Agencies ask us whether AI-built software is ready for production. We answer with a business.',
-      'MAPL Tours sells private airport transfers and tours in Jamaica: video-first discovery, live quoting, payments, dispatch and lifecycle email. It is not a demo. It takes real payments for rides operated by a licensed transportation provider, so every failure mode is a real one.',
+      'Agencies ask us if software built with AI is ready for real customers. We answered by running a business on it.',
+      'MAPL Tours sells private airport transfers and tours in Jamaica. The site handles video browsing, live quotes, payments, driver dispatch and customer emails. It is not a demo. It takes real payments for rides run by a licensed transportation provider, so every mistake would be a real one.',
     ],
     built: {
-      intro: 'Agents do much of the implementation. The engineering is in what they are allowed to do.',
+      intro: 'AI agents write much of the code. Our engineering is in the rules that control what they can do.',
       stages: [
-        { name: 'Specification', text: 'A project specification every agent reads before making changes, plus persistent decision memory.' },
-        { name: 'Tests', text: 'Nearly 2,000 tests running through a CI/CD pipeline before changes reach production.' },
-        { name: 'Review', text: 'Adversarial review: specialist agents critique each change and a skeptic agent tries to disprove the findings.' },
-        { name: 'Money', text: 'Hard financial guardrails: server-side pricing, idempotent payments and isolated test traffic.' },
-        { name: 'AI-native', text: 'MCP and WebMCP tools that let AI assistants query real fares and hand travellers a ready-to-book link.' },
+        { name: 'Plan', text: 'A written project plan every AI agent reads before it changes anything, plus a lasting record of decisions.' },
+        { name: 'Tests', text: 'Nearly 2,000 automated tests run before any change goes live.' },
+        { name: 'Review', text: 'Specialist AI agents check every change, and a skeptic agent tries to prove their findings wrong.' },
+        { name: 'Money', text: 'Strict payment safeguards: prices are worked out on the server, a repeated payment request is charged only once, and test orders stay apart from real ones.' },
+        { name: 'AI assistants', text: 'MCP and WebMCP tools let AI assistants look up real fares and give travellers a link that is ready to book.' },
       ],
     },
     impact: [
       {
         heading: 'What it proves',
         items: [
-          'Roughly half of customers now arrive through ChatGPT',
-          'AI-assisted delivery can carry real money when the guardrails are engineered, not hoped for',
-          'Software that AI assistants can query directly gets recommended by them',
+          'Software built with AI can handle real money when the safeguards are built in, not hoped for',
+          'Software that AI assistants can look up directly gets recommended by them',
         ],
       },
     ],
     matters: {
       heading: 'Why this matters if your clients ask about AI',
-      text: 'Your clients are already being found, or missed, by AI assistants. We build sites and tools those assistants can read, query and recommend, because we run a business that depends on it.',
+      text: 'AI assistants are already finding your clients, or missing them. We build sites and tools these assistants can read and recommend. We know how because our own business depends on it.',
     },
     sources: 'Figures as published by MAPL TECH’s co-founder on leshanpatterson.com (November 2026).',
     media: {
@@ -171,33 +168,61 @@ export const STORIES: readonly CaseStory[] = [
     client: 'CHHA-NCR',
     legalName: chha?.client ?? 'Canadian Hard of Hearing Association, National Capital Region',
     tags: ['Website relaunch', 'Non-profit', 'Ottawa'],
-    headline: 'A relaunch for people with hearing loss, most of them over 55, built so the charity’s own volunteers can run it.',
+    headline: 'A relaunched website for people with hearing loss, most of them over 55, that the charity’s own volunteers can run.',
     facts: [
       { term: 'Client', detail: chha?.client ?? 'CHHA-NCR' },
       { term: 'Sector', detail: chha?.industry ?? 'Non-profit / accessibility' },
-      { term: 'Stack', detail: (chha?.stack ?? []).join(', ') },
-      { term: 'Relaunched', detail: chha?.delivered ?? 'July 2026' },
+      { term: 'Built with', detail: (chha?.stack ?? []).join(', ') },
+      // site.ts says "Relaunched July 2026"; the term already says relaunched.
+      { term: 'Relaunched', detail: (chha?.delivered ?? 'July 2026').replace(/^relaunched\s+/i, '') },
       { term: 'Live', detail: 'chhancr.ca', href: 'https://www.chhancr.ca/' },
     ],
     results: [
-      { value: 'AA', label: 'WCAG contrast on every audited colour pair' },
-      { value: '5', label: 'journey stages: Noticing, Finding Out, Choosing, Living with it, Giving back' },
+      { value: 'AA', label: 'WCAG accessibility level for colour contrast, on every pair the audit checked' },
+      { value: '5', label: 'stages that guide visitors: Noticing, Finding Out, Choosing, Living with it, Giving back' },
     ],
     situation: chha ? [chha.challenge] : undefined,
+    // Plain-language versions of site.ts caseStudies `solution` and `results`
+    // (same facts, everyday words; the record keeps the audit's own wording).
     built: chha
       ? {
-          intro: 'Accessibility engineered in from the first component, not bolted on at the end.',
-          stages: chha.solution.map((text, i) => ({
-            name: ['Journey', 'Accessibility', 'Directory', 'Self-service'][i] ?? `Stage ${i + 1}`,
-            text,
-          })),
+          intro: 'Accessibility built in from the start, not added at the end.',
+          stages: [
+            {
+              name: 'Journey',
+              text: 'The site is organised as a five-stage journey: Noticing, Finding Out, Choosing, Living with it, Giving back. Each stage is a plain-language page that points to the next.',
+            },
+            {
+              name: 'Accessibility',
+              text: 'Skip links, a clear page structure for screen readers, descriptions on every image, visible keyboard focus, reduced-motion support, and a panel where visitors set text size, motion and link underlining.',
+            },
+            {
+              name: 'Directory',
+              text: 'A directory of local hearing clinics with addresses, tap-to-call numbers and map links, plus an Accessible Ottawa guide to venues with hearing loops.',
+            },
+            {
+              name: 'Self-service',
+              text: 'Volunteers edit the site themselves on WordPress. Caching keeps it fast and structured data helps search engines read it, so the branch does not depend on an agency.',
+            },
+          ],
         }
       : undefined,
-    impact: chha ? [{ heading: 'What the independent audit found', items: chha.results }] : undefined,
+    impact: chha
+      ? [
+          {
+            heading: 'What the independent audit found',
+            items: [
+              'Every colour pair the audit checked meets WCAG AA. The August 2026 audit rated the accessibility work above what most agencies ship.',
+              'Openness about how the charity is run, which the audit called rare at this size: full board bios and published annual meeting (AGM) reports.',
+              'The five-stage journey was noted as ahead of the US national counterpart’s site.',
+            ],
+          },
+        ]
+      : undefined,
     quote: chhaAudit ? { text: chhaAudit.quote, name: chhaAudit.name, role: chhaAudit.role } : undefined,
     matters: {
-      heading: 'Why this matters if you build for public-sector and non-profit clients',
-      text: 'For these clients accessibility is a requirement and the audit is coming. We engineer WCAG AA in from the first component and hand over a site the client’s own team can maintain without calling an agency.',
+      heading: 'Why this matters if you build for government and non-profit clients',
+      text: 'For these clients, accessibility is required and an audit will follow. We build to the WCAG AA standard from the start, then hand over a site the client’s own team can update without calling an agency.',
     },
     sources: chha?.sourceNote,
     media: {
@@ -210,7 +235,7 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'lro-salary-guide',
     client: 'LRO Interactive Salary Guide',
     tags: ['Custom internal tool', 'Staffing and recruitment', 'Ottawa and Toronto'],
-    headline: 'An interactive salary guide that turns market data into a benchmarking tool for recruiters and hiring managers.',
+    headline: 'An interactive salary guide that turns market data into a tool for comparing pay, made for recruiters and hiring managers.',
     facts: [
       { term: 'Client', detail: 'LRO Staffing' },
       { term: 'Type', detail: 'Interactive tool' },
@@ -223,9 +248,9 @@ export const STORIES: readonly CaseStory[] = [
     ],
     built: {
       stages: [
-        { name: 'Filter', text: 'Dynamic filtering across roles and markets.' },
-        { name: 'See', text: 'Real-time data visualisation that redraws as the filters change.' },
-        { name: 'Benchmark', text: 'Role-based salary benchmarking for recruiters and hiring managers.' },
+        { name: 'Filter', text: 'Filters for role and market.' },
+        { name: 'See', text: 'Charts that update as soon as you change a filter.' },
+        { name: 'Compare', text: 'Salary comparisons by role, for recruiters and hiring managers.' },
       ],
     },
     matters: {
@@ -242,22 +267,22 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'focas-canada',
     client: 'FOCAS Canada',
     tags: ['Web platform', 'Membership and events'],
-    headline: 'An event-driven web platform with a member portal, registration workflows and community tools.',
+    headline: 'An events website with a member portal, event registration and community tools.',
     facts: [
       { term: 'Client', detail: 'FOCAS Canada' },
-      { term: 'Stack', detail: 'WordPress' },
+      { term: 'Built with', detail: 'WordPress' },
       { term: 'Live', detail: 'focascanada.org', href: 'https://focascanada.org/' },
     ],
     built: {
       stages: [
         { name: 'Members', text: 'A member portal.' },
-        { name: 'Events', text: 'Registration workflows for events.' },
-        { name: 'Community', text: 'Community engagement tools.' },
+        { name: 'Events', text: 'Online registration for events.' },
+        { name: 'Community', text: 'Tools for community engagement.' },
       ],
     },
     matters: {
       heading: 'Why this matters if your client runs a membership',
-      text: 'Membership sites fail at the seams between the website, the registration system and the inbox. We build those seams as one system, so the client’s team stops copying data between tools.',
+      text: 'Membership sites often break where the website, the sign-up system and email meet. We build them as one system, so the client’s team stops copying data between tools.',
     },
     media: {
       desktop: '/images/cases/focas-desktop.jpg',
@@ -270,8 +295,7 @@ export const STORIES: readonly CaseStory[] = [
     client: 'UNSVCC',
     legalName: 'United Senior Citizen Voice for Change Coalition',
     tags: ['Internal tools', 'Non-profit', 'Canada'],
-    headline:
-      'An internal operations dashboard for a Canadian seniors’ advocacy coalition: real-time organisational metrics, role-based access and automated reporting.',
+    headline: 'A private dashboard for a Canadian seniors’ advocacy coalition, with live numbers, access by role and automatic reports.',
     facts: [
       { term: 'Client', detail: 'United Senior Citizen Voice for Change Coalition' },
       { term: 'What we built', detail: 'Internal operations dashboard' },
@@ -279,9 +303,9 @@ export const STORIES: readonly CaseStory[] = [
     ],
     built: {
       stages: [
-        { name: 'Metrics', text: 'Real-time organisational metrics in one place.' },
-        { name: 'Access', text: 'Role-based access, so each person sees what their role needs.' },
-        { name: 'Reports', text: 'Automated reporting instead of manual spreadsheets.' },
+        { name: 'Numbers', text: 'Live numbers for the whole organisation, in one place.' },
+        { name: 'Access', text: 'Access by role, so each person sees what their job needs.' },
+        { name: 'Reports', text: 'Reports that build themselves, instead of spreadsheets made by hand.' },
       ],
     },
     matters: {
@@ -299,21 +323,21 @@ export const STORIES: readonly CaseStory[] = [
     slug: 'crowned-spice',
     client: 'Crowned Spice',
     tags: ['Automation', 'E-commerce'],
-    headline: 'End-to-end e-commerce automation: inventory syncing, shipping triggers and post-purchase communication.',
+    headline: 'Online store automation, from stock levels to shipping to the messages customers get after they buy.',
     facts: [
       { term: 'Client', detail: 'Crowned Spice' },
       { term: 'Type', detail: 'E-commerce automation' },
     ],
     built: {
       stages: [
-        { name: 'Inventory', text: 'Inventory that stays in sync across channels.' },
-        { name: 'Shipping', text: 'Shipping triggered automatically when an order is ready.' },
-        { name: 'After the sale', text: 'Post-purchase communication flows.' },
+        { name: 'Stock', text: 'Stock levels that stay the same across every place the store sells.' },
+        { name: 'Shipping', text: 'Shipping starts automatically when an order is ready.' },
+        { name: 'After the sale', text: 'Automatic messages to customers after they buy.' },
       ],
     },
     matters: {
       heading: 'Why this matters if your client sells online',
-      text: 'The storefront is the easy part. The hours go into everything after the click. We automate the order lifecycle so the client’s team handles exceptions, not every order.',
+      text: 'The online store is the easy part. The hours go into everything after someone clicks buy. We automate each step of an order, so the client’s team only handles the unusual ones.',
     },
   },
 ];

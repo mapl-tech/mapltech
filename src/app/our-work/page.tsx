@@ -6,30 +6,18 @@ import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
 import { PrimaryCta, TextCta } from '@/components/work/Cta';
 import WorkIndex from '@/components/work/WorkIndex';
-import {
-  WORK_PAGE,
-  catalogFilters,
-  catalogItems,
-  catalogVoice,
-  countWord,
-  lowestFromPrice,
-  pad2,
-  servicesOnView,
-  type CatalogItem,
-} from '@/components/work/catalog';
-import { LABS_PAGE, NEXT_PRODUCTS, TOURS, TOURS_STORY } from '@/components/work/labs';
+import { WORK_PAGE, catalogFilters, catalogItems, catalogVoice, countWord, type CatalogItem } from '@/components/work/catalog';
 import { findProject } from '@/components/work/work-data';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { creativeWork, imageObject, itemList, pageGraph } from '@/lib/schema';
 import styles from './work.module.scss';
 
 /*
- * /our-work (Nov 2026 award pass). The page hero states the honest line (most
- * of our work ships under partners' names) and counts what is on view; then
- * the index: one editorial row per listed project, in the owner's order, each
- * with its real capture and a link to its case study, filterable by service
- * line. Then the client in her words, the products we run ourselves (MAPL
- * Labs), and the ask.
+ * /our-work (Nov 2026 simplify pass): four parts, in reading order. The page
+ * hero says the honest line (most of our work ships under partners' names);
+ * the index lists every project in the owner's order, each with its real
+ * capture and a link to its case study, filterable by service line; one
+ * client quote; the ask.
  *
  * Every row's capture carries the case hero's view-transition name, so it
  * morphs into the case study's browser frame on navigation (one element per
@@ -43,8 +31,6 @@ export default function OurWorkPage() {
   const items = catalogItems();
   const filters = catalogFilters();
   const voice = catalogVoice();
-  const from = lowestFromPrice();
-  const toursResult = TOURS_STORY?.results?.[0];
 
   const graph = pageGraph({
     path: WORK_PAGE.path,
@@ -71,7 +57,7 @@ export default function OurWorkPage() {
               : undefined,
           };
         }),
-        { path: WORK_PAGE.path, name: 'Projects on view' },
+        { path: WORK_PAGE.path, name: 'Projects' },
       ),
     ],
   });
@@ -82,12 +68,12 @@ export default function OurWorkPage() {
 
       <PageHeader
         id="work-title"
-        label="Case studies"
+        label="Our work"
         title="Work we can show."
         lede={
           <p>
-            Most of what we build ships under our partners’ names, and stays there. These {countWord(items.length)} projects
-            carry ours, and each one opens into the full story.
+            Most of our work is published under our partners’ names. These {countWord(items.length)} projects carry ours.
+            Open any one to see what we built and what changed.
           </p>
         }
         actions={
@@ -100,28 +86,6 @@ export default function OurWorkPage() {
             </TextCta>
           </>
         }
-        aside={
-          <div className={styles.tally}>
-            <p className={styles.tallyCount}>
-              <span className={styles.tallyValue} aria-hidden="true">
-                {pad2(items.length)}
-              </span>
-              <span className={styles.tallyLabel}>
-                <span className="visually-hidden">{items.length} </span>projects on view
-              </span>
-            </p>
-            <dl className={styles.tallyFacts}>
-              <div className={styles.tallyFact}>
-                <dt>Work shown</dt>
-                <dd>{servicesOnView().join(', ')}</dd>
-              </div>
-              <div className={styles.tallyFact}>
-                <dt>Public prices</dt>
-                <dd>From {from}</dd>
-              </div>
-            </dl>
-          </div>
-        }
       />
 
       {/* ------------------------------------------------------------ the index */}
@@ -133,7 +97,7 @@ export default function OurWorkPage() {
             total={items.length}
             heading={
               <h2 id="index-title" className={styles.indexLabel}>
-                Projects on view
+                Projects
               </h2>
             }
           >
@@ -143,13 +107,6 @@ export default function OurWorkPage() {
               ))}
             </ol>
           </WorkIndex>
-          {/* The live site's own invitation, for readers who reach the end of the list. */}
-          <p className={styles.indexNext}>
-            <span>Want results like these? Tell us about your project. We’ll tell you exactly how we’d approach it.</span>
-            <TextCta href={PROJECT_HREF} placement="work_index_project">
-              {PROJECT_LABEL}
-            </TextCta>
-          </p>
         </div>
       </section>
 
@@ -158,7 +115,7 @@ export default function OurWorkPage() {
         <section className={styles.voice} aria-labelledby="voice-title">
           <div className={styles.voiceInner}>
             <h2 id="voice-title" className={styles.voiceLabel}>
-              In her words
+              What a client says
             </h2>
             <figure className={styles.quote}>
               <blockquote cite={voice.path} className={styles.quoteText}>
@@ -181,69 +138,10 @@ export default function OurWorkPage() {
         </section>
       ) : null}
 
-      {/* ------------------------------------------------------------ MAPL Labs (paper) */}
-      <section className={styles.labs} aria-labelledby="labs-title">
-        <div className={styles.labsInner}>
-          <header className={styles.labsHead}>
-            <p className={styles.labsLabel}>{LABS_PAGE.name}</p>
-            <h2 id="labs-title" className={styles.labsTitle}>
-              Products we build and run ourselves.
-            </h2>
-            {TOURS_STORY?.situation?.[0] ? <p className={styles.labsLede}>{TOURS_STORY.situation[0]}</p> : null}
-          </header>
-
-          <div className={styles.labsBody}>
-            <ol className={styles.products} role="list">
-              <li className={styles.product}>
-                <p className={styles.status} data-status="live">
-                  {TOURS.status}
-                </p>
-                <h3 className={styles.productName}>{TOURS.name}</h3>
-                <p className={styles.productLine}>{TOURS.tagline}.</p>
-                {toursResult ? (
-                  <p className={styles.productResult}>
-                    <span className={styles.productValue}>{toursResult.value}</span>
-                    <span>{toursResult.label}</span>
-                  </p>
-                ) : null}
-              </li>
-              {NEXT_PRODUCTS.map((product) => (
-                <li key={product.slug} className={styles.product}>
-                  <p className={styles.status}>{product.status}</p>
-                  <h3 className={styles.productName}>{product.name}</h3>
-                  <p className={styles.productLine}>{product.tagline}.</p>
-                </li>
-              ))}
-            </ol>
-
-            {TOURS_STORY?.media?.mobile ? (
-              <div className={styles.labsMedia} aria-hidden="true">
-                <div className={styles.labsPhone}>
-                  <Image
-                    src={TOURS_STORY.media.mobile}
-                    alt=""
-                    width={780}
-                    height={1688}
-                    sizes="(min-width: 1024px) 300px, (min-width: 768px) 280px, 68vw"
-                    className={styles.labsShot}
-                  />
-                </div>
-              </div>
-            ) : null}
-
-            <p className={styles.labsMore}>
-              <TextCta href={LABS_PAGE.path} placement="work_labs" tone="paper">
-                See MAPL Labs
-              </TextCta>
-            </p>
-          </div>
-        </div>
-      </section>
-
       <CloseBand
         id="work-close-title"
         placement="work_close"
-        title="Your project, next."
+        title="Ready to start your project?"
       />
     </>
   );
@@ -256,8 +154,6 @@ export default function OurWorkPage() {
 function Row({ item }: { item: CatalogItem }) {
   return (
     <li className={styles.row} data-slug={item.slug} data-line={item.line}>
-      <span className={styles.number} aria-hidden="true" />
-
       <div className={styles.media}>
         <ViewTransition name={`case-media-${item.slug}`} share="morph" default="none">
           {item.desktop ? (

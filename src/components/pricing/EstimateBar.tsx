@@ -63,13 +63,13 @@ export default function EstimateBar({ result, visible, onJump }: EstimateBarProp
     <div className={styles.bar} data-visible={visible || undefined} inert={!visible}>
       <button type="button" className={styles.barButton} onClick={onJump}>
         <span className={styles.barText}>
-          <span className={styles.barLabel}>Your estimate{monthly ? ' · plus monthly' : ''}</span>
+          <span className={styles.barLabel}>Your estimate{monthly ? ', plus monthly' : ''}</span>
           <span className={styles.barRange}>
             <Range result={result} />
           </span>
         </span>
         <span className={styles.barAction}>
-          Breakdown
+          Details
           <span aria-hidden="true" className={styles.barArrow}>
             ↓
           </span>

@@ -112,7 +112,7 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
         Want it in writing?
       </p>
       <label htmlFor={`${id}-email`} className={styles.sendLabel}>
-        Your email <span className={styles.optional}>(optional, the only field)</span>
+        Your email <span className={styles.optional}>(optional)</span>
       </label>
       <div className={styles.sendRow}>
         <input

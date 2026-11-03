@@ -1,31 +1,29 @@
 /**
  * Copy and facts for the company family (/about-us, /team, /careers), Nov 2026
- * award pass. Server-safe: no client imports.
+ * simplify pass: plain English, one idea per section. Server-safe: no client
+ * imports.
  *
  * Sources, so every sentence can be checked:
- * - The about hero: the live site's purpose, as the homepage states it
- *   (flagship/content.ts HERO: "the engineering backbone behind agencies that
- *   refuse to cut corners"; "We partner with agencies to build, ship, and
- *   scale...").
+ * - The about hero: the live site's purpose ("the engineering backbone behind
+ *   agencies that refuse to cut corners"), and what the company builds, as
+ *   the four service lines and the white-label promise state it (the
+ *   homepage FAQ: "every deliverable carries your brand").
  * - Founders: `executives` in config/team.ts (names, titles, bios, LinkedIn,
  *   photos, the same two the homepage shows).
  * - "Why MAPL TECH exists": the previous about page ("MAPL TECH exists because
  *   agencies shouldn't need to hire a full engineering department...", "We
  *   don't compete with you") and flagship/content.ts WORK_INTRO.
- * - How we work: the homepage white-label promises and process steps
- *   (home/data.ts TRUST, PLUG_IN, FAQ_ITEMS): mutual NDA and non-solicit,
- *   20-minute scoping call, weekly demos, 30-90 days of post-launch support.
- *   The stages also feed the about page's HowTo JSON-LD.
- * - Proof: the one approved client quote (site.ts `testimonials`).
+ * - Offices: the published 09:00-18:00 local office hours (ui/officeTime)
+ *   and the published offsets (Lagos 5-6 hours ahead of Toronto; Kingston
+ *   keeps no daylight saving time).
  * - Numbers: 200+ projects supported and 25+ years of combined experience as
  *   published on the live homepage (flagship/content.ts PROOF); the lowest
  *   public price is computed from `pricing`; role counts from `careers`.
  */
 import type { StaticImageData } from 'next/image';
-import { careers, testimonials } from '@/config/site';
+import { careers } from '@/config/site';
 import { executives, type Executive } from '@/config/team';
 import { slugify } from '@/lib/schema';
-import { HERO } from '@/components/flagship/content';
 import type { OfficeCity } from './OfficeMap';
 import { lowestStartingPrice } from './regions';
 // Square, face-centred crops of the founders' own photos, for small avatars.
@@ -58,8 +56,8 @@ export interface Founder extends Executive {
 }
 
 const FOCUS: Record<string, string> = {
-  'Leshan Patterson': 'Leads architecture, automation systems and performance engineering, and sets technical strategy across every division.',
-  'Mercy Akuma': 'Oversees international growth, strategic partnerships and operational expansion, and keeps cross-border delivery aligned.',
+  'Leshan Patterson': 'Leads how our systems are designed and built, from automation to speed, and sets the technical direction for the whole company.',
+  'Mercy Akuma': 'Leads our growth in new countries, our partnerships and our operations, and keeps work across all three countries on track.',
 };
 
 const AVATAR: Record<string, StaticImageData> = {
@@ -102,8 +100,9 @@ export function listWords(items: readonly string[]): string {
   return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
 }
 
-/** "01", "02": the numbered-row index. */
-export const indexOf = (i: number): string => String(i + 1).padStart(2, '0');
+
+/** The public "from" price, the same words on every company page. */
+export const PRICE_FACT = { term: 'Public prices from', detail: `${lowestStartingPrice()} USD` } as const;
 
 /* ------------------------------------------------------------------ */
 /* /about-us                                                            */
@@ -112,7 +111,7 @@ export const indexOf = (i: number): string => String(i + 1).padStart(2, '0');
 export const ABOUT = {
   title: 'About Us',
   description:
-    'MAPL TECH is the engineering team behind agencies: two founders, senior engineers in Toronto, Lagos and Kingston, white-label delivery and public prices.',
+    'MAPL TECH builds websites, automation, internal tools and cloud systems for agencies, under the agency’s brand. Two founders, teams in Toronto, Lagos and Kingston, and public prices.',
   hero: {
     label: 'About MAPL TECH',
     // The live site's purpose, said as what the company is.
@@ -121,7 +120,7 @@ export const ABOUT = {
       { text: 'engineering backbone', accent: true },
       { text: ' behind agencies that refuse to cut corners.' },
     ] as readonly TitleRun[],
-    lede: HERO.lede,
+    lede: 'We build the websites, automation, internal tools and cloud systems that agencies sell to their clients. Your brand goes on the work. Our engineers stay behind it.',
   },
   facts: [
     { term: 'Founded by', detail: FOUNDER_NAMES },
@@ -129,7 +128,7 @@ export const ABOUT = {
     { term: 'Teams in', detail: 'Lagos, Nigeria · Kingston, Jamaica' },
     { term: 'Experience', detail: '25+ years combined' },
     { term: 'Projects supported', detail: '200+' },
-    { term: 'Prices from', detail: `${lowestStartingPrice()} (USD), public` },
+    PRICE_FACT,
   ],
   story: {
     label: 'Why MAPL TECH exists',
@@ -138,57 +137,24 @@ export const ABOUT = {
       { text: 'That is why MAPL TECH exists.', accent: true },
     ] as readonly TitleRun[],
     paragraphs: [
-      `${FOUNDER_NAMES} built it to be the team behind the agency: senior engineers who build what you sell, under your name, and hand it back in a state your own developers can maintain.`,
-      'We don’t compete with you, and we never list your client as ours. Most of what we build ships under our partners’ names.',
+      `${FOUNDER_NAMES} started MAPL TECH to be the team behind the agency. Our senior engineers build what you sell, under your name. Then we hand it over, ready for your own developers to look after.`,
+      'We don’t compete with you, and we never list your client as ours. Most of what we build carries our partners’ names.',
     ],
     workLink: { before: 'The projects that carry ours are on ', label: 'our work page', href: '/our-work', after: '.' },
     signature: 'Co-founders, MAPL TECH',
   },
-  howWeWork: {
-    label: 'White-label delivery',
-    title: 'How we work behind your brand.',
-    lede: 'White-label from the first email to the last commit: your brand on every deliverable, your PM in front of your client, and code your developers can keep.',
-    stages: [
-      {
-        id: 'how-nda',
-        name: 'Before you send anything',
-        text: 'We sign a mutual NDA and non-solicit. We never contact your client, and we never list your client as ours.',
-      },
-      {
-        id: 'how-scope',
-        name: 'Scope',
-        text: 'A 20-minute call about your agency, your client and the build. You leave with a fixed range from our public price list.',
-      },
-      {
-        id: 'how-build',
-        name: 'Build',
-        text: 'Your PM, our engineers. We join your Slack and your standups and ship with weekly demos. Every deliverable carries your brand.',
-      },
-      {
-        id: 'how-handoff',
-        name: 'Hand-off',
-        text: 'Documented code, training and 30 to 90 days of post-launch support, depending on tier. Your developers can read it, extend it and maintain it.',
-      },
-    ],
-    after: 'After launch, retainer and partnership models keep your systems maintained and evolving.',
-  },
   offices: {
     label: 'Where we work',
-    title: 'Three offices. Your working day.',
-    lede: 'MAPL TECH is based in Toronto, with teams in Lagos, Nigeria and Kingston, Jamaica. Each office keeps 09:00 to 18:00 local hours, Monday to Friday. Here is how that lands in your day.',
-    footnote:
-      'Lagos is 5 hours ahead of Toronto in summer and 6 in winter. Kingston does not observe daylight saving time, so it matches Toronto in winter and sits one hour behind in summer.',
+    title: 'Three offices. One team.',
+    lede: 'Toronto is our headquarters. We also have teams in Lagos, Nigeria and Kingston, Jamaica. Every office works 09:00 to 18:00 local time, Monday to Friday.',
   },
   founders: {
     label: 'Who leads it',
   },
   close: {
-    title: 'Say yes to the build you’d normally turn down.',
+    title: 'Say yes to the project you would normally turn down.',
   },
 } as const;
-
-/** The one approved client quote: Alita Fabiano, LRO Staffing. */
-export const PROOF_QUOTE = testimonials.find((t) => t.company === 'LRO Staffing') ?? null;
 
 /* ------------------------------------------------------------------ */
 /* /team                                                                */
@@ -197,9 +163,9 @@ export const PROOF_QUOTE = testimonials.find((t) => t.company === 'LRO Staffing'
 export const TEAM = {
   title: 'Leadership & Global Team',
   description:
-    'Meet the people behind MAPL TECH: co-founders Leshan Patterson and Mercy Akuma, and our team in Canada, Nigeria and Jamaica, building under agency brands.',
+    'Meet the people behind MAPL TECH: co-founders Leshan Patterson and Mercy Akuma, and our team in Canada, Nigeria and Jamaica.',
   hero: {
-    label: 'Leadership and team',
+    label: 'Our team',
     title: [{ text: 'The people ' }, { text: 'behind the work.', accent: true }] as readonly TitleRun[],
     lede: `MAPL TECH is led by its co-founders, ${FOUNDER_NAMES}, with a team across Canada, Nigeria and Jamaica.`,
   },
@@ -212,14 +178,14 @@ export const TEAM = {
   founders: {
     label: 'Leadership',
     title: 'The founders.',
-    lede: 'Both are directors of the company, and both are on LinkedIn under their own names, so you can check who you would be working with.',
+    lede: 'Both are directors of the company. Both are on LinkedIn under their own names, so you can see who you will work with.',
   },
   directory: {
     label: 'The team',
-    title: 'The team, by country.',
+    title: 'Our team, by country.',
   },
   close: {
-    title: 'Put us behind your next client build.',
+    title: 'Need a team behind your next client project?',
   },
 } as const;
 
@@ -264,7 +230,7 @@ export const CAREERS = {
   hero: {
     label: 'Careers',
     title: [{ text: 'Build the systems ' }, { text: 'agencies sell.', accent: true }] as readonly TitleRun[],
-    lede: `${careers.length} ${typeWord}roles in ${listWords(roleCountries)}, ${remoteRoles} of them open to remote work. Applying takes one short form.`,
+    lede: `${careers.length} ${typeWord}roles in ${listWords(roleCountries)}. ${remoteRoles} of them can be done remotely. To apply, fill in one short form.`,
   },
   facts: [
     { term: 'Open roles', detail: `${careers.length}${roleTypes.length === 1 ? `, all ${roleTypes[0].toLowerCase()}` : ''}` },
@@ -279,22 +245,21 @@ export const CAREERS = {
   roles: {
     label: 'Now hiring',
     title: 'Open roles.',
-    lede: 'Filter by country or by remote work. Every Apply link opens the same short form with that role already chosen.',
+    lede: 'Filter by country or by remote work. Each Apply button opens the form with that role already chosen.',
   },
   apply: {
     label: 'How hiring works',
-    title: 'Apply.',
-    lede: 'No cover letter and no upload. A short note is enough to start the conversation, and a link to your work helps.',
+    title: 'How to apply.',
+    lede: 'No cover letter and no file upload. A short note is enough, and a link to your work helps.',
     steps: [
       { name: 'Pick a role', text: 'Or choose a general application if none fits yet.' },
-      { name: 'Tell us who you are', text: 'Your name and email, a few lines on why the role fits, and a link to your work if you have one.' },
+      { name: 'Tell us about you', text: 'Your name, your email and a few lines on why the role fits you.' },
       { name: 'Hear back by email', text: 'We read every application and reply by email.' },
     ],
   },
   talent: {
-    label: 'Talent list',
-    title: 'Don’t see your fit?',
-    lede: 'We’re always open to exceptional people. Tell us what you do best, and we’ll write when a matching role opens.',
+    summary: 'Don’t see your fit? Join the talent list.',
+    lede: 'Tell us what you do best, and we’ll write when a matching role opens.',
   },
   close: {
     // The page's candidate asks come first; the close speaks to the agency

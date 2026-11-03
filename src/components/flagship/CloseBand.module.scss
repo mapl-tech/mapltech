@@ -84,8 +84,10 @@
     background: $color-white;
   }
 
-  &:active {
-    transform: scale(0.97);
+  @include motion-ok {
+    &:active {
+      transform: scale(0.97);
+    }
   }
 
   &:focus-visible {

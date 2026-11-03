@@ -8,8 +8,8 @@ import styles from './CareersBoard.module.scss';
 
 /**
  * The open roles from `careers` in site.ts, every one in the server HTML, set
- * as numbered rows (numbered in the order shown, so a filtered list still
- * counts 01, 02, 03). Filters are native radio chips synced to the URL
+ * as ruled rows: the title with its Apply button, then where and how, then
+ * what the job is. Filters are native radio chips synced to the URL
  * (?loc=, plus ?type= when the roles have more than one type), so a filtered
  * view is shareable and filtering only toggles `hidden`, never unmounts.
  * "Apply" is a real link (?role=slug#apply, works without JavaScript); with
@@ -33,7 +33,7 @@ export interface CareersBoardProps {
   applyId?: string;
   /** id of the role field in the apply form; it receives focus after "Apply". */
   applyFieldId?: string;
-  /** id of the talent-list section, offered when a filter matches nothing. */
+  /** id of the talent list, offered when a filter matches nothing. */
   talentId?: string;
 }
 
@@ -75,10 +75,8 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
     if (type !== ALL && role.type.toLowerCase() !== type) return false;
     return true;
   };
-  const shownRoles = roles.filter(matches);
-  const visible = shownRoles.length;
-  /** Row numbers follow the order shown, so a filtered list still counts 01, 02, 03. */
-  const rowNumber = new Map(shownRoles.map((role, i) => [role.slug, String(i + 1).padStart(2, '0')]));
+  const shown = new Set(roles.filter(matches).map((role) => role.slug));
+  const visible = shown.size;
   const locLabel = locOptions.find((o) => o.key === loc)?.label ?? 'All';
 
   const setFilter = (key: 'loc' | 'type', value: string) => {
@@ -158,26 +156,21 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
 
       <ul className={styles.list} role="list" data-flip={changes === 0 ? undefined : changes % 2 ? 'a' : 'b'}>
         {roles.map((role) => (
-          <li key={role.slug} id={role.slug} className={styles.role} hidden={!rowNumber.has(role.slug)}>
-            <span className={styles.roleNo} aria-hidden="true">
-              {rowNumber.get(role.slug) ?? '00'}
-            </span>
-            <div className={styles.roleMain}>
-              <h3 className={styles.roleTitle}>{role.title}</h3>
-              <p className={styles.roleMeta}>
-                <span>{role.country}</span>
-                <span aria-hidden="true" className={styles.sep}>
-                  ·
-                </span>
-                <span>{placeWords(role.location)}</span>
-                <span aria-hidden="true" className={styles.sep}>
-                  ·
-                </span>
-                <span>{role.type}</span>
-                <span className="visually-hidden">.</span>
-              </p>
-              <p className={styles.roleText}>{role.description}</p>
-            </div>
+          <li key={role.slug} id={role.slug} className={styles.role} hidden={!shown.has(role.slug)}>
+            <h3 className={styles.roleTitle}>{role.title}</h3>
+            <p className={styles.roleMeta}>
+              <span>{role.country}</span>
+              <span aria-hidden="true" className={styles.sep}>
+                ·
+              </span>
+              <span>{placeWords(role.location)}</span>
+              <span aria-hidden="true" className={styles.sep}>
+                ·
+              </span>
+              <span>{role.type}</span>
+              <span className="visually-hidden">.</span>
+            </p>
+            <p className={styles.roleText}>{role.description}</p>
             <a
               href={applyHref(role)}
               className={styles.apply}

@@ -1,16 +1,14 @@
-import { HOURLY, priceText } from './content';
+import { HOURLY, HOURLY_FROM, priceText } from './content';
+import PriceGroup from './PriceGroup';
 import styles from './PriceList.module.scss';
 
 /** Hourly rates from `pricing.hourlyRates`; names match the OfferCatalog JSON-LD. */
 export default function HourlyRates() {
   return (
-    <section id="hourly" className={styles.group} aria-labelledby="hourly-title">
-      <header className={styles.groupHead}>
-        <h3 id="hourly-title" className={styles.groupTitle}>
-          Hourly
-        </h3>
+    <PriceGroup id="hourly" title="Hourly rates" from={`From ${HOURLY_FROM} an hour`} meta={`${HOURLY.rates.length} rates`}>
+      <div className={styles.groupHead}>
         <p className={styles.groupAnswer}>{HOURLY.answer}</p>
-      </header>
+      </div>
       <div className={styles.monthly}>
         <ul className={styles.monthlyList} role="list">
           {HOURLY.rates.map((rate) => (
@@ -25,6 +23,6 @@ export default function HourlyRates() {
           ))}
         </ul>
       </div>
-    </section>
+    </PriceGroup>
   );
 }

@@ -1,0 +1,73 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Interaction #9: the phone action bar, gone from 768px up. The slide and
+// visibility are inline (they follow page state); everything else is here.
+// The global class names on the elements (mobile-action-bar, data-visible)
+// are hooks for Header.module.scss, which hides the header's compact CTA
+// while the bar is up.
+.bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(10, 10, 10, 0.92);
+  // Lightning CSS keeps only the last of the pair: prefixed first.
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid $color-hairline;
+
+  @include md {
+    display: none;
+  }
+}
+
+// One action only (Sentinel sticky-mobile-cta-bar): context left, the CTA right.
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+
+  &[data-solo] {
+    justify-content: flex-end;
+  }
+}
+
+.line {
+  flex: 1;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.25;
+  color: rgba(246, 243, 239, 0.78);
+}
+
+// The same crimson states as every primary button (white label 5.01, 5.79 and 7.2:1).
+.primary {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: $radius-full;
+  background: $color-red-fill;
+  color: $color-white;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background: $color-red-fill-hover;
+  }
+
+  &:active {
+    background: $color-red-fill-pressed;
+  }
+
+  @include focus-ring;
+}

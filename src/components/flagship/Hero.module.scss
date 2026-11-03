@@ -109,31 +109,6 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
-.eyebrow {
-  @include mono-label($color-fg-muted);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 clamp(20px, 3vh, 32px);
-
-  @include motion-ok {
-    animation: rise 0.9s $ease-out 0.05s both;
-  }
-}
-
-// The bar from the wordmark, as a caret: blinks three times, then holds.
-.caret {
-  flex: none;
-  width: 2px;
-  height: 1.25em;
-  border-radius: 1px;
-  background: $color-red;
-
-  @include motion-ok {
-    animation: blink 1.05s steps(1, end) 0.6s 3;
-  }
-}
-
 .title {
   margin: 0;
   font-family: $font-display;
@@ -298,18 +273,19 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   justify-content: space-between;
   gap: 16px;
   padding-top: 18px;
-  border-top: 1px solid $color-hairline;
   // Room on the right for the motion toggle, which sits in the scene layer.
   padding-right: 168px;
 
-  // Portrait: the clocks return in the founders section; the hero stays short.
+  // The rule only where the hint shows (the same query as .hint): a touch
+  // tablet in landscape, or reduced motion, would otherwise get a bare line.
+  @media (min-aspect-ratio: 21/20) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    border-top: 1px solid $color-hairline;
+  }
+
+  // Portrait: no foot row; the hero stays short.
   @media #{$portrait} {
     display: none;
   }
-}
-
-.clocks {
-  margin: 0;
 }
 
 // The interaction hint: landscape with a mouse only, and only while the scene can respond.
@@ -318,7 +294,7 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   display: none;
   align-items: center;
   gap: 10px;
-  margin: 0 auto 0 8px;
+  margin: 0 auto 0 0;
   opacity: 0;
   transition: opacity 0.6s ease;
 
@@ -368,11 +344,5 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 @keyframes settle {
   from {
     transform: translate3d(0, 0.18em, 0);
-  }
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0;
   }
 }

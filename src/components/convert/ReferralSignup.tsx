@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef, useState, type FocusEvent, type FormEvent, type ReactNode } from 'react';
 import { ESTIMATE_SERVICES, SERVICE_META } from '@/lib/estimate';
-import { useReferralChoice } from '@/components/pricing/referralChoice';
 import { RECAPTCHA_ENABLED, field, isEmail, useContactSubmit } from './useContactSubmit';
 import styles from '@/components/pricing/ReferralForm.module.scss';
 
@@ -12,9 +11,7 @@ import styles from '@/components/pricing/ReferralForm.module.scss';
  * blur once a first attempt has been made; each error sits under its field,
  * is linked with aria-describedby, and focus moves to the first one. On
  * success the form is replaced by a status panel that takes focus. Posts to
- * /api/contact with the subject "Referral: <name>". "What do they need?"
- * starts from the visitor's own choice in the calculator above, if they made
- * one, and says so.
+ * /api/contact with the subject "Referral: <name>".
  */
 
 type FieldKey = 'name' | 'email' | 'refName' | 'refEmail';
@@ -40,24 +37,18 @@ interface FieldProps {
   label: string;
   optional?: boolean;
   error?: string;
-  hint?: string;
   wide?: boolean;
   children: (describedBy: string | undefined) => ReactNode;
 }
 
-function Field({ id, label, optional = false, error, hint, wide = false, children }: FieldProps) {
-  const describedBy = [hint ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(' ') || undefined;
+function Field({ id, label, optional = false, error, wide = false, children }: FieldProps) {
+  const describedBy = error ? `${id}-error` : undefined;
   return (
     <div className={`${styles.field} ${wide ? styles.wide : ''}`.trim()}>
       <label htmlFor={id} className={styles.label}>
         {label} {optional ? <span className={styles.optional}>(optional)</span> : null}
       </label>
       {children(describedBy)}
-      {hint ? (
-        <p id={`${id}-hint`} className={styles.hint}>
-          {hint}
-        </p>
-      ) : null}
       {error ? (
         <p id={`${id}-error`} className={styles.fieldError}>
           {error}
@@ -70,8 +61,7 @@ function Field({ id, label, optional = false, error, hint, wide = false, childre
 export default function ReferralSignup() {
   const uid = useId();
   const { status, submit, warmUp, reset } = useContactSubmit();
-  const choice = useReferralChoice();
-  const [picked, setPicked] = useState<string | null>(null);
+  const [need, setNeed] = useState('');
   const [errors, setErrors] = useState<Errors>({});
   const [attempted, setAttempted] = useState(false);
   const [sentTo, setSentTo] = useState('');
@@ -80,7 +70,6 @@ export default function ReferralSignup() {
   const statusRef = useRef<HTMLDivElement>(null);
 
   const id = (key: string) => `${uid}-${key}`;
-  const need = picked ?? choice ?? '';
   const sent = status === 'success' || botSent;
 
   // The status panel replaces the form; move focus to it so it is announced.
@@ -148,7 +137,7 @@ export default function ReferralSignup() {
     setBotSent(false);
     setErrors({});
     setAttempted(false);
-    setPicked(null);
+    setNeed('');
     setSentTo('');
   };
 
@@ -269,19 +258,14 @@ export default function ReferralSignup() {
               />
             )}
           </Field>
-          <Field
-            id={id('refNeed')}
-            label="What do they need?"
-            optional
-            hint={picked === null && choice ? 'From your choice in the calculator. Change it if you like.' : undefined}
-          >
+          <Field id={id('refNeed')} label="What do they need?" optional>
             {(describedBy) => (
               <select
                 id={id('refNeed')}
                 name="refNeed"
                 className={styles.select}
                 value={need}
-                onChange={(event) => setPicked(event.target.value)}
+                onChange={(event) => setNeed(event.target.value)}
                 aria-describedby={describedBy}
               >
                 <option value="">Not sure yet</option>

@@ -2,8 +2,8 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// Service page rhythm: dark hero → paper "what we build" → dark proof → dark
-// process → paper tiers → dark questions → other services → crimson close.
+// Service page rhythm: dark hero → paper "what we build" → dark proof → paper
+// tiers → dark "how it works" → dark questions → other services → crimson close.
 
 // ---------------------------------------------------------------- hero facts (PageHeader aside)
 .facts {
@@ -113,23 +113,11 @@
   }
 }
 
-// Outline numerals, decorative (every list here is an <ol>).
-@mixin outline-numeral($stroke) {
-  font-family: $font-display;
-  font-weight: 800;
-  line-height: 0.86;
-  letter-spacing: -0.04em;
-  color: transparent;
-  -webkit-text-stroke: 1.5px $stroke;
-  @include tabular;
-}
-
 // ---------------------------------------------------------------- what we build (paper)
 .build {
   background: $color-paper;
   color: $color-ink;
   border-radius: clamp(24px, 3vw, 40px);
-  scroll-margin-top: calc(var(--header-height, 72px) + 16px);
 
   .label {
     color: $color-ink-muted;
@@ -155,57 +143,55 @@
   gap: clamp(48px, 7vw, 88px);
 }
 
+// Six short points: one column on phones, two on tablets, three on wide screens.
 .caps {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid $color-ink-hairline;
+  display: grid;
+  column-gap: 48px;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .cap {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  gap: 10px 16px;
-  padding: 26px 0 28px;
-  border-bottom: 1px solid $color-ink-hairline;
+  align-content: start;
+  gap: 10px;
+  padding: 22px 0 26px;
+  border-top: 1px solid $color-ink-hairline;
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
-    column-gap: 48px;
-    align-items: start;
-    padding: 40px 0;
+    padding: 32px 0 40px;
   }
 
   @include rise-in;
 }
 
-.capNo {
-  grid-row: span 2;
-  @include outline-numeral($color-red-ink);
-  font-size: clamp(2.75rem, 1.6rem + 3.4vw, 5rem);
-
-  @include lg {
-    grid-row: auto;
-  }
-}
-
 .capTitle {
   margin: 0;
-  @include display-m;
-  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.375rem);
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: clamp(1.25rem, 1.05rem + 0.7vw, 1.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
   color: $color-ink;
+  text-wrap: balance;
 }
 
 .capText {
   margin: 0;
   max-width: 34em;
   font-size: $font-size-base;
-  line-height: 1.6;
+  line-height: 1.55;
   color: $color-ink-muted;
-
-  @include lg {
-    padding-top: 0.35em;
-  }
+  text-wrap: pretty;
 }
 
 .stack {
@@ -246,11 +232,10 @@
   }
 }
 
-// ---------------------------------------------------------------- how we build it
+// ---------------------------------------------------------------- how it works
 .process {
   background: $color-ground;
   border-top: 1px solid $color-hairline;
-  scroll-margin-top: calc(var(--header-height, 72px) + 16px);
 }
 
 .processInner {
@@ -260,92 +245,10 @@
   gap: clamp(48px, 7vw, 88px);
 }
 
-.stages {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  border-top: 1px solid $color-hairline-strong;
-
-  @include md {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 56px;
-  }
-
-  @include lg {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-.stage {
-  position: relative;
-  display: grid;
-  align-content: start;
-  gap: 14px;
-  padding: 28px 0 32px;
-  border-bottom: 1px solid $color-hairline;
-
-  // Column rules sit in the middle of the gap: four equal columns.
-  &::before {
-    content: '';
-    display: none;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: -28px;
-    width: 1px;
-    background: $color-hairline;
-  }
-
-  @include md {
-    padding: 32px 0 36px;
-
-    &:nth-child(2n)::before {
-      display: block;
-    }
-  }
-
-  @include lg {
-    padding: 36px 0 8px;
-    border-bottom: 0;
-
-    &:nth-child(n)::before {
-      display: block;
-    }
-
-    &:first-child::before {
-      display: none;
-    }
-  }
-
-  @include rise-in;
-}
-
-.stageNo {
-  @include outline-numeral($color-red);
-  font-size: clamp(3rem, 2rem + 3vw, 5.25rem);
-  margin-bottom: 8px;
-}
-
-.stageName {
-  margin: 0;
-  @include display-m;
-  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.125rem);
-  color: $color-fg;
-}
-
-.stageText {
-  margin: 0;
-  max-width: 30em;
-  font-size: $font-size-base;
-  line-height: 1.6;
-  color: $color-text-body;
-}
-
-// ---------------------------------------------------------------- questions (the homepage's FAQ layout)
+// ---------------------------------------------------------------- questions
 .faq {
   background: $color-ground;
-  scroll-margin-top: calc(var(--header-height, 72px) + 16px);
+  border-top: 1px solid $color-hairline;
 }
 
 .faqInner {
@@ -418,10 +321,10 @@
 
 .other {
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    'no name go'
-    'no price go';
+    'name go'
+    'price go';
   align-items: center;
   gap: 6px 16px;
   padding: 18px 0;
@@ -429,8 +332,8 @@
   text-decoration: none;
 
   @include md {
-    grid-template-columns: 64px minmax(0, 1fr) auto auto;
-    grid-template-areas: 'no name price go';
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: 'name price go';
     column-gap: 32px;
     padding: 24px 0;
   }
@@ -439,18 +342,6 @@
     outline: $focus-ring-width solid $color-red;
     outline-offset: 4px;
     border-radius: 6px;
-  }
-}
-
-.otherNo {
-  grid-area: no;
-  align-self: start;
-  padding-top: 0.5em;
-  @include mono-label($color-red-text);
-
-  @include md {
-    align-self: center;
-    padding-top: 0;
   }
 }
 

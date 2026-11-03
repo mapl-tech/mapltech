@@ -150,6 +150,19 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
+// Touch screens wide enough for this bar (a tablet in landscape): the label's
+// link and the menu button are separate taps, so their hit areas sit 8px
+// apart instead of overlapping. The chevron moves 4px further from the label.
+@media (hover: none), (pointer: coarse) {
+  .item > .link:has(+ .disclosure) {
+    padding-right: 0;
+  }
+
+  .disclosure {
+    margin-left: 8px;
+  }
+}
+
 .chevron {
   transition: rotate 160ms $ease;
 
@@ -397,11 +410,6 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
-.rowIndex {
-  @include mono-label($color-fg-dim);
-  min-width: 22px;
-}
-
 .rowLabel {
   flex: 1;
 }
@@ -419,7 +427,7 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .subList {
-  padding: $space-4 0 $space-8 calc(#{$space-4} + 38px);
+  padding: $space-4 0 $space-8 $space-16;
   border-bottom: 1px solid $color-hairline;
 }
 
@@ -449,7 +457,7 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
 
 .sheetContact {
   display: grid;
-  gap: 2px;
+  gap: 8px;
   margin: $space-md 0 0;
   padding: 0;
   list-style: none;
@@ -458,15 +466,11 @@ $ease: cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     align-items: center;
     min-height: 44px;
-    font-size: $font-size-sm;
+    font-size: 1rem;
     color: $color-fg-muted;
 
     &:hover {
       color: $color-fg;
     }
   }
-}
-
-.sheetClocks {
-  margin-top: $space-md;
 }

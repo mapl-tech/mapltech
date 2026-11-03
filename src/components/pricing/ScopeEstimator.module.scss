@@ -480,10 +480,10 @@ $card: #121214;
 .rail {
   min-width: 0;
 
-  // Sticky beside the questions. The live total, the breakdown and the
-  // primary action sit in its top 700px; the rest (proof, "in writing", what
-  // is included) runs past the fold and scrolls into view with the end of
-  // the questions, instead of hiding behind an inner scroll box.
+  // Sticky beside the questions. The live total and the primary action sit
+  // in its top 500px; "in writing" and the two disclosures follow, and the
+  // card only scrolls inside itself when a disclosure makes it taller than
+  // the viewport (ScopeEstimator sets data-lenis-prevent then).
   @include lg {
     position: sticky;
     top: calc(var(--header-height, 72px) + 24px);
@@ -492,7 +492,6 @@ $card: #121214;
 
 .readout {
   position: relative;
-  scroll-margin-top: 72px;
 }
 
 .card {
@@ -515,35 +514,11 @@ $card: #121214;
   }
 }
 
-.readoutTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .readoutLabel {
   @include section-label;
 
   &::before {
     @include section-label-rule;
-  }
-}
-
-// Teal = live: the only teal outside the numbers themselves.
-.liveTag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  @include mono-label($color-signal);
-
-  &::before {
-    content: '';
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: $color-signal;
-    box-shadow: 0 0 0 3px rgba($color-signal, 0.15);
   }
 }
 
@@ -615,23 +590,12 @@ $card: #121214;
   color: rgba(245, 242, 238, 0.86);
 }
 
-// ---------------------------------------------------------------- breakdown
-.breakdown {
-  margin-top: 26px;
-  padding-top: 24px;
-  border-top: 1px solid $color-hairline;
-}
-
-.subhead {
-  margin: 0 0 16px;
-  @include mono-label($label-muted);
-}
-
+// ---------------------------------------------------------------- how the price adds up
 // One row per driver, on hairlines; a red node marks each service line.
 .drivers {
   display: grid;
-  margin: 0;
-  padding: 0;
+  margin: 4px 0 0;
+  padding: 0 0 18px;
   list-style: none;
 }
 
@@ -752,7 +716,7 @@ $card: #121214;
   display: grid;
   gap: 4px;
   margin: 16px 0 0;
-  padding: 12px 0 0 14px;
+  padding: 2px 0 2px 14px;
   border-left: 2px solid $color-red;
   list-style: none;
 
@@ -792,44 +756,6 @@ $card: #121214;
   margin: 0;
   font-size: 1rem;
   line-height: 1.5;
-  color: $label-muted;
-}
-
-// One attributed line of client proof under the action it supports.
-.proof {
-  margin: 10px 0 0;
-  padding: 10px 0 0 16px;
-  border-left: 2px solid $color-red;
-}
-
-.proofQuote {
-  margin: 0;
-
-  p {
-    margin: 0;
-    font-family: $font-display;
-    font-weight: $font-weight-semibold;
-    font-size: 1.125rem;
-    line-height: 1.35;
-    letter-spacing: -0.01em;
-    color: $color-fg;
-
-    &::before {
-      content: '\201C';
-      color: $color-red;
-    }
-
-    &::after {
-      content: '\201D';
-      color: $color-red;
-    }
-  }
-}
-
-.proofBy {
-  margin-top: 8px;
-  font-size: 1rem;
-  line-height: 1.45;
   color: $label-muted;
 }
 
@@ -930,13 +856,20 @@ $card: #121214;
   color: $color-fg;
 }
 
-// ---------------------------------------------------------------- what's included
-.included {
-  margin-top: 26px;
+// ---------------------------------------------------------------- disclosures
+// "How this price adds up" and "What's included": a tap away on every screen.
+.disclosure {
+  // 4px either side of the hairline keeps the two summaries' hit areas 8px apart.
+  padding: 4px 0;
   border-top: 1px solid $color-hairline;
+
+  .send + &,
+  .sent + & {
+    margin-top: 26px;
+  }
 }
 
-.includedSummary {
+.disclosureSummary {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -953,7 +886,7 @@ $card: #121214;
     color: $color-red;
   }
 
-  .included[open] > &::after {
+  .disclosure[open] > &::after {
     content: '\2212';
   }
 

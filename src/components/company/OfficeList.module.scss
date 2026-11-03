@@ -1,0 +1,143 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// The three offices on the dark ground (OfficeList, OfficeNow): ruled rows,
+// the city and its clock on one line, how the clock sits against Toronto's
+// under it, and the office's own page as a text link.
+
+// Rows switch to one line by the list's own width, not the viewport's: the
+// list sits full width on tablets and in a column beside the map on desktop.
+.wrap {
+  container: office-list / inline-size;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid $color-hairline-strong;
+
+  // One line per office: the rows share the list's columns (subgrid), so the
+  // clocks and the links line up whether or not a row has a link.
+  @container office-list (min-width: 640px) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    column-gap: 40px;
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'city now'
+    'note now'
+    'link link';
+  align-items: start;
+  column-gap: 20px;
+  padding: 22px 0 18px;
+  border-bottom: 1px solid $color-hairline;
+
+  @container office-list (min-width: 640px) {
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    column-gap: normal; // the list's gap
+    grid-template-areas:
+      'city now link'
+      'note now link';
+    align-items: center;
+    padding: 26px 0;
+  }
+}
+
+.city {
+  grid-area: city;
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem); // 22px -> 28px
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: $color-fg;
+}
+
+.note {
+  grid-area: note;
+  margin: 6px 0 0;
+  max-width: 26rem;
+  font-size: $font-size-base;
+  line-height: 1.45;
+  color: $color-fg-muted;
+}
+
+.now {
+  grid-area: now;
+  text-align: right;
+
+  @container office-list (min-width: 640px) {
+    text-align: left;
+  }
+}
+
+.time {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(1.5rem, 1.25rem + 0.8vw, 2rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: $color-fg;
+  @include tabular;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-size: 1rem;
+  line-height: 1.3;
+  color: rgba($color-fg, 0.84);
+
+  @container office-list (min-width: 640px) {
+    justify-content: flex-start;
+  }
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba($color-fg, 0.55);
+
+  .now[data-open='true'] & {
+    border-color: $color-teal;
+    background: $color-teal;
+  }
+}
+
+.link {
+  grid-area: link;
+  justify-self: start;
+  margin-top: 6px;
+  @include text-action($color-fg);
+
+  @container office-list (min-width: 640px) {
+    justify-self: end;
+    margin-top: 0;
+  }
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.35s $ease-out-expo;
+
+  .link:hover & {
+    @include motion-ok {
+      transform: translateX(4px);
+    }
+  }
+}

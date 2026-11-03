@@ -30,52 +30,6 @@
   }
 }
 
-.steps {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid $color-ink-hairline;
-}
-
-.step {
-  display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  column-gap: 16px;
-  padding: 22px 0;
-  border-bottom: 1px solid $color-ink-hairline;
-}
-
-// Outline numerals on paper (decorative, aria-hidden). The stroke sits under
-// a paper-coloured fill so the glyphs' overlapping contours stay hidden.
-.stepNo {
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: 2.75rem;
-  line-height: 0.85;
-  letter-spacing: -0.04em;
-  color: $color-paper;
-  -webkit-text-stroke: 2.5px $color-red-ink;
-  paint-order: stroke fill;
-  @include tabular;
-}
-
-.stepName {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  color: $color-ink;
-}
-
-.stepText {
-  margin: 6px 0 0;
-  font-size: $font-size-base;
-  line-height: 1.5;
-  color: $color-ink-muted;
-}
-
 .fallback {
   margin: 0;
   font-size: $font-size-base;
@@ -104,9 +58,85 @@
 // The forms sit on the dark card (the shared inputs are built for dark).
 .formCard {
   padding: clamp(22px, 3.6vw, 44px);
-  scroll-margin-top: calc(var(--header-height, 72px) + 24px);
+  scroll-margin-top: 8px;
 }
 
-.talentCard {
-  max-width: 52rem;
+// ---------------------------------------------------------------- talent list (in the apply rail)
+// For people with no listed role yet: one line on paper that opens the
+// three-field form (native <details>; the form is in the HTML either way).
+.talent {
+  border-top: 1px solid $color-ink-hairline;
+  border-bottom: 1px solid $color-ink-hairline;
+  scroll-margin-top: 8px;
+}
+
+.talentSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 12px 0;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: $color-ink;
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 4px;
+  }
+}
+
+// A plus that becomes a minus while the list is open.
+.talentIcon {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(11, 11, 12, 0.22);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 1.5px;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+  }
+
+  &::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+    transition: transform 0.3s $ease-out-expo;
+  }
+
+  .talentSummary:hover & {
+    background: $color-ink;
+    border-color: $color-ink;
+    color: $color-paper;
+  }
+
+  .talent[open] &::after {
+    transform: translate(-50%, -50%);
+  }
+}
+
+.talentBody {
+  display: grid;
+  gap: 20px;
+  padding: 4px 0 24px;
+}
+
+.talentLede {
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-ink-muted;
 }

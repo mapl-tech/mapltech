@@ -10,68 +10,6 @@
   @include text-action($color-fg);
 }
 
-// The hero aside: the article count as large as the column allows, then facts.
-.masthead {
-  display: grid;
-  gap: clamp(24px, 3vw, 32px);
-  padding-top: 22px;
-  border-top: 1px solid $color-hairline-strong;
-}
-
-.count {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-}
-
-.countValue {
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(4rem, 2.4rem + 4.4vw, 6.5rem); // 64px -> 104px, level with the title
-  line-height: 0.86;
-  letter-spacing: -0.05em;
-  color: $color-fg;
-  @include tabular;
-}
-
-.countLabel {
-  font-size: $font-size-base;
-  line-height: 1.45;
-  color: $color-fg-muted;
-}
-
-.facts {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px 14px;
-  margin: 0;
-
-  @include sm {
-    column-gap: 24px;
-  }
-
-  > div {
-    display: grid;
-    gap: 8px;
-    align-content: start;
-    min-width: 0;
-    padding-top: 14px;
-    border-top: 1px solid $color-hairline;
-  }
-
-  dt {
-    @include mono-label;
-  }
-
-  dd {
-    margin: 0;
-    font-size: $font-size-base;
-    line-height: 1.35;
-    color: $color-fg;
-    @include tabular;
-  }
-}
-
 // ---------------------------------------------------------------- latest
 .latest {
   position: relative;
@@ -225,13 +163,17 @@
 
 // The cover: a stock photograph graded to the site's monochrome, lit from the
 // corner by the same crimson as the card, fading into the card below it.
+// Tablets and up only: on phones the lead is text first and fast (the title is
+// the first paint's largest element), and `sizes` gives phones a 1px-wide
+// candidate, so they fetch a tiny file instead of the cover.
 .media {
+  display: none;
   position: relative;
   overflow: clip;
-  aspect-ratio: 16 / 10;
   background: #0d0d0f;
 
   @include md {
+    display: block;
     aspect-ratio: 2 / 1;
   }
 
@@ -291,7 +233,6 @@
   background: $color-paper;
   color: $color-ink;
   border-radius: clamp(24px, 3vw, 40px) clamp(24px, 3vw, 40px) 0 0;
-  scroll-margin-top: var(--header-height, 72px);
 }
 
 .archiveInner {

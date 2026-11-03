@@ -6,8 +6,6 @@ import { createSpring, type Spring } from './spring';
 import { useFinePointer, usePrefersReducedMotion } from './useMediaQuery';
 import styles from './MagneticButton.module.scss';
 
-export type CursorLabel = 'view' | 'drag' | 'play' | 'external' | 'estimate';
-
 export interface MagneticButtonProps {
   children: ReactNode;
   href?: string;
@@ -21,14 +19,12 @@ export interface MagneticButtonProps {
   block?: boolean;
   external?: boolean;
   disabled?: boolean;
-  /** Sets data-cursor so the cursor pill labels the hover (desktop). */
-  cursor?: CursorLabel;
   /** When set, a click dispatches window `cta_click` with { placement, href }. */
   placement?: string;
   'aria-label'?: string;
 }
 
-/** Interaction #5: spring config shared with the cursor pill's press feel. */
+/** Interaction #5: the magnetic pull's spring. */
 const SPRING = { stiffness: 350, damping: 18, mass: 0.4 };
 const PULL = 0.18;
 const MAX_PULL = 12;
@@ -54,7 +50,6 @@ export default function MagneticButton({
   block = false,
   external = false,
   disabled = false,
-  cursor,
   placement,
   'aria-label': ariaLabel,
 }: MagneticButtonProps) {
@@ -125,7 +120,6 @@ export default function MagneticButton({
     onPointerMove: handlePointerMove,
     onPointerLeave: handlePointerLeave,
     onClick: handleClick,
-    'data-cursor': cursor,
     'aria-label': ariaLabel,
   };
 

@@ -2,25 +2,21 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { WorkEntry } from '@/components/work/work-types';
 import { estimateLinkFor } from '@/components/work/work-data';
-import ScrollLit from '@/components/ui/ScrollLit';
 import CloseBand from '@/components/flagship/CloseBand';
 import { HERO_REASSURE } from '@/components/flagship/content';
 import CaseStage from './CaseStage';
 import ChapterNav from './ChapterNav';
-import PhoneRow from './PhoneRow';
 import SiteScroll from './SiteScroll';
 import { FULL_PAGES } from './fullPages';
 import type { CaseStory } from './stories';
 import styles from './Case.module.scss';
 
 /**
- * The case-study template (Nov 2026 award pass). Written for the next buyer
- * and staged like a film:
+ * The case-study template (Nov 2026, simplified). Written for the next buyer:
  *
- *   hero (the name, the facts, the product rising into view) → results →
- *   the story in chapters (situation, what we built, what changed, in their
- *   words) → the live site scrolling top to bottom → every screen → why it
- *   matters to you → the next project.
+ *   hero (the name, the facts, the product) → results → the story in
+ *   chapters (situation, what we built, what changed, what they said) → the
+ *   live site, top to bottom → why it matters to you → the next project.
  *
  * Every section renders only when its story field exists, so a project with a
  * thin record gets a shorter page, never padding. Every sentence is sourced in
@@ -43,7 +39,7 @@ export default function CaseStudy({
     story.situation?.length ? { id: 'situation', label: 'The situation' } : null,
     story.built ? { id: 'built', label: 'What we built' } : null,
     story.impact?.length ? { id: 'impact', label: 'What changed' } : null,
-    story.quote ? { id: 'words', label: 'In their words' } : null,
+    story.quote ? { id: 'words', label: 'What they said' } : null,
   ].filter((c): c is { id: string; label: string } => c !== null);
 
   const [lead, ...rest] = story.situation ?? [];
@@ -64,7 +60,11 @@ export default function CaseStudy({
           <p className={styles.tags}>
             <span className={styles.tagLead}>Case study</span>
             {story.tags.map((tag) => (
-              <span key={tag}>{tag}</span>
+              <span key={tag}>
+                <span aria-hidden="true"> · </span>
+                <span className="visually-hidden">, </span>
+                {tag}
+              </span>
             ))}
           </p>
           <h1 id="case-title" className={styles.title}>
@@ -123,7 +123,7 @@ export default function CaseStudy({
               ))}
             </dl>
             <Link href={estimateHref} className={styles.resultsAction} data-cta-placement={`case_${entry.slug}_results`}>
-              Price a build like this<span aria-hidden="true"> →</span>
+              Price a project like this<span aria-hidden="true"> →</span>
             </Link>
           </div>
         </section>
@@ -139,12 +139,9 @@ export default function CaseStudy({
               {lead ? (
                 <section id="situation" className={styles.chapter} aria-labelledby="case-situation">
                   <h2 id="case-situation" className={styles.chapterTitle}>
-                    <span className={styles.chapterNo} aria-hidden="true">
-                      01
-                    </span>
                     The situation
                   </h2>
-                  <ScrollLit as="p" runs={[{ text: lead }]} className={styles.lead} />
+                  <p className={styles.lead}>{lead}</p>
                   {rest.map((paragraph) => (
                     <p key={paragraph.slice(0, 32)} className={styles.prose}>
                       {paragraph}
@@ -156,34 +153,23 @@ export default function CaseStudy({
               {story.built ? (
                 <section id="built" className={styles.chapter} aria-labelledby="case-built">
                   <h2 id="case-built" className={styles.chapterTitle}>
-                    <span className={styles.chapterNo} aria-hidden="true">
-                      {String(chapters.findIndex((c) => c.id === 'built') + 1).padStart(2, '0')}
-                    </span>
                     What we built
                   </h2>
                   {story.built.intro ? <p className={styles.prose}>{story.built.intro}</p> : null}
-                  <ol className={styles.build} role="list">
-                    {story.built.stages.map((stage, i) => (
+                  <ul className={styles.build} role="list">
+                    {story.built.stages.map((stage) => (
                       <li key={stage.name} className={styles.buildStep}>
-                        <span className={styles.buildNo} aria-hidden="true">
-                          {String(i + 1).padStart(2, '0')}
-                        </span>
-                        <div>
-                          <h3 className={styles.buildName}>{stage.name}</h3>
-                          <p className={styles.buildText}>{stage.text}</p>
-                        </div>
+                        <h3 className={styles.buildName}>{stage.name}</h3>
+                        <p className={styles.buildText}>{stage.text}</p>
                       </li>
                     ))}
-                  </ol>
+                  </ul>
                 </section>
               ) : null}
 
               {story.impact?.length ? (
                 <section id="impact" className={styles.chapter} aria-labelledby="case-impact">
                   <h2 id="case-impact" className={styles.chapterTitle}>
-                    <span className={styles.chapterNo} aria-hidden="true">
-                      {String(chapters.findIndex((c) => c.id === 'impact') + 1).padStart(2, '0')}
-                    </span>
                     What changed
                   </h2>
                   <div className={styles.impactGrid} data-count={story.impact.length}>
@@ -204,10 +190,7 @@ export default function CaseStudy({
               {story.quote ? (
                 <section id="words" className={styles.chapter} aria-labelledby="case-quote">
                   <h2 id="case-quote" className={styles.chapterTitle}>
-                    <span className={styles.chapterNo} aria-hidden="true">
-                      {String(chapters.findIndex((c) => c.id === 'words') + 1).padStart(2, '0')}
-                    </span>
-                    In their words
+                    What they said
                   </h2>
                   <figure className={styles.quote}>
                     <blockquote>
@@ -233,16 +216,13 @@ export default function CaseStudy({
       {/* ---------------------------------------------------------- the live site */}
       {full ? <SiteScroll client={story.client} url={live?.detail} desktop={full.desktop} mobile={full.mobile} /> : null}
 
-      {/* ---------------------------------------------------------- every screen */}
-      {full ? <PhoneRow client={story.client} mobile={full.mobile} /> : null}
-
       {/* ---------------------------------------------------------- matters */}
       {story.matters ? (
         <CloseBand
           id="case-matters"
           title={story.matters.heading}
           lede={story.matters.text}
-          secondary={{ label: 'Price a build like this', href: estimateHref }}
+          secondary={{ label: 'Price a project like this', href: estimateHref }}
           placement={`case_${entry.slug}`}
           note={HERO_REASSURE}
           hero

@@ -4,14 +4,14 @@
  * Every price on the page is read from `pricing` in src/config/site.ts through
  * the estimator engine, so the hero, the estimator, the price list and the
  * OfferCatalog JSON-LD can never disagree. Hand-written lines are grounded in
- * a tier's own feature list (cited inline). Copy rules: no em dashes, no hype
- * verbs. CTA labels (Nov 2026 award pass): "Start a project" is the page's
- * primary ask (header, estimate readout, tiers, close band); the estimator
- * keeps "Price your project" as the hero's way into it.
+ * a tier's own feature list (cited inline). Copy rules (simplify pass, Nov
+ * 2026): plain words a non-technical reader knows ("package", "monthly plan",
+ * "a 20-minute call"), no em dashes, no hype verbs. CTA labels: "Start a
+ * project" is the page's primary ask (header, estimate readout, tiers, close
+ * band); the estimator keeps "Price your project" as the hero's way into it.
  */
-import { pricing, testimonials } from '@/config/site';
+import { pricing } from '@/config/site';
 import {
-  FIXED_QUOTE_NOTE,
   SERVICE_META,
   formatMoney,
   formatRange,
@@ -19,6 +19,7 @@ import {
   recurringLinesFor,
   tiersFor,
   type EstimateService,
+  type ToggleKey,
 } from '@/lib/estimate';
 
 export const PRICING_PATH = '/pricing';
@@ -57,12 +58,12 @@ function lowest(labels: readonly string[]): number {
   return Math.min(...lows);
 }
 
-/** "$25,000+" / "$18,000" / "custom-quoted Enterprise builds": the top of a service line. */
+/** "$25,000+" / "$18,000" / "a custom quote for Enterprise builds": the top of a service line. */
 function ceilingOf(service: EstimateService): string {
   const tiers = tiersFor(service);
   const top = tiers[tiers.length - 1];
   const parsed = parsePriceLabel(top.price);
-  if (parsed.isCustom) return `custom-quoted ${top.name} builds`;
+  if (parsed.isCustom) return `a custom quote for ${top.name} builds`;
   if (parsed.high === null) return `${formatMoney(parsed.low ?? 0)}+`;
   return `${formatMoney(parsed.high)}${parsed.openEnded ? '+' : ''}`;
 }
@@ -78,7 +79,7 @@ export interface ServiceFacts {
   entry: string;
   tierCount: number;
   monthlyFrom: number;
-  /** Answer-first sentence for the price list (GEO): range of tiers + monthly floor. */
+  /** Answer-first sentence for the price list (GEO): range of packages + monthly floor. */
   answer: string;
   href: string;
   linkLabel: string;
@@ -86,14 +87,14 @@ export interface ServiceFacts {
 
 // Services are always named by SERVICE_META[key].label (the canonical names).
 const SERVICE_COPY: Record<EstimateService, { id: string; entry: string }> = {
-  // Starter: "Custom-coded responsive website (up to 7 pages)"
+  // Starter: "Custom-coded website that works on every screen (up to 7 pages)"
   web: { id: 'web-development', entry: 'Starter: a custom-coded site, up to 7 pages' },
-  // Foundation Automation: "CRM setup & configuration", "3-5 core automations"
-  automation: { id: 'automation', entry: 'Foundation: CRM setup and 3 to 5 core automations' },
-  // Internal Dashboards: "Custom data visualization", "Real-time reporting"
-  tools: { id: 'internal-tools', entry: 'A custom dashboard with real-time reporting' },
-  // Starter Cloud Setup: "Cloud provider setup (AWS, GCP, or Azure)"
-  cloud: { id: 'cloud-engineering', entry: 'Starter setup on AWS, GCP or Azure' },
+  // Foundation Automation: "CRM setup for your team", "3 to 5 key automations"
+  automation: { id: 'automation', entry: 'Foundation: CRM setup and 3 to 5 key automations' },
+  // Internal Dashboards: "Custom charts and graphs", "Live reports"
+  tools: { id: 'internal-tools', entry: 'A custom dashboard with live reports' },
+  // Starter Cloud Setup: "Cloud setup on AWS, Google Cloud or Azure"
+  cloud: { id: 'cloud-engineering', entry: 'Starter setup on AWS, Google Cloud or Azure' },
 };
 
 function factsFor(service: EstimateService): ServiceFacts {
@@ -102,7 +103,7 @@ function factsFor(service: EstimateService): ServiceFacts {
   const tiers = tiersFor(service);
   const from = lowest(tiers.map((tier) => tier.price));
   const monthlyFrom = lowest(recurringLinesFor(service).map((line) => line.price));
-  const recurring = meta.recurringLabel === 'Maintenance' ? 'Maintenance' : 'Retainers';
+  const monthly = meta.recurringLabel === 'Maintenance' ? 'Monthly maintenance' : 'Monthly plans';
   return {
     service,
     id: copy.id,
@@ -112,9 +113,9 @@ function factsFor(service: EstimateService): ServiceFacts {
     entry: copy.entry,
     tierCount: tiers.length,
     monthlyFrom,
-    answer: `There are ${NUMBER_WORDS[tiers.length].toLowerCase()} ${meta.label} tiers, from ${formatMoney(from)} to ${ceilingOf(service)}. ${recurring} ${recurring === 'Maintenance' ? 'starts' : 'start'} at ${formatMoney(monthlyFrom)} a month.`,
+    answer: `${NUMBER_WORDS[tiers.length]} packages, from ${formatMoney(from)} to ${ceilingOf(service)}. ${monthly} ${monthly === 'Monthly maintenance' ? 'starts' : 'start'} at ${formatMoney(monthlyFrom)}.`,
     href: meta.path,
-    linkLabel: `${meta.label} in detail`,
+    linkLabel: `More about ${meta.label}`,
   };
 }
 
@@ -132,7 +133,7 @@ const bundleRange = (label: string) => {
   return formatRange(parsed.low, parsed.high);
 };
 
-export const BUNDLES_ANSWER = `${NUMBER_WORDS[pricing.bundles.length]} monthly partnerships cover several service lines at once: ${pricing.bundles
+export const BUNDLES_ANSWER = `${NUMBER_WORDS[pricing.bundles.length]} bundles cover several services for one monthly price: ${pricing.bundles
   .map((bundle) => `${bundle.name} at ${bundleRange(bundle.price)} a month`)
   .join(' and ')}.`;
 
@@ -143,11 +144,11 @@ export const HOURLY = {
   answer: `Standard work is ${formatRange(standard.low, standard.high)} an hour. Urgent fixes and AI specialist work are ${formatRange(emergency.low, emergency.high)} an hour.`,
   // Names match the OfferCatalog JSON-LD (src/lib/schema.ts offerCatalog) word for word.
   rates: [
-    { name: 'Standard hourly rate', price: pricing.hourlyRates.standard, description: 'Development and systems work across all four service lines.' },
+    { name: 'Standard hourly rate', price: pricing.hourlyRates.standard, description: 'Development work for any of our four services.' },
     {
       name: 'Emergency hourly rate',
       price: pricing.hourlyRates.emergency,
-      description: 'Urgent fixes, AI agent development and specialised work. The estimator’s Rush option adds this rate.',
+      description: 'Urgent fixes, AI agent work and other specialist work. Choosing Rush in the estimator adds this rate.',
     },
   ],
 } as const;
@@ -174,12 +175,16 @@ const FROM_PRICES = `${web.name} from ${web.fromLabel}, ${automation.name} from 
 
 export const PRICING_DESCRIPTION = `${FROM_PRICES}. Price your project in the estimator.`;
 
+/** The quote promise, in the page's own words (estimate.ts FIXED_QUOTE_NOTE says "scoping call"). */
+export const QUOTE_NOTE = 'Fixed quote after a 20-minute call';
+
 export const HERO = {
   eyebrow: 'Pricing',
   title: 'What it costs, before you ask.',
-  // Answer-first (GEO): the first sentence under the H1 is the price list. 25 words.
-  lede: `${FROM_PRICES}. Answer five questions for the range that fits your project. No email needed.`,
-  trust: `Ranges come straight from the price list below. ${FIXED_QUOTE_NOTE.replace('20-min', '20-minute')}.`,
+  // The starting prices follow at once (the ledger); the lede says how to use them. 17 words.
+  lede: 'Every price is public. Answer five questions to get a price range for your project. No email needed.',
+  // What happens after the range (QUOTE_NOTE; one price for the agreed work).
+  trust: 'After a 20-minute call, you get one fixed price for the agreed work.',
 } as const;
 
 /** "22 September 2026", formatted without Intl so server and client agree byte for byte. */
@@ -190,64 +195,45 @@ export function longDate(iso: string): string {
 }
 
 /* ------------------------------------------------------------------ */
-/* Estimator, quote steps, close                                          */
+/* Estimator, price list, questions, close                               */
 /* ------------------------------------------------------------------ */
 
 export const ESTIMATOR = {
   label: 'Estimator',
   title: 'Price your project.',
-  lede: 'Each answer maps to a published tier, so the range moves as you go. You see it before we ask for an email.',
+  lede: 'Answer five questions. The price range updates as you go, using the prices on this page.',
 } as const;
 
 /**
- * What happens after the estimate. Sources: FIXED_QUOTE_NOTE (estimate.ts);
- * the call covers the brief the contact page asks for (goal, current state,
- * timeline); milestone payments and the 30-90 day post-launch support come
- * from the pricing FAQ and the web tier feature lists in site.ts.
+ * The estimator's add-on names in everyday words. The engine's labels
+ * (estimate.ts TOGGLE_OPTIONS) stay as they are for the brief and the emails;
+ * these replace them wherever /pricing shows one, switches and breakdown alike.
  */
-export const QUOTE_STEPS = {
-  label: 'After the estimate',
-  title: 'From a range to a fixed quote.',
-  lede: 'The estimate is where the conversation starts. Here is everything that happens after it.',
-  steps: [
-    { name: 'Price it here', text: 'The estimator gives you a range from the published price list. No email, no call.' },
-    {
-      name: 'A 20-minute scoping call',
-      text: 'We walk through the scope with you: what the build has to do, what you already have, and when it needs to ship.',
-    },
-    {
-      name: 'A fixed quote',
-      text: 'You get one price for the agreed scope, usually paid in milestones: a deposit to start, a payment mid-project and the final payment at launch.',
-    },
-    {
-      name: 'Launch, then support',
-      text: `${web.name} plans include 30 to 90 days of post-launch support, depending on the tier. Monthly maintenance after that is optional.`,
-    },
-  ],
-} as const;
+export const TOGGLE_LABELS: Partial<Record<ToggleKey, string>> = {
+  cms: 'Content editing (CMS)',
+  ecommerce: 'Online store or bookings',
+  auth: 'User logins and roles',
+};
 
 export const PRICE_LIST = {
   label: 'Price list',
-  title: 'The full price list.',
-  lede: 'Every package, retainer and rate, in plain text. The estimator reads from this same list.',
+  title: 'Every price, by service.',
+  lede: 'Open a service to see each package, what it includes and the monthly plans.',
 } as const;
 
 export const FAQ_COPY = {
-  label: 'Answers',
+  label: 'Questions',
   /** Also the FAQPage JSON-LD name. */
-  title: 'Pricing questions, answered plainly.',
-  lede: 'What agency owners ask us about cost, timelines and payment before they book a call.',
+  title: 'Questions about pricing.',
+  lede: 'Cost, timelines and payment, answered in plain words.',
 } as const;
 
 /**
- * The close band. Sources: the 20-minute scoping call and the fixed quote
- * (FIXED_QUOTE_NOTE), one price for the agreed scope (QUOTE_STEPS), white
- * label (the previous close: "the work ships under your brand").
+ * The close band. Sources: the 20-minute call and the fixed quote
+ * (QUOTE_NOTE), one price for the agreed work (HERO.trust), white label
+ * (the previous close: "the work ships under your brand").
  */
 export const CLOSE = {
   title: 'Turn your range into a fixed quote.',
-  lede: 'We scope it with you on a 20-minute call and quote one fixed price. The work ships under your brand.',
+  lede: 'Tell us about the project. After a 20-minute call, we quote one fixed price, and the work goes out under your brand.',
 } as const;
-
-/** The one approved client quote (site.ts `testimonials`, LRO Staffing). */
-export const PROOF = testimonials.find((entry) => entry.company === 'LRO Staffing') ?? null;

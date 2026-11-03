@@ -2,7 +2,7 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// /services rhythm: dark statement → dark index → paper terms → dark partnerships → crimson close.
+// /services rhythm: dark statement → dark index → paper "how it works" → crimson close.
 
 .nowrap {
   white-space: nowrap;
@@ -39,15 +39,6 @@
   color: $color-fg;
 }
 
-.lede {
-  @include lede;
-  margin: 0;
-
-  @include lg {
-    grid-column: 2;
-  }
-}
-
 // ---------------------------------------------------------------- the index
 // PageHeader's light fades out before its edge, so the index sits on plain ground.
 .index {
@@ -69,7 +60,25 @@
   }
 }
 
-// ---------------------------------------------------------------- how we work (paper)
+// One line under the rows: bundles live on /pricing.
+.pointer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 32px;
+  padding-top: 24px;
+}
+
+.pointerText {
+  margin: 0;
+  max-width: 40em;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-text-body;
+}
+
+// ---------------------------------------------------------------- how it works (paper)
 .how {
   background: $color-paper;
   color: $color-ink;
@@ -86,265 +95,13 @@
   .title {
     color: $color-ink;
   }
-
-  .lede {
-    color: $color-ink-muted;
-  }
 }
 
 .howInner {
   @include shell;
   @include section-pad;
   display: grid;
-  gap: clamp(48px, 7vw, 96px);
-}
-
-.terms {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid $color-ink-hairline;
-}
-
-.term {
-  display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  gap: 10px 16px;
-  padding: 28px 0 30px;
-  border-bottom: 1px solid $color-ink-hairline;
-
-  @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
-    column-gap: 48px;
-    align-items: start;
-    padding: 44px 0;
-  }
-
-  @include rise-in;
-}
-
-// Outline numerals, decorative (the list is an <ol>).
-.termNo {
-  grid-row: span 2;
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2.75rem, 1.6rem + 3.4vw, 5rem);
-  line-height: 0.86;
-  letter-spacing: -0.04em;
-  color: transparent;
-  -webkit-text-stroke: 1.5px $color-red-ink;
-  @include tabular;
-
-  @include lg {
-    grid-row: auto;
-  }
-}
-
-.termTitle {
-  margin: 0;
-  @include display-m;
-  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.375rem);
-  color: $color-ink;
-}
-
-.termText {
-  margin: 0;
-  max-width: 34em;
-  font-size: $font-size-base;
-  line-height: 1.6;
-  color: $color-ink-muted;
-
-  @include lg {
-    padding-top: 0.35em;
-  }
-}
-
-.quote {
-  margin: 0;
-  display: grid;
-  gap: 28px;
-
-  @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
-
-    > * {
-      grid-column: 2;
-    }
-  }
-}
-
-.quoteText {
-  margin: 0;
-
-  p {
-    margin: 0;
-    font-family: $font-display;
-    font-weight: 600;
-    font-size: clamp(1.625rem, 1rem + 2.2vw, 3rem);
-    line-height: 1.16;
-    letter-spacing: -0.02em;
-    color: $color-ink;
-    text-wrap: pretty;
-  }
-}
-
-.by {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  > span {
-    display: grid;
-    gap: 2px;
-  }
-}
-
-.avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.byName {
-  font-weight: $font-weight-semibold;
-  color: $color-ink;
-}
-
-.byRole {
-  font-size: $font-size-sm;
-  color: $color-ink-muted;
-}
-
-// ---------------------------------------------------------------- partnerships
-.partner {
-  background: $color-ground;
-}
-
-.partnerInner {
-  @include shell;
-  @include section-pad;
-  display: grid;
-  gap: clamp(48px, 7vw, 88px);
-}
-
-.plans {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  border-top: 1px solid $color-hairline-strong;
-
-  @include lg {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.plan {
-  display: grid;
-  align-content: start;
-  gap: 18px;
-  padding: 36px 0 40px;
-  border-bottom: 1px solid $color-hairline;
-
-  @include lg {
-    padding: 48px 48px 8px 0;
-    border-bottom: 0;
-
-    & + & {
-      padding-left: 48px;
-      padding-right: 0;
-      border-left: 1px solid $color-hairline-strong;
-    }
-  }
-
-  // Name, price, description and features line up across the two plans.
-  @supports (grid-template-rows: subgrid) {
-    @include lg {
-      grid-row: span 4;
-      grid-template-rows: subgrid;
-    }
-  }
-}
-
-.planName {
-  margin: 0;
-  @include display-m;
-  font-size: clamp(1.625rem, 1.2rem + 1.4vw, 2.5rem);
-  color: $color-fg;
-}
-
-.planPrice {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2.5rem, 1.5rem + 3.2vw, 4.75rem);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  color: $color-fg;
-  @include tabular;
-}
-
-.planUnit {
-  font-family: $font-body;
-  font-weight: $font-weight-medium;
-  font-size: $font-size-lede;
-  letter-spacing: 0;
-  color: $color-fg-muted;
-  white-space: nowrap;
-}
-
-.planWhat {
-  margin: 0;
-  max-width: 30em;
-  font-size: $font-size-lede;
-  line-height: 1.5;
-  color: $color-text-body;
-}
-
-.planFeatures {
-  list-style: none;
-  margin: 6px 0 0;
-  padding: 0;
-  border-top: 1px solid $color-hairline-strong;
-
-  li {
-    position: relative;
-    padding: 14px 0 14px 28px;
-    border-bottom: 1px solid $color-hairline;
-    font-size: $font-size-base;
-    line-height: 1.5;
-    color: $color-text-body;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 1.45em;
-      width: 14px;
-      height: 2px;
-      background: $color-red;
-    }
-  }
-}
-
-.rates {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 40px;
-  padding-top: 28px;
-  border-top: 1px solid $color-hairline;
-}
-
-.ratesText {
-  margin: 0;
-  max-width: 44em;
-  font-size: $font-size-base;
-  line-height: 1.6;
-  color: $color-text-body;
+  gap: clamp(40px, 6vw, 80px);
 }
 
 .textLink {

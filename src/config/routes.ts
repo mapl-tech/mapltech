@@ -46,7 +46,6 @@ export const staticRoutes: readonly RouteEntry[] = [
   // High-value pages
   { path: '/pricing', lastModified: REDESIGN_DATE },
   { path: '/our-work', lastModified: REDESIGN_DATE },
-  { path: '/labs', lastModified: REDESIGN_DATE },
   { path: '/about-us', lastModified: REDESIGN_DATE },
   { path: '/contact-us', lastModified: REDESIGN_DATE },
 

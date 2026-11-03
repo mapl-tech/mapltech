@@ -6,14 +6,14 @@ import { jobPosting, pageGraph, slugify } from '@/lib/schema';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
 import FactsBand from '@/components/company/FactsBand';
-import FoundersNote from '@/components/company/FoundersNote';
 import HeroActions from '@/components/company/HeroActions';
 import OfficeMap from '@/components/company/OfficeMap';
-import { CAREERS, indexOf } from '@/components/company/content';
+import { CAREERS } from '@/components/company/content';
 import ed from '@/components/company/Company.module.scss';
 import CareersBoard, { type BoardRole } from '@/components/convert/CareersBoard';
 import CareersApply from '@/components/convert/CareersApply';
 import TalentListForm from '@/components/convert/TalentListForm';
+import Steps from '@/components/services/Steps';
 import styles from './careers.module.scss';
 
 const PATH = '/careers';
@@ -40,9 +40,10 @@ export const metadata: Metadata = {
  * date, so datePosted is the date the board went live in the redesign
  * (REDESIGN_DATE) and no salary is published.
  *
- * Order: the hero (roles first) -> the facts -> the board -> how hiring works,
- * with the form (paper) -> the talent list -> the close, which speaks to the
- * agency owner who came to see who would be doing the work.
+ * Order: the hero (roles first) -> the facts -> the board -> how to apply,
+ * with the form (paper; the talent list for people with no listed role sits
+ * one click away inside it) -> the close, which speaks to the agency owner
+ * who came to see who would be doing the work.
  */
 /** Display only: a spaced hyphen used as a dash in the source copy reads as a colon. */
 const tidy = (text: string) => text.replace(/\s+-\s+/, ': ');
@@ -82,7 +83,7 @@ export default function CareersPage() {
         actions={
           <HeroActions
             primary={{ label: 'See open roles', href: '#roles', placement: 'careers_hero_primary' }}
-            secondary={{ label: 'Join the talent list', href: '#talent', placement: 'careers_hero_secondary' }}
+            secondary={{ label: 'How to apply', href: '#apply', placement: 'careers_hero_secondary' }}
           />
         }
         aside={
@@ -121,19 +122,7 @@ export default function CareersPage() {
 
           <div className={styles.applyGrid}>
             <div className={styles.applyRail}>
-              <ol className={styles.steps} role="list">
-                {apply.steps.map((step, i) => (
-                  <li key={step.name} className={styles.step}>
-                    <span className={styles.stepNo} aria-hidden="true">
-                      {indexOf(i)}
-                    </span>
-                    <div>
-                      <h3 className={styles.stepName}>{step.name}</h3>
-                      <p className={styles.stepText}>{step.text}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
+              <Steps steps={apply.steps.map(({ name, text }) => ({ title: name, text }))} tone="paper" />
               <p className={styles.fallback}>
                 Prefer email? Write to{' '}
                 <a
@@ -144,27 +133,22 @@ export default function CareersPage() {
                 </a>{' '}
                 with the role, a link to your work and a few lines about you.
               </p>
-              <FoundersNote placement="careers_apply" />
+              {/* No listed role yet: the talent list, one click away (native <details>, the form is in the HTML). */}
+              <details id="talent" className={styles.talent}>
+                <summary className={styles.talentSummary}>
+                  {talent.summary}
+                  <span aria-hidden="true" className={styles.talentIcon} />
+                </summary>
+                <div className={styles.talentBody}>
+                  <p className={styles.talentLede}>{talent.lede}</p>
+                  <div className={`${ed.card} ${styles.formCard}`}>
+                    <TalentListForm contactEmail={siteConfig.email} />
+                  </div>
+                </div>
+              </details>
             </div>
             <div className={`${ed.card} ${styles.formCard}`}>
               <CareersApply roles={roles} contactEmail={siteConfig.email} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="talent" className={ed.dark} aria-labelledby="talent-title">
-        <div className={ed.inner}>
-          <header className={ed.head}>
-            <p className={ed.label}>{talent.label}</p>
-            <h2 id="talent-title" className={ed.title}>
-              {talent.title}
-            </h2>
-            <p className={ed.lede}>{talent.lede}</p>
-          </header>
-          <div className={ed.offset}>
-            <div className={`${ed.card} ${styles.formCard} ${styles.talentCard}`}>
-              <TalentListForm contactEmail={siteConfig.email} />
             </div>
           </div>
         </div>

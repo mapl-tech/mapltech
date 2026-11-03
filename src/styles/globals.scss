@@ -31,6 +31,10 @@ html {
   background-color: $color-ground;
   color-scheme: dark;
   accent-color: $color-red;
+  // Touch screens: every tap flashes the brand crimson instead of the browser's
+  // grey, so links, rows and cards all answer a tap the same way. Controls with
+  // their own pressed state (buttons, accordions, estimator options) opt out.
+  -webkit-tap-highlight-color: rgba(217, 28, 63, 0.22);
   // The fixed header's height, for full-bleed heroes that sit under it.
   --header-height: 72px;
   // Keyboard focus and in-page jumps land below the fixed header, never under

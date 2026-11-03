@@ -1,14 +1,15 @@
 'use client';
 
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { usePrefersReducedMotion } from './useMediaQuery';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { MOBILE_BAR_CONTEXT } from '@/components/flagship/content';
+import styles from './MobileActionBar.module.scss';
 
 /**
- * Interaction #9: sticky mobile action bar (md:hidden).
+ * Interaction #9: sticky mobile action bar (hidden from 768px).
  *
  * It repeats the page's own hero action: the link marked `data-hero-cta` (or
  * the first link inside it) gives the label and the target, so a service page
@@ -42,21 +43,6 @@ const KEYBOARD_RATIO = 0.75;
 const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
 /** The bar's height plus a margin: how far focused controls stay above it. */
 const FOCUS_CLEARANCE = '88px';
-
-const BAR_STYLE: CSSProperties = {
-  background: 'rgba(10, 10, 10, 0.92)',
-  backdropFilter: 'blur(12px)',
-  WebkitBackdropFilter: 'blur(12px)',
-  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-};
-
-const PRIMARY_STYLE: CSSProperties = {
-  minHeight: 48,
-  background: 'var(--bar-primary-bg, #D91C3F)', // crimson fill: white label 5.01:1
-  color: '#ffffff',
-  fontSize: 17,
-  fontWeight: 600,
-};
 
 const isEstimate = (href: string) => href.startsWith('/pricing') || href === '#estimator';
 
@@ -172,29 +158,22 @@ export default function MobileActionBar({
       : `transform 240ms ${EASE}, visibility 0s linear 240ms`;
 
   const linkProps = {
-    className: 'mobile-action-bar__primary flex shrink-0 items-center justify-center rounded-full px-5 text-center',
-    style: PRIMARY_STYLE,
+    className: styles.primary,
     onClick: () => emit(isEstimate(href) ? 'estimate' : 'hero', href),
   };
 
   return (
     <div
-      className="mobile-action-bar fixed inset-x-0 bottom-0 z-[200] md:hidden pb-[env(safe-area-inset-bottom)]"
+      className={`mobile-action-bar ${styles.bar}`}
       data-visible={visible ? 'true' : 'false'}
       style={{
-        ...BAR_STYLE,
         transform: visible ? 'translateY(0)' : 'translateY(110%)',
         visibility: visible ? 'visible' : 'hidden',
         transition,
       }}
     >
-      {/* One action only (Sentinel sticky-mobile-cta-bar): context left, the CTA right. */}
-      <div className={`flex items-center gap-3 px-4 py-2${line ? '' : ' justify-end'}`}>
-        {line ? (
-          <p className="m-0 flex-1 text-[15px] leading-tight" style={{ color: 'rgba(246, 243, 239, 0.78)' }}>
-            {line}
-          </p>
-        ) : null}
+      <div className={styles.row} data-solo={line ? undefined : ''}>
+        {line ? <p className={styles.line}>{line}</p> : null}
         {/* Same-page fragments are plain anchors (no router round trip). */}
         {href.startsWith('#') ? (
           <a href={href} {...linkProps}>

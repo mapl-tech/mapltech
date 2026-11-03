@@ -3,7 +3,7 @@ import { siteConfig } from '@/config/site';
 import MagneticButton from '@/components/ui/MagneticButton';
 import NewsletterForm from './NewsletterForm';
 import SocialLinks from './SocialLinks';
-import { FOOTER_JOIN, FOOTER_START, OFFICE_LINKS, PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from './chrome';
+import { FOOTER_COMPANY, FOOTER_SERVICES, OFFICE_LINKS, PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from './chrome';
 import styles from './Footer.module.scss';
 
 /**
@@ -11,9 +11,9 @@ import styles from './Footer.module.scss';
  * the newsletter form and the social icons.
  *
  * Order: the one ask (same label as everywhere; hidden on pages that end on
- * their own close section, marked `data-page-close`) → sitemap columns for the
- * diligent and the lost (Sentinel mega-footer) → newsletter → legal → the
- * wordmark set at composition scale, the last thing on every page.
+ * their own close section, marked `data-page-close`) → four plainly named
+ * link columns (Services, Company, Offices, Contact) → newsletter → legal →
+ * the wordmark set at composition scale, the last thing on every page.
  * One step darker than the page ground; on phones the bottom padding clears
  * the sticky action bar.
  */
@@ -24,7 +24,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.ask}>
-          <p className={styles.askLine}>Have a build your clients are waiting on?</p>
+          <p className={styles.askLine}>Have a project your clients are waiting on?</p>
           <div className={styles.askActions}>
             <span data-cta-placement="footer_estimate">
               <MagneticButton href={PROJECT_HREF} size="medium" placement="footer_project">
@@ -40,10 +40,10 @@ export default function Footer() {
         <div className={styles.columns}>
           <nav className={styles.column} aria-labelledby="footer-services">
             <h2 id="footer-services" className={styles.heading}>
-              Build with us
+              Services
             </h2>
             <ul role="list">
-              {FOOTER_START.map((link) => (
+              {FOOTER_SERVICES.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href}>{link.label}</Link>
                 </li>
@@ -56,20 +56,17 @@ export default function Footer() {
               Company
             </h2>
             <ul role="list">
-              {FOOTER_JOIN.map((link) => (
+              {FOOTER_COMPANY.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href}>{link.label}</Link>
                 </li>
               ))}
-              <li>
-                <Link href="/blog">Blog</Link>
-              </li>
             </ul>
           </nav>
 
           <nav className={styles.column} aria-labelledby="footer-offices">
             <h2 id="footer-offices" className={styles.heading}>
-              Where we work
+              Offices
             </h2>
             <ul role="list">
               {OFFICE_LINKS.map((link) => (
@@ -81,7 +78,7 @@ export default function Footer() {
           </nav>
 
           <div className={styles.column}>
-            <h2 className={styles.heading}>Say hello</h2>
+            <h2 className={styles.heading}>Contact</h2>
             <ul role="list">
               <li>
                 <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
@@ -99,8 +96,8 @@ export default function Footer() {
 
         <div className={styles.newsletter}>
           <div>
-            <h2 className={styles.newsTitle}>Engineering notes, monthly</h2>
-            <p className={styles.newsText}>What we shipped, what broke, and what we would do differently. No fluff.</p>
+            <h2 className={styles.newsTitle}>Get our newsletter</h2>
+            <p className={styles.newsText}>Practical tips on websites, automation and software for agencies.</p>
           </div>
           <NewsletterForm />
         </div>
@@ -115,12 +112,6 @@ export default function Footer() {
             </li>
             <li>
               <Link href="/terms">Terms</Link>
-            </li>
-            <li>
-              <a href="/llms.txt">llms.txt</a>
-            </li>
-            <li>
-              <a href="/sitemap.xml">Sitemap</a>
             </li>
           </ul>
         </div>

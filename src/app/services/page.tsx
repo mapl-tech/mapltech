@@ -5,8 +5,8 @@ import { INDEX_META, LAYER_VIEWS, SERVICES_REVISED, indexMetadata } from '@/comp
 import { itemList, pageGraph, serviceId } from '@/lib/schema';
 
 /*
- * /services (award pass, Nov 2026): the four service lines as a numbered
- * index, how we work, the partnerships. Copy, prices and sources live in
+ * /services (Nov 2026 simplify pass): the four services, how it works, the
+ * ask. Copy, prices and sources live in
  * src/components/services/serviceContent.ts.
  *
  * Metadata: unique title, a 140-160 character description that answers "what
@@ -43,7 +43,7 @@ const graph = pageGraph({
         description: layer.summary,
         item: { '@id': serviceId(layer.slug) },
       })),
-      { path: '/services', name: 'Four service lines' },
+      { path: '/services', name: 'Our four services' },
     ),
   ],
 });

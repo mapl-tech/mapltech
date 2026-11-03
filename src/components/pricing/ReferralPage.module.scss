@@ -2,18 +2,9 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// /referral (Nov 2026 award pass). The shared section grammar lives in
-// PricingSections.module.scss; this module adds the hero's two-line title and
-// actions, the steps band, the calculator's section, the paper section with
-// the client quote, and the form section.
-//
-// On paper #F1EDE7: ink 17.6:1, ink-muted 6.4:1, crimson-ink #B81D38 5.5:1.
-
-$ease: cubic-bezier(0.23, 1, 0.32, 1);
-$ink: $color-ink;
-$muted: $color-ink-muted;
-$hair: $color-ink-hairline;
-$accent: $color-red-ink;
+// /referral (Nov 2026 award pass, simplified). The shared section grammar
+// lives in PricingSections.module.scss; this module adds the hero's two-line
+// title and actions, the steps band and the form section.
 
 // ---------------------------------------------------------------- hero
 // Each sentence of the H1 on its own line; the condition in crimson (PageHeader's <em>).
@@ -56,8 +47,6 @@ $accent: $color-red-ink;
 .how {
   position: relative;
   background: $color-ground;
-  scroll-margin-top: 72px;
-
 }
 
 .howInner {
@@ -74,166 +63,11 @@ $accent: $color-red-ink;
   }
 }
 
-// ---------------------------------------------------------------- calculator
-.estimator {
-  position: relative;
-  background:
-    radial-gradient(60% 40% at 92% 6%, rgba(217, 28, 63, 0.1) 0%, transparent 70%),
-    $color-ground;
-  border-top: 1px solid $color-hairline;
-  scroll-margin-top: 72px;
-}
-
-.estimatorInner {
-  @include shell;
-  @include section-pad;
-}
-
-// ---------------------------------------------------------------- what they get (paper)
-.theyGet {
-  position: relative;
-  background: $color-paper;
-  color: $ink;
-  border-radius: clamp(24px, 3vw, 40px);
-}
-
-.theyGetInner {
-  @include shell;
-  @include section-pad;
-  display: grid;
-  gap: clamp(48px, 7vw, 96px);
-
-  @include lg {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    column-gap: clamp(48px, 6vw, 112px);
-    align-items: start;
-  }
-}
-
-.theyGetHead {
-  min-width: 0;
-}
-
-.paperLabel {
-  @include section-label($muted);
-
-  &::before {
-    @include section-label-rule($accent);
-  }
-}
-
-.paperTitle {
-  @include section-title;
-  margin-top: 22px;
-  max-width: 12em;
-  color: $ink;
-}
-
-.answer {
-  margin: 24px 0 0;
-  max-width: 36rem;
-  font-size: $font-size-lede;
-  line-height: 1.55;
-  color: $ink;
-}
-
-.note {
-  margin: 16px 0 0;
-  max-width: 36rem;
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  color: $muted;
-}
-
-.links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 32px;
-  margin: 24px 0 0;
-}
-
-.paperLink {
-  @include text-action($ink);
-
-  &:focus-visible {
-    outline: 2px solid $accent;
-    outline-offset: 2px;
-  }
-}
-
-// The agency's view of working with us, as large as the column allows.
-.proof {
-  @include rise-in;
-  margin: 0;
-  min-width: 0;
-
-  @include lg {
-    padding-top: 0.4em;
-  }
-}
-
-.proofQuote {
-  margin: 0;
-
-  p {
-    margin: 0;
-    font-family: $font-display;
-    font-weight: 600;
-    font-size: clamp(1.625rem, 1rem + 2.2vw, 3rem);
-    line-height: 1.16;
-    letter-spacing: -0.02em;
-    color: $ink;
-    text-wrap: pretty;
-
-    &::before {
-      content: '\201C';
-      color: $accent;
-    }
-
-    &::after {
-      content: '\201D';
-      color: $accent;
-    }
-  }
-}
-
-.proofBy {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid $hair;
-
-  > span {
-    display: grid;
-    gap: 2px;
-  }
-}
-
-.avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.proofName {
-  font-weight: $font-weight-semibold;
-  color: $ink;
-}
-
-.proofRole {
-  font-size: 1rem;
-  color: $muted;
-}
-
 // ---------------------------------------------------------------- the form
 .signup {
   position: relative;
   background: $color-ground;
   border-top: 1px solid $color-hairline;
-  scroll-margin-top: 40px;
 }
 
 .signupInner {
@@ -274,36 +108,6 @@ $accent: $color-red-ink;
   }
 }
 
-// What the form needs, as a two-row ledger beside it.
-.needs {
-  margin: 32px 0 0;
-  border-top: 1px solid $color-hairline-strong;
-}
-
-.needsRow {
-  display: grid;
-  gap: 4px;
-  padding: 16px 0;
-  border-bottom: 1px solid $color-hairline;
-
-  @include sm {
-    grid-template-columns: 104px minmax(0, 1fr);
-    column-gap: 24px;
-    align-items: baseline;
-  }
-}
-
-.needsTerm {
-  @include mono-label;
-}
-
-.needsDetail {
-  margin: 0;
-  font-size: 1.0625rem;
-  line-height: 1.55;
-  color: $color-text-body;
-}
-
 .formCard {
   min-width: 0;
   padding: clamp(24px, 4vw, 48px) clamp(20px, 4vw, 48px);
@@ -315,6 +119,6 @@ $accent: $color-red-ink;
 }
 
 // Focus is never hidden under the fixed header (WCAG 2.4.11).
-:is(.estimator, .theyGet, .signup) :is(a, button, input, select, textarea, summary) {
-  scroll-margin-top: 96px;
+.signup :is(a, button, input, select, textarea, summary) {
+  scroll-margin-top: 8px;
 }

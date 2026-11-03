@@ -1,13 +1,16 @@
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
-import { PRICING_HREF } from '@/components/layout/chrome';
+import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import { pricing } from '@/config/site';
+import { formatMoney } from '@/lib/estimate';
 import { keepTogether } from './keepTogether';
 import {
   QUOTE_LINE,
+  TIER_HIGHLIGHTS,
   cleanCopy,
+  costTitle,
   humanPrice,
-  tierSentence,
+  supportWindow,
   tierViews,
   type LayerView,
   type TierView,
@@ -32,69 +35,74 @@ function Amount({ label }: { label: string }) {
 }
 
 /**
- * The line's tiers on paper, side by side like a printed price list: name,
- * public price and what kind of number it is, the typical timeline where
- * services.ts states one, who it is for and every feature. No tier is marked
- * "recommended": nothing in the data says which one most clients choose.
- * Each column deep-links the estimator with that tier selected; a Custom tier
- * goes to the project brief. Below, the monthly plans and the hourly rate:
- * nothing price-related is hidden.
+ * What the service costs, on paper: one card per tier with its name, public
+ * price, who it is for and what it includes. Tablets and desktops show the
+ * first three inclusions and fold the rest into "See everything included";
+ * phones fold them all, with the tier's action, into "What’s included", so
+ * four tiers read in under two screens. No tier is marked "recommended":
+ * nothing in the data says which one most clients choose. Each card
+ * deep-links the estimator with that tier selected; a Custom tier goes to the
+ * project brief. Monthly plans and the hourly rate follow, one tap away.
  */
 export default function TierSchedule({ view }: { view: LayerView }) {
   const tiers = tierViews(view);
-  const isWeb = view.service === 'web';
+  const support = supportWindow(view);
+  const monthly = view.lowestMonthly ? `${formatMoney(view.lowestMonthly.amount)} a month` : null;
+  const hourly = humanPrice(pricing.hourlyRates.standard);
+  const afterIntro = [
+    support ? `Every tier includes ${support} of support after launch.` : 'Once it is live, we can keep looking after it.',
+    monthly ? `Monthly plans start at ${monthly}, and hourly work costs ${hourly}.` : `Hourly work costs ${hourly}.`,
+  ].join(' ');
 
   return (
     <section id="tiers" className={styles.tiers} aria-labelledby="tiers-title">
       <div className={styles.inner}>
         <header className={styles.head}>
-          <p className={styles.label}>Tiers and prices</p>
+          <p className={styles.label}>What it costs</p>
           <h2 id="tiers-title" className={styles.title}>
-            Transparent pricing, no surprises.
+            {costTitle(view)}
           </h2>
-          <p className={styles.lede}>{keepTogether(`${tierSentence(view)} ${QUOTE_LINE}`)}</p>
+          <p className={styles.lede}>{keepTogether(`Every price is public. Pick the tier closest to your project. ${QUOTE_LINE}`)}</p>
         </header>
 
         <ol className={styles.grid} data-count={tiers.length}>
-          {tiers.map((tier, i) => (
-            <TierColumn key={tier.id} tier={tier} index={i} slug={view.slug} />
+          {tiers.map((tier) => (
+            <TierCard key={tier.id} tier={tier} slug={view.slug} />
           ))}
         </ol>
 
         <div className={styles.after}>
-          <div className={styles.afterHead}>
-            <h3 className={styles.afterTitle}>After launch</h3>
-            <p className={styles.afterIntro}>
-              {keepTogether(
-                isWeb && view.record.postLaunchSupport
-                  ? `Every tier includes post-launch support (${cleanCopy(view.record.postLaunchSupport)}). After that, a monthly plan or hourly work.`
-                  : 'Once it is live: a monthly retainer, or hourly work when you need it.',
-              )}
-            </p>
-          </div>
-          <dl className={styles.plans} style={{ '--plans': view.recurring.length + 1 } as CSSProperties}>
-            {view.recurring.map((line) => (
-              <div key={line.name} className={styles.plan}>
-                <dt className={styles.planName}>{line.name}</dt>
+          <h3 className={styles.afterTitle}>After launch</h3>
+          <p className={styles.afterIntro}>{keepTogether(afterIntro)}</p>
+          <details className={styles.plansBox}>
+            <summary className={styles.summary}>
+              See the monthly plans
+              <span className={styles.chevron} aria-hidden="true" />
+            </summary>
+            <dl className={styles.plans} style={{ '--plans': view.recurring.length + 1 } as CSSProperties}>
+              {view.recurring.map((line) => (
+                <div key={line.name} className={styles.plan}>
+                  <dt className={styles.planName}>{line.name}</dt>
+                  <dd className={styles.planPrice}>
+                    <Amount label={line.price} />
+                  </dd>
+                  {line.description ? (
+                    <dd className={styles.planWhat}>{sentence(cleanCopy(line.description))}</dd>
+                  ) : null}
+                </div>
+              ))}
+              <div className={styles.plan}>
+                <dt className={styles.planName}>Hourly</dt>
                 <dd className={styles.planPrice}>
-                  <Amount label={line.price} />
+                  <Amount label={pricing.hourlyRates.standard} />
                 </dd>
-                {line.description ? (
-                  <dd className={styles.planWhat}>{sentence(cleanCopy(line.description))}</dd>
-                ) : null}
+                <dd className={styles.planWhat}>Emergency work {humanPrice(pricing.hourlyRates.emergency)}.</dd>
               </div>
-            ))}
-            <div className={styles.plan}>
-              <dt className={styles.planName}>Hourly</dt>
-              <dd className={styles.planPrice}>
-                <Amount label={pricing.hourlyRates.standard} />
-              </dd>
-              <dd className={styles.planWhat}>Emergency work {humanPrice(pricing.hourlyRates.emergency)}.</dd>
-            </div>
-          </dl>
+            </dl>
+          </details>
           <p className={styles.allPrices}>
             <Link href={PRICING_HREF} className={styles.textLink} data-cta-placement={`${view.slug}_tiers_pricing`}>
-              Every price we publish, on one page
+              {PRICING_LABEL}
               <span aria-hidden="true" className={styles.arrow}>
                 →
               </span>
@@ -106,54 +114,73 @@ export default function TierSchedule({ view }: { view: LayerView }) {
   );
 }
 
-function TierColumn({ tier, index, slug }: { tier: TierView; index: number; slug: string }) {
+function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
+  const top = tier.features.slice(0, TIER_HIGHLIGHTS);
+  const rest = tier.features.slice(TIER_HIGHLIGHTS);
+  const builds = tier.builds ? <p className={styles.builds}>{tier.builds}, plus:</p> : null;
+  const item = (feature: string) => <li key={feature}>{keepTogether(feature)}</li>;
+  const action = (
+    <Link href={tier.href} className={styles.tierLink} data-cta-placement={`${slug}_${tier.id}`}>
+      {tier.isCustom ? (
+        <>
+          Start a project<span className="visually-hidden"> at the {tier.name} tier</span>
+        </>
+      ) : (
+        <>
+          Price this tier<span className="visually-hidden">: {tier.name}</span>
+        </>
+      )}
+      <span aria-hidden="true" className={styles.arrow}>
+        →
+      </span>
+    </Link>
+  );
+
   return (
     <li id={tier.id} className={styles.tier}>
-      <div className={styles.tierHead}>
-        <span className={styles.tierNo} aria-hidden="true">
-          {String(index + 1).padStart(2, '0')}
-        </span>
+      <div className={styles.top}>
         <h3 className={styles.tierName}>{tier.name}</h3>
-      </div>
-      <div className={styles.priceBlock}>
-        <p className={styles.price} data-long={tier.price.length > 8 ? '' : undefined}>
-          {tier.price}
-        </p>
-        <p className={styles.priceNote}>
-          {tier.priceNote}
-          {tier.timeline ? (
-            <>
-              {' · '}
-              <span className={styles.nowrap}>typically {tier.timeline.label}</span>
-            </>
-          ) : null}
-        </p>
+        <div className={styles.priceBlock}>
+          <p className={styles.price} data-long={tier.price.length > 8 ? '' : undefined}>
+            {tier.price}
+          </p>
+          <p className={styles.priceNote}>
+            {tier.priceNote}
+            {tier.timeline ? (
+              <>
+                {' · '}
+                <span className={styles.nowrap}>usually {tier.timeline.label}</span>
+              </>
+            ) : null}
+          </p>
+        </div>
       </div>
       <p className={styles.who}>{keepTogether(sentence(tier.who))}</p>
       <div className={styles.features}>
-        {tier.builds ? <p className={styles.builds}>{tier.builds}, plus:</p> : null}
-        <ul role="list">
-          {tier.features.map((feature) => (
-            <li key={feature}>{keepTogether(feature)}</li>
-          ))}
-        </ul>
+        {/* Tablets and desktops: the first three inclusions stay open. */}
+        <div className={styles.wide}>
+          {builds}
+          <ul role="list">{top.map(item)}</ul>
+        </div>
+        <details className={styles.more} data-rest={rest.length ? undefined : 'none'}>
+          <summary className={styles.summary}>
+            <span className={styles.phoneOnly}>What’s included</span>
+            <span className={styles.wideOnly}>See everything included</span>
+            <span className="visually-hidden"> in {tier.name}</span>
+            <span className={styles.chevron} aria-hidden="true" />
+          </summary>
+          <div className={styles.moreBody}>
+            {/* Phones: every inclusion sits in here, the first three included, then the tier's action. */}
+            <div className={styles.phoneOnly}>
+              {builds}
+              <ul role="list">{top.map(item)}</ul>
+            </div>
+            {rest.length ? <ul role="list">{rest.map(item)}</ul> : null}
+            <p className={`${styles.phoneOnly} ${styles.innerAction}`}>{action}</p>
+          </div>
+        </details>
       </div>
-      <p className={styles.action}>
-        <Link href={tier.href} className={styles.tierLink} data-cta-placement={`${slug}_${tier.id}`}>
-          {tier.isCustom ? (
-            <>
-              Start a project<span className="visually-hidden"> at the {tier.name} tier</span>
-            </>
-          ) : (
-            <>
-              Price this tier<span className="visually-hidden">: {tier.name}</span>
-            </>
-          )}
-          <span aria-hidden="true" className={styles.arrow}>
-            →
-          </span>
-        </Link>
-      </p>
+      <p className={styles.action}>{action}</p>
     </li>
   );
 }

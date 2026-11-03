@@ -5,23 +5,20 @@ import JsonLd from '@/components/seo/JsonLd';
 import { breadcrumb, contactPage, contactPoint, graph } from '@/lib/schema';
 import { absoluteUrl } from '@/config/routes';
 import { siteConfig, testimonials } from '@/config/site';
-import { PRICING_HREF, PRICING_LABEL, telHref } from '@/components/layout/chrome';
-import { FAQ_ITEMS } from '@/components/home/data';
+import { telHref } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
-import { LiveClocks } from '@/components/ui/TimezoneOverlap';
 import ProjectBrief from '@/components/convert/ProjectBrief';
+import Steps from '@/components/services/Steps';
 import styles from '@/components/convert/ContactLayout.module.scss';
 
 /**
- * /contact-us (Nov 2026 award pass): the site's primary destination. Every
+ * /contact-us (Nov 2026, simplified): the site's primary destination. Every
  * "Start a project" button lands here, so the page is the ask: a short hero,
  * then the project brief on a paper sheet, four questions, one at a time
  * (ProjectBrief; fields, validation, submission and analytics unchanged).
- * Beside it (under it on phones): what happens after you send it, one client
- * in her own words (the approved LRO Staffing quote), the direct line with the
- * three offices' live time, and the two diligence answers agencies ask first,
- * quoted from the homepage FAQ so the wording never drifts. No response time
- * is promised. No close band: the sheet carries
+ * Beside it (under it on phones), three things only: what happens after you
+ * send it, one client in her own words (the approved LRO Staffing quote), and
+ * the email and phone number. No close band: the sheet carries
  * `data-page-close`, so the footer drops its own ask.
  *
  * Structured data: ContactPage + BreadcrumbList + ContactPoint.
@@ -44,28 +41,25 @@ export const metadata: Metadata = {
   },
 };
 
-/** After the brief: the steps the site already publishes (fixed quote after a 20-minute scoping call). */
+/** After the brief: the steps the site already publishes (fixed quote after a 20-minute call). */
 const NEXT_STEPS = [
   {
     // The live contact page's own promise ("We respond within 24 hours"), also quoted in llms.txt.
-    name: 'We read it and reply',
-    text: 'Within 24 hours, by email or with a call, whichever you chose, with questions or a time to talk.',
+    name: 'We reply within 24 hours',
+    text: 'By email or phone, whichever you chose, with questions or a time to talk.',
   },
   {
-    name: 'A 20-minute scoping call',
-    text: 'We agree what is in scope and what is not, so the quote describes the real job.',
+    name: 'A 20-minute call',
+    text: 'We agree what is included and what is not, so the quote matches the real work.',
   },
   {
     name: 'A fixed quote',
-    text: 'Final pricing is set through scoping and written into a proposal, so you know the number before work starts.',
+    text: 'You get a written proposal with a fixed price, so you know the cost before work starts.',
   },
 ] as const;
 
 /** The one approved client quote (site.ts `testimonials`), beside the decision. */
 const PROOF = testimonials.find((entry) => entry.company === 'LRO Staffing') ?? null;
-
-/** The NDA and ownership answers, word for word from the homepage FAQ (home/data.ts). */
-const DILIGENCE = FAQ_ITEMS.filter((item) => /\bNDA\b/.test(item.answer) || /owns the code/i.test(item.question));
 
 export default function ContactPage() {
   return (
@@ -85,7 +79,8 @@ export default function ContactPage() {
         title="Start a project."
         lede={
           <p>
-            Tell us what you are building in four short questions. You get a fixed quote after a 20-minute scoping call.
+            Answer four short questions about your project. After a 20-minute call, you get a fixed quote. Need an NDA
+            first? Just ask.
           </p>
         }
       />
@@ -108,19 +103,7 @@ export default function ContactPage() {
               <h2 id="next-title" className={styles.blockLabel}>
                 What happens next
               </h2>
-              <ol className={styles.steps} role="list">
-                {NEXT_STEPS.map((step, index) => (
-                  <li key={step.name} className={styles.stepRow}>
-                    <span className={styles.stepNo} aria-hidden="true">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <div>
-                      <h3 className={styles.stepName}>{step.name}</h3>
-                      <p className={styles.stepText}>{step.text}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
+              <Steps steps={NEXT_STEPS.map(({ name, text }) => ({ title: name, text }))} tone="paper" />
             </section>
 
             {PROOF ? (
@@ -147,9 +130,9 @@ export default function ContactPage() {
 
             <section className={styles.direct} aria-labelledby="direct-title">
               <h2 id="direct-title" className={styles.directLabel}>
-                Direct line
+                Talk to us
               </h2>
-              <p className={styles.directLede}>Rather talk it through first? Write or call.</p>
+              <p className={styles.directLede}>Prefer to talk it through first? Email or call.</p>
               <ul className={styles.channels} role="list">
                 <li>
                   <a href={`mailto:${siteConfig.email}`} className={styles.channel} data-cta-placement="contact_email">
@@ -164,34 +147,11 @@ export default function ContactPage() {
                   </a>
                 </li>
               </ul>
-              <div className={styles.hours}>
-                <p className={styles.hoursText}>Toronto, Lagos and Kingston keep 09:00 to 18:00 local time, Monday to Friday.</p>
-                <LiveClocks className={styles.clocks} />
-              </div>
-              <p className={styles.priceFirst}>
-                Want numbers first?{' '}
-                <Link href={PRICING_HREF} className={styles.priceLink} data-cta-placement="contact_price_first">
-                  {PRICING_LABEL}
-                </Link>
+              <p className={styles.hoursText}>
+                Our offices in Toronto, Lagos and Kingston are open 09:00 to 18:00 local time, Monday to Friday.
               </p>
             </section>
           </div>
-
-          {DILIGENCE.length ? (
-            <section className={styles.diligence} aria-labelledby="diligence-title">
-              <h2 id="diligence-title" className={styles.blockLabel}>
-                Before you send anything
-              </h2>
-              <dl className={styles.answers}>
-                {DILIGENCE.map((item) => (
-                  <div key={item.question} className={styles.answer}>
-                    <dt className={styles.question}>{item.question}</dt>
-                    <dd className={styles.reply}>{item.answer}</dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          ) : null}
 
           {/* Phones only: after the reading, a way back up. The mobile bar repeats it
               (data-hero-cta) once the brief is off screen, so it never points at this page. */}

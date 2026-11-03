@@ -40,12 +40,6 @@ export interface WorkFilter {
   count: number;
 }
 
-export interface WorkflowStep {
-  id: string;
-  title: string;
-  text: string;
-}
-
 /**
  * One layer of the /our-work pointer preview. Serialisable, because it crosses
  * into the client island; the catalog builds it from the case stories.
@@ -58,14 +52,4 @@ export interface PreviewItem {
   flow?: readonly string[];
   /** Caption on the card when the screenshot is not the work itself (what it shows instead). */
   caption?: string;
-}
-
-/** One stage of the MAPL Labs pipeline illustration (/labs). */
-export interface PipelineStage {
-  id: string;
-  name: string;
-  /** What the traveller sees at this stage. */
-  surface: string;
-  /** The software doing the work underneath ("Under the hood"). */
-  engineering: string;
 }

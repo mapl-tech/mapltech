@@ -2,75 +2,9 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// /our-work (Nov 2026 award pass): the page hero counts what is on view, then
-// the index, set like the homepage services index on the dark ground: big
-// names on hairlines, each with its real capture. Then the client voice, MAPL
-// Labs on paper, and the crimson close.
-
-// ===================================================================
-// Hero aside: the count
-// ===================================================================
-.tally {
-  display: grid;
-  gap: clamp(20px, 2.4vw, 28px);
-  padding-top: clamp(20px, 2.4vw, 28px);
-  border-top: 1px solid $color-hairline-strong;
-}
-
-.tallyCount {
-  display: flex;
-  align-items: flex-end;
-  gap: 18px;
-  margin: 0;
-}
-
-// An outline numeral (the homepage's Approach treatment), capped under the
-// H1's size: large, but lighter in mass than the title, so the H1 stays the
-// one entry point. Decorative (aria-hidden); the label carries the count.
-.tallyValue {
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(4.5rem, 2.4rem + 5.6vw, 7.75rem); // 72px -> 124px (H1 tops out at 136px)
-  line-height: 0.8;
-  letter-spacing: -0.04em;
-  color: transparent;
-  -webkit-text-stroke: 1.5px $color-red;
-  @include tabular;
-}
-
-.tallyLabel {
-  @include mono-label;
-  padding-bottom: 0.2em;
-}
-
-.tallyFacts {
-  display: grid;
-  gap: 14px;
-  margin: 0;
-}
-
-.tallyFact {
-  display: grid;
-  gap: 4px;
-
-  @include sm {
-    grid-template-columns: 8.5em minmax(0, 1fr);
-    gap: 16px;
-    align-items: baseline;
-  }
-
-  dt {
-    @include mono-label;
-  }
-
-  dd {
-    margin: 0;
-    font-size: $font-size-base;
-    line-height: 1.45;
-    color: $color-fg;
-    @include tabular;
-  }
-}
+// /our-work (Nov 2026 simplify pass): the page hero, then the index, set like
+// the homepage services index on the dark ground: big names on hairlines, each
+// with its real capture. Then one client quote and the crimson close.
 
 // ===================================================================
 // The index
@@ -86,22 +20,6 @@
   padding-bottom: clamp(56px, 8vw, 112px);
 }
 
-// After the last row: one quiet sentence and a text action, never a second filled button.
-.indexNext {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 24px;
-  margin: clamp(28px, 4vw, 44px) 0 0;
-  font-size: $font-size-base;
-  line-height: 1.5;
-  color: $color-text-body;
-
-  > span {
-    max-width: 44em;
-  }
-}
-
 .indexLabel {
   @include section-label;
 
@@ -114,32 +32,30 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  counter-reset: work;
   border-top: 1px solid $color-hairline-strong;
 }
 
-// Phones: the capture, then number · name · arrow, then the facts under the
-// name. Tablets: capture left, words right. Desktop: one line per project,
-// number · capture · name · facts · arrow, like the homepage services index.
+// Phones: the capture, then name · arrow, then the facts under the name.
+// Tablets: capture left, words right. Desktop: one line per project,
+// capture · name · facts · arrow, like the homepage services index.
 .row {
-  counter-increment: work;
   position: relative;
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) 44px;
+  grid-template-columns: minmax(0, 1fr) 44px;
   grid-template-areas:
-    'media media media'
-    'number name go'
-    '. facts facts';
+    'media media'
+    'name go'
+    'facts facts';
   column-gap: 12px;
   align-items: baseline;
   padding: 24px 0 32px;
   border-bottom: 1px solid $color-hairline;
 
   @include md {
-    grid-template-columns: minmax(0, 1.05fr) 28px minmax(0, 1fr) 44px;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) 44px;
     grid-template-areas:
-      'media number name go'
-      'media . facts facts';
+      'media name go'
+      'media facts facts';
     grid-template-rows: auto 1fr;
     column-gap: 20px;
     align-items: start;
@@ -147,8 +63,8 @@
   }
 
   @include lg {
-    grid-template-columns: 40px clamp(184px, 18vw, 264px) minmax(0, 1.1fr) minmax(0, 1fr) 48px;
-    grid-template-areas: 'number media name facts go';
+    grid-template-columns: clamp(184px, 18vw, 264px) minmax(0, 1.1fr) minmax(0, 1fr) 48px;
+    grid-template-areas: 'media name facts go';
     grid-template-rows: auto;
     column-gap: clamp(24px, 2.6vw, 40px);
     align-items: center;
@@ -188,22 +104,6 @@
     @starting-style {
       translate: 0 24px;
     }
-  }
-}
-
-// The index numbering counts visible rows only (hidden rows do not increment).
-.number {
-  grid-area: number;
-  @include mono-label;
-
-  &::before {
-    content: counter(work, decimal-leading-zero);
-  }
-
-  // Small text: the accessible crimson (#ff5c73, 5.5:1), not the large-text red.
-  .row:hover &,
-  .row:focus-within & {
-    color: $color-red-text;
   }
 }
 
@@ -657,206 +557,4 @@
   @include lg {
     grid-column: 2;
   }
-}
-
-// ===================================================================
-// MAPL Labs (paper)
-// ===================================================================
-.labs {
-  position: relative;
-  background: $color-paper;
-  color: $color-ink;
-  border-radius: clamp(24px, 3vw, 40px) clamp(24px, 3vw, 40px) 0 0;
-}
-
-.labsInner {
-  @include shell;
-  @include section-pad;
-  display: grid;
-  gap: clamp(40px, 6vw, 80px);
-}
-
-.labsHead {
-  display: grid;
-  gap: 24px;
-
-  @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
-  }
-}
-
-.labsLabel {
-  @include section-label($color-ink-muted);
-  align-self: start;
-
-  &::before {
-    @include section-label-rule($color-red-ink);
-  }
-
-  @include lg {
-    padding-top: 0.9em;
-    grid-row: span 2;
-  }
-}
-
-.labsTitle {
-  @include section-title;
-  max-width: 13em;
-  color: $color-ink;
-}
-
-.labsLede {
-  @include lede;
-  margin: 0;
-  color: $color-ink-muted;
-}
-
-// Products on hairlines beside the live product on a phone. Phones: the phone
-// first (the picture, then its caption), then the products and the link.
-.labsBody {
-  display: grid;
-  grid-template-areas:
-    'media'
-    'products'
-    'more';
-  gap: 40px;
-
-  @include md {
-    grid-template-columns: minmax(0, 1fr) clamp(220px, 30vw, 280px);
-    grid-template-areas:
-      'products media'
-      'more media';
-    grid-template-rows: auto 1fr;
-    column-gap: 48px;
-    row-gap: 32px;
-  }
-
-  // Aligned with the heading column above (3fr | 9fr, 48px apart).
-  @include lg {
-    margin-left: calc((100% - 48px) * 0.25 + 48px);
-    grid-template-columns: minmax(0, 1fr) clamp(240px, 21vw, 300px);
-    column-gap: clamp(48px, 6vw, 96px);
-  }
-}
-
-.products {
-  grid-area: products;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid $color-ink-hairline;
-}
-
-.product {
-  display: grid;
-  gap: 12px;
-  padding: clamp(24px, 3vw, 36px) 0;
-  border-bottom: 1px solid $color-ink-hairline;
-}
-
-// A status mark beside the label: filled crimson for live, an open ring otherwise.
-.status {
-  @include mono-label($color-ink-muted);
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-
-  &::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    border: 1.5px solid currentColor;
-  }
-
-  &[data-status='live'] {
-    color: $color-ink;
-
-    &::before {
-      background: $color-red-ink;
-      border-color: $color-red-ink;
-    }
-  }
-}
-
-.productName {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2.25rem, 1.2rem + 3.4vw, 4.5rem); // 36px -> 72px
-  line-height: 0.95;
-  letter-spacing: -0.035em;
-  color: $color-ink;
-}
-
-.productLine {
-  margin: 0;
-  max-width: 30em;
-  font-size: $font-size-lede;
-  line-height: 1.45;
-  color: $color-ink-muted;
-}
-
-.productResult {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 2px 14px;
-  margin: 6px 0 0;
-  padding-left: 14px;
-  border-left: 2px solid $color-red-ink;
-  font-size: $font-size-base;
-  line-height: 1.45;
-  color: $color-ink-muted;
-}
-
-.productValue {
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: $color-ink;
-  @include tabular;
-}
-
-.labsMedia {
-  grid-area: media;
-  justify-self: center;
-  width: min(68vw, 280px);
-
-  @include md {
-    width: 100%;
-  }
-
-  @include md {
-    justify-self: end;
-  }
-
-  @include rise-in;
-}
-
-// The phone treatment from the case template's phone row, on paper.
-.labsPhone {
-  overflow: hidden;
-  aspect-ratio: 9 / 19.5;
-  border-radius: clamp(28px, 3vw, 40px);
-  border: 6px solid $color-ink;
-  background: $color-ink;
-  box-shadow: 0 40px 80px -30px rgba(11, 11, 12, 0.5);
-}
-
-.labsShot {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-}
-
-.labsMore {
-  grid-area: more;
-  margin: 0;
 }

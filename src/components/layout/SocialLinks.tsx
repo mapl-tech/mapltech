@@ -37,7 +37,6 @@ export default function SocialLinks({ links, className = '' }: SocialLinksProps)
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`MAPL TECH on ${SOCIAL_LABELS[key] ?? key}`}
-              data-cursor="external"
             >
               <Icon size={16} aria-hidden="true" />
             </a>

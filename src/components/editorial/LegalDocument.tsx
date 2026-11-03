@@ -107,10 +107,6 @@ export default function LegalDocument({
               </dd>
             </div>
             <div>
-              <dt>Sections</dt>
-              <dd>{sections.length}</dd>
-            </div>
-            <div className={styles.heroFactWide}>
               <dt>Questions</dt>
               <dd>
                 <a href={mailto(mailSubject)}>{siteConfig.email}</a>
@@ -132,7 +128,7 @@ export default function LegalDocument({
               <h2 id="facts-title" className={styles.summaryTitle}>
                 The short version
               </h2>
-              <p className={styles.summaryNote}>What the sections below say, in brief. The full text is what applies.</p>
+              <p className={styles.summaryNote}>A short summary of each section. The full text below is what applies.</p>
               <dl className={styles.factList}>
                 {facts.map((fact) => (
                   <div key={fact.label} className={styles.fact}>
@@ -171,13 +167,13 @@ export default function LegalDocument({
                   To use a right from <a href={`#${action.section}`}>section {number(action.section)}</a> (
                   {action.rights}), email us and say which one. Anything else:{' '}
                   <a href={mailto(mailSubject)}>{siteConfig.email}</a> or{' '}
-                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office keeps 09:00 to 18:00
+                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office is open 09:00 to 18:00
                   Eastern time, Monday to Friday.
                 </p>
               ) : (
                 <p className={styles.questionsText}>
                   Email <a href={mailto(mailSubject)}>{siteConfig.email}</a> or call{' '}
-                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office keeps 09:00 to 18:00
+                  <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>. Our Toronto office is open 09:00 to 18:00
                   Eastern time, Monday to Friday.
                 </p>
               )}

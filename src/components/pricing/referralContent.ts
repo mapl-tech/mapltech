@@ -1,13 +1,12 @@
 /**
- * /referral copy and facts (flagship redesign, Nov 2026).
+ * /referral copy and facts (flagship redesign, Nov 2026; simplified).
  *
  * Every statement about the program comes from the live referral page:
  * "When they become a client, you earn a referral bonus for making the
  * introduction", the three steps (submit a referral; we reach out mentioning
  * your introduction; when the referral becomes a client we thank you with a
  * referral bonus). No bonus amount, percentage or payment date is published,
- * so none is stated anywhere, and the calculator says plainly that its figure
- * is project value, not the bonus. Prices are read from site.ts.
+ * so none is stated anywhere. Prices are read from site.ts.
  */
 import type { FaqItem } from '@/lib/schema';
 import { factsOf } from './content';
@@ -26,65 +25,34 @@ const cloud = factsOf('cloud');
 export const REFERRAL_HERO = {
   eyebrow: 'Referral program',
   titleLines: ['Introduce an agency.', 'Earn a bonus when they become a client.'],
-  // 22 words: the "how" behind the headline, from the live page's step two.
-  lede: 'Send us their details and what they need. Our team reaches out, mentions your introduction and talks through the project with them.',
+  // 19 words: the "how" behind the headline, from the live page's step two.
+  lede: 'Send us their details. We reach out, mention that you introduced them, and talk with them about their project.',
   trust: 'One short form. No account needed.',
 } as const;
 
-/** The live page's three steps, in its own order and words. */
+/** The live page's three steps, in its own order. */
 export const REFERRAL_STEPS = [
-  { name: 'You introduce them', text: 'Fill out the form with the agency or partner’s details and what they need.' },
-  { name: 'We reach out', text: 'Our team contacts them, mentions your introduction and discusses their needs.' },
+  { name: 'You introduce them', text: 'Fill in the form with their details and what they need.' },
+  { name: 'We reach out', text: 'We contact them, mention your introduction and talk about what they need.' },
   { name: 'They become a client', text: 'When the agency you introduced becomes a client, we thank you with a referral bonus.' },
 ] as const;
-
-export const REFERRAL_ESTIMATOR = {
-  label: 'Calculator',
-  title: 'Put a number on your introductions.',
-  lede: 'Pick how many agencies you might introduce in a year and what they mostly need. The figure is project value at our public prices, not your bonus.',
-} as const;
-
-// Services are always named by their canonical labels (SERVICE_META via factsOf).
-const toolsAndCloud =
-  tools.from === cloud.from
-    ? `${tools.name} and ${cloud.name} at ${tools.fromLabel}`
-    : `${tools.name} at ${tools.fromLabel} and ${cloud.name} at ${cloud.fromLabel}`;
-
-export const REFERRAL_THEY_GET = {
-  label: 'For the agency you introduce',
-  title: 'What the agency you introduce gets.',
-  // Answer-first: what your contact is offered, with the real starting prices.
-  answer: `Public prices, a 20-minute scoping call and a fixed quote after it. ${web.name} starts at ${web.fromLabel}, ${automation.name} at ${automation.fromLabel}, ${toolsAndCloud}.`,
-  // First clause: the homepage's published line (flagship content.ts WORK_INTRO).
-  note: 'Most of what we build ships under our partners’ names, so the work can go out under the agency’s brand, not ours.',
-} as const;
 
 export const REFERRAL_FORM = {
   label: 'Your referral',
   title: 'Refer an agency.',
-  lede: 'Tell us about the agency and how to reach them. We will contact them and mention that you introduced them.',
-  // What the form asks of you, answered beside it (the fields in ReferralSignup).
-  needs: [
-    { term: 'Required', detail: 'Four fields: your name and email, and theirs.' },
-    { term: 'Optional', detail: 'Your company, the agency’s name, what they need and a note.' },
-  ],
+  // What the form asks of you (the required fields in ReferralSignup).
+  lede: 'Four fields are required: your name and email, and theirs. Everything else is optional.',
 } as const;
 
-/** Terms as FAQ: every answer is composed from copy already published on the site. */
+/**
+ * Questions, as FAQ: every answer is composed from copy already published on
+ * the site. The white-label line is the homepage's ("Most of what we build
+ * ships under our partners' names").
+ */
 export const REFERRAL_TERMS: FaqItem[] = [
   {
-    question: 'How do I refer an agency?',
-    answer:
-      'Fill out the referral form with the agency or partner’s details and their needs. Our team contacts them, mentions your introduction and discusses their needs.',
-  },
-  {
-    question: 'When do I receive the referral bonus?',
+    question: 'When do I get the referral bonus?',
     answer: 'When the agency you referred becomes a client, we thank you with a referral bonus for making the introduction.',
-  },
-  {
-    question: 'Is the figure in the calculator my bonus?',
-    answer:
-      'No. It is the project value your introductions would represent at our public prices. The referral bonus is separate: we thank you with one when an agency you introduced becomes a client.',
   },
   {
     question: 'Who can I refer?',
@@ -92,27 +60,27 @@ export const REFERRAL_TERMS: FaqItem[] = [
   },
   {
     question: 'What does the agency I refer get?',
-    answer: `A 20-minute scoping call and a fixed quote after it. ${web.name} starts at ${web.fromLabel}, ${automation.name} at ${automation.fromLabel}, ${tools.name} at ${tools.fromLabel} and ${cloud.name} at ${cloud.fromLabel}.`,
+    answer: `Public prices, a 20-minute call and a fixed quote after it. ${web.name} starts at ${web.fromLabel}, ${automation.name} at ${automation.fromLabel}, ${tools.name} at ${tools.fromLabel} and ${cloud.name} at ${cloud.fromLabel}. The work can go out under their own brand.`,
   },
   {
     question: 'Where does MAPL TECH work?',
     answer:
-      'MAPL TECH is headquartered in Toronto, Canada, with offices in Lagos, Nigeria and Kingston, Jamaica, and works with agencies in Canada, Nigeria, Jamaica and beyond.',
+      'We are based in Toronto, Canada, with offices in Lagos, Nigeria and Kingston, Jamaica. We work with agencies in Canada, Nigeria, Jamaica and beyond.',
   },
 ];
 
 export const REFERRAL_TERMS_COPY = {
-  label: 'Terms',
+  label: 'Questions',
   /** Also the FAQPage JSON-LD name. */
-  title: 'Referral questions, answered plainly.',
-  lede: 'How the program works, in the same words we use on every page.',
+  title: 'Questions about referrals.',
+  lede: 'What people ask before they refer an agency.',
 } as const;
 
 /**
  * The close band, for the visitor who is an agency with a build of its own.
- * Lede: the homepage close's own words (flagship content.ts CLOSE_BAND).
+ * Lede: the homepage close's own promise (a fixed quote after a 20-minute call).
  */
 export const REFERRAL_CLOSE = {
-  title: 'Have a build of your own in mind?',
-  lede: 'Tell us what you are building. You get a fixed quote after a 20-minute scoping call.',
+  title: 'Have a project of your own in mind?',
+  lede: 'Tell us what you are building. You get a fixed quote after a 20-minute call.',
 } as const;

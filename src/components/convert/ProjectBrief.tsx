@@ -457,8 +457,8 @@ export default function ProjectBrief() {
         </legend>
         <p id="brief-size-hint" className={styles.hint}>
           {kind === 'partner'
-            ? 'Monthly, from the public price list. Pick one to move on.'
-            : 'Each size shows the public price it maps to. Pick one to move on.'}
+            ? 'Monthly plans from our public price list. Pick one to move on.'
+            : 'Each size shows its public price. Pick one to move on.'}
         </p>
         <Options
           name="size"

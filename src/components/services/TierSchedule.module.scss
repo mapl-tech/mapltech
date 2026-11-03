@@ -2,20 +2,19 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// Tiers on paper: a printed price list, one column per tier, hairlines between.
+// What it costs, on paper: a printed price list, one card per tier, hairlines between.
 //   ink on paper ~17.6:1 · ink-muted 6.4:1 · crimson ink #B81D38 5.5:1
 .tiers {
   background: $color-paper;
   color: $color-ink;
   border-radius: clamp(24px, 3vw, 40px);
-  scroll-margin-top: calc(var(--header-height, 72px) + 16px);
 }
 
 .inner {
   @include shell;
   @include section-pad;
   display: grid;
-  gap: clamp(48px, 7vw, 88px);
+  gap: clamp(40px, 6vw, 80px);
 }
 
 .nowrap {
@@ -25,7 +24,7 @@
 // ---------------------------------------------------------------- head
 .head {
   display: grid;
-  gap: 24px;
+  gap: 20px;
 
   @include lg {
     grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
@@ -64,7 +63,7 @@
   }
 }
 
-// ---------------------------------------------------------------- the columns
+// ---------------------------------------------------------------- the tiers
 .grid {
   list-style: none;
   margin: 0;
@@ -94,15 +93,15 @@
   position: relative;
   display: grid;
   align-content: start;
-  gap: 20px;
-  padding: 32px 0 36px;
+  gap: 14px;
+  padding: 22px 0 24px;
   border-bottom: 1px solid $color-ink-hairline;
 
   &:last-child {
     border-bottom: 0;
   }
 
-  // Name, price, who, features and action line up across the row of tiers.
+  // Name, price, who, inclusions and action line up across a row of tiers.
   @supports (grid-template-rows: subgrid) {
     @include md {
       grid-row: span 5;
@@ -111,8 +110,7 @@
     }
   }
 
-  // The rule between columns sits in the middle of the gap, so every column is the same width
-  // (and every container-sized price the same size).
+  // The rule between columns sits in the middle of the gap, so every column is the same width.
   &::before {
     content: '';
     display: none;
@@ -125,7 +123,8 @@
   }
 
   @include md {
-    padding: 36px 0 40px;
+    gap: 18px;
+    padding: 32px 0 36px;
     border-bottom: 0;
 
     &:nth-child(2n)::before {
@@ -138,7 +137,7 @@
   }
 
   @include lg {
-    padding: 40px 0 8px;
+    padding: 36px 0 8px;
 
     &:nth-child(n) {
       border-top: 0;
@@ -156,22 +155,26 @@
   @include rise-in;
 }
 
-.tierHead {
+// Phones: the name on the left, the price on the right. Wider: the name and the price are rows of
+// the tier's own grid, so every tier's price sits on the same line.
+.top {
   display: grid;
-  gap: 10px;
-  align-content: start;
-}
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 16px;
+  row-gap: 4px;
 
-.tierNo {
-  @include mono-label($color-red-ink);
+  @include md {
+    display: contents;
+  }
 }
 
 .tierName {
   margin: 0;
   font-family: $font-display;
   font-weight: 700;
-  font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
-  line-height: 1.1;
+  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.75rem);
+  line-height: 1.12;
   letter-spacing: -0.02em;
   color: $color-ink;
   text-wrap: balance;
@@ -179,30 +182,50 @@
 
 // The size container lives here, not on the tier: containment would stop the tier being a subgrid.
 .priceBlock {
-  container-type: inline-size;
-  display: grid;
-  gap: 10px;
-  align-content: start;
+  display: contents;
+
+  @include md {
+    container-type: inline-size;
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
 }
 
-// Sized to the column (container units): short prices large, ranges a step down.
+// Phones: a steady size beside the name. Wider: sized to the column, short prices large, ranges a step down.
 .price {
   margin: 0;
+  justify-self: end;
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(2.25rem, 22cqi, 4rem);
-  line-height: 0.95;
-  letter-spacing: -0.045em;
+  font-size: 1.75rem;
+  line-height: 1;
+  letter-spacing: -0.035em;
   color: $color-ink;
+  white-space: nowrap;
   @include tabular;
 
+  // A range ("$12,000–$25,000+") would squeeze the name: it takes its own line under it.
   &[data-long] {
-    font-size: clamp(1.75rem, 11.5cqi, 3rem);
-    letter-spacing: -0.035em;
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  @include md {
+    justify-self: start;
+    font-size: clamp(2.25rem, 22cqi, 4rem);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+
+    &[data-long] {
+      font-size: clamp(1.75rem, 11.5cqi, 3rem);
+      letter-spacing: -0.035em;
+    }
   }
 }
 
 .priceNote {
+  grid-column: 1 / -1;
   margin: 0;
   font-size: $font-size-base;
   line-height: 1.45;
@@ -217,18 +240,21 @@
   text-wrap: pretty;
 }
 
+// ---------------------------------------------------------------- inclusions
 .features {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid $color-ink-hairline;
   }
 
   li {
     position: relative;
-    padding: 11px 0 11px 22px;
-    border-bottom: 1px solid $color-ink-hairline;
+    padding: 6px 0 6px 22px;
     font-size: $font-size-base;
     line-height: 1.45;
     color: $color-ink-muted;
@@ -237,7 +263,7 @@
       content: '';
       position: absolute;
       left: 0;
-      top: 1.3em;
+      top: calc(6px + 0.72em);
       width: 10px;
       height: 2px;
       background: $color-red-ink;
@@ -246,15 +272,92 @@
 }
 
 .builds {
-  margin: 0 0 12px;
+  margin: 0 0 4px;
   font-size: $font-size-base;
   font-weight: $font-weight-semibold;
   color: $color-ink;
 }
 
+// Which copy of the first three inclusions shows: open on wide screens, inside the disclosure on phones.
+.wide {
+  display: none;
+
+  @include md {
+    display: block;
+  }
+}
+
+.wideOnly {
+  display: none;
+
+  @include md {
+    display: inline;
+  }
+}
+
+.phoneOnly {
+  @include md {
+    display: none;
+  }
+}
+
+.more {
+  @include md {
+    &[data-rest='none'] {
+      display: none;
+    }
+  }
+}
+
+// A disclosure row: the whole row is the target (48px), the chevron turns when open.
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+.chevron {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  margin-left: 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.3s $ease-out-expo;
+
+  details[open] > .summary & {
+    transform: translateY(2px) rotate(-135deg);
+  }
+}
+
+.moreBody {
+  padding: 2px 0 8px;
+}
+
+// Wide screens: the action closes the card. Phones: it sits at the end of "What’s included".
 .action {
+  display: none;
   margin: 0;
   align-self: end;
+
+  @include md {
+    display: block;
+  }
+}
+
+.innerAction {
+  margin: 6px 0 0;
 }
 
 .tierLink,
@@ -278,23 +381,23 @@
 // ---------------------------------------------------------------- after launch
 .after {
   display: grid;
-  gap: 24px;
-  padding-top: clamp(28px, 3vw, 40px);
+  gap: 12px;
+  padding-top: clamp(24px, 3vw, 40px);
   border-top: 1px solid $color-ink-hairline;
 
   @include lg {
     grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
     column-gap: 48px;
-  }
-}
+    row-gap: 8px;
 
-.afterHead {
-  display: grid;
-  gap: 12px;
-  align-content: start;
+    > * {
+      grid-column: 2;
+    }
 
-  @include lg {
-    grid-row: span 2;
+    > .afterTitle {
+      grid-column: 1;
+      grid-row: 1 / span 3;
+    }
   }
 }
 
@@ -302,14 +405,14 @@
   margin: 0;
   font-family: $font-display;
   font-weight: 700;
-  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.875rem);
   letter-spacing: -0.02em;
   color: $color-ink;
 }
 
 .afterIntro {
   margin: 0;
-  max-width: 26em;
+  max-width: 40em;
   font-size: $font-size-base;
   line-height: 1.55;
   color: $color-ink-muted;
@@ -317,7 +420,7 @@
 
 .plans {
   display: grid;
-  margin: 0;
+  margin: 4px 0 8px;
   border-top: 1px solid $color-ink-hairline;
 
   @include md {
@@ -334,7 +437,7 @@
   display: grid;
   gap: 6px;
   align-content: start;
-  padding: 18px 0 20px;
+  padding: 16px 0 18px;
   border-bottom: 1px solid $color-ink-hairline;
 }
 
@@ -346,7 +449,7 @@
   margin: 0;
   font-family: $font-display;
   font-weight: 700;
-  font-size: clamp(1.375rem, 1.15rem + 0.6vw, 1.75rem);
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.625rem);
   letter-spacing: -0.02em;
   color: $color-ink;
   @include tabular;
@@ -355,7 +458,7 @@
 .unit {
   font-family: $font-body;
   font-weight: $font-weight-medium;
-  font-size: $font-size-sm;
+  font-size: $font-size-base;
   letter-spacing: 0;
   white-space: nowrap;
   color: $color-ink-muted;
@@ -370,8 +473,4 @@
 
 .allPrices {
   margin: 0;
-
-  @include lg {
-    grid-column: 2;
-  }
 }

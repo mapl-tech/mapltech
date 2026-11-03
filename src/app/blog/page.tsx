@@ -13,12 +13,11 @@ import { SERVICE_LIST, topicLabel } from '@/components/editorial/services';
 import styles from './blog-index.module.scss';
 
 /**
- * /blog (Nov 2026 award pass): the archive as a publication. The page hero
- * with the real counts → the newest article presented large → every article
- * on paper, grouped by month as editorial rows, with topic facets and instant
- * search (BlogArchive) → the crimson close. All post links are in the server
- * HTML. Structured data: a CollectionPage with the Blog node listing every
- * BlogPosting.
+ * /blog (Nov 2026, simplified): the page hero → the newest article presented
+ * large → every article on paper, grouped by month as editorial rows, with
+ * topic facets and instant search (BlogArchive) → the crimson close. All post
+ * links are in the server HTML. Structured data: a CollectionPage with the
+ * Blog node listing every BlogPosting.
  */
 
 const MONTHS = [
@@ -29,9 +28,6 @@ const MONTHS = [
 /** Newest first, by the ISO date (blog-posts.ts is ordered that way already; this makes it a guarantee). */
 const posts: BlogPost[] = [...blogPosts].sort((a, b) => toISODate(b.date).localeCompare(toISODate(a.date)));
 const latest = posts[0];
-const readTimes = posts.map((post) => post.readTime);
-const minRead = Math.min(...readTimes);
-const maxRead = Math.max(...readTimes);
 
 const DESCRIPTION = `${posts.length} practical articles from MAPL TECH on ${SERVICE_LIST}, for digital agencies.`;
 
@@ -99,41 +95,13 @@ export default function BlogPage() {
 
       <PageHeader
         size="l"
-        label="MAPL TECH blog"
-        title="Engineering, written down."
-        lede={`Practical articles on ${SERVICE_LIST}, written by the MAPL TECH team for agencies and the clients they serve.`}
+        label="Blog"
+        title="Practical guides for agencies."
+        lede={`Articles on ${SERVICE_LIST}, written by the MAPL TECH team for agencies and their clients.`}
         actions={
           <a href="#archive" className={styles.heroLink} data-cta-placement="blog_hero_archive">
-            Search the archive
+            Search all articles
           </a>
-        }
-        aside={
-          <div className={styles.masthead}>
-            <p className={styles.count}>
-              <span className={styles.countValue}>{posts.length}</span>
-              <span className={styles.countLabel}>articles since {firstMonth}</span>
-            </p>
-            <dl className={styles.facts}>
-              <div>
-                <dt>Topics</dt>
-                <dd>{categories.length}</dd>
-              </div>
-              <div>
-                <dt>Latest</dt>
-                <dd>
-                  <time dateTime={newest.iso}>
-                    {newest.short}, {newest.year}
-                  </time>
-                </dd>
-              </div>
-              <div>
-                <dt>Reading time</dt>
-                <dd>
-                  {minRead} to {maxRead} min
-                </dd>
-              </div>
-            </dl>
-          </div>
         }
       />
 
@@ -146,8 +114,9 @@ export default function BlogPage() {
                 src={latest.coverImage}
                 alt={latest.coverImageAlt}
                 fill
-                sizes="(min-width: 1440px) 1296px, 92vw"
+                sizes="(min-width: 1440px) 1296px, (min-width: 768px) 92vw, 1px"
                 loading="eager"
+                fetchPriority="high"
                 className={styles.image}
               />
             </div>
@@ -185,10 +154,10 @@ export default function BlogPage() {
           <header className={styles.archiveHead}>
             <p className={styles.archiveLabel}>The archive</p>
             <h2 id="archive-title" className={styles.archiveTitle}>
-              Every article
+              All articles
             </h2>
             <p className={styles.archiveLede}>
-              {posts.length} articles since {firstMonth}, newest first. Filter by topic or search titles and summaries.
+              {posts.length} articles since {firstMonth}, newest first. Choose a topic, or search the titles and summaries.
             </p>
           </header>
           <BlogArchive rows={rows} topics={topics} />

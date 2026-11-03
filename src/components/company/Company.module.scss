@@ -12,7 +12,6 @@
   position: relative;
   background: $color-ground;
   color: $color-fg;
-  scroll-margin-top: var(--header-height, 72px);
 }
 
 // Paper: ink on #F1EDE7 (ink 17.6:1, ink-muted 6.4:1, crimson-ink 5.5:1).
@@ -21,7 +20,6 @@
   background: $color-paper;
   color: $color-ink;
   border-radius: clamp(24px, 3vw, 40px);
-  scroll-margin-top: var(--header-height, 72px);
 }
 
 .inner {

@@ -117,14 +117,7 @@ $card-wide: 920px;
 
 .kind {
   @include mono-label;
-  display: flex;
-  align-items: center;
-  gap: 12px;
   margin: 0;
-}
-
-.count {
-  color: $color-red;
 }
 
 .client {

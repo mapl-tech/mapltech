@@ -23,8 +23,8 @@
  * A field without a source is absent; the row is one line shorter, never padded.
  */
 import { findStory, type CaseStory } from '@/components/case/stories';
-import { ESTIMATE_SERVICES, SERVICE_META, formatMoney, parsePriceLabel, tiersFor, type EstimateService } from '@/lib/estimate';
-import { activeServiceLines, approvedTestimonialFor, workEntries, workFilters, type WorkEntry } from './work-data';
+import type { EstimateService } from '@/lib/estimate';
+import { approvedTestimonialFor, workEntries, workFilters, type WorkEntry } from './work-data';
 import type { PreviewItem, WorkFilter } from './work-types';
 
 /** Metadata and JSON-LD share these strings, so the two can never drift. */
@@ -63,16 +63,17 @@ const BUILT: Partial<Record<string, string>> = {
   // stories.ts facts: "What we built: The complete website"; "Stack: WordPress, custom theme, PHP".
   'lro-staffing': 'The complete website, on a custom WordPress theme',
   // site.ts: "Full relaunch ... all on a CMS volunteers can maintain themselves".
-  'chha-ncr': 'A full relaunch on a CMS volunteers can maintain',
-  // site.ts: "Interactive salary guide tool with ... role-based salary benchmarking".
-  'lro-salary-guide': 'An interactive salary benchmarking tool',
+  'chha-ncr': 'A full relaunch that volunteers can update themselves',
+  // site.ts: "Interactive salary guide tool with ... role-based salary benchmarking
+  // for recruiters and hiring managers".
+  'lro-salary-guide': 'An interactive salary guide for recruiters and hiring managers',
   // site.ts: "Our own product: a travel and tourism company fully managed by AI".
   'mapl-tours': 'Our own product, a travel company run by AI',
   // site.ts: "Event-driven web platform with member portal, registration workflows".
   'focas-canada': 'An event platform with a member portal',
   // site.ts: "End-to-end e-commerce automation: inventory syncing, shipping triggers,
   // and post-purchase communication flows".
-  'crowned-spice': 'E-commerce automation, from inventory to post-purchase',
+  'crowned-spice': 'Online store automation: stock, shipping and follow-up messages',
   // stories.ts facts: "What we built: Internal operations dashboard".
   unsvcc: 'An internal operations dashboard',
 };
@@ -158,40 +159,9 @@ export function catalogVoice(): CatalogVoice | undefined {
   return undefined;
 }
 
-/** The four service lines by their canonical names (nav, homepage, pricing). */
-export const SERVICE_NAMES: Record<EstimateService, string> = {
-  web: SERVICE_META.web.label,
-  automation: SERVICE_META.automation.label,
-  tools: SERVICE_META.tools.label,
-  cloud: SERVICE_META.cloud.label,
-};
-
-/** The service lines that have at least one project on view, by name. */
-export function servicesOnView(): string[] {
-  return activeServiceLines().map((key) => SERVICE_NAMES[key]);
-}
-
-/** Lowest public "from" price across the four lines (site.ts `pricing`), e.g. "$3,500". */
-export function lowestFromPrice(): string {
-  const lows = ESTIMATE_SERVICES.flatMap((service) => tiersFor(service).map((tier) => parsePriceLabel(tier.price).low)).filter(
-    (n): n is number => typeof n === 'number',
-  );
-  return formatMoney(Math.min(...lows));
-}
-
-/** The four service pages, by canonical name. */
-export function serviceLinks(): { key: EstimateService; name: string; href: string }[] {
-  return ESTIMATE_SERVICES.map((key) => ({ key, name: SERVICE_NAMES[key], href: SERVICE_META[key].path }));
-}
-
 const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
 
 /** "seven" for 7; digits past twelve. */
 export function countWord(n: number): string {
   return NUMBER_WORDS[n] ?? String(n);
-}
-
-/** "07" for 7: the index's own numbering. */
-export function pad2(n: number): string {
-  return String(n).padStart(2, '0');
 }

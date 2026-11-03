@@ -9,7 +9,6 @@ import SmoothScroll from '@/components/ui/SmoothScroll';
 import MobileActionBar from '@/components/ui/MobileActionBar';
 import JsonLd from '@/components/seo/JsonLd';
 import { siteGraph } from '@/lib/schema';
-import '@/styles/tailwind.css';
 import '@/styles/globals.scss';
 
 // The two families the live site already uses. Overpass: display only (H1-H3,

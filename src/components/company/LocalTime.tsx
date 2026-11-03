@@ -1,6 +1,6 @@
 'use client';
 
-import { WORK_END, WORK_START, isOfficeOpen, useMinute, zoneTime } from '@/components/ui/TimezoneOverlap';
+import { WORK_END, WORK_START, isOfficeOpen, useMinute, zoneTime } from '@/components/ui/officeTime';
 import styles from './PlaceReadout.module.scss';
 
 const pad = (n: number) => String(n).padStart(2, '0');

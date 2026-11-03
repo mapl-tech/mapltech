@@ -23,9 +23,9 @@ import {
   type ToggleKey,
   type ToggleOption,
 } from '@/lib/estimate';
-import { useLenis } from '@/components/ui/SmoothScroll';
+import { anchorOffset, useLenis } from '@/components/ui/SmoothScroll';
 import { useMediaQuery, usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
-import { SERVICES, keepHyphens, priceText } from './content';
+import { SERVICES, TOGGLE_LABELS, keepHyphens, priceText } from './content';
 import EstimateBar from './EstimateBar';
 import EstimateSummary from './EstimateSummary';
 import { clearEstimateUrl, useEstimateState, writeEstimateUrl } from './estimateUrlStore';
@@ -46,26 +46,36 @@ import styles from './ScopeEstimator.module.scss';
  * live range on screen while the questions are in view and hands over to the
  * readout once it scrolls in. The five questions are numbered rows on
  * hairlines (the numerals are decorative; each legend is the question alone).
+ *
+ * Simplify pass (Nov 2026): every option changes the price or the brief. The
+ * "design supplied" switch is gone from the questions (it never moved the
+ * price); a shared link that carries it still decodes.
  */
 
 const TIMELINE_COPY: Record<EstimateTimeline, { label: string; effect: string }> = {
-  standard: { label: 'Standard', effect: 'No rush premium' },
-  rush: { label: 'Rush', effect: `Adds the emergency rate, ${priceText(pricing.hourlyRates.emergency)}/hour` },
+  standard: { label: 'Standard', effect: 'No extra cost' },
+  rush: { label: 'Rush', effect: `Adds our emergency rate, ${priceText(pricing.hourlyRates.emergency)} an hour` },
 };
+
+/** Add-ons that change the price: all but "design supplied". */
+const PRICED_TOGGLES = TOGGLE_OPTIONS.filter((toggle) => toggle.key !== 'designSupplied');
+
+/** An add-on's name in everyday words (TOGGLE_LABELS), or the engine's own. */
+const toggleName = (toggle: ToggleOption): string => TOGGLE_LABELS[toggle.key] ?? toggle.label;
 
 /**
  * What a support level is and costs across the selected lines: the published
  * line it maps to ("Essential Care") and the monthly sum ("$1,000–$2,000/mo").
  */
 function supportEffect(services: readonly EstimateService[], level: SupportLevel): { meta: string; price: string | null } {
-  if (level === 'none') return { meta: 'No monthly retainer', price: null };
+  if (level === 'none') return { meta: 'No monthly plan', price: null };
   const lines = services.map((service) => supportLineFor(service, level)).filter((line) => line !== undefined);
-  if (lines.length === 0) return { meta: 'Not offered for this line', price: null };
+  if (lines.length === 0) return { meta: 'Not offered for this service', price: null };
   const price = `${formatRange(
     lines.reduce((sum, line) => sum + line.low, 0),
     lines.reduce((sum, line) => sum + line.high, 0),
   )}/mo`;
-  return { meta: lines.length === 1 ? lines[0].name : `${lines.length} monthly lines`, price };
+  return { meta: lines.length === 1 ? lines[0].name : `${lines.length} monthly plans`, price };
 }
 
 /**
@@ -73,14 +83,13 @@ function supportEffect(services: readonly EstimateService[], level: SupportLevel
  * flips it: the tier it requires, or that the current tier already covers it.
  */
 function toggleEffect(toggle: ToggleOption, input: EstimateInput): string {
-  if (toggle.key === 'designSupplied') return 'No price change. We build from your Figma, Sketch or XD files.';
   const services = input.services.filter((service) => toggle.appliesTo.includes(service));
   const parts = services.map((service) => {
     const without = resolveTier(service, input.size[service], { ...input.toggles, [toggle.key]: false });
     const withIt = resolveTier(service, input.size[service], { ...input.toggles, [toggle.key]: true });
     const prefix = services.length > 1 ? `${SERVICE_META[service].shortLabel}: ` : '';
     return withIt.index > without.index
-      ? `${prefix}${services.length > 1 ? 'r' : 'R'}equires ${keepHyphens(withIt.tier.name)}, ${priceText(withIt.tier.price)}`
+      ? `${prefix}${services.length > 1 ? 'n' : 'N'}eeds ${keepHyphens(withIt.tier.name)}, ${priceText(withIt.tier.price)}`
       : `${prefix}${services.length > 1 ? 'i' : 'I'}ncluded in ${keepHyphens(without.tier.name)}`;
   });
   return parts.join(' · ');
@@ -170,21 +179,21 @@ export default function ScopeEstimator() {
   };
 
   // Through Lenis where it runs (fine pointers), as the site's anchor handler
-  // does, natively elsewhere; both land at the readout's scroll-margin-top.
+  // does, natively elsewhere; both land at the same place (anchorOffset).
   const jumpToReadout = () => {
     const target = document.getElementById('estimate-readout');
     if (!target) return;
-    if (lenis) lenis.scrollTo(target, { offset: -(parseFloat(getComputedStyle(target).scrollMarginTop) || 88), immediate: reduceMotion });
+    if (lenis) lenis.scrollTo(target, { offset: -anchorOffset(target), immediate: reduceMotion });
     else target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     window.setTimeout(() => document.getElementById('estimate-total')?.focus({ preventScroll: true }), reduceMotion ? 0 : 450);
   };
 
   const multi = input.services.length > 1;
-  const applicableToggles = TOGGLE_OPTIONS.filter((toggle) => toggle.appliesTo.some((service) => input.services.includes(service)));
+  const applicableToggles = PRICED_TOGGLES.filter((toggle) => toggle.appliesTo.some((service) => input.services.includes(service)));
 
   return (
     <div className={styles.estimator}>
-      <form ref={controlsRef} className={styles.controls} aria-label="Scope estimator" onSubmit={(event) => event.preventDefault()}>
+      <form ref={controlsRef} className={styles.controls} aria-label="Price estimator" onSubmit={(event) => event.preventDefault()}>
         {/* 1 · Service lines (checkboxes: several lines can be priced together) */}
         <fieldset className={styles.step} aria-describedby={`${uid}-svc-hint`}>
           <legend className={styles.legend}>
@@ -192,7 +201,7 @@ export default function ScopeEstimator() {
             <span className={styles.legendText}>What are we building?</span>
           </legend>
           <p id={`${uid}-svc-hint`} className={styles.hint}>
-            Pick one or more. Two or more lines also show the partner bundle that covers them.
+            Pick one or more services.
           </p>
           <div className={styles.services}>
             {SERVICES.map((facts) => {
@@ -218,7 +227,7 @@ export default function ScopeEstimator() {
             })}
           </div>
           <span id={`${uid}-locked`} className="visually-hidden">
-            At least one service line stays selected.
+            At least one service stays selected.
           </span>
         </fieldset>
 
@@ -276,7 +285,7 @@ export default function ScopeEstimator() {
             <span className={styles.legendText}>What does it need?</span>
           </legend>
           <p id={`${uid}-addon-hint`} className={styles.hint}>
-            Each add-on says what it does to the price before you turn it on.
+            Turn on what the project needs. Each one shows how it changes the price.
           </p>
           <div className={styles.switches}>
             {applicableToggles.map((toggle) => {
@@ -285,7 +294,7 @@ export default function ScopeEstimator() {
               return (
                 <label key={toggle.key} className={styles.switch} data-checked={on || undefined}>
                   <span className={styles.switchText}>
-                    <span className={styles.switchLabel}>{toggle.label}</span>
+                    <span className={styles.switchLabel}>{toggleName(toggle)}</span>
                     <span id={effectId} className={styles.switchEffect}>
                       {toggleEffect(toggle, input)}
                     </span>
@@ -315,7 +324,7 @@ export default function ScopeEstimator() {
             <span className={styles.legendText}>Support after launch</span>
           </legend>
           <p id={`${uid}-support-hint`} className={styles.hint}>
-            Optional and monthly. Each level maps to a published {multi ? 'maintenance or retainer' : SERVICE_META[input.services[0]].recurringLabel.toLowerCase()} line.
+            Optional. Each level matches one of our monthly plans.
           </p>
           <div className={styles.options}>
             {SUPPORT_LEVELS.map((level) => {
@@ -375,7 +384,7 @@ export default function ScopeEstimator() {
             <button type="button" className={styles.resetButton} onClick={startOver}>
               Start over
             </button>
-            <span className={styles.resetNote}>Clears your answers and the link.</span>
+            <span className={styles.resetNote}>Clears your answers.</span>
           </div>
         ) : null}
       </form>

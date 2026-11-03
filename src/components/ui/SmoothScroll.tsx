@@ -14,8 +14,19 @@ import { useFinePointer, usePrefersReducedMotion } from './useMediaQuery';
  */
 export { useLenis } from 'lenis/react';
 
-/** Clearance under the fixed header for targets that set no scroll-margin-top. */
+/** Clearance under the fixed header if the page sets no scroll-padding-top. */
 const DEFAULT_ANCHOR_CLEARANCE = 88;
+
+/**
+ * Where an in-page jump should leave `target`: the same place the browser's own
+ * hash jump and focus scrolling put it, i.e. the root's scroll-padding-top (the
+ * fixed header plus 16px, globals.scss) plus the target's own scroll-margin-top
+ * (breathing room only). Lenis gets this as its offset, negated.
+ */
+export function anchorOffset(target: Element): number {
+  const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || DEFAULT_ANCHOR_CLEARANCE;
+  return padding + (parseFloat(getComputedStyle(target).scrollMarginTop) || 0);
+}
 
 /** Can receive focus without help (otherwise it gets tabindex="-1"). */
 const FOCUSABLE = 'a[href], button, input, select, textarea, summary, [tabindex]';
@@ -32,7 +43,7 @@ const LENIS_OPTIONS: LenisOptions = {
   syncTouch: false,
   autoRaf: true,
   // In-page anchors are handled in LenisSingleton, not by Lenis's `anchors`
-  // option: that scrolls with offset 0 and ignores scroll-margin-top, which
+  // option: that scrolls with offset 0 and ignores the header clearance, which
   // parked headings under the fixed header.
   // data-lenis-prevent, data-lenis-prevent-wheel and data-lenis-prevent-touch are
   // honoured by Lenis on every node in the event path; no custom `prevent` needed.
@@ -52,7 +63,7 @@ function LenisSingleton() {
   const pathname = usePathname();
 
   // In-page anchors glide through Lenis but land where the browser would put
-  // them: below the target's own scroll-margin-top, with the URL hash updated
+  // them (anchorOffset), with the URL hash updated
   // and keyboard focus moved to the target (so the next Tab starts there).
   // Cross-page hash links are left to the router.
   useEffect(() => {
@@ -68,9 +79,8 @@ function LenisSingleton() {
       if (!target || !lenis) return;
 
       event.preventDefault();
-      const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || DEFAULT_ANCHOR_CLEARANCE;
       lenis.scrollTo(target, {
-        offset: -margin,
+        offset: -anchorOffset(target),
         onComplete: () => {
           if (window.location.hash !== url.hash) window.history.pushState(null, '', url.hash);
           if (!target.matches(FOCUSABLE)) {

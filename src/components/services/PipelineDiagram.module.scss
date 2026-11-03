@@ -4,13 +4,13 @@
 
 // The path a change travels. Narrow containers: one column, top to bottom.
 // Wide containers (container query): three stages out, three back, one loop home.
-//   01 Commit  ->  02 Tests  ->  03 Preview
+//   01 Change  ->  02 Tests  ->  03 Preview
 //        ^                          |
-//   06 Monitoring <- 05 Production <- 04 Review
+//   06 Monitoring <- 05 Live <- 04 Review
 .pipeline {
   --gap-x: clamp(26px, 3.6vw, 52px);
   --gap-y: 30px;
-  --name-size: clamp(0.9375rem, 0.82rem + 0.4vw, 1.125rem);
+  --name-size: clamp(1.0625rem, 0.98rem + 0.3vw, 1.125rem);
   margin: 0;
   container: pipeline / inline-size;
 
@@ -96,7 +96,7 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: #17171a;
 
-  // Production: the one lit stage.
+  // Live: the one lit stage.
   &[data-live] {
     border-color: rgba($color-red, 0.7);
     box-shadow: 0 0 28px -6px rgba($color-red, 0.6);
@@ -232,7 +232,7 @@
       transform-origin: right center;
     }
 
-    // What monitoring finds feeds the next change: a dashed loop back to Commit.
+    // What monitoring finds feeds the next change: a dashed loop back to Change.
     &:nth-child(6)::after {
       top: auto;
       bottom: 100%;

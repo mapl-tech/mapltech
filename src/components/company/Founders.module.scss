@@ -176,25 +176,25 @@
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   grid-template-areas:
-    'photo no'
     'photo head'
     'body body';
-  grid-template-rows: auto 1fr auto;
-  gap: 12px 18px;
+  gap: 20px 18px;
   padding: clamp(32px, 4vw, 48px) 0;
   border-bottom: 1px solid $color-hairline;
-  scroll-margin-top: calc(var(--header-height, 72px) + 24px);
+  scroll-margin-top: 8px;
 
   @include md {
     grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
     column-gap: 40px;
   }
 
+  // Wide screens: the photo in the label column, the name and bio in the
+  // content column (the section head's 3fr / 9fr grid).
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 3fr) minmax(0, 6fr);
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
     grid-template-areas:
-      'no photo head'
-      'no photo body';
+      'photo head'
+      'photo body';
     grid-template-rows: auto 1fr;
     column-gap: 48px;
     row-gap: 28px;
@@ -203,28 +203,6 @@
 
   &:target {
     border-bottom-color: rgba($color-red, 0.6);
-  }
-}
-
-.profileNo {
-  grid-area: no;
-  align-self: end;
-  @include mono-label($color-red);
-
-  // Wide screens: the homepage's outline numeral, in the label column. The
-  // stroke sits under a ground-coloured fill, so only its outer half shows and
-  // the glyphs' overlapping contours (the foot of the 1) stay hidden.
-  @include lg {
-    align-self: start;
-    font-family: $font-display;
-    font-weight: 800;
-    font-size: clamp(4.5rem, 2.4rem + 4.4vw, 8rem);
-    line-height: 0.82;
-    letter-spacing: -0.045em;
-    text-transform: none;
-    color: $color-ground;
-    -webkit-text-stroke: 3px $color-red;
-    paint-order: stroke fill;
   }
 }
 
@@ -239,7 +217,12 @@
 
 .profileHead {
   grid-area: head;
+  align-self: center;
   min-width: 0;
+
+  @include lg {
+    align-self: start;
+  }
 }
 
 .profileName {

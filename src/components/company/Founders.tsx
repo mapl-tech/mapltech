@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ABOUT, FOUNDERS, TEAM, indexOf, type Founder } from './content';
+import { ABOUT, FOUNDERS, TEAM, type Founder } from './content';
 import ed from './Company.module.scss';
 import styles from './Founders.module.scss';
 
@@ -11,7 +11,7 @@ import styles from './Founders.module.scss';
  *
  * - `FoundersSpread` (/about-us): on paper, beside the decision to get in
  *   touch: names, titles, one line from each bio, LinkedIn.
- * - `FounderProfiles` (/team): numbered entries with the full team.ts bios
+ * - `FounderProfiles` (/team): one entry each with the full team.ts bios
  *   and the `/team#slug` anchors their Person JSON-LD points at.
  */
 
@@ -92,11 +92,8 @@ export function FounderProfiles() {
         </header>
 
         <ol className={styles.profiles} role="list">
-          {FOUNDERS.map((founder, i) => (
+          {FOUNDERS.map((founder) => (
             <li key={founder.slug} id={founder.slug} className={styles.profile}>
-              <span className={styles.profileNo} aria-hidden="true">
-                {indexOf(i)}
-              </span>
               <Portrait founder={founder} sizes="(min-width: 1024px) 320px, 40vw" className={styles.profilePhoto} />
               <div className={styles.profileHead}>
                 <h3 className={styles.profileName}>{founder.name}</h3>

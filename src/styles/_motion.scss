@@ -93,18 +93,6 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 // ---------------------------------------------------------------------------
 // #9 Bottom sheet (vaul) + mobile action bar
 // ---------------------------------------------------------------------------
-.mobile-action-bar__primary:hover {
-  --bar-primary-bg: #{$color-red-bright};
-}
-
-.mobile-action-bar__primary:active {
-  --bar-primary-bg: #{$color-red-deep};
-}
-
-.mobile-action-bar__call:active {
-  border-color: $color-red-deep;
-}
-
 @media (prefers-reduced-motion: reduce) {
   [data-vaul-drawer],
   [data-vaul-overlay] {

@@ -7,7 +7,6 @@
   position: relative;
   background: $color-ground;
   padding-bottom: $editorial-pad-y;
-  scroll-margin-top: calc(var(--header-height, 72px) + 16px);
 }
 
 .head {
@@ -148,21 +147,6 @@
   }
 }
 
-.stack {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 14px;
-  margin: 0;
-  font-size: $font-size-base;
-  line-height: 1.5;
-  color: $color-fg;
-}
-
-.stackLabel {
-  @include mono-label;
-}
-
 .read {
   @include text-action($color-fg);
   justify-self: start;
@@ -268,66 +252,7 @@
   color: $color-fg-muted;
 }
 
-// ---------------------------------------------------------------- the client, in her words
-.quote {
-  margin: 0;
-  display: grid;
-  gap: 28px;
-
-  @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
-
-    > * {
-      grid-column: 2;
-    }
-  }
-}
-
-.quoteText {
-  margin: 0;
-
-  p {
-    margin: 0;
-    font-family: $font-display;
-    font-weight: 600;
-    font-size: clamp(1.625rem, 1rem + 2.2vw, 3rem);
-    line-height: 1.16;
-    letter-spacing: -0.02em;
-    color: $color-fg;
-    text-wrap: pretty;
-  }
-}
-
-.by {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  > span {
-    display: grid;
-    gap: 2px;
-  }
-}
-
-.avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.byName {
-  font-weight: $font-weight-semibold;
-  color: $color-fg;
-}
-
-.byRole {
-  font-size: $font-size-sm;
-  color: $color-fg-muted;
-}
-
-// ---------------------------------------------------------------- the line's other cases
+// ---------------------------------------------------------------- the other case
 .more {
   display: grid;
   gap: clamp(20px, 2.4vw, 28px);

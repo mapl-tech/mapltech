@@ -28,12 +28,9 @@ export default function ChapterNav({ chapters }: { chapters: readonly { id: stri
   return (
     <nav className={styles.chapters} aria-label="Case study chapters">
       <ol>
-        {chapters.map((chapter, i) => (
+        {chapters.map((chapter) => (
           <li key={chapter.id}>
             <a href={`#${chapter.id}`} aria-current={active === chapter.id ? 'location' : undefined}>
-              <span className={styles.chapterIndex} aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
               {chapter.label}
             </a>
           </li>

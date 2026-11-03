@@ -10,7 +10,7 @@ import styles from '@/components/editorial/NotFound.module.scss';
  * The site-wide 404 (any unmatched URL and every notFound() call), kept light:
  * no WebGL and no script beyond the path-aware hint. Very large numerals under
  * the page light, a plain sentence as the H1, the one primary action and the
- * way home, then the six places people usually want as editorial rows.
+ * way home, then the six places people usually want, as plain rows.
  * Next.js marks the response noindex.
  */
 
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 const PLACES = [
   { href: '/services', name: 'Services', note: `${SERVICE_NAMES.join(', ')}.` },
-  { href: '/our-work', name: 'Work', note: 'Projects that carry our name.' },
+  { href: '/our-work', name: 'Work', note: 'Projects we can show.' },
   { href: '/pricing', name: 'Pricing', note: 'The public price list and the estimator.' },
   { href: '/blog', name: 'Blog', note: `${blogPosts.length} practical articles for agencies.` },
   { href: '/about-us', name: 'About', note: 'Who we are, in Toronto, Lagos and Kingston.' },
@@ -71,11 +71,8 @@ export default function NotFound() {
             Where to next
           </h2>
           <ul className={styles.list} role="list">
-            {PLACES.map((place, i) => (
+            {PLACES.map((place) => (
               <li key={place.href} className={styles.place}>
-                <span className={styles.placeIndex} aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
                 <span className={styles.placeText}>
                   <Link href={place.href} className={styles.placeName} data-cta-placement={`not_found_${place.name.toLowerCase()}`}>
                     {place.name}

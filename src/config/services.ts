@@ -2,13 +2,14 @@
  * One typed record per service line, for the four `/services/*` pages, the
  * homepage services rows, the pricing estimator and the JSON-LD builders.
  *
- * Every string here is existing copy: the four current service pages
- * (hero, capability cards, process phases, CTA band), the tier data in
- * `pricing` (site.ts) and the pricing page's FAQ array. Composed FAQ answers
- * interpolate tier names, prices and features from `pricing` at module load,
- * so they can never disagree with the tier tables. Nothing is invented; where
- * the current copy states no fact (a timeline, a stack, a case study) the
- * field is omitted or null.
+ * Every fact here comes from the live service pages (hero, capability cards,
+ * process phases, CTA band), the tier data in `pricing` (site.ts) and the
+ * pricing page's FAQ array, rewritten in plain words (Nov 2026 simplify pass:
+ * short sentences, no jargon). Composed FAQ answers interpolate tier names,
+ * prices and features from `pricing` at module load, so they can never
+ * disagree with the tier tables. Nothing is invented; where the live copy
+ * states no fact (a timeline, a stack, a case study) the field is omitted or
+ * null.
  */
 import type { EstimateService } from '@/lib/estimate';
 import { pricing } from './site';
@@ -159,26 +160,25 @@ function costAnswer(key: ServicePricingKey): string {
     const verb = index === 0 ? 'covers' : 'adds';
     return `${tier.name} (${tier.price}) ${verb} ${listWords(ownFeatures(tier))}.`;
   });
-  return `${sentences.join(' ')} You get a fixed quote after a 20-minute scoping call.`;
+  return `${sentences.join(' ')} You get a fixed quote after a 20-minute call.`;
 }
 
-/** "What ongoing support is available?" answer composed from the recurring lines. */
-function supportAnswer(key: ServicePricingKey, noun: string): string {
+/** "What support do you offer after launch?" answer composed from the recurring lines. */
+function supportAnswer(key: ServicePricingKey): string {
   const lines = recurringFor(key);
   const list = lines
     .map((line) => `${line.name} (${line.price}${line.description ? `: ${midSentence(line.description)}` : ''})`)
     .join('; ');
-  return `${lines.length === 1 ? 'One' : lines.length === 2 ? 'Two' : 'Three'} monthly ${noun} options: ${list}.`;
+  const count = lines.length === 1 ? 'One monthly plan' : `${lines.length === 2 ? 'Two' : 'Three'} monthly plans`;
+  return `${count}: ${list}.`;
 }
 
 /** Shared answer from the pricing page's FAQ; the wording is not service-specific. */
 const PAYMENT_PLANS_FAQ: ServiceFaq = {
   question: 'Do you offer payment plans?',
   answer:
-    'Yes. We typically split projects into milestone-based payments - a deposit to start, a mid-project payment, and a final payment at launch. We will work out a structure that fits your cash flow.',
+    'Yes. We usually split a project into three payments: a deposit to start, one in the middle and one at launch. We can shape the plan around your cash flow.',
 };
-
-const web = pricing.webDevelopment.tiers;
 
 /* ------------------------------------------------------------------ */
 /* Records                                                              */
@@ -193,24 +193,25 @@ export const services: readonly ServiceRecord[] = [
     heroLabel: 'Web Development',
     pricingKey: 'webDevelopment',
     estimateKey: 'web',
-    heroTitle: 'Web Development That Actually Performs',
+    // Plain-language pass (Nov 2026): the live pages' facts, in everyday words.
+    heroTitle: 'Fast, accessible websites, built for the team that runs them',
     oneLiner:
-      'Custom-coded sites engineered for speed, accessibility, and long-term maintainability. We handle the complex builds so your agency can focus on design and client strategy.',
+      'Fast, accessible websites built from your designs. We handle the build, so your agency can focus on design and your clients.',
     sections: {
       capabilities: {
-        label: 'What We Deliver',
-        title: 'Every Layer of the Stack, Done Right',
-        subtitle: 'From pixel-perfect frontends to bulletproof backends - we build what your agency project demands.',
+        label: 'What we build',
+        title: 'Fast, accessible websites, built for the team that runs them',
+        subtitle: 'Every site is built for the people who will run it, and checked for speed and accessibility before launch.',
       },
       process: {
-        label: 'Our Process',
-        title: 'From Brief to Browser, Step by Step',
-        subtitle: 'A battle-tested workflow built around agency timelines and real client expectations.',
+        label: 'How it works',
+        title: 'From plan to launch, in four steps',
+        subtitle: 'A simple process built around agency deadlines.',
       },
       pricing: {
-        label: 'Pricing',
-        title: 'Transparent Pricing, No Surprises',
-        subtitle: 'Pick the tier that matches your project scope. Every plan includes post-launch support.',
+        label: 'What it costs',
+        title: 'Four tiers, every price public',
+        subtitle: 'Pick the tier closest to your project. Every plan includes support after launch.',
       },
     },
     buyerSituations: situationsFrom('webDevelopment'),
@@ -220,99 +221,83 @@ export const services: readonly ServiceRecord[] = [
       {
         // Not "no page builders": CHHA-NCR, shown as proof, runs on Elementor so
         // its volunteers can edit it. The build is chosen for who runs the site.
-        title: 'Built for Whoever Runs It',
+        title: 'Built for the people who run it',
         description:
-          'No off-the-shelf theme bent into shape. Each site is built for the team that will run it: a custom WordPress theme, a headless CMS build or full-stack React.',
+          'No template forced into shape. We build for the team that will run the site, on WordPress or fully custom code.',
       },
       {
-        title: 'Speed That Ranks',
-        description:
-          'Fast load times through code splitting, image optimization, lazy loading, and SSR. Fast sites convert better and rank higher.',
+        title: 'Fast pages',
+        description: 'We keep pages light so they load quickly. Fast sites win more customers and rank higher on Google.',
       },
       {
-        title: 'Works Everywhere',
+        title: 'Works on every device',
         description:
-          "Tested across every major browser and device. Your clients' users get the same experience whether they're on Safari, Chrome, or a 5-year-old Android.",
+          'Tested on every major browser and device. It works the same on Safari, Chrome or a five-year-old Android phone.',
       },
       {
-        title: 'Accessible by Default',
+        title: 'Accessible to everyone',
         description:
-          "WCAG 2.1 compliance isn't an add-on. ARIA attributes, keyboard navigation, and screen reader support are built in from day one.",
+          'Built to accessibility standards (WCAG 2.1) from day one, so people who use a keyboard or a screen reader can use it too.',
       },
       {
-        title: 'Solid Backend Architecture',
+        title: 'Solid behind the scenes',
         description:
-          'APIs, databases, server logic, and caching layers - the invisible infrastructure that makes everything else work reliably.',
+          'The parts visitors never see, like databases and connections to other tools, are built to work reliably.',
       },
       {
-        title: 'Mobile-First Responsiveness',
-        description:
-          'Fluid layouts designed for mobile first, then scaled up. Every breakpoint is intentional, not an afterthought.',
+        title: 'Phones first',
+        description: 'We design for phones first, then scale up to tablets and desktops, so every screen size looks right.',
       },
     ],
     processSteps: [
       {
         phase: 'Phase 01',
-        title: 'Discovery',
-        description:
-          'We map your goals, audience, and technical landscape. You walk away with a clear project spec, sitemap, and architecture plan before we write a single line of code.',
+        title: 'Plan',
+        description: 'We learn your goals and agree a written plan before we write any code.',
       },
       {
         phase: 'Phase 02',
         title: 'Design',
-        description:
-          'Your designers lead the creative vision. We validate every mockup for technical feasibility, responsive behavior, and performance so nothing gets lost in translation.',
+        description: 'Your designers lead. We check that every design works on all screens and loads fast.',
       },
       {
         phase: 'Phase 03',
-        title: 'Development',
-        description:
-          'Iterative sprints with weekly demos you can click through. Custom code, no shortcuts. Every component is built for speed, accessibility, and maintainability.',
+        title: 'Build',
+        description: 'We build in short cycles and show you working pages every week.',
       },
       {
         phase: 'Phase 04',
-        title: 'Test & Launch',
-        description:
-          'Cross-browser QA, performance audits, and accessibility checks. We deploy with zero downtime and stay on for post-launch monitoring and support.',
+        title: 'Test and launch',
+        description: 'We test speed, accessibility and every browser, launch without downtime, then support you.',
       },
     ],
     faqs: [
       {
-        question: 'How much does a headless WordPress build cost for an agency?',
-        answer: `CMS integration (headless or WordPress) is included from the ${web[1].name} tier at ${web[1].price}. That tier covers ${listWords(ownFeatures(web[1]).filter((f) => !/^cms integration/i.test(f)))}. ${ownFeatures(web[2])[0]}s start at ${web[2].price} (${web[2].name}). You get a fixed quote after a 20-minute scoping call.`,
+        question: 'How much does a website cost?',
+        answer: costAnswer('webDevelopment'),
       },
       {
-        question: 'How long does a typical web development project take?',
+        question: 'How long does a website take?',
         answer:
-          'Starter sites typically ship in 3–4 weeks. Growth / E-Commerce projects run 5–8 weeks. Advanced and Enterprise builds are scoped individually, but most launch within 8–14 weeks. We give you a clear timeline during discovery and stick to it.',
+          'Starter sites usually take 3–4 weeks. Growth / E-Commerce projects take 5–8 weeks. Advanced and Enterprise builds usually launch within 8–14 weeks. We agree a timeline with you at the start and keep to it.',
       },
       {
-        question: 'Do you work with our existing designs, or do you handle design too?',
+        question: 'Can you build from our designs?',
         answer:
-          'Both. Most agencies bring their own designs and we build pixel-perfect from Figma, Sketch, or XD files. If you need design support, we can collaborate with your team or connect you with a design partner.',
+          'Yes. Most agencies bring their own designs, and we build them exactly from Figma, Sketch or XD files. If you need design help, we can work with your team or introduce you to a design partner.',
       },
       {
-        question: 'What technologies do you build with?',
+        question: 'What happens after launch?',
         answer:
-          'We use the right tool for each project: React, Next.js, WordPress, Node.js, Python and more. Every decision is based on your project requirements, not our preferences.',
-      },
-      {
-        question: 'What happens after the site launches?',
-        answer:
-          'Every plan includes post-launch support (30-90 days depending on tier). After that, our monthly maintenance plans keep your site secure, fast, and updated. Most clients choose a maintenance plan because it costs far less than fixing problems later.',
-      },
-      {
-        question: 'Can you rebuild our existing site without downtime?',
-        answer:
-          'Yes. We build the new site on a staging environment, migrate content, test everything, and do a zero-downtime cutover. Your visitors never see a broken page.',
+          'Every plan includes 30–90 days of support after launch, depending on the tier. After that, a monthly plan keeps your site secure, fast and up to date.',
       },
       PAYMENT_PLANS_FAQ,
     ],
     typicalTimeline: '3–4 weeks Starter · 5–8 weeks Growth / E-Commerce · 8–14 weeks Advanced and Enterprise',
     postLaunchSupport: '30–90 days depending on tier',
     ctaBand: {
-      heading: 'Ready to Build Your Next Web Project?',
-      body: "Tell us about your project requirements and let's discuss how we can help.",
+      heading: 'Ready to build your next website?',
+      body: 'Tell us about the project, and we will show you how we can help.',
       submitLabel: 'Get Started',
     },
     portfolioCategory: 'Web Development',
@@ -325,24 +310,24 @@ export const services: readonly ServiceRecord[] = [
     heroLabel: 'Automation & AI',
     pricingKey: 'automation',
     estimateKey: 'automation',
-    heroTitle: 'Stop Doing Manually What Should Happen Automatically',
+    heroTitle: 'Stop doing by hand what should happen automatically',
     oneLiner:
-      'We connect your CRM, project tools, invoicing, and client intake into one pipeline. From simple automations to custom AI agents.',
+      'We connect your CRM, project tools, invoicing and client intake so they work as one. From simple automations to custom AI agents.',
     sections: {
       capabilities: {
-        label: 'Capabilities',
-        title: 'Automation That Actually Saves Time',
-        subtitle: 'Not just Zapier connections. Real engineering that connects your entire operational stack.',
+        label: 'What we build',
+        title: 'Stop doing by hand what should happen automatically',
+        subtitle: 'More than simple app connections: automation that links all your tools and keeps working.',
       },
       process: {
-        label: 'Our Process',
-        title: 'From Manual Chaos to Automated Clarity',
-        subtitle: 'A structured approach to replacing repetitive work with intelligent systems.',
+        label: 'How it works',
+        title: 'From manual to automatic, in four steps',
+        subtitle: 'A clear plan for handing repetitive work to software.',
       },
       pricing: {
-        label: 'Pricing',
-        title: 'Automation & AI Pricing Tiers',
-        subtitle: 'Scalable solutions from foundation setup to enterprise-grade AI workflows.',
+        label: 'What it costs',
+        title: 'Three tiers, every price public',
+        subtitle: 'From a first CRM setup to AI that runs whole workflows.',
       },
     },
     buyerSituations: situationsFrom('automation'),
@@ -350,76 +335,68 @@ export const services: readonly ServiceRecord[] = [
     stack: ['CRM setup & configuration', 'Custom API integrations', 'AI-powered intake forms', 'Custom AI agents', 'Predictive analytics pipelines'],
     capabilities: [
       {
-        title: 'CRM That Works for You',
+        title: 'A CRM that does the follow-up',
         description:
-          'We configure your CRM to route leads, trigger follow-ups, and manage pipelines automatically - so your team focuses on closing, not data entry.',
+          'Your CRM routes new leads and sends follow-ups by itself, so your team spends its time closing deals, not typing data.',
       },
       {
-        title: 'Multi-System Pipelines',
-        description:
-          "Your website, CRM, project tools, invoicing, and internal systems - all connected into one automated pipeline that doesn't break.",
+        title: 'All your tools, connected',
+        description: 'Your website, CRM, project tools and invoicing work as one system that keeps running.',
       },
       {
-        title: 'AI-Powered Intake & Assistants',
+        title: 'AI that sorts new enquiries',
         description:
-          'Intelligent forms that qualify leads before they hit your inbox. AI assistants that handle routine inquiries so your team handles the rest.',
+          'Smart forms check leads before they reach your inbox. AI assistants answer routine questions, so your team handles the rest.',
       },
       {
-        title: 'Custom API Integrations',
-        description:
-          'If two tools need to talk, we make it happen. Custom API bridges that keep data flowing across your entire tech stack.',
+        title: 'Custom connections',
+        description: 'If two tools need to share information, we connect them, so data moves between them automatically.',
       },
       {
-        title: 'AI Agents & Predictive Analytics',
-        description:
-          'Custom AI agents that take action, not just report data. Predictive analytics that surface what matters before you have to ask.',
+        title: 'AI agents that act',
+        description: 'Custom AI agents that do tasks, not just report on them. Forecasts that flag what matters before you ask.',
       },
       {
-        title: 'Enterprise Orchestration',
-        description:
-          'Cross-department automation with governance, compliance, and full audit trails. Built for agencies managing multiple teams and clients.',
+        title: 'Built for bigger teams',
+        description: 'Automation across departments, with permissions, compliance rules and a full record of every action.',
       },
     ],
     processSteps: [
       {
         phase: 'Phase 01',
-        title: 'Discovery',
-        description:
-          "We audit your current tools, map every manual workflow, and identify where automation will have the highest impact on your team's time and revenue.",
+        title: 'Review',
+        description: 'We review your tools and find the manual work most worth automating first.',
       },
       {
         phase: 'Phase 02',
-        title: 'Design',
-        description:
-          'We architect your automation plan: triggers, logic paths, data flows, and fallback scenarios. You approve the system design before we build anything.',
+        title: 'Plan',
+        description: 'We map out each automation. You approve the plan before we build anything.',
       },
       {
         phase: 'Phase 03',
-        title: 'Development',
-        description:
-          'We wire your tools together with custom integrations, configure AI agents, and build the pipelines that do the manual work automatically.',
+        title: 'Build',
+        description: 'We connect your tools, set up the AI agents and build the automations.',
       },
       {
         phase: 'Phase 04',
-        title: 'Test & Launch',
-        description:
-          'Stress-tested with real data, edge cases, and failure scenarios. We deploy, monitor, train your team, and stay on to fine-tune performance.',
+        title: 'Test and launch',
+        description: 'We test with real data, launch, train your team, then keep improving it.',
       },
     ],
     faqs: [
       {
-        question: 'How much does automation and AI cost for an agency?',
+        question: 'How much does automation cost?',
         answer: costAnswer('automation'),
       },
       {
-        question: 'What ongoing support is available once the automations are live?',
-        answer: supportAnswer('automation', 'retainer'),
+        question: 'What support do you offer after launch?',
+        answer: supportAnswer('automation'),
       },
       PAYMENT_PLANS_FAQ,
     ],
     ctaBand: {
-      heading: 'Ready to Stop Copy-Pasting Between Tools?',
-      body: "Tell us what you're tired of doing manually. We'll build the automation that makes it disappear.",
+      heading: 'Tired of copying data between tools?',
+      body: 'Tell us what your team does by hand. We will build the automation that does it for you.',
       submitLabel: "Let's Automate",
     },
     portfolioCategory: 'Automation and AI Workflows',
@@ -432,102 +409,94 @@ export const services: readonly ServiceRecord[] = [
     heroLabel: 'Internal Tools',
     pricingKey: 'internalTools',
     estimateKey: 'tools',
-    heroTitle: 'Internal Tools Built Around Your Agency - Not the Other Way Around',
+    heroTitle: 'Tools built around your agency, not the other way around',
     oneLiner:
-      'Dashboards, client portals, and reporting systems designed for how your team actually operates - not how a SaaS platform thinks you should.',
+      'Dashboards, client portals and reporting tools built around how your team works, not how a software company thinks you should work.',
     sections: {
       capabilities: {
-        label: 'What We Build',
-        title: 'Your Agency Deserves Its Own Tools',
-        subtitle: 'Off-the-shelf software forces you to adapt. We build tools that adapt to you.',
+        label: 'What we build',
+        title: 'Tools built around your agency, not the other way around',
+        subtitle: 'Off-the-shelf software makes you change how you work. We build tools that fit how you already work.',
       },
       process: {
-        label: 'Our Process',
-        title: 'Built With Your Team, Not Just for Them',
-        subtitle: 'A collaborative workflow that turns operational friction into purpose-built software.',
+        label: 'How it works',
+        title: 'Built with your team, in four steps',
+        subtitle: 'Your team shapes the tool at every step.',
       },
       pricing: {
-        label: 'Pricing',
-        title: 'Internal Tools Pricing',
-        subtitle: 'From dashboards to full operational platforms, we have a solution for every scale.',
+        label: 'What it costs',
+        title: 'Three tiers, every price public',
+        subtitle: 'From one dashboard to a system that runs your whole agency.',
       },
     },
     buyerSituations: situationsFrom('internalTools'),
     deliverables: deliverablesFrom('internalTools'),
-    // Named technologies come from the pricing page's "What technologies do you build with?"
-    // answer, which speaks for every project; the last two are this line's own feature terms.
-    stack: ['React', 'Next.js', 'Node.js', 'Python', 'Role-based access control', 'API integrations'],
+    // Named technologies from the pricing page's "What technologies do you build with?"
+    // answer, which speaks for every project.
+    stack: ['React', 'Next.js', 'Node.js', 'Python'],
     capabilities: [
       {
-        title: 'Internal Dashboards',
-        description:
-          'Real-time data visualization with role-based access. Your team sees exactly what they need - nothing more, nothing less.',
+        title: 'Dashboards',
+        description: 'Live numbers on one screen. Each person sees exactly what their role needs, nothing more.',
       },
       {
-        title: 'Client Portals',
+        title: 'Client portals',
         description:
-          'Branded, white-label portals where clients track projects, share documents, communicate with your team, and pay invoices.',
+          'A portal under your brand where clients follow projects, share files, message your team and pay invoices.',
       },
       {
-        title: 'Ops & Reporting Systems',
-        description:
-          'End-to-end operations platforms with automated reports, multi-team coordination, and analytics engines your leadership team actually uses.',
+        title: 'Operations and reporting',
+        description: 'One system to run daily operations, with automatic reports your leadership team will actually use.',
       },
       {
-        title: 'Security Built In',
-        description:
-          'Encryption, authentication, role-based permissions, and compliance - baked into every tool from the start, not bolted on later.',
+        title: 'Secure from the start',
+        description: 'Encryption, logins, permissions and compliance are built in from day one, not added later.',
       },
       {
-        title: 'Grows With You',
-        description: 'Modern architecture that scales. Add features, users, and integrations without a rewrite.',
+        title: 'Grows with you',
+        description: 'Add features, users and connections later, without starting over.',
       },
       {
-        title: 'Plugs Into Your Stack',
-        description:
-          'Custom integrations with your existing platforms, APIs, and data sources. One unified operational experience.',
+        title: 'Works with your tools',
+        description: 'Connects to the platforms and data you already use, so your team works in one place.',
       },
     ],
     processSteps: [
       {
         phase: 'Phase 01',
-        title: 'Discovery',
-        description:
-          "We shadow your team's actual workflows, interview stakeholders, and document every pain point. The result is a requirements spec your whole team signs off on.",
+        title: 'Learn',
+        description: 'We study how your team works and agree in writing what the tool must do.',
       },
       {
         phase: 'Phase 02',
         title: 'Design',
-        description:
-          "Interactive wireframes and clickable prototypes built around your real data. Your team tests the tool's flow and layout before a single line of production code.",
+        description: 'Your team tries a clickable prototype with your real data before we build it.',
       },
       {
         phase: 'Phase 03',
-        title: 'Development',
-        description:
-          'Modular builds with biweekly demos. We integrate with your existing stack, lock down permissions, and ship features your team can start using immediately.',
+        title: 'Build',
+        description: 'We build it in stages, with a demo for your team every two weeks.',
       },
       {
         phase: 'Phase 04',
-        title: 'Test & Launch',
-        description:
-          'User acceptance testing with your team, security audits, and load testing. We deploy, onboard your users, and provide hands-on training to drive adoption.',
+        title: 'Test and launch',
+        description: 'Your team tests it, we check security and load, then we launch and train everyone.',
       },
     ],
     faqs: [
       {
-        question: 'How much does a custom internal tool cost for an agency?',
+        question: 'How much does a custom internal tool cost?',
         answer: costAnswer('internalTools'),
       },
       {
-        question: 'What ongoing support is available after the tool ships?',
-        answer: supportAnswer('internalTools', 'retainer'),
+        question: 'What support do you offer after launch?',
+        answer: supportAnswer('internalTools'),
       },
       PAYMENT_PLANS_FAQ,
     ],
     ctaBand: {
-      heading: 'Tired of Workarounds and Spreadsheets?',
-      body: "Tell us what's slowing your team down. We'll build the tool that fixes it - for good.",
+      heading: 'Tired of workarounds and spreadsheets?',
+      body: 'Tell us what slows your team down. We will build the tool that fixes it, for good.',
       submitLabel: "Let's Build",
     },
     portfolioCategory: 'Custom Internal Tools',
@@ -540,101 +509,93 @@ export const services: readonly ServiceRecord[] = [
     heroLabel: 'Cloud Engineering',
     pricingKey: 'cloudEngineering',
     estimateKey: 'cloud',
-    heroTitle: 'Infrastructure That Scales When Your Clients Do',
+    heroTitle: 'Hosting that grows when your clients do',
     oneLiner:
-      'We design, deploy, and manage cloud infrastructure so your agency never worries about uptime, scaling, or deployment again.',
+      'We set up and look after cloud hosting, so your agency stops worrying about downtime, traffic spikes or broken releases.',
     sections: {
       capabilities: {
-        label: 'Capabilities',
-        title: 'Cloud Done Right, From Day One',
-        subtitle: 'Production-grade infrastructure engineering - not just spinning up servers and hoping for the best.',
+        label: 'What we build',
+        title: 'Hosting that grows when your clients do',
+        subtitle: 'We do more than switch on a server and hope for the best.',
       },
       process: {
-        label: 'Our Process',
-        title: 'From Audit to Always-On',
-        subtitle: 'A methodical approach to building infrastructure you can trust.',
+        label: 'How it works',
+        title: 'Four steps to reliable hosting',
+        subtitle: 'A careful process, so nothing breaks along the way.',
       },
       pricing: {
-        label: 'Pricing',
-        title: 'Cloud Engineering Pricing Tiers',
-        subtitle: 'From first cloud setup to enterprise-grade multi-region platforms.',
+        label: 'What it costs',
+        title: 'Three tiers, every price public',
+        subtitle: 'From a first cloud setup to platforms that run in several regions.',
       },
     },
     buyerSituations: situationsFrom('cloudEngineering'),
     deliverables: deliverablesFrom('cloudEngineering'),
-    stack: ['AWS, GCP, or Azure', 'Terraform / Pulumi', 'CI/CD pipelines', 'Containerization', 'Logging, monitoring, and observability stack'],
+    stack: ['AWS, Google Cloud or Azure', 'Terraform or Pulumi', 'Automatic testing and release (CI/CD)', 'Containers', 'Logging and monitoring'],
     capabilities: [
       {
-        title: 'Infrastructure as Code',
+        title: 'Written down as code',
         description:
-          'Every server, database, and network rule defined in version-controlled Terraform or Pulumi modules. Reproducible, auditable, and never configured by hand.',
+          'Your whole cloud setup is written down as code, so it can be checked, repeated and rebuilt at any time.',
       },
       {
-        title: 'Cloud Architecture & Migration',
+        title: 'Moving to the cloud',
         description:
-          'We design the right architecture for your workloads on AWS, GCP, or Azure - and migrate you there with zero downtime and zero data loss.',
+          'We plan the right setup on AWS, Google Cloud or Azure, then move you there with no downtime and no lost data.',
       },
       {
-        title: 'CI/CD Pipeline Engineering',
-        description:
-          'Automated build, test, and deploy pipelines that ship your code to production. No more manual deployments or broken releases.',
+        title: 'Tested updates',
+        description: 'Every update is built, tested and released automatically. No more manual releases or broken updates.',
       },
       {
-        title: 'Monitoring & Observability',
-        description:
-          "Full-stack observability with structured logging, distributed tracing, and alerting. Know exactly what's happening in your infrastructure before your clients do.",
+        title: 'Monitoring',
+        description: 'Logs, tracing and alerts show what is happening, so problems are found before your clients notice.',
       },
       {
-        title: 'Security & Compliance',
-        description:
-          'IAM policies, network isolation, encryption at rest and in transit, and compliance readiness for SOC 2, HIPAA, and GDPR. Security built in, not bolted on.',
+        title: 'Security and compliance',
+        description: 'Access controls, private networks and encryption, ready for standards like SOC 2, HIPAA and GDPR.',
       },
       {
-        title: 'Cost Optimization & Scaling',
-        description:
-          'Right-sized resources, reserved capacity planning, and auto-scaling policies that keep your cloud bill predictable while handling traffic spikes.',
+        title: 'Predictable costs',
+        description: 'Servers sized to what you need, which grow for traffic spikes and keep your cloud bill predictable.',
       },
     ],
     processSteps: [
       {
         phase: 'Phase 01',
-        title: 'Audit',
-        description:
-          'We assess your current infrastructure, hosting environment, and deployment workflows. You get a clear report of risks, bottlenecks, and opportunities before we touch anything.',
+        title: 'Review',
+        description: 'We review your current hosting and report the risks before we change anything.',
       },
       {
         phase: 'Phase 02',
-        title: 'Architecture',
-        description:
-          'We design your cloud architecture plan: provider selection, networking, security boundaries, and scaling strategy. You approve the plan before we provision a single resource.',
+        title: 'Plan',
+        description: 'We plan the provider, security and growth. You approve before we set anything up.',
       },
       {
         phase: 'Phase 03',
         title: 'Build',
-        description:
-          'Infrastructure provisioned as code, CI/CD pipelines configured, monitoring deployed, and applications migrated. Every change is version-controlled and repeatable.',
+        description: 'We set everything up as code, add tested releases and monitoring, then move your apps.',
       },
       {
         phase: 'Phase 04',
-        title: 'Monitor & Optimize',
-        description:
-          'Post-launch monitoring, cost reviews, and performance tuning. We stay on to ensure your infrastructure runs reliably and your cloud spend stays under control.',
+        title: 'Monitor',
+        description: 'We keep watching, tune performance and review costs, so it stays reliable and affordable.',
       },
     ],
     faqs: [
       {
-        question: 'How much does cloud engineering cost for an agency?',
+        question: 'How much does cloud engineering cost?',
         answer: costAnswer('cloudEngineering'),
       },
       {
-        question: 'What ongoing support is available after the infrastructure is live?',
-        answer: supportAnswer('cloudEngineering', 'retainer'),
+        question: 'What support do you offer after launch?',
+        answer: supportAnswer('cloudEngineering'),
       },
       PAYMENT_PLANS_FAQ,
     ],
     ctaBand: {
-      heading: 'Ready to Move to the Cloud?',
-      body: "Tell us about your infrastructure challenges and let's build something that scales.",
+      heading: 'Ready to move to the cloud?',
+      body: 'Tell us about your hosting today, and we will plan a setup that can grow with your clients.',
       submitLabel: "Let's Build",
     },
     // No portfolioProjects entry is categorised as cloud work today.

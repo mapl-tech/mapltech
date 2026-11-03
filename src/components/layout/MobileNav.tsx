@@ -5,19 +5,18 @@ import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import BottomSheet, { type SnapPoint } from '@/components/ui/BottomSheet';
 import MagneticButton from '@/components/ui/MagneticButton';
-import { LiveClocks } from '@/components/ui/TimezoneOverlap';
 import { PROJECT_HREF, PROJECT_LABEL, telHref } from './chrome';
 import styles from './Header.module.scss';
 
 /**
  * Mobile navigation: the interaction #9 bottom sheet (vaul via BottomSheet).
  *
- * Rows are large display type with a numbered index (64px targets). Sections
- * with children (Services, Work, About) are native <details> groups, so their
- * links are in the DOM and the sheet expands to full height the first time a
- * group opens. One CTA ("Start a project") and the two contact lines close the
- * sheet; the office clocks sit underneath. Escape, the overlay and a downward
- * drag dismiss it; focus returns to the hamburger.
+ * The same five items as the desktop bar, as large display rows (64px
+ * targets). Sections with children (Services, About) are native <details>
+ * groups, so their links are in the DOM and the sheet expands to full height
+ * the first time a group opens. One CTA ("Start a project") and the two
+ * contact lines close the sheet. Escape, the overlay and a downward drag
+ * dismiss it; focus returns to the hamburger.
  */
 
 const SNAP_POINTS: SnapPoint[] = [0.86, 1];
@@ -82,9 +81,6 @@ export default function MobileNav({ id, open, onOpenChange, pathname, returnFocu
               <li key={item.href} style={{ ['--i' as string]: index }}>
                 <details className={styles.group} name="mobile-nav" onToggle={onGroupToggle}>
                   <summary className={styles.row}>
-                    <span className={styles.rowIndex} aria-hidden="true">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
                     <span className={styles.rowLabel}>{item.label}</span>
                     <Chevron />
                   </summary>
@@ -112,9 +108,6 @@ export default function MobileNav({ id, open, onOpenChange, pathname, returnFocu
                   aria-current={pathname === item.href ? 'page' : undefined}
                   onClick={close}
                 >
-                  <span className={styles.rowIndex} aria-hidden="true">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
                   <span className={styles.rowLabel}>{item.label}</span>
                 </Link>
               </li>
@@ -148,7 +141,6 @@ export default function MobileNav({ id, open, onOpenChange, pathname, returnFocu
           </a>
         </li>
       </ul>
-      <LiveClocks className={styles.sheetClocks} />
     </BottomSheet>
   );
 }

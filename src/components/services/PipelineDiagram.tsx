@@ -2,18 +2,18 @@ import type { CSSProperties } from 'react';
 import styles from './PipelineDiagram.module.scss';
 
 /**
- * Cloud Engineering has no screen to show, so its exhibit is the pipeline we
- * set up: the same six stages as the homepage's Cloud preview
- * (flagship/ServiceIndex.tsx), laid out as the path a change travels. Each
- * stage is a cloud deliverable in site.ts `pricing` or services.ts: CI/CD
- * ("Automated build, test, and deploy pipelines"), "Staging, production, and
- * preview environments", "Uptime monitoring & alerting".
+ * Cloud Engineering has no screen to show, so its exhibit is how an update
+ * goes live on hosting we set up, laid out as the path a change travels, in
+ * plain words. Each stage is a cloud deliverable in site.ts `pricing` or
+ * services.ts: CI/CD ("Automated build, test, and deploy pipelines"),
+ * "Staging, production, and preview environments", "Uptime monitoring &
+ * alerting".
  *
  * `card`: the proof exhibit, a real list with a caption; the path draws as it
  * scrolls through (CSS view timeline, transform only, static elsewhere).
  * `mini`: the index preview, decoration inside an aria-hidden frame.
  */
-const STAGES = ['Commit', 'Tests', 'Preview', 'Review', 'Production', 'Monitoring'] as const;
+const STAGES = ['Change', 'Tests', 'Preview', 'Review', 'Live', 'Monitoring'] as const;
 
 export default function PipelineDiagram({ variant = 'card', className }: { variant?: 'card' | 'mini'; className?: string }) {
   const card = variant === 'card';
@@ -26,15 +26,15 @@ export default function PipelineDiagram({ variant = 'card', className }: { varia
             <i />
             <i />
           </span>
-          <span className={styles.chromeLabel}>CI/CD pipeline</span>
+          <span className={styles.chromeLabel}>How an update goes live</span>
         </div>
         <div className={styles.board}>
-          <ol className={styles.stages} aria-label={card ? 'How a change ships' : undefined}>
+          <ol className={styles.stages} aria-label={card ? 'How an update goes live' : undefined}>
             {STAGES.map((stage, i) => (
               <li
                 key={stage}
                 className={styles.stage}
-                data-live={stage === 'Production' ? '' : undefined}
+                data-live={stage === 'Live' ? '' : undefined}
                 style={{ '--i': i } as CSSProperties}
               >
                 <span className={styles.no} aria-hidden="true">
@@ -48,9 +48,8 @@ export default function PipelineDiagram({ variant = 'card', className }: { varia
       </div>
       {card ? (
         <figcaption className={styles.caption}>
-          A diagram, not a screenshot: how a change ships on infrastructure we set up. It is built and tested
-          automatically, previewed and reviewed, released to production and monitored, and what monitoring finds
-          feeds the next change.
+          A diagram, not a screenshot. On hosting we set up, every change is built and tested automatically,
+          previewed and reviewed, then goes live and is monitored. What monitoring finds shapes the next change.
         </figcaption>
       ) : null}
     </figure>

@@ -1,36 +1,32 @@
 import BundleTiers from './BundleTiers';
 import HourlyRates from './HourlyRates';
 import MatchedTiers from './MatchedTiers';
-import PriceIndex from './PriceIndex';
+import OpenTarget from './OpenTarget';
 import ServiceTiers from './ServiceTiers';
 import WideOpen from './WideOpen';
-import { BUNDLES_FROM, HOURLY_FROM, PRICE_LIST, SERVICES } from './content';
+import { PRICE_LIST, SERVICES } from './content';
 import styles from './PriceList.module.scss';
 
 /**
- * The full price list, on paper (the page's light section): the crawlable
- * price statements, every tier, monthly line, bundle and rate as plain HTML.
- * The heading and an index hold still on wide screens; every tier is a row on
- * an ink hairline with its price set large, as on a printed price sheet.
+ * The full price list, on paper (the page's light section). Each service is
+ * one row, a native <details> that opens to its packages, monthly plans and
+ * what every package includes, so the page stays short and the summaries
+ * double as the index. Everything is server HTML whether a row is open or
+ * not, read by search engines and by the OfferCatalog JSON-LD. Links to a
+ * row (the starting-price ledger, the readout's bundle link, /pricing#bundles)
+ * open it first (OpenTarget).
  */
 export default function PriceList() {
-  const index = [
-    ...SERVICES.map((facts) => ({ id: facts.id, name: facts.name, from: `from ${facts.fromLabel}` })),
-    { id: 'bundles', name: 'Partner bundles', from: `from ${BUNDLES_FROM}/mo` },
-    { id: 'hourly', name: 'Hourly', from: `from ${HOURLY_FROM}/h` },
-  ];
-
   return (
     <section id="price-list" className={styles.list} aria-labelledby="price-list-title">
       <div className={styles.inner}>
-        <div className={styles.rail}>
+        <header className={styles.head}>
           <p className={styles.label}>{PRICE_LIST.label}</p>
           <h2 id="price-list-title" className={styles.title}>
             {PRICE_LIST.title}
           </h2>
           <p className={styles.lede}>{PRICE_LIST.lede}</p>
-          <PriceIndex items={index} />
-        </div>
+        </header>
 
         <div className={styles.groups}>
           {SERVICES.map((facts) => (
@@ -38,10 +34,11 @@ export default function PriceList() {
           ))}
           <BundleTiers />
           <HourlyRates />
-          <MatchedTiers />
-          <WideOpen />
         </div>
       </div>
+      <MatchedTiers />
+      <WideOpen />
+      <OpenTarget />
     </section>
   );
 }

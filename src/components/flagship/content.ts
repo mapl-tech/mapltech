@@ -24,14 +24,13 @@ interface TitleRun {
  * sets at desktop widths (phones let it wrap freely).
  */
 export const HERO = {
-  eyebrow: 'Systems · Automation · Infrastructure',
   titleLines: [
     [{ text: 'The ' }, { text: 'engineering', accent: true }],
     [{ text: 'backbone', accent: true }, { text: ' behind' }],
     [{ text: 'agencies that refuse' }],
     [{ text: 'to cut corners.' }],
   ] as readonly (readonly TitleRun[])[],
-  lede: 'We partner with agencies to build, ship, and scale the systems, automation, and infrastructure their most ambitious projects demand.',
+  lede: 'We build the websites, automation, software and cloud systems that agencies sell, and we deliver them under your brand.',
 } as const;
 
 /** Lowest public "from" price across the four service lines (site.ts `pricing`). */
@@ -77,7 +76,6 @@ export interface Layer {
   /** Link text to the service page, cased by hand ("AI", not "ai"). */
   linkLabel: string;
   summary: string;
-  deliverables: readonly string[];
   fromPrice: string;
   href: string;
   image: { src: string; alt: string; width: number; height: number } | null;
@@ -94,8 +92,7 @@ export const LAYERS: readonly Layer[] = [
     service: 'web',
     name: 'Web Development',
     linkLabel: 'How we build websites',
-    summary: 'Custom-coded and headless sites that load fast, rank, and pass an accessibility audit on launch day.',
-    deliverables: ['Next.js or WordPress, chosen for the client', 'A CMS your client can edit without calling you', 'Core Web Vitals and WCAG AA as acceptance criteria'],
+    summary: 'Fast websites that rank on Google, meet accessibility standards on launch day, and that your client can update without help.',
     fromPrice: from(pricing.webDevelopment.tiers[0].price),
     href: '/services/web-development',
     image: {
@@ -110,8 +107,7 @@ export const LAYERS: readonly Layer[] = [
     service: 'automation',
     name: 'Automation & AI',
     linkLabel: 'How we build automation and AI',
-    summary: 'CRM workflows, AI intake and agents that take the manual work out of your client’s week.',
-    deliverables: ['Lead routing, follow-ups and reporting on autopilot', 'AI agents with guardrails and an audit trail', 'Integrations with the tools the team already uses'],
+    summary: 'AI and automation that take repetitive work off your client’s team: sorting new leads, follow-ups and reports.',
     fromPrice: from(pricing.automation.tiers[0].price),
     href: '/services/automation-ai-workflow-setup',
     image: {
@@ -126,8 +122,7 @@ export const LAYERS: readonly Layer[] = [
     service: 'tools',
     name: 'Custom Internal Tools',
     linkLabel: 'How we build internal tools',
-    summary: 'Dashboards, client portals and ops systems built around how the team actually works.',
-    deliverables: ['Role-based access from day one', 'Live data from the systems you already pay for', 'Software your team owns, not another subscription'],
+    summary: 'Dashboards, client portals and admin systems, built around how your client’s team really works.',
     fromPrice: from(pricing.internalTools.tiers[0].price),
     href: '/services/custom-internal-tools',
     image: {
@@ -142,8 +137,7 @@ export const LAYERS: readonly Layer[] = [
     service: 'cloud',
     name: 'Cloud Engineering',
     linkLabel: 'How we run cloud infrastructure',
-    summary: 'Infrastructure as code, CI/CD, monitoring and migrations, so the thing you shipped stays up.',
-    deliverables: ['AWS, Google Cloud or Azure, written as code', 'Pipelines that test every change before it ships', 'Monitoring that pages us before your client notices'],
+    summary: 'Cloud hosting on AWS, Google Cloud or Azure, with testing, monitoring and moves from old servers, so sites stay online.',
     fromPrice: from(pricing.cloudEngineering.tiers[0].price),
     href: '/services/cloud-engineering',
     image: null,
@@ -168,11 +162,6 @@ const listedSlugs = new Set(listedProjects().map((p) => p.slug));
  * figures as published on leshanpatterson.com (Nov 2026); CHHA-NCR from the
  * independent August 2026 audit (site.ts `caseStudies`).
  */
-export const WORK_INTRO = {
-  title: 'Work we can show.',
-  lede: 'Most of what we build ships under our partners’ names. These are the projects that carry ours.',
-} as const;
-
 export const WORK: readonly WorkCard[] = (
   [
     {
@@ -181,8 +170,8 @@ export const WORK: readonly WorkCard[] = (
       kind: 'Website · Ottawa and Toronto',
       outcome: 'One website for two audiences: people looking for work and employers looking to hire.',
       metrics: [
-        { value: '100', label: 'Lighthouse accessibility and SEO, mobile and desktop' },
-        { value: '8', label: 'industry expertise hubs, one click from the menu' },
+        { value: '100', label: 'Google Lighthouse score for accessibility and SEO, phone and desktop' },
+        { value: '8', label: 'industry pages, one click from the menu' },
       ],
       image: { src: '/images/case-lro-website.jpg', alt: 'LRO Staffing homepage with its job search panel.' },
       href: '/our-work/lro-staffing',
@@ -194,7 +183,7 @@ export const WORK: readonly WorkCard[] = (
       outcome: 'A travel company we built and run ourselves, with AI handling quoting, booking and follow-up.',
       metrics: [
         { value: '~50%', label: 'of customers now arrive through ChatGPT' },
-        { value: '~2,000', label: 'automated tests run before every release' },
+        { value: '~2,000', label: 'automatic checks run before every update' },
       ],
       image: { src: '/images/case-mapl-tours.jpg', alt: 'MAPL Tours homepage over aerial footage of the Jamaican coast.' },
       href: '/our-work/mapl-tours',
@@ -202,11 +191,11 @@ export const WORK: readonly WorkCard[] = (
     {
       slug: 'chha-ncr',
       client: 'CHHA-NCR',
-      kind: 'Non-profit relaunch · Ottawa',
-      outcome: 'A relaunch for people with hearing loss, most of them over 55, that volunteers can run themselves.',
+      kind: 'Non-profit website · Ottawa',
+      outcome: 'A new website for people with hearing loss, most of them over 55. Volunteers can update it themselves.',
       metrics: [
-        { value: 'AA', label: 'WCAG contrast on every audited colour pair' },
-        { value: '5', label: 'journey stages, from noticing to giving back' },
+        { value: 'AA', label: 'accessibility rating for colour contrast, on every pair checked' },
+        { value: '5', label: 'stages in the site’s guide, from noticing hearing loss to giving back' },
       ],
       image: { src: '/images/case-chha-ncr.jpg', alt: 'The CHHA-NCR homepage after the July 2026 relaunch.' },
       href: '/our-work/chha-ncr',
@@ -221,7 +210,7 @@ export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') 
  * Beside the hero ask: the risk answer (both facts are the FAQ's own answers,
  * src/components/home/data.ts) and the first sentence of the approved quote.
  */
-export const HERO_REASSURE = 'Fixed quote after a 20-minute scoping call. Mutual NDA before you share anything.';
+export const HERO_REASSURE = 'A fixed quote after one 20-minute call. We sign an NDA before you share anything.';
 export const HERO_PROOF = SPOTLIGHT
   ? {
       quote: SPOTLIGHT.quote.match(/^[^.!?]+[.!?]/)?.[0] ?? SPOTLIGHT.quote,
@@ -231,37 +220,17 @@ export const HERO_PROOF = SPOTLIGHT
     }
   : null;
 
-export const FOUNDERS = {
-  title: 'Two founders, three cities, your hours.',
-  lede: 'Toronto is home base. Kingston works within an hour of Eastern time all year, and Lagos’s afternoon overlaps the Eastern morning, so your working day is covered by people who know your project.',
-  people: [
-    { name: 'Leshan Patterson', role: 'Co-founder and Director', image: '/images/team/leshan-patterson.jpg' },
-    { name: 'Mercy Akuma', role: 'Co-founder and Director', image: '/images/team/mercy-akuma.jpg' },
-  ],
-} as const;
-
 export const MOBILE_BAR_CONTEXT = `Public prices, from ${money(LOWEST_PRICE)}`;
 
 /* ------------------------------------------------------------------ */
-/* Award pass (Nov 2026): the live site's sections, restaged.           */
-/* Copy is the live homepage's own unless noted.                       */
+/* Homepage sections (Nov 2026 simplify pass): the live site's purpose, */
+/* in plain words. Facts come from the live homepage and the FAQ.       */
 /* ------------------------------------------------------------------ */
-
-/** Scroll-lit statement: the launch-week story, then the answer. */
-export const STATEMENT = {
-  label: 'Why agencies call us',
-  runs: [
-    { text: 'The site launches on time. Three weeks later the booking form breaks, and the developer has moved on. ' },
-    { text: 'Your client doesn’t call the developer. They call you.', accent: true },
-  ],
-  // FAQ answers: documented code and a clean handoff; post-launch support on every plan.
-  resolve: 'So we build it to last, document it so your team can own it, and stay after launch.',
-} as const;
 
 export const SERVICES_INTRO = {
   label: 'What we do',
-  title: 'The technical work agencies can’t afford to get wrong.',
-  lede: 'Systems, automation, and infrastructure, built by engineers who understand agency life.',
+  title: 'What we build for agencies.',
+  lede: 'Four services, each with a public starting price. Use one, or combine them.',
 } as const;
 
 /** The four service rows: names, summaries and links from LAYERS; previews are real work. */
@@ -274,41 +243,30 @@ export const SERVICE_PREVIEWS: Record<string, { src: string; width: number; heig
 
 export const WORK_SECTION = {
   label: 'Selected work',
-  title: 'Selected projects and technical deliveries.',
-  lede: WORK_INTRO.lede,
-  all: { label: 'All client work', href: '/our-work' },
+  title: 'Work we can show.',
+  lede: 'Most of what we build carries our partners’ brands, not ours. These are projects we can show you.',
+  all: { label: 'See all our work', href: '/our-work' },
 } as const;
 
-/**
- * The scroll reel: real captures of sites MAPL TECH built (public/images/cases).
- * UNSVCC is left out: its public site is not our build (we built its internal dashboard).
- */
-export const REEL = [
-  ['lro-desktop', 'chha-mobile', 'salary-desktop'],
-  ['tours-mobile', 'focas-desktop', 'lro-mobile'],
-  ['chha-desktop', 'salary-mobile', 'tours-desktop'],
-  ['focas-mobile', 'lro-desktop', 'chha-mobile'],
-] as const;
-
 export const APPROACH = {
-  label: 'How we work',
-  title: 'We embed into your team.',
-  lede: 'Most vendors hand off a deliverable and disappear. We join your Slack, attend your standups, and ship code like we sit in your office.',
+  label: 'Process',
+  title: 'How it works.',
+  lede: 'From your first message to launch day, you know what happens next.',
   steps: [
-    { title: 'Discover & Scope', text: 'We learn your agency, your clients, and your pain points.' },
-    { title: 'Architect & Plan', text: 'We design systems around your workflow, not ours.' },
-    { title: 'Build & Iterate', text: 'Transparent development with weekly check-ins.' },
-    { title: 'Deploy & Support', text: 'Smooth launches with ongoing maintenance built in.' },
+    { title: 'Tell us what you need', text: 'Answer four short questions. Then we talk for 20 minutes.' },
+    { title: 'Get a fixed quote', text: 'We agree what is included, and you get one fixed price.' },
+    { title: 'We build it with you', text: 'Your brand on the work, and a check-in with your team every week.' },
+    { title: 'Launch and support', text: 'We launch, hand over documented code, and support you after launch.' },
   ],
 } as const;
 
 export const PROOF_SECTION = {
-  label: 'Why agencies choose us',
-  title: 'The numbers speak. The work speaks louder.',
+  label: 'Our track record',
+  title: 'Why agencies choose us.',
 } as const;
 
 /** The close adds what the hero's reassurance does not: what the call is for (the contact page's own steps). */
 export const CLOSE_BAND = {
-  title: 'Have a build your clients are waiting on?',
-  lede: 'Four short questions, then a 20-minute call where we agree what is in scope and what is not, so your fixed quote describes the real job.',
+  title: 'Have a project your clients are waiting on?',
+  lede: 'Answer four short questions. Then we talk for 20 minutes, agree what is included, and send you a fixed quote.',
 } as const;

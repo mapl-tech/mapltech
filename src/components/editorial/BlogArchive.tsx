@@ -279,8 +279,8 @@ export default function BlogArchive({ rows, topics, pageSize = 24 }: BlogArchive
           {topicLabel ? ` in ${topicLabel}` : ''}.
         </p>
         <p className={styles.emptyText}>
-          Try a shorter word or another topic. Weighing a build rather than researching one? The estimator answers
-          faster than an article: <Link href="/pricing#estimator">open the estimator</Link>.
+          Try a shorter word or another topic. Want a price instead? The estimator is faster:{' '}
+          <Link href="/pricing#estimator">open the estimator</Link>.
         </p>
         <button type="button" className={styles.emptyButton} onClick={clearAll}>
           Clear search and topic

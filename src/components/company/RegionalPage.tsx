@@ -10,11 +10,11 @@ import { faqPage, getServiceLine, itemList, pageGraph, serviceId } from '@/lib/s
 import { SERVICE_META } from '@/lib/estimate';
 import FactsBand from './FactsBand';
 import HeroActions from './HeroActions';
-import HoursExplorer from './HoursExplorer';
 import LocalTime from './LocalTime';
+import OfficeList from './OfficeList';
 import OfficeMap from './OfficeMap';
-import { indexOf, keepBrand } from './content';
-import { REPLY_TIME, lowestStartingPrice, rolesIn, startingFrom, type RegionConfig } from './regions';
+import { PRICE_FACT, keepBrand } from './content';
+import { REPLY_TIME, rolesIn, startingFrom, type RegionConfig } from './regions';
 import ed from './Company.module.scss';
 import place from './PlaceReadout.module.scss';
 import styles from './RegionalPage.module.scss';
@@ -28,13 +28,14 @@ export interface RegionalPageProps {
 }
 
 /**
- * The regional template for /nigeria and /jamaica (Nov 2026 award pass).
+ * The regional template for /nigeria and /jamaica (Nov 2026 simplify pass).
  *
  * A sense of place without stock photography: the branch city's live local
  * time beside a to-scale drawing of the three offices. Then the market facts,
- * what the local team builds with real "from" prices (paper), your working
- * day against the branch's hours, a real local project where one exists, the
- * market questions with the branch's contact lines, and the close.
+ * what the local team builds with real "from" prices (paper), the three
+ * offices' hours with the branch first, a real local project where one
+ * exists, the market questions with the branch's contact lines, and the
+ * close.
  *
  * Schema (unchanged): WebPage + BreadcrumbList + ItemList of the four
  * services + FAQPage, all built from the same arrays the page renders. No
@@ -110,7 +111,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
       <FactsBand
         facts={[
           ...region.facts,
-          { term: 'Prices from', detail: `${lowestStartingPrice()} (USD), public` },
+          PRICE_FACT,
           { term: 'Reply time', detail: REPLY_TIME },
         ]}
         label={`${region.brandName} at a glance`}
@@ -124,30 +125,21 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             <h2 id="services-title" className={ed.title}>
               {keepBrand(region.team.heading)}
             </h2>
-            {region.team.body.map((paragraph) => (
-              <p key={paragraph.slice(0, 32)} className={ed.lede}>
-                {paragraph}
-              </p>
-            ))}
+            <p className={ed.lede}>{region.team.body}</p>
+            <div className={ed.headNote}>
+              <Link href={PRICING_HREF} className={ed.action} data-cta-placement={`${prefix}_services_pricing`}>
+                See all prices
+                <span aria-hidden="true" className={ed.arrow}>
+                  →
+                </span>
+              </Link>
+            </div>
           </header>
 
-          <div className={styles.listHead}>
-            <h3 className={styles.listTitle}>{region.services.heading}</h3>
-            <Link href={PRICING_HREF} className={ed.action} data-cta-placement={`${prefix}_services_pricing`}>
-              See the price list
-              <span aria-hidden="true" className={ed.arrow}>
-                →
-              </span>
-            </Link>
-          </div>
-
-          <ol className={styles.rows} role="list">
-            {services.map(({ row, line, from }, i) => (
+          <ul className={styles.rows} role="list" aria-label={region.services.heading}>
+            {services.map(({ row, line, from }) => (
               <li key={line.slug} className={styles.row}>
                 <Link href={line.path} className={styles.rowLink} data-cta-placement={`${prefix}_services_${line.slug}`}>
-                  <span className={styles.rowIndex} aria-hidden="true">
-                    {indexOf(i)}
-                  </span>
                   <span className={styles.rowName}>{SERVICE_META[row.service].label}</span>{' '}
                   <span className={styles.rowText}>{row.description}</span>{' '}
                   <span className={styles.rowMeta}>From {from}</span>
@@ -157,7 +149,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
                 </Link>
               </li>
             ))}
-          </ol>
+          </ul>
 
           <div className={styles.realities}>
             <h3 className={styles.realitiesTitle}>{region.team.realitiesHeading}</h3>
@@ -170,7 +162,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         </div>
       </section>
 
-      {/* Your working day against the branch's hours. */}
+      {/* The three offices' hours, the branch first. */}
       <section id="overlap" className={ed.dark} aria-labelledby="overlap-title">
         <div className={ed.inner}>
           <header className={ed.head}>
@@ -179,18 +171,9 @@ export default function RegionalPage({ region, title, description }: RegionalPag
               {region.overlap.heading}
             </h2>
             <p className={ed.lede}>{region.overlap.body}</p>
-            <div className={ed.headNote}>
-              <p>{region.overlap.footnote}</p>
-              <Link href="/about-us#offices" className={ed.action} data-cta-placement={`${prefix}_overlap_about`}>
-                How our three offices work together
-                <span aria-hidden="true" className={ed.arrow}>
-                  →
-                </span>
-              </Link>
-            </div>
           </header>
           <div className={ed.offset}>
-            <HoursExplorer focus={region.officeCity} label={`Your working day against ${region.brandName}'s office hours`} />
+            <OfficeList label="Our offices" focus={region.officeCity} current={region.path} placement={`${prefix}_offices`} />
           </div>
         </div>
       </section>
@@ -258,7 +241,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             <h2 id="faq-title" className={ed.title}>
               {region.faq.heading}
             </h2>
-            <p className={ed.lede}>Answered plainly, with the same prices and hours as everywhere else on this site.</p>
+            <p className={ed.lede}>Short answers, with the same prices and hours as the rest of this site.</p>
             <dl className={styles.branch}>
               <div>
                 <dt>Email</dt>

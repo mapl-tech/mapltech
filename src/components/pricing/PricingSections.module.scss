@@ -4,22 +4,13 @@
 
 // Shared section grammar for /pricing and /referral (Nov 2026 award pass),
 // the homepage's voice: a label in a 3fr column, a big Overpass title and a
-// measured lede in 9fr; numbered rows on hairlines; the FAQ as on the
-// homepage (sticky head, native accordion).
+// measured lede in 9fr (the estimator's head); numbered rows on hairlines
+// (the referral steps); the FAQ as on the homepage (sticky head, native
+// accordion).
 
 $ease: cubic-bezier(0.23, 1, 0.32, 1);
 
 // ---------------------------------------------------------------- section voice
-.section {
-  position: relative;
-  background: $color-ground;
-}
-
-.inner {
-  @include shell;
-  @include section-pad;
-}
-
 .head {
   display: grid;
   gap: 22px;
@@ -56,40 +47,6 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   margin: 0;
 }
 
-// ---------------------------------------------------------------- numbered steps (dark)
-// Four columns on wide screens, divided by hairlines; rows on phones.
-.steps {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid $color-hairline-strong;
-
-  @include md {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @include xl {
-    grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
-  }
-}
-
-.step {
-  @include rise-in;
-  position: relative;
-  display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  column-gap: 16px;
-  align-content: start;
-  padding: clamp(24px, 3vw, 36px) 0;
-  border-bottom: 1px solid $color-hairline;
-
-  @include md {
-    display: block;
-    padding: clamp(28px, 3vw, 40px) clamp(20px, 2.4vw, 36px) clamp(28px, 3vw, 40px) 0;
-  }
-}
-
 // Divider between neighbours on the two-column and four-column grids.
 @include md {
   .steps > .step:nth-child(2n) {
@@ -113,47 +70,11 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
-// Outline numerals, decorative (aria-hidden).
-.stepNo {
-  display: block;
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2.75rem, 1.8rem + 3vw, 5rem); // 44px -> 80px
-  line-height: 0.86;
-  letter-spacing: -0.045em;
-  color: transparent;
-  -webkit-text-stroke: 1.5px $color-red;
-  @include tabular;
-
-  @include md {
-    margin-bottom: clamp(24px, 3vw, 48px);
-  }
-}
-
-.stepName {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: clamp(1.375rem, 1.15rem + 0.7vw, 1.75rem);
-  line-height: 1.12;
-  letter-spacing: -0.02em;
-  color: $color-fg;
-}
-
-.stepText {
-  margin: 10px 0 0;
-  max-width: 30em;
-  font-size: $font-size-base;
-  line-height: 1.55;
-  color: $color-fg-muted;
-}
-
 // ---------------------------------------------------------------- faq (as on the homepage)
 .faq {
   position: relative;
   background: $color-ground;
   border-top: 1px solid $color-hairline;
-  scroll-margin-top: 72px;
 }
 
 .faqInner {
@@ -197,6 +118,6 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 // Focus is never hidden under the fixed header (WCAG 2.4.11).
-:is(.section, .faq) :is(a, button, input, select, textarea, summary) {
-  scroll-margin-top: 96px;
+.faq :is(a, button, input, select, textarea, summary) {
+  scroll-margin-top: 8px;
 }

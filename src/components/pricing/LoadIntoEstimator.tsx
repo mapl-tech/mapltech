@@ -10,7 +10,7 @@ import {
   type EstimateSize,
   type SizeKey,
 } from '@/lib/estimate';
-import { useLenis } from '@/components/ui/SmoothScroll';
+import { anchorOffset, useLenis } from '@/components/ui/SmoothScroll';
 import { usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
 import { writeEstimateUrl } from './estimateUrlStore';
 
@@ -21,14 +21,11 @@ interface LoadIntoEstimatorProps {
   children: ReactNode;
 }
 
-/** Header is 64px fixed; land the estimator heading just under it. */
-const SCROLL_OFFSET = -88;
-
 /**
- * Interaction #10: tier -> estimator hand-off.
+ * Interaction #10: package -> estimator hand-off ("Add to my estimate").
  *
  * A real link (`/pricing?svc=web&size.web=growth#estimator`) that works with
- * no JavaScript. With JavaScript it merges the tier into the current estimate
+ * no JavaScript. With JavaScript it merges the package into the current estimate
  * (adds the service line, sets its size, keeps the rest), mirrors it to the
  * URL, scrolls to #estimator and moves focus to the live total so the new
  * range is read out as it springs into place.
@@ -52,7 +49,7 @@ export default function LoadIntoEstimator({ service, size, className, children }
 
     const target = document.getElementById('estimator');
     if (target) {
-      if (lenis) lenis.scrollTo(target, { offset: SCROLL_OFFSET, immediate: reduceMotion });
+      if (lenis) lenis.scrollTo(target, { offset: -anchorOffset(target), immediate: reduceMotion });
       else target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     }
     window.setTimeout(() => {
@@ -67,7 +64,6 @@ export default function LoadIntoEstimator({ service, size, className, children }
       scroll={false}
       onClick={handleClick}
       className={className}
-      data-cursor="estimate"
       data-cta-placement="pricing_tier_load"
       data-service={service}
       data-size={size}

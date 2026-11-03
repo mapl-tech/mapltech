@@ -1,24 +1,27 @@
 /**
- * Services family (award pass, Nov 2026): the copy and the derived facts
+ * Services family (Nov 2026 simplify pass): the copy and the derived facts
  * behind /services and the four /services/* pages.
  *
  * Sources, and the only ones:
  *  - prices, tiers, retainers, hourly rates and bundles: `pricing` in
  *    src/config/site.ts, read through src/config/services.ts and
  *    src/lib/estimate.ts, so a price change there changes every page here;
- *  - capabilities, process stages, FAQs, the live site's hero promises, its
- *    section titles and its closing asks: services.ts;
- *  - one-line summaries and deliverables: the homepage copy in
- *    src/components/flagship/content.ts (LAYERS, SERVICES_INTRO, WORK_INTRO);
+ *  - capabilities, process steps, FAQs, section headings and closing asks:
+ *    services.ts (the live pages' facts, in plain words);
+ *  - the one-line summary of each service and the "How it works" steps on
+ *    /services: the homepage copy in src/components/flagship/content.ts
+ *    (LAYERS, APPROACH), so the two pages describe both the same way;
  *  - case facts: src/components/case/stories.ts (listed projects only).
  * Every sentence written here is cited inline. Nothing is estimated.
  *
- * Punctuation is normalised at render time by `cleanCopy` (a spaced hyphen
- * used as a dash becomes a colon or a comma, numeric ranges get an en dash,
- * apostrophes curl), because the config keeps ASCII ranges the price parser
- * reads. Wording is fixed at the source; the spec fails if banned or retired
- * words come back. FAQ JSON-LD is built from the same cleaned strings the
- * page renders, so markup and structured data cannot disagree.
+ * Voice: plain English for a diverse audience (short sentences, no jargon,
+ * canonical service names in labels). Punctuation is normalised at render
+ * time by `cleanCopy` (a spaced hyphen used as a dash becomes a colon or a
+ * comma, numeric ranges get an en dash, apostrophes curl), because the config
+ * keeps ASCII ranges the price parser reads. Wording is fixed at the source;
+ * the spec fails if banned, retired or jargon words come back. FAQ JSON-LD is
+ * built from the same cleaned strings the page renders, so markup and
+ * structured data cannot disagree.
  */
 import type { Metadata } from 'next';
 import { absoluteUrl } from '@/config/routes';
@@ -32,7 +35,7 @@ import {
   type ServiceSlug,
   type ServiceTier,
 } from '@/config/services';
-import { listedProjects, pricing, testimonials } from '@/config/site';
+import { listedProjects, pricing } from '@/config/site';
 import {
   SERVICE_META,
   SIZE_OPTIONS,
@@ -44,9 +47,10 @@ import {
   type SizeKey,
 } from '@/lib/estimate';
 import { findStory } from '@/components/case/stories';
+import { APPROACH, LAYERS } from '@/components/flagship/content';
 
 /** The date this family was rebuilt (JSON-LD dateModified); the sitemap uses routes.ts REDESIGN_DATE. */
-export const SERVICES_REVISED = '2026-11-01';
+export const SERVICES_REVISED = '2026-11-02';
 
 /* ------------------------------------------------------------------ */
 /* Copy hygiene                                                         */
@@ -106,8 +110,10 @@ function lowOf(label: string): number | null {
   return parsePriceLabel(label).low;
 }
 
-/** The scoping line every price on the site closes with (services.ts cost answers). */
-export const QUOTE_LINE = 'You get a fixed quote after a 20-minute scoping call.';
+/** The line every price on these pages closes with (services.ts cost answers). */
+export const QUOTE_LINE = 'You get a fixed quote after a 20-minute call.';
+
+const COUNT_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
 
 /* ------------------------------------------------------------------ */
 /* Per-service copy                                                     */
@@ -116,33 +122,24 @@ export const QUOTE_LINE = 'You get a fixed quote after a 20-minute scoping call.
 export interface Exhibit {
   src: string;
   alt: string;
-  caption: string;
 }
 
 interface ServiceCopy {
   /** H1: the service's canonical name (SERVICE_META label, the same on every page of the site). */
   name: string;
-  /** What the line is in one phrase: the hero label and the index kicker. */
+  /** What the service is, in a few everyday words: the hero label and the index kicker. */
   role: string;
   /** Outcome-first hero lede, under 30 words. */
   lede: string;
-  /** One sentence for the index row and the ItemList description. */
-  summary: string;
   /** The entry tier's headline inclusions, composed from its feature list. */
   entryIncludes: string;
-  /** Who the line is for: the entry tier's own description (site.ts), phrased as an audience. */
-  who: string;
-  /** Lede under "What we build". */
-  deliverIntro: string;
-  /** Label for services.ts `stack` (automation's stack lists deliverables, not technologies). */
-  stackLabel: string;
-  /** Case studies that prove this line, lead case first (stories.ts slugs). */
+  /** Label for the technology chips under "What we build"; null shows none (automation's list repeats its capabilities). */
+  stackLabel: string | null;
+  /** Case studies that prove this service, lead case first (stories.ts slugs); two at most. */
   proofSlugs: readonly string[];
-  /** Cloud shows only MAPL Tours' published infrastructure facts. */
-  proofFilter?: { headline: string; results: RegExp; stages: readonly string[] };
-  /** Show Alita Fabiano's quote (LRO Staffing is the client behind this line's lead case). */
-  quote: boolean;
-  /** Real work for the index preview; null draws the pipeline diagram instead (cloud has no screen). */
+  /** Cloud shows only MAPL Tours' published delivery facts. */
+  proofFilter?: { headline: string; results: RegExp };
+  /** Real work for the index preview; null draws the release diagram instead (cloud has no screen). */
   exhibit: Exhibit | null;
   meta: { title: string; description: string };
   og: { src: string; width: number; height: number; alt: string };
@@ -159,23 +156,17 @@ const SHARE_IMAGE = {
 const COPY: Record<ServiceSlug, ServiceCopy> = {
   'web-development': {
     name: SERVICE_META.web.label,
-    role: 'What customers see',
-    // content.ts LAYERS[0].summary · services.ts FAQ "we build pixel-perfect from Figma, Sketch, or XD files" · content.ts HERO.lede
-    lede: 'Custom-coded sites that load fast, rank, and pass an accessibility audit on launch day. Built from your designs, shipped under your brand.',
-    summary: 'Custom-coded and headless sites that load fast, rank, and pass an accessibility audit on launch day.',
-    // Starter features: "Custom-coded responsive website (up to 7 pages)", "Mobile-first, pixel-perfect build"
-    entryIncludes: 'Up to 7 custom-coded pages, built mobile-first',
-    // Starter: "For agencies that need a sharp, fast site with no template bloat"
-    who: 'Agencies that need a sharp, fast site with no template bloat.',
-    // services.ts oneLiner
-    deliverIntro: 'Custom-coded sites engineered for speed, accessibility and long-term maintainability.',
+    role: 'Websites and web apps',
+    // services.ts capabilities (speed, accessibility, built for whoever runs it) · FAQ "we build them exactly from
+    // Figma, Sketch or XD files" · the live lede "Built from your designs, shipped under your brand."
+    lede: 'Fast, accessible websites built from your designs and delivered under your brand. Your client gets a site that is easy to use and easy to update.',
+    // Starter features: "Custom-coded website that works on every screen (up to 7 pages)", "Designed for phones first"
+    entryIncludes: 'Up to 7 custom-coded pages, built for phones first',
     stackLabel: 'Built with',
-    proofSlugs: ['lro-staffing', 'chha-ncr', 'focas-canada'],
-    quote: true,
+    proofSlugs: ['lro-staffing', 'chha-ncr'],
     exhibit: {
       src: '/images/cases/lro-desktop.jpg',
       alt: 'The LRO Staffing homepage built by MAPL TECH: “Building Careers. Strengthening Organizations.” above a job search panel.',
-      caption: 'LRO Staffing’s website, built by MAPL TECH.',
     },
     meta: {
       title: 'Custom Web Development for Agencies',
@@ -191,24 +182,18 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
   },
   'automation-ai-workflow-setup': {
     name: SERVICE_META.automation.label,
-    role: 'What moves the work',
-    // content.ts LAYERS[1].summary + deliverable "Integrations with the tools the team already uses"
-    lede: 'CRM workflows, AI intake and agents that take the manual work out of your client’s week, wired into the tools their team already uses.',
-    summary: 'CRM workflows, AI intake and agents that take the manual work out of your client’s week.',
-    // Foundation Automation features: "CRM setup & configuration", "Lead routing workflows", "3-5 core automations"
-    entryIncludes: 'CRM setup, lead routing and 3–5 core automations',
-    // Foundation Automation: "For agencies doing CRM work and follow-ups by hand"
-    who: 'Agencies doing CRM work and follow-ups by hand.',
-    // services.ts sections.capabilities.subtitle
-    deliverIntro: 'Not just Zapier connections: real engineering that connects the entire operational stack.',
-    stackLabel: 'Covers',
+    role: 'Less manual work',
+    // services.ts oneLiner ("From simple automations to custom AI agents") · content.ts LAYERS deliverable
+    // "Lead routing, follow-ups and reporting on autopilot"
+    lede: 'We connect the tools your team already uses and automate the repetitive work: follow-ups, sorting new leads and reports. From simple automations to custom AI agents.',
+    // Foundation Automation features: "CRM setup for your team", "New leads sent to the right person
+    // automatically", "3 to 5 key automations"
+    entryIncludes: 'CRM setup, new leads sent to the right person, and 3 to 5 key automations',
+    stackLabel: null,
     proofSlugs: ['mapl-tours', 'crowned-spice'],
-    quote: false,
     exhibit: {
       src: '/images/cases/tours-desktop.jpg',
       alt: 'The MAPL Tours homepage, “Discover Jamaica beyond the resort.”, over aerial footage of the coast.',
-      // content.ts WORK[1].outcome
-      caption: 'MAPL Tours, our own travel company, with AI handling quoting, booking and follow-up.',
     },
     meta: {
       title: 'Automation & AI Workflow Setup for Agencies',
@@ -224,23 +209,16 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
   },
   'custom-internal-tools': {
     name: SERVICE_META.tools.label,
-    role: 'What the team works in',
-    // content.ts LAYERS[2].summary + deliverable "Role-based access from day one"
-    lede: 'Dashboards, client portals and ops systems built around how the team actually works, with role-based access from day one.',
-    summary: 'Dashboards, client portals and ops systems built around how the team actually works.',
-    // Internal Dashboards features: "Real-time reporting", "Role-based access control"
-    entryIncludes: 'Real-time reporting with role-based access control',
-    // Internal Dashboards: "Give your team real-time visibility into the numbers that matter most" + feature "Real-time reporting"
-    who: 'Teams that need real-time reporting on the numbers that matter most.',
-    // services.ts sections.capabilities.subtitle
-    deliverIntro: 'Off-the-shelf software forces you to adapt. We build tools that adapt to you.',
+    role: 'Dashboards and portals',
+    // services.ts oneLiner: "designed for how your team actually operates, not how a SaaS platform thinks you should"
+    lede: 'Dashboards, client portals and reporting tools built around how your team works, not how a software company thinks you should work.',
+    // Internal Dashboards features: "Live reports", "Access levels for each role"
+    entryIncludes: 'Live reports, with access levels for each role',
     stackLabel: 'Built with',
     proofSlugs: ['lro-salary-guide', 'unsvcc'],
-    quote: true,
     exhibit: {
       src: '/images/cases/salary-desktop.jpg',
       alt: 'The LRO 2026 Interactive Salary Guide built by MAPL TECH, with its filters and charts.',
-      caption: 'The LRO Interactive Salary Guide, built by MAPL TECH.',
     },
     meta: {
       title: 'Custom Internal Tools for Agencies',
@@ -256,28 +234,21 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
   },
   'cloud-engineering': {
     name: SERVICE_META.cloud.label,
-    role: 'What it all runs on',
-    // content.ts LAYERS[3].summary + deliverable "AWS, Google Cloud or Azure, written as code"
-    lede: 'Infrastructure as code, CI/CD, monitoring and migrations on AWS, Google Cloud or Azure, so the thing you shipped stays up.',
-    summary: 'Infrastructure as code, CI/CD, monitoring and migrations, so the thing you shipped stays up.',
-    // Starter Cloud Setup features: provider setup, "Basic CI/CD pipeline configuration", "Uptime monitoring & alerting"
-    entryIncludes: 'AWS, GCP or Azure setup, a CI/CD pipeline and uptime monitoring',
-    // Starter Cloud Setup: "For agencies ready to move off shared hosting and into reliable, scalable infrastructure"
-    who: 'Agencies ready to move off shared hosting and into reliable, scalable infrastructure.',
-    // services.ts sections.capabilities.subtitle
-    deliverIntro: 'Production-grade infrastructure engineering, not just spinning up servers and hoping for the best.',
+    role: 'Hosting that stays online',
+    // services.ts capabilities: AWS, GCP or Azure · "Automated build, test, and deploy pipelines" · monitoring and alerting
+    lede: 'We set up and run your hosting on AWS, Google Cloud or Azure. Every update is tested before it goes live, and monitoring spots problems early.',
+    // Starter Cloud Setup features: "Cloud setup on AWS, Google Cloud or Azure", "Basic automatic testing and
+    // deployment", "Alerts if the site goes down"
+    entryIncludes: 'Cloud setup on AWS, Google Cloud or Azure, automatic deployment and downtime alerts',
     stackLabel: 'Built with',
     proofSlugs: ['mapl-tours'],
-    // Only what stories.ts publishes about MAPL Tours' delivery and production: the tests in its CI/CD
-    // pipeline and live payments (as results), its review step and payment guardrails (as stages; the
-    // "Tests" stage would repeat the tests result).
+    // Only what stories.ts publishes about MAPL Tours' delivery and production: the tests every change passes
+    // and live payments.
     proofFilter: {
       // stories.ts facts: Owner MAPL TECH; Status "Live, taking real payments".
       headline: 'Our own travel company, live and taking real payments.',
       results: /tests|payments/i,
-      stages: ['Review', 'Money'],
     },
-    quote: false,
     exhibit: null,
     meta: {
       title: 'Cloud Engineering for Agencies',
@@ -297,19 +268,19 @@ export interface LayerView extends ServiceCopy {
   service: EstimateService;
   path: string;
   record: ServiceRecord;
-  /** 1-based position in services.ts order (web, automation, tools, cloud): the index numeral. */
-  index: number;
-  /** "01" */
-  numeral: string;
-  /** The live site's hero headline for this line, as a statement ("Web development that actually performs."). */
+  /** One sentence for the index row and the ItemList description: the homepage's own (content.ts LAYERS). */
+  summary: string;
+  /** "What we build" heading: what the service gives the reader, as a statement. */
   promise: string;
-  /** The live site's process heading ("From brief to browser, step by step."). */
+  /** Lede under "What we build" (services.ts capabilities subtitle). */
+  deliverIntro: string;
+  /** "How it works" heading for this service's four steps. */
   processTitle: string;
-  /** The live site's closing ask for this line (services.ts ctaBand), plus the quote line. */
+  /** The closing ask for this service (services.ts ctaBand), plus the quote line. */
   close: { title: string; lede: string };
   tiers: readonly ServiceTier[];
   recurring: readonly ServiceRecurringLine[];
-  /** Lowest one-time price across the line's tiers. */
+  /** Lowest one-time price across the service's tiers. */
   from: number;
   /** "From $5,000" */
   fromLabel: string;
@@ -341,16 +312,16 @@ function toView(record: ServiceRecord): LayerView {
   const tiers = serviceTiers(record);
   const recurring = serviceRecurringLines(record);
   const from = lowestFrom(tiers);
-  const index = services.findIndex((s) => s.slug === record.slug) + 1;
+  const layer = LAYERS.find((item) => item.service === record.estimateKey);
   return {
     ...copy,
     slug: record.slug,
     service: record.estimateKey,
     path: record.path,
     record,
-    index,
-    numeral: String(index).padStart(2, '0'),
+    summary: layer ? cleanCopy(layer.summary) : cleanCopy(record.oneLiner),
     promise: statement(record.heroTitle),
+    deliverIntro: cleanCopy(record.sections.capabilities.subtitle),
     processTitle: statement(record.sections.process.title),
     close: { title: cleanCopy(sentenceCase(record.ctaBand.heading)), lede: `${cleanCopy(record.ctaBand.body)} ${QUOTE_LINE}` },
     tiers,
@@ -364,7 +335,7 @@ function toView(record: ServiceRecord): LayerView {
   };
 }
 
-/** The four lines in services.ts order: web, automation, tools, cloud. */
+/** The four services in services.ts order: web, automation, tools, cloud. */
 export const LAYER_VIEWS: readonly LayerView[] = services.map(toView);
 
 export function layerView(slug: ServiceSlug): LayerView {
@@ -374,12 +345,12 @@ export function layerView(slug: ServiceSlug): LayerView {
 /** Lowest one-time price on the whole price list ($3,500 today). */
 export const LOWEST_FROM = Math.min(...LAYER_VIEWS.map((view) => view.from));
 
-/** Lowest monthly line across all four lines ($500 today, web Essential Care). */
+/** Lowest monthly line across all four services ($500 today, web Essential Care). */
 export const LOWEST_MONTHLY = Math.min(
   ...LAYER_VIEWS.map((view) => view.lowestMonthly?.amount ?? Number.POSITIVE_INFINITY),
 );
 
-/** Post-launch support stated for web builds ("30–90 days"), without its "depending on tier" tail. */
+/** Support after launch stated for web builds ("30–90 days"), without its "depending on tier" tail. */
 export function supportWindow(view: LayerView): string | null {
   return view.record.postLaunchSupport ? cleanCopy(view.record.postLaunchSupport.replace(/ depending on tier/, '')) : null;
 }
@@ -387,6 +358,9 @@ export function supportWindow(view: LayerView): string | null {
 /* ------------------------------------------------------------------ */
 /* Tiers                                                                */
 /* ------------------------------------------------------------------ */
+
+/** How many inclusions a tier card shows before the rest fold into "See everything included". */
+export const TIER_HIGHLIGHTS = 3;
 
 export interface TierView {
   id: string;
@@ -410,7 +384,7 @@ export interface TierView {
 /**
  * Per-tier timelines parsed from services.ts `typicalTimeline`
  * ("3–4 weeks Starter · 5–8 weeks Growth / E-Commerce · 8–14 weeks Advanced and Enterprise").
- * Lines without a stated timeline return an empty map, and the page shows none.
+ * Services without a stated timeline return an empty map, and the page shows none.
  */
 export function tierTimelines(record: ServiceRecord): Map<string, { min: number; max: number }> {
   const out = new Map<string, { min: number; max: number }>();
@@ -456,13 +430,7 @@ export function tierViews(view: LayerView): TierView[] {
       name: tier.name,
       who: cleanCopy(tier.description),
       price: parsed.isCustom ? 'Custom' : cleanCopy(tier.price),
-      priceNote: parsed.isCustom
-        ? 'Scoped with you on a call'
-        : startingAt
-          ? 'Starting price'
-          : parsed.openEnded
-            ? 'Published range, open-ended'
-            : 'Published range',
+      priceNote: parsed.isCustom ? 'Priced with you on a call' : startingAt ? 'Starting price' : 'Price range',
       isCustom: parsed.isCustom,
       builds,
       features: tier.features.filter((feature) => feature !== builds).map(cleanCopy),
@@ -472,23 +440,14 @@ export function tierViews(view: LayerView): TierView[] {
   });
 }
 
-/**
- * One GEO-quotable sentence naming every tier and its price, straight from the table:
- * "Web Development at MAPL TECH: from $5,000 for Starter, from $8,500 for … Enterprise is priced per project."
- */
-export function tierSentence(view: LayerView): string {
-  const tiers = tierViews(view);
-  const priced = tiers.filter((tier) => !tier.isCustom);
-  const custom = tiers.filter((tier) => tier.isCustom);
-  const from = view.service === 'web' ? 'from ' : '';
-  const parts = priced.map((tier) => `${from}${tier.price} for ${tier.name}`);
-  const list = parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}` : parts[0];
-  const tail = custom.length ? ` ${custom.map((tier) => tier.name).join(' and ')} is priced per project.` : '';
-  return `${view.name} at MAPL TECH: ${list}.${tail}`;
+/** "What it costs" heading, from the table: "Four tiers, from $5,000." */
+export function costTitle(view: LayerView): string {
+  const count = COUNT_WORDS[view.tiers.length] ?? String(view.tiers.length);
+  return `${count} tiers, from ${view.fromMoney}.`;
 }
 
 /* ------------------------------------------------------------------ */
-/* What we build, how we build it, FAQ                                  */
+/* What we build, how it works, FAQ                                     */
 /* ------------------------------------------------------------------ */
 
 export function capabilityViews(view: LayerView) {
@@ -514,11 +473,9 @@ export interface FaqView {
   question: string;
   /** The whole answer as one string, the words shown: the FAQPage JSON-LD reads this. */
   answer: string;
-  /** Price answers in the homepage FAQ's list form: the direct sentence, one figure per line, the quote line. */
+  /** Price answers in list form: the direct sentence, one figure per line, the quote line. */
   list?: { lead: string; points: readonly string[]; close?: string };
 }
-
-const COUNT_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
 
 /**
  * services.ts composes the price answers from the tier table: every inclusion
@@ -526,22 +483,23 @@ const COUNT_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
  * On these pages the answer gives what was asked (the price of each tier, the
  * quote line) and the inclusions stay in the tier list. Only answers in the
  * composed shape are listed (each tier, or each plan, named with its price);
- * anything else, like the web page's own question, keeps its words.
+ * anything else keeps its words.
  */
 function priceList(view: LayerView, answer: string): FaqView['list'] {
   const tiers = tierViews(view);
   const tierShape = tiers.every((tier, i) => answer.includes(`${tier.name} (${cleanCopy(view.tiers[i].price)})`));
   if (tierShape && tiers.length > 1) {
+    const from = view.service === 'web' ? 'from ' : '';
     return {
       lead: `From ${view.fromMoney}, across ${COUNT_WORDS[tiers.length]?.toLowerCase() ?? tiers.length} tiers.`,
-      points: tiers.map((tier) => `${tier.name}: ${tier.price}`),
+      points: tiers.map((tier) => (tier.isCustom ? `${tier.name}: priced per project` : `${tier.name}: ${from}${tier.price}`)),
       close: answer.match(/You get a fixed quote[^.]*\./)?.[0],
     };
   }
   const plans = view.recurring;
   const planShape =
     plans.length > 0 &&
-    /^\w+ monthly \w+ options: /.test(answer) &&
+    /^\w+ monthly plans?: /.test(answer) &&
     plans.every((plan) => !plan.description && answer.includes(`${plan.name} (${cleanCopy(plan.price)})`));
   if (planShape) {
     return {
@@ -554,7 +512,7 @@ function priceList(view: LayerView, answer: string): FaqView['list'] {
 
 export function faqItems(view: LayerView): FaqView[] {
   return view.record.faqs.map((faq) => {
-    // Questions exactly as services.ts writes them: that is how agencies search, and the JSON-LD carries the same words.
+    // Questions exactly as services.ts writes them; the JSON-LD carries the same words.
     const question = faq.question;
     const answer = cleanCopy(faq.answer);
     const list = priceList(view, answer);
@@ -575,14 +533,11 @@ export interface ProofCase {
   headline: string;
   href: string;
   /** Real captures of the live product (public/images/cases): desktop 1800x1125, phone 780x1688. */
-  media: { desktop: string; mobile?: string; alt: string; caption?: string } | null;
+  media: { desktop: string; mobile?: string; alt: string } | null;
   /** The live address, for the browser frame's address bar ("lrostaffing.com"). */
   url?: string;
   results: readonly { value: string; label: string }[];
   stages: readonly { name: string; text: string }[];
-  stack?: string;
-  /** The line narrowed this case to specific facts (cloud: delivery and production only). */
-  focused: boolean;
 }
 
 const listed = new Set(listedProjects().map((project) => project.slug));
@@ -605,85 +560,33 @@ export function proofCases(view: LayerView): ProofCase[] {
     if (!story || !listed.has(slug)) continue;
     const filter = view.proofFilter;
     const results = (story.results ?? []).filter((result) => !filter || filter.results.test(result.label));
-    const stages = (story.built?.stages ?? []).filter((stage) => !filter || filter.stages.includes(stage.name));
     out.push({
       slug,
       client: story.client,
       kind: caseKind(story.tags),
       headline: filter?.headline ?? story.headline,
       href: `/our-work/${slug}`,
-      media: story.media
-        ? { desktop: story.media.desktop, mobile: story.media.mobile, alt: story.media.alt, caption: story.media.caption }
-        : null,
+      media: story.media ? { desktop: story.media.desktop, mobile: story.media.mobile, alt: story.media.alt } : null,
       url: story.facts.find((fact) => fact.href)?.detail,
       results,
-      stages,
-      stack: story.facts.find((fact) => fact.term === 'Stack')?.detail,
-      focused: Boolean(filter),
+      // What was built, for a case with no published numbers (a filtered case keeps to its numbers).
+      stages: filter ? [] : (story.built?.stages ?? []),
     });
   }
-  return out;
+  return out.slice(0, 2);
 }
 
-const alita = testimonials.find((t) => t.name === 'Alita Fabiano');
-
-/** The one approved client quote (site.ts testimonials), word for word; only the apostrophes curl. */
-export const CLIENT_QUOTE = alita ? { ...alita, quote: cleanCopy(alita.quote) } : null;
-
 /* ------------------------------------------------------------------ */
-/* Index: how we work, and the partnerships                             */
+/* Index: how it works, and the partnerships pointer                    */
 /* ------------------------------------------------------------------ */
 
-const web = LAYER_VIEWS.find((view) => view.service === 'web');
+/** The homepage's "How it works" (content.ts APPROACH): one process, described the same way on both pages. */
+export const INDEX_STEPS: readonly { title: string; text: string }[] = APPROACH.steps;
 
-/**
- * How an engagement runs. Every term is stated in services.ts or site.ts:
- * the fixed quote (services.ts cost answers), the written plan before the
- * build (every line's Phase 01-02 copy), milestone payments (the shared
- * payment-plans FAQ) and post-launch support (web `postLaunchSupport`, every
- * line's retainers, `hourlyRates`).
- */
-export const ENGAGEMENT = [
-  {
-    title: 'Public prices, fixed quotes.',
-    text: 'Every tier on these pages shows its price. Scope your project with us on a 20-minute call and the quote you get is fixed.',
-  },
-  {
-    title: 'You see the plan before we build.',
-    text: 'Discovery ends in a written plan you can review: a project spec, a system design, a requirements spec or an architecture plan. Code comes after.',
-  },
-  {
-    title: 'Paid in milestones.',
-    text: 'Projects are typically split into a deposit to start, a mid-project payment and a final payment at launch, worked out around your cash flow.',
-  },
-  {
-    title: 'Support after launch.',
-    text: `Web builds include ${(web && supportWindow(web)) ?? '30–90 days'} of post-launch support. After that, every service line has a monthly plan from ${formatMoney(LOWEST_MONTHLY)} a month, and hourly work runs ${humanPrice(pricing.hourlyRates.standard)}.`,
-  },
-] as const;
-
-export interface PartnershipView {
-  name: string;
-  /** "$4,000–$7,500 a month" */
-  price: string;
-  description: string;
-  features: readonly string[];
-}
-
-/** The two monthly partnerships (site.ts `pricing.bundles`), as published. */
-export const PARTNERSHIPS: readonly PartnershipView[] = pricing.bundles.map((bundle) => ({
-  name: bundle.name,
-  price: humanPrice(bundle.price),
-  description: `${cleanCopy(bundle.description)}.`,
-  features: bundle.features.map(cleanCopy),
-}));
-
-/** The single-line floor under the partnerships: the cheapest monthly plan and the hourly rates. */
-export const RATES = {
-  monthlyFrom: `${formatMoney(LOWEST_MONTHLY)} a month`,
-  hourly: humanPrice(pricing.hourlyRates.standard),
-  emergency: humanPrice(pricing.hourlyRates.emergency),
-} as const;
+/** Lowest monthly partnership (site.ts `pricing.bundles`): "$4,000 a month". */
+export const PARTNERSHIP_FROM = `${formatMoney(
+  Math.min(...pricing.bundles.map((bundle) => lowOf(bundle.price) ?? Number.POSITIVE_INFINITY)),
+)} a month`;
 
 /* ------------------------------------------------------------------ */
 /* Metadata                                                             */

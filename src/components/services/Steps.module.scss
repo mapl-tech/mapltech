@@ -1,0 +1,159 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// A numbered column in narrow space, two across from 560px, one row from
+// 880px, all measured on the list's own width (container queries).
+//   dark: text ~11:1, number #F5F2EE · paper: ink ~17.6:1, ink-muted 6.4:1
+$two-up: 560px;
+$one-row: 880px;
+
+.wrap {
+  container: steps / inline-size;
+}
+
+.steps {
+  --rule: #{$color-hairline-strong};
+  --ring: #{$color-red};
+  --ink: #{$color-fg};
+  --body: #{$color-text-body};
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  column-gap: 40px;
+
+  &[data-tone='paper'] {
+    --rule: #{$color-ink-hairline};
+    --ring: #{$color-red-ink};
+    --ink: #{$color-ink};
+    --body: #{$color-ink-muted};
+  }
+
+  @container steps (min-width: #{$two-up}) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @container steps (min-width: #{$one-row}) {
+    grid-template-columns: repeat(var(--count, 4), minmax(0, 1fr));
+  }
+
+  &[data-count='3'] {
+    --count: 3;
+  }
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: 16px;
+  row-gap: 6px;
+  align-content: start;
+  padding: 22px 0 24px;
+  border-top: 1px solid var(--rule);
+
+  // As the list scrolls in, each step's top rule draws in crimson, left to
+  // right, one after another: the order made visible. Scroll-driven, transform
+  // only; without support or with reduced motion the hairline stays as is.
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: var(--ring);
+    transform: scaleX(0);
+    transform-origin: left;
+
+    @include motion-ok {
+      @supports (animation-timeline: view()) {
+        animation: step-draw linear both;
+        animation-timeline: view();
+        // The rule is 1px tall, so its range is its trip up the viewport.
+        animation-range: cover 6% cover 30%;
+      }
+    }
+  }
+
+  // In one row the steps share a scroll position, so later ones start later.
+  @supports (animation-timeline: view()) {
+    &:nth-child(2)::before {
+      animation-range: cover 10% cover 34%;
+    }
+
+    &:nth-child(3)::before {
+      animation-range: cover 14% cover 38%;
+    }
+
+    &:nth-child(4)::before {
+      animation-range: cover 18% cover 42%;
+    }
+  }
+
+  @container steps (min-width: #{$one-row}) {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 12px;
+    padding: 28px 0 0;
+  }
+
+  @include rise-in;
+}
+
+.no {
+  grid-row: span 2;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ring);
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  line-height: 1;
+  color: var(--ink);
+  @include tabular;
+
+  @container steps (min-width: #{$one-row}) {
+    grid-row: auto;
+    margin-bottom: 6px;
+  }
+}
+
+.name {
+  margin: 0;
+  padding-top: 8px;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+
+  @container steps (min-width: #{$one-row}) {
+    padding-top: 0;
+  }
+}
+
+.text {
+  grid-column: 2;
+  margin: 0;
+  max-width: 30em;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: var(--body);
+  text-wrap: pretty;
+
+  @container steps (min-width: #{$one-row}) {
+    grid-column: auto;
+  }
+}
+
+@keyframes step-draw {
+  to {
+    transform: scaleX(1);
+  }
+}

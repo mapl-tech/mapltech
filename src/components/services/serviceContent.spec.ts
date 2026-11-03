@@ -3,33 +3,44 @@ import { services } from '@/config/services';
 import { pricing } from '@/config/site';
 import { SERVICE_META } from '@/lib/estimate';
 import {
-  ENGAGEMENT,
   INDEX_META,
+  INDEX_STEPS,
   LAYER_VIEWS,
-  PARTNERSHIPS,
+  PARTNERSHIP_FROM,
   PRICE_SUMMARY,
-  RATES,
+  QUOTE_LINE,
   capabilityViews,
   cleanCopy,
+  costTitle,
   faqItems,
   indexMetadata,
   proofCases,
   sentenceCase,
   serviceMetadata,
   stageViews,
-  tierSentence,
   tierViews,
 } from './serviceContent';
 
 /** Visible-copy rules from the flagship guide: no em dashes, no hype words, no exclamation marks. */
 const BANNED =
-  /—|\bseamless\b|\belevate|\bunleash|\brobust\b|cutting-edge|revolutioni[sz]e|supercharge|\bempower|\bunlock|!/i;
+  /—|\bseamless\b|\belevate|\bunleash|\brobust\b|cutting-edge|revolutioni[sz]e|supercharge|\bempower|\bunlock|\bleverage|world-class|best-in-class|!/i;
 
 /** Site-wide rule (Nov 2026): no unmeasured timed claims. */
 const TIMED = /\bsub-second\b|\bseconds?\b|\bin minutes\b|\binstant(ly)?\b/i;
 
 /** Retired by the owner (Nov 2026): no construction metaphors anywhere in the services copy. */
 const RETIRED = /holds it up|\bsteel\b|\btowers?\b|\bblueprints?\b|\bfloors?\b|\bground\b|foundation(?! automation)/i;
+
+/**
+ * Simplify pass (Nov 2026): words a diverse audience should not have to decode
+ * in the copy we write. Tier names and inclusions are site.ts data and are not
+ * checked here; "CI/CD" is allowed only where it is explained in the same item.
+ */
+const JARGON =
+  /\bheadless\b|\bstack\b|\bembed(ded)?\b|\bdiligence\b|\bstandups?\b|\bscoping\b|\bretainers?\b|\bSLA\b|\borchestration\b|\bdeliverables?\b|\bpipelines?\b|\binfrastructure as code\b|core web vitals|\bobservability\b|\bprovision/i;
+
+const words = (text: string) => text.split(/\s+/).filter(Boolean).length;
+const sentences = (text: string) => text.split(/(?<=[.?!])\s+/).filter(Boolean);
 
 describe('cleanCopy', () => {
   it('turns numeric hyphens into en dashes and spaced hyphens into punctuation', () => {
@@ -58,9 +69,8 @@ describe('sentenceCase', () => {
 });
 
 describe('service pages', () => {
-  it('has one view per service line, in services.ts order', () => {
+  it('has one view per service, in services.ts order', () => {
     expect(LAYER_VIEWS.map((view) => view.service)).toEqual(['web', 'automation', 'tools', 'cloud']);
-    expect(LAYER_VIEWS.map((view) => view.numeral)).toEqual(['01', '02', '03', '04']);
   });
 
   it.each(LAYER_VIEWS.map((view) => [view.slug, view] as const))(
@@ -77,78 +87,94 @@ describe('service pages', () => {
   it.each(LAYER_VIEWS.map((view) => [view.slug, view] as const))(
     '%s: rendered copy obeys the copy rules',
     (_slug, view) => {
-      const strings = [
+      const written = [
         view.role,
         view.lede,
         view.summary,
         view.entryIncludes,
-        view.who,
         view.deliverIntro,
         view.promise,
         view.processTitle,
         view.close.title,
         view.close.lede,
-        tierSentence(view),
+        costTitle(view),
         ...capabilityViews(view).flatMap((c) => [c.title, c.text]),
         ...stageViews(view).flatMap((s) => [s.name, s.text]),
-        ...tierViews(view).flatMap((t) => [t.who, ...t.features]),
         ...faqItems(view).flatMap((f) => [f.question, f.answer]),
       ];
-      for (const text of strings) {
+      const data = tierViews(view).flatMap((t) => [t.who, ...t.features]);
+      for (const text of [...written, ...data]) {
         expect(text, text).not.toMatch(BANNED);
         expect(text, text).not.toMatch(RETIRED);
         expect(text, text).not.toMatch(TIMED);
         expect(text, text).not.toMatch(/drowning|Perfect for|page builder/);
       }
-      // Names and labels use the canonical service name; sentences (FAQ questions) keep services.ts's words.
+      // Plain words: no unexplained jargon, and no sentence a reader has to hold in their head.
+      for (const text of written.filter((t) => !faqItems(view).some((f) => f.answer === t && f.list))) {
+        expect(text, text).not.toMatch(JARGON);
+        for (const sentence of sentences(text)) expect(words(sentence), sentence).toBeLessThanOrEqual(25);
+      }
+      // Steps stay short: 15 words or fewer each.
+      for (const stage of stageViews(view)) expect(words(stage.text), stage.text).toBeLessThanOrEqual(15);
+      expect(stageViews(view)).toHaveLength(4);
+      // Names and labels use the canonical service name; FAQ questions and the JSON-LD carry the same words.
       expect(view.name).toBe(SERVICE_META[view.service].label);
       expect(faqItems(view).map((f) => f.question)).toEqual(view.record.faqs.map((f) => f.question));
-      expect(view.lede.split(/\s+/).length).toBeLessThan(30);
+      expect(faqItems(view).length).toBeLessThanOrEqual(5);
+      expect(words(view.lede)).toBeLessThan(30);
       // Case labels carry the sector, never a short service name ("Website", "Internal tools").
       for (const item of proofCases(view))
         expect(item.kind).not.toMatch(/^(Website|Internal tools?|Automation|Custom)/);
     },
   );
 
-  it('takes the promise, the process heading and the close from the live copy in services.ts', () => {
+  it('states each promise, process heading and close in plain words', () => {
     const [webView, automation, tools, cloud] = LAYER_VIEWS;
-    expect(webView.promise).toBe('Web development that actually performs.');
-    expect(automation.promise).toBe('Stop doing manually what should happen automatically.');
-    expect(tools.promise).toBe('Internal tools built around your agency, not the other way around.');
-    expect(cloud.promise).toBe('Infrastructure that scales when your clients do.');
-    expect(cloud.processTitle).toBe('From audit to always-on.');
-    expect(automation.close.title).toBe('Ready to stop copy-pasting between tools?');
+    expect(webView.promise).toBe('Fast, accessible websites, built for the team that runs them.');
+    expect(automation.promise).toBe('Stop doing by hand what should happen automatically.');
+    expect(tools.promise).toBe('Tools built around your agency, not the other way around.');
+    expect(cloud.promise).toBe('Hosting that grows when your clients do.');
+    expect(cloud.processTitle).toBe('Four steps to reliable hosting.');
+    expect(automation.close.title).toBe('Tired of copying data between tools?');
     expect(tools.close.lede).toBe(
-      'Tell us what’s slowing your team down. We’ll build the tool that fixes it, for good. You get a fixed quote after a 20-minute scoping call.',
+      'Tell us what slows your team down. We will build the tool that fixes it, for good. You get a fixed quote after a 20-minute call.',
     );
+    expect(QUOTE_LINE).toBe('You get a fixed quote after a 20-minute call.');
     for (const view of LAYER_VIEWS) expect(services.some((s) => s.slug === view.slug)).toBe(true);
   });
 
   it('prices every tier from site.ts', () => {
     const webView = LAYER_VIEWS[0];
     expect(tierViews(webView).map((t) => t.price)).toEqual(pricing.webDevelopment.tiers.map((t) => cleanCopy(t.price)));
-    expect(tierSentence(webView)).toBe(
-      'Web Development at MAPL TECH: from $5,000 for Starter, from $8,500 for Growth / E-Commerce and from $12,000 for Advanced / AI-Powered. Enterprise is priced per project.',
-    );
+    expect(costTitle(webView)).toBe('Four tiers, from $5,000.');
+    expect(costTitle(LAYER_VIEWS[1])).toBe('Three tiers, from $3,500.');
     expect(tierViews(webView).map((t) => t.timeline?.label ?? null)).toEqual([
       '3–4 weeks',
       '5–8 weeks',
       '8–14 weeks',
       '8–14 weeks',
     ]);
+    expect(tierViews(webView).map((t) => t.priceNote)).toEqual([
+      'Starting price',
+      'Starting price',
+      'Starting price',
+      'Priced with you on a call',
+    ]);
     // Only web states timelines.
     for (const view of LAYER_VIEWS.slice(1)) expect(tierViews(view).every((t) => t.timeline === null)).toBe(true);
   });
 
-  it('shows only listed case studies with real captures, and only infrastructure facts on cloud', () => {
+  it('shows at most two listed case studies with real captures, and only delivery facts on cloud', () => {
     const cloud = LAYER_VIEWS[3];
     const [tours] = proofCases(cloud);
     expect(tours.slug).toBe('mapl-tours');
+    expect(tours.results.length).toBeGreaterThan(0);
     expect(tours.results.every((r) => /tests|payments/i.test(r.label))).toBe(true);
-    expect(tours.stages.map((s) => s.name)).toEqual(['Review', 'Money']);
+    expect(tours.stages).toEqual([]);
     expect(tours.kind).toBe('Our own product · Travel');
     expect(cloud.exhibit).toBeNull();
-    expect(proofCases(LAYER_VIEWS[0]).map((c) => c.slug)).toEqual(['lro-staffing', 'chha-ncr', 'focas-canada']);
+    for (const view of LAYER_VIEWS) expect(proofCases(view).length).toBeLessThanOrEqual(2);
+    expect(proofCases(LAYER_VIEWS[0]).map((c) => c.slug)).toEqual(['lro-staffing', 'chha-ncr']);
     const leads = LAYER_VIEWS.slice(0, 3).map((view) => proofCases(view)[0]);
     expect(leads.map((c) => c.media?.desktop)).toEqual([
       '/images/cases/lro-desktop.jpg',
@@ -168,13 +194,21 @@ describe('service pages', () => {
     const [cost, support] = faqItems(automation);
     expect(cost.list?.lead).toBe('From $3,500, across three tiers.');
     expect(cost.list?.points).toEqual(pricing.automation.tiers.map((t) => `${t.name}: ${cleanCopy(t.price)}`));
-    expect(cost.list?.close).toBe('You get a fixed quote after a 20-minute scoping call.');
+    expect(cost.list?.close).toBe(QUOTE_LINE);
     expect(cost.answer).toBe(
       [cost.list?.lead, ...(cost.list?.points ?? []).map((p) => `${p}.`), cost.list?.close].join(' '),
     );
+    expect(support.list?.lead).toBe('Three monthly plans.');
     expect(support.list?.points[0]).toBe('Light Monitoring & Tweaks: $750 a month');
-    // The web page's own price question keeps its words.
-    expect(faqItems(LAYER_VIEWS[0])[0].list).toBeUndefined();
+    // Web prices are starting prices; the custom tier is priced per project.
+    const [webCost] = faqItems(LAYER_VIEWS[0]);
+    expect(webCost.list?.lead).toBe('From $5,000, across four tiers.');
+    expect(webCost.list?.points).toEqual([
+      'Starter: from $5,000',
+      'Growth / E-Commerce: from $8,500',
+      'Advanced / AI-Powered: from $12,000',
+      'Enterprise: priced per project',
+    ]);
     for (const view of LAYER_VIEWS) for (const faq of faqItems(view)) expect(faq.answer).not.toMatch(/\/month/);
   });
 });
@@ -191,16 +225,13 @@ describe('services index', () => {
     );
   });
 
-  it('states engagement terms and partnerships from the config only', () => {
-    const text = ENGAGEMENT.map((term) => `${term.title} ${term.text}`).join(' ');
-    expect(text).toContain('$500 a month');
-    expect(text).toContain('$65–$120 an hour');
-    expect(text).toContain('30–90 days');
-    expect(text).not.toMatch(BANNED);
-    expect(text).not.toMatch(TIMED);
-    expect(PARTNERSHIPS.map((p) => p.name)).toEqual(pricing.bundles.map((b) => b.name));
-    expect(PARTNERSHIPS.map((p) => p.price)).toEqual(['$4,000–$7,500 a month', '$7,500–$12,000 a month']);
-    expect(RATES).toEqual({ monthlyFrom: '$500 a month', hourly: '$65–$120 an hour', emergency: '$150+ an hour' });
-    for (const p of PARTNERSHIPS) for (const s of [p.description, ...p.features]) expect(s).not.toMatch(BANNED);
+  it('tells how it works in the homepage’s short steps, and points bundles to pricing', () => {
+    expect(INDEX_STEPS.length).toBeGreaterThanOrEqual(3);
+    expect(INDEX_STEPS.length).toBeLessThanOrEqual(4);
+    for (const step of INDEX_STEPS) {
+      expect(words(step.text), step.text).toBeLessThanOrEqual(15);
+      expect(`${step.title} ${step.text}`).not.toMatch(BANNED);
+    }
+    expect(PARTNERSHIP_FROM).toBe('$4,000 a month');
   });
 });

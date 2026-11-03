@@ -35,8 +35,12 @@ $color-red-ink: #B81D38;
 }
 
 // "01  What we do": tabular index, a short crimson rule, the label.
+// The short label above a section heading: one step larger and less tightly
+// tracked than the 13px mono label, so it stays easy to read in capitals.
 @mixin section-label($color: $color-fg-muted) {
   @include mono-label($color);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
   display: inline-flex;
   align-items: center;
   gap: 14px;

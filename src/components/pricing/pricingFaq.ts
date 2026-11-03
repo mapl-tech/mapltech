@@ -10,6 +10,10 @@ import { factsOf, priceText } from './content';
  * two unsourced claims cut: "most clients choose a maintenance plan" and
  * "your visitors never see a broken page") and from the price list itself,
  * read from site.ts so a price change updates the answers too.
+ *
+ * Simplify pass (Nov 2026): pricing questions only, in plain words. The three
+ * build questions (your designs, technologies, rebuilding without downtime)
+ * live on the Web Development page's FAQ (services.ts).
  */
 
 const web = factsOf('web');
@@ -23,45 +27,28 @@ const bundles = pricing.bundles
 export const pricingFaq: FaqItem[] = [
   {
     question: 'How accurate is the estimator?',
-    answer:
-      `It reads the same price list this page publishes. Each answer maps to a published tier, add-ons move a line to the tier that includes them, and support maps to a published monthly line. ${web.name} tiers are starting prices, so a ${web.name} range runs from one tier’s price to the next. The fixed quote comes after a 20-minute scoping call.`,
+    answer: `It uses the same prices as this page. Each answer matches a published package, and an add-on moves you to the package that includes it. ${web.name} prices are starting prices, so a ${web.name} range runs from one package’s price to the next. You get a fixed quote after a 20-minute call.`,
   },
   {
     question: `How long does a typical ${web.name} project take?`,
     answer:
-      'Starter sites typically ship in 3–4 weeks. Growth / E-Commerce projects run 5–8 weeks. Advanced and Enterprise builds are scoped individually, but most launch within 8–14 weeks. We give you a clear timeline during discovery and stick to it.',
+      'Starter sites usually take 3 to 4 weeks. Growth / E-Commerce projects take 5 to 8 weeks. Advanced and Enterprise builds are planned one by one, and most launch within 8 to 14 weeks. We agree a clear timeline with you at the start and stick to it.',
   },
   {
     question: 'Do you offer payment plans?',
     answer:
-      'Yes. We typically split projects into milestone payments: a deposit to start, a mid-project payment and a final payment at launch. We will work out a structure that fits your cash flow.',
+      'Yes. We usually split a project into milestone payments: a deposit to start, a payment mid-project and a final payment at launch. We can agree a schedule that fits your cash flow.',
   },
   {
-    question: 'Do you offer monthly retainers instead of project pricing?',
-    answer: `Yes. Every service line has monthly maintenance or retainer lines, starting at ${formatMoney(web.monthlyFrom)} a month for ${web.name} maintenance. Two partner bundles cover several lines as one monthly partnership: ${bundles}.`,
+    question: 'Can we pay monthly instead of per project?',
+    answer: `Yes. Every service has monthly plans, starting at ${formatMoney(web.monthlyFrom)} a month for ${web.name} maintenance. Two bundles cover several services for one monthly price: ${bundles}.`,
   },
   {
     question: 'What happens after the site launches?',
-    answer: `Every ${web.name} plan includes post-launch support, 30 to 90 days depending on the tier. After that, monthly maintenance from ${formatMoney(web.monthlyFrom)} a month keeps the site secure, fast and up to date.`,
+    answer: `Every ${web.name} package includes support after launch, for 30 to 90 days depending on the package. After that, monthly maintenance from ${formatMoney(web.monthlyFrom)} a month keeps the site secure, fast and up to date.`,
   },
   {
     question: 'What does urgent work cost?',
-    answer: `Urgent fixes and AI specialist work are billed at the emergency rate, ${priceText(pricing.hourlyRates.emergency)} an hour; standard work is ${priceText(pricing.hourlyRates.standard)} an hour. The estimator’s Rush option adds the emergency rate on top of the range.`,
-  },
-  {
-    question: 'Do you work with our existing designs, or do you handle design too?',
-    answer:
-      'Both. Most agencies bring their own designs and we build pixel-perfect from Figma, Sketch or XD files. If you need design support, we can collaborate with your team or connect you with a design partner.',
-  },
-  {
-    question: 'What technologies do you build with?',
-    answer:
-      // No "not page builders": CHHA-NCR, shown as proof, runs on Elementor (see services.ts).
-      'We use the right tool for each project: React, Next.js, WordPress, Node.js, Python and more. Every decision is based on your project’s requirements, not our preferences.',
-  },
-  {
-    question: 'Can you rebuild our existing site without downtime?',
-    answer:
-      'Yes. We build the new site on a staging environment, migrate the content, test everything, then switch over with no downtime.',
+    answer: `Urgent fixes and AI specialist work are billed at our emergency rate, ${priceText(pricing.hourlyRates.emergency)} an hour. Standard work is ${priceText(pricing.hourlyRates.standard)} an hour. Choosing Rush in the estimator adds the emergency rate on top of the range.`,
   },
 ];

@@ -23,14 +23,14 @@ export const executives: Executive[] = [
   {
     name: 'Leshan Patterson',
     title: 'Co-Founder & Director',
-    bio: 'Leshan Patterson is Co-Founder and Director of MAPL TECH, leading global architecture, automation systems, and performance engineering initiatives. He specializes in high-performance web infrastructure, AI-enabled applications, and scalable enterprise systems. Leshan oversees technical strategy across all international divisions, ensuring every platform is engineered for speed, security, and scale.',
+    bio: 'Leshan Patterson is Co-Founder and Director of MAPL TECH. He leads how our systems are designed and built, including automation and speed. He specializes in fast web platforms, AI-powered applications and large business systems built to grow. Leshan sets the technical direction in every country we work in, so everything we build is fast, secure and ready to scale.',
     linkedin: 'https://www.linkedin.com/in/lpattersonn/',
     image: '/images/team/leshan-patterson.jpg',
   },
   {
     name: 'Mercy Akuma',
     title: 'Co-Founder & Director',
-    bio: 'Mercy Akuma is Co-Founder and Director at MAPL TECH, overseeing international growth, strategic partnerships, and operational expansion. She plays a key role in aligning cross-border execution with long-term company vision, ensuring MAPL TECH operates with precision, discipline, and global scalability.',
+    bio: 'Mercy Akuma is Co-Founder and Director of MAPL TECH. She leads our growth in new countries, our partnerships and the expansion of our operations. She makes sure the work in every country follows the company’s long-term plan, so MAPL TECH runs with precision and discipline as it grows.',
     linkedin: 'https://www.linkedin.com/in/mercyakuma/',
     image: '/images/team/mercy-akuma.jpg',
   },

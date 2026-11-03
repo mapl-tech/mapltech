@@ -215,16 +215,11 @@
 .place {
   position: relative;
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
   gap: 4px 14px;
   padding: 20px 0 22px;
   border-bottom: 1px solid $color-hairline;
-}
-
-.placeIndex {
-  padding-top: 0.95em;
-  @include mono-label($color-fg-dim);
 }
 
 .placeText {

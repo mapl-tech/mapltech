@@ -2,9 +2,11 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// The full price list on paper (Nov 2026 award pass): a sticky heading and
-// index on wide screens, every tier a row on an ink hairline with its price
-// set large, monthly lines as a ledger on a slightly deeper sheet.
+// The full price list on paper (Nov 2026, simplified): the heading holds
+// still on wide screens; every service is one row (a native <details>, closed
+// on first paint) with its name, starting price and package count, opening to
+// its packages, each on an ink hairline with its price set large, and its
+// monthly plans as a ledger on a slightly deeper sheet.
 //
 // On paper #F1EDE7: ink 17.6:1, ink-muted 6.4:1, crimson-ink #B81D38 5.5:1.
 // Headings set their colour here (the global h2-h6 rule paints them light).
@@ -20,14 +22,13 @@ $accent: $color-red-ink;
   background: $color-paper;
   color: $ink;
   border-radius: clamp(24px, 3vw, 40px);
-  scroll-margin-top: 72px;
 }
 
 .inner {
   @include shell;
   @include section-pad;
   display: grid;
-  gap: 56px;
+  gap: 40px;
 
   @include lg {
     grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
@@ -36,7 +37,7 @@ $accent: $color-red-ink;
   }
 }
 
-.rail {
+.head {
   min-width: 0;
 
   @include lg {
@@ -67,119 +68,150 @@ $accent: $color-red-ink;
   color: $muted;
 }
 
-// ---------------------------------------------------------------- index (wide screens)
-.index {
-  display: none;
-  margin-top: 40px;
-
-  @include lg {
-    display: block;
-  }
-
-  ol {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    border-top: 1px solid $hair;
-  }
-
-  // The hairline sits between targets, with air either side of it.
-  li {
-    padding: 3px 0;
-    border-bottom: 1px solid $hair;
-  }
+// ---------------------------------------------------------------- service rows
+.groups {
+  min-width: 0;
+  border-top: 1px solid rgba(11, 11, 12, 0.24);
 }
 
-.indexLink {
+.group {
+  min-width: 0;
+  // 4px either side of each hairline keeps neighbouring rows' hit areas 8px apart.
+  padding: 4px 0;
+  border-bottom: 1px solid $hair;
+  scroll-margin-top: 8px;
+}
+
+// Name, then the starting price and package count; the plus sits at the right.
+// Phones put the name on its own line; wider screens set the row on one line.
+.groupSummary {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 48px;
-  padding: 12px 0 12px 20px;
-  color: $muted;
-  transition: color 160ms $ease;
+  column-gap: 16px;
+  row-gap: 6px;
+  min-height: 88px;
+  padding: 22px 64px 22px 0;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
 
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: $accent;
-    transform: translateY(-50%) scale(0.5);
-    opacity: 0;
-    transition:
-      opacity 160ms ease-out,
-      transform 160ms $ease;
-  }
-
-  @include pointer-fine {
-    &:hover {
-      color: $ink;
-    }
-  }
-
-  &[aria-current='location'] {
-    color: $ink;
-
-    &::before {
-      opacity: 1;
-      transform: translateY(-50%) scale(1);
-    }
+  &::-webkit-details-marker {
+    display: none;
   }
 
   &:focus-visible {
     outline: 2px solid $accent;
     outline-offset: 2px;
   }
+
+  @include md {
+    flex-wrap: nowrap;
+    align-items: center;
+    column-gap: 28px;
+    min-height: 104px;
+  }
 }
 
-.indexName {
+// The global red rule (styles/_motion.scss) spans the whole row, in crimson-ink on paper.
+.group.group > .groupSummary::after {
+  left: 0;
+  right: 0;
+  background: $accent;
+}
+
+.groupTitle {
+  flex: 1 0 100%;
+  margin: 0;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.25rem); // 24px -> 36px
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: $ink;
+
+  @include md {
+    flex: 1 1 auto;
+  }
+}
+
+.groupFrom {
   font-family: $font-display;
   font-weight: $font-weight-bold;
   font-size: 1.125rem;
   letter-spacing: -0.015em;
+  white-space: nowrap;
+  color: $ink;
+  @include tabular;
+
+  @include md {
+    font-size: 1.25rem;
+  }
 }
 
-.indexFrom {
+.groupMeta {
   font-size: 1rem;
   white-space: nowrap;
-  @include tabular;
+  color: $muted;
 }
 
-// ---------------------------------------------------------------- groups
-.groups {
-  display: grid;
-  gap: clamp(80px, 10vw, 144px);
-  min-width: 0;
+// A plus in a ring that turns to a minus when the row is open.
+.groupIcon {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(11, 11, 12, 0.24);
+  transform: translateY(-50%);
+  transition: background-color 160ms $ease;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 14px;
+    height: 2px;
+    margin: -1px 0 0 -7px;
+    border-radius: 1px;
+    background: $accent;
+    transition: transform 240ms $ease;
+  }
+
+  &::after {
+    transform: rotate(90deg);
+  }
+
+  .group[open] > .groupSummary > &::after {
+    transform: rotate(0deg);
+  }
+
+  @include pointer-fine {
+    .groupSummary:hover > & {
+      background: rgba(11, 11, 12, 0.05);
+    }
+  }
 }
 
-.group {
-  min-width: 0;
-  scroll-margin-top: 96px;
+.groupBody {
+  padding: 4px 0 40px;
+
+  @include md {
+    padding-bottom: 56px;
+  }
 }
 
 .groupHead {
   max-width: 46rem;
-  margin-bottom: 28px;
-}
-
-.groupTitle {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2.25rem, 1.3rem + 3vw, 4rem); // 36px -> 64px
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  color: $ink;
+  margin-bottom: 24px;
 }
 
 .groupAnswer {
-  margin: 16px 0 0;
+  margin: 0;
   font-size: $font-size-md;
   line-height: 1.6;
   color: $muted;
@@ -231,10 +263,9 @@ $accent: $color-red-ink;
 // A schedule row: name left, price right on the same line (it wraps under
 // the name only when the two cannot share a line), the detail underneath.
 .tier {
-  @include rise-in;
   display: grid;
   gap: 16px;
-  padding: clamp(28px, 3vw, 40px) 0;
+  padding: clamp(24px, 2.6vw, 36px) 0;
   border-bottom: 1px solid $hair;
 }
 
@@ -538,5 +569,12 @@ $accent: $color-red-ink;
 // Focus is never hidden under the fixed header (WCAG 2.4.11): keyboard focus
 // scrolls these controls clear of it.
 .list :is(a, button, input, select, textarea, summary) {
-  scroll-margin-top: 96px;
+  scroll-margin-top: 8px;
+}
+
+// Room for focus rings at a row's edges: the global accordion clips the
+// content box it animates (styles/_motion.scss), which would shave the left
+// edge off a ring drawn 2px outside a link that sits flush left.
+.group::details-content {
+  overflow-clip-margin: 6px;
 }

@@ -59,20 +59,20 @@ const bundleHigh = highOf(pricing.bundles[pricing.bundles.length - 1].price);
  */
 function pricingFaq(): FaqEntry {
   const list = {
-    lead: 'Every price is public, and the pricing page lists every tier.',
+    lead: 'White-label means we do the work and your agency delivers it under its own name. Our prices are public:',
     points: [
       `${SERVICE_META.web.label} from ${fromOf(web[0].price)}`,
       `${SERVICE_META.automation.label} from ${fromOf(automation[0].price)}`,
       `${SERVICE_META.tools.label} from ${fromOf(tools[0].price)}`,
       `${SERVICE_META.cloud.label} from ${fromOf(cloud[0].price)}`,
-      `Partner retainers: ${bundleLow} to ${bundleHigh} a month`,
+      `Monthly partner plans: ${bundleLow} to ${bundleHigh} a month`,
       // "$65-$120/hour" in site.ts reads as "$65–$120 an hour" here, like every other range.
       `Hourly work: ${pricing.hourlyRates.standard.replace(/^(\$[\d,]+)-(\$[\d,]+)\/hour$/, '$1–$2 an hour')}`,
     ],
-    close: 'You get a fixed quote after a 20-minute scoping call.',
+    close: 'You get a fixed quote after a 20-minute call.',
   };
   return {
-    question: 'How do you price white-label work?',
+    question: 'How much does white-label work cost?',
     answer: [list.lead, ...list.points.map((point) => `${point}.`), list.close].join(' '),
     list,
   };
@@ -82,22 +82,22 @@ export const FAQ_ITEMS: readonly FaqEntry[] = [
   {
     question: 'Will my client ever know MAPL TECH was involved?',
     answer:
-      'No. We sign a mutual NDA and non-solicit before you send anything, every deliverable carries your brand, and your client hears from your PM, not from us. We never list your client as ours.',
+      'No. Before you share anything, we sign an NDA and agree never to approach your clients. Everything we make carries your brand. Your client talks to your team, not to us, and we never list your client as ours.',
   },
   {
     question: 'Who owns the code when the project ends?',
     answer:
-      'You and your client do. Every project ships with documented code and a clean handoff, so your team can pick up right where we left off.',
+      'You and your client do. We hand over the code with clear notes, so your team can carry on where we left off.',
   },
   pricingFaq(),
   {
     question: "Can you work in our client's timezone?",
     answer:
-      'Yes. Our teams work from Toronto (Eastern), Lagos (UTC+1, whose afternoon overlaps the Eastern morning) and Kingston (within an hour of Eastern all year). We join your Slack and your standups.',
+      'Yes. Our teams work in Toronto (Eastern time), Kingston (within an hour of Eastern time all year) and Lagos (UTC+1, whose afternoon overlaps the Eastern morning). We join your Slack and your team check-ins.',
   },
   {
     question: 'What happens after launch?',
     answer:
-      'Every plan includes post-launch support (30–90 days depending on tier). After that, retainer and partnership models keep your systems maintained, optimized, and evolving.',
+      'Every package includes support after launch, for 30 to 90 days depending on the package. After that, a monthly plan keeps everything updated, fixed and improving.',
   },
 ];

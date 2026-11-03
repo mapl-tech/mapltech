@@ -6,11 +6,11 @@ import Link from 'next/link';
 import { LAYERS, SERVICES_INTRO, SERVICE_PREVIEWS } from './content';
 import styles from './ServiceIndex.module.scss';
 
-/** The cloud row has no screenshot to show; its preview is the pipeline we run. */
-const PIPELINE = ['Commit', 'Tests', 'Preview', 'Review', 'Production', 'Monitoring'] as const;
+/** The cloud row has no screenshot to show; its preview is how an update goes live (PipelineDiagram's stages). */
+const PIPELINE = ['Change', 'Tests', 'Preview', 'Review', 'Live', 'Monitoring'] as const;
 
 /**
- * The four service lines as a numbered index on paper. With a mouse, a
+ * The four service lines as an index on paper. With a mouse, a
  * preview of real work for the hovered row trails the cursor (eased in a
  * rAF loop, transform only); on touch each row simply carries its summary.
  * Rows are plain links, so keyboard focus shows the same preview.
@@ -89,9 +89,6 @@ export default function ServiceIndex() {
                   aria-describedby={`${layer.id}-summary`}
                   data-cta-placement={`home_services_${layer.service}`}
                 >
-                  <span className={styles.index} aria-hidden="true">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
                   <span id={`${layer.id}-name`} className={styles.name}>
                     {layer.name}
                   </span>

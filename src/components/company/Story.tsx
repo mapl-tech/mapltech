@@ -1,14 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import ScrollLit from '@/components/ui/ScrollLit';
 import { ABOUT, FOUNDERS, FOUNDER_NAMES } from './content';
 import ed from './Company.module.scss';
 import styles from './Story.module.scss';
 
 /**
- * Why MAPL TECH exists, in the founders' voice (the homepage Statement idiom):
- * the reason lights word by word as it scrolls, then the two paragraphs that
- * explain it, signed by the two people who wrote it.
+ * Why MAPL TECH exists, in the founders' voice: the reason, set large and
+ * fully lit from the first frame, then the two paragraphs that explain it,
+ * signed by the two people who wrote it.
  */
 export default function Story() {
   const { story } = ABOUT;
@@ -20,7 +19,17 @@ export default function Story() {
         </h2>
 
         <div className={styles.body}>
-          <ScrollLit as="p" runs={story.lead} className={styles.lead} />
+          <p className={styles.lead}>
+            {story.lead.map((run) =>
+              run.accent ? (
+                <span key={run.text} className={styles.accent}>
+                  {run.text}
+                </span>
+              ) : (
+                run.text
+              ),
+            )}
+          </p>
 
           <div className={styles.columns}>
             {story.paragraphs.map((paragraph, i) => (

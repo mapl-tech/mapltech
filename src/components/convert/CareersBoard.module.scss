@@ -101,25 +101,29 @@
 
 .role {
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    'no main'
-    '. apply';
-  column-gap: 14px;
-  row-gap: 18px;
-  padding: clamp(26px, 3.2vw, 40px) 0;
+    'title apply'
+    'meta meta'
+    'text text';
+  column-gap: 16px;
+  align-items: start;
+  padding: clamp(24px, 3.2vw, 40px) 0;
   border-bottom: 1px solid $color-hairline;
-  scroll-margin-top: calc(var(--header-height, 72px) + 24px);
+  scroll-margin-top: 8px;
 
   &[hidden] {
     display: none;
   }
 
+  // Wider: where-and-how and the description stay in the text column, clear
+  // of the Apply button.
   @include md {
-    grid-template-columns: 64px minmax(0, 1fr) auto;
-    grid-template-areas: 'no main apply';
-    column-gap: 24px;
-    align-items: start;
+    grid-template-areas:
+      'title apply'
+      'meta .'
+      'text .';
+    column-gap: 32px;
   }
 
   &:target {
@@ -166,18 +170,9 @@
   }
 }
 
-.roleNo {
-  grid-area: no;
-  padding-top: 0.55em;
-  @include mono-label($color-red);
-}
-
-.roleMain {
-  grid-area: main;
-  min-width: 0;
-}
-
 .roleTitle {
+  grid-area: title;
+  align-self: center;
   margin: 0;
   font-family: $font-display;
   font-weight: 700;
@@ -188,6 +183,7 @@
 }
 
 .roleMeta {
+  grid-area: meta;
   display: flex;
   flex-wrap: wrap;
   gap: 4px 0;
@@ -202,6 +198,7 @@
 }
 
 .roleText {
+  grid-area: text;
   margin: 14px 0 0;
   max-width: 40em;
   font-size: $font-size-base;
@@ -211,13 +208,13 @@
 
 .apply {
   grid-area: apply;
-  justify-self: start;
+  justify-self: end;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   min-height: 48px;
-  padding: 0 24px;
+  padding: 0 20px;
   border-radius: $radius-full;
   border: 1px solid rgba($color-fg, 0.28);
   color: $color-fg;
@@ -235,8 +232,14 @@
     color: $color-ground;
   }
 
-  &:active {
-    transform: scale(0.97);
+  @include motion-ok {
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  @include md {
+    padding: 0 24px;
   }
 
   @include focus-ring;

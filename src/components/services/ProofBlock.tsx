@@ -1,20 +1,20 @@
 import { ViewTransition, type CSSProperties } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { WORK_SECTION } from '@/components/flagship/content';
 import { BrowserFrame, DesktopShot, PhoneFrame } from './Frames';
 import PipelineDiagram from './PipelineDiagram';
 import { keepTogether } from './keepTogether';
-import { CLIENT_QUOTE, proofCases, type LayerView, type ProofCase } from './serviceContent';
+import { proofCases, type LayerView, type ProofCase } from './serviceContent';
 import styles from './ProofBlock.module.scss';
 
 /**
- * Proof for one service line, staged like the homepage's work cards: the lead
- * case with its real captures (the live site in a browser, its phone view
- * over the corner), its published results, then the client in her own words
- * where she is the client behind the lead case, then the line's other case
- * studies. Cloud has no screen to show, so its exhibit is the pipeline we set
- * up, beside MAPL Tours' published delivery facts. Every fact is from
- * stories.ts; a case with no published numbers shows what was built instead.
+ * Proof for one service, staged like the homepage's work cards: the lead case
+ * with its real captures (the live site in a browser, its phone view over the
+ * corner) and its published results, then one more case study. Two projects
+ * at most. Cloud has no screen to show, so its exhibit is how a release runs
+ * on infrastructure we set up, beside MAPL Tours' published delivery facts.
+ * Every fact is from stories.ts; a case with no published numbers shows what
+ * was built instead.
  */
 export default function ProofBlock({ view }: { view: LayerView }) {
   const cases = proofCases(view);
@@ -24,36 +24,15 @@ export default function ProofBlock({ view }: { view: LayerView }) {
   return (
     <section id="work" className={styles.work} aria-labelledby="work-title">
       <div className={styles.head}>
-        <p className={styles.label}>Selected work</p>
+        <p className={styles.label}>{WORK_SECTION.label}</p>
         <h2 id="work-title" className={styles.title}>
-          Work we can show.
+          {WORK_SECTION.title}
         </h2>
-        <p className={styles.lede}>
-          Most of what we build ships under our partners’ names. These are the projects that carry ours.
-        </p>
+        <p className={styles.lede}>{WORK_SECTION.lede}</p>
       </div>
 
       <div className={styles.body}>
         <LeadCase item={lead} view={view} />
-
-        {view.quote && CLIENT_QUOTE ? (
-          <figure className={styles.quote}>
-            <blockquote className={styles.quoteText}>
-              <p>“{CLIENT_QUOTE.quote}”</p>
-            </blockquote>
-            <figcaption className={styles.by}>
-              {CLIENT_QUOTE.image ? (
-                <Image src={CLIENT_QUOTE.image} alt="" width={56} height={56} className={styles.avatar} />
-              ) : null}
-              <span>
-                <span className={styles.byName}>{CLIENT_QUOTE.name}</span>
-                <span className={styles.byRole}>
-                  {CLIENT_QUOTE.role}, {CLIENT_QUOTE.company}
-                </span>
-              </span>
-            </figcaption>
-          </figure>
-        ) : null}
 
         {more.length ? (
           <div className={styles.more}>
@@ -87,8 +66,8 @@ export default function ProofBlock({ view }: { view: LayerView }) {
 
 function LeadCase({ item, view }: { item: ProofCase; view: LayerView }) {
   const diagram = view.exhibit === null;
-  // Stages show when there are no published numbers, or when the line narrowed the case to specific facts.
-  const showStages = item.stages.length > 0 && (item.results.length === 0 || item.focused);
+  // What was built shows only when there are no published numbers to show.
+  const showStages = item.stages.length > 0 && item.results.length === 0;
   // A stage text that opens with its own name would read the name twice; then the list goes without names.
   const named = !item.stages.some((stage) => stage.text.toLowerCase().startsWith(stage.name.toLowerCase()));
 
@@ -109,12 +88,6 @@ function LeadCase({ item, view }: { item: ProofCase; view: LayerView }) {
               </li>
             ))}
           </ul>
-        ) : null}
-        {item.focused && item.stack ? (
-          <p className={styles.stack}>
-            <span className={styles.stackLabel}>Stack</span>
-            {item.stack}
-          </p>
         ) : null}
         <Link href={item.href} className={styles.read} data-cta-placement={`${view.slug}_case_${item.slug}`}>
           Read the case study<span className="visually-hidden">: {item.client}</span>

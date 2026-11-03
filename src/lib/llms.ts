@@ -189,7 +189,7 @@ function workShort(): string {
     byCategory.set(project.category, list);
   }
   const grouped = [...byCategory.entries()].map(([category, titles]) => `${category}: ${titles.join(', ')}`).join('; ');
-  const labs = labsProjects.map((p) => `${p.name} (${p.status}): ${p.tagline}`).join('. ');
+  const own = labsProjects.map((p) => `${link(p.name, `/our-work/${p.slug}`)} (${p.status}): ${p.tagline}`).join('. ');
   const quotes = publishedTestimonials().map((t) => `- Client quote: "${t.quote}" (${t.name}, ${t.role}, ${t.company})`);
   // Each case study with its own page, one-line outcome and sourced results.
   const cases = listedProjects().flatMap((project) => {
@@ -202,7 +202,7 @@ function workShort(): string {
     '## Work',
     '',
     `- ${link('Our Work', '/our-work')}: ${listedProjects().length} client projects. ${grouped}.`,
-    `- ${link('MAPL Labs', '/labs')}: products ${ORG_NAME} builds and operates in-house. ${labs}.`,
+    `- Our own products, built and run in-house by ${ORG_NAME}: ${own}.`,
     ...quotes,
     '',
     '### Case studies',
@@ -347,8 +347,8 @@ function workFull(): string {
       ...(story?.sources ? [`  - Sources: ${story.sources}`] : []),
     ].join('\n');
   });
-  const labs = labsProjects.flatMap((p) => [
-    `- **${p.name}** (${p.status}): ${p.tagline}. ${p.description}`,
+  const own = labsProjects.flatMap((p) => [
+    `- **${p.name}** (${p.status}), ${link('case study', `/our-work/${p.slug}`)}: ${p.tagline}. ${p.description}`,
     ...p.capabilities.map((c) => `  - ${c}`),
   ]);
   const quotes = publishedTestimonials().map((t) => `- "${t.quote}" (${t.name}, ${t.role}, ${t.company})`);
@@ -359,9 +359,9 @@ function workFull(): string {
     '',
     ...projects,
     '',
-    `${link('MAPL Labs', '/labs')}: proprietary products ${ORG_NAME} builds and operates in-house.`,
+    `Our own products, built and run in-house by ${ORG_NAME}:`,
     '',
-    ...labs,
+    ...own,
     ...(quotes.length ? ['', 'Client testimonials:', '', ...quotes] : []),
   ].join('\n');
 }

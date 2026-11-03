@@ -2,8 +2,8 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// Case study (Nov 2026 award pass). Rhythm: dark hero → paper results →
-// dark story → dark live site → paper phones → crimson ask → the next project.
+// Case study (Nov 2026, simplified). Rhythm: dark hero → paper results →
+// dark story → dark live site → crimson ask → the next project.
 $portrait: '(max-aspect-ratio: 21/20)';
 $landscape: '(min-aspect-ratio: 21/20)';
 
@@ -72,23 +72,16 @@ $landscape: '(min-aspect-ratio: 21/20)';
   }
 }
 
+// One quiet line: "Case study · Website · Staffing and recruitment · Ottawa and Toronto".
 .tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  @include mono-label;
   margin: 0 0 clamp(28px, 3.4vw, 48px);
-
-  span {
-    @include mono-label;
-    padding: 7px 12px;
-    border-radius: $radius-full;
-    border: 1px solid $color-hairline-strong;
-  }
+  line-height: 1.7;
 }
 
+// Small text: the accessible crimson (5.5:1), not the large-text red.
 .tagLead {
-  color: $color-fg !important;
-  border-color: rgba($color-red, 0.6) !important;
+  color: $color-red-text;
 }
 
 .title {
@@ -370,12 +363,13 @@ $landscape: '(min-aspect-ratio: 21/20)';
     align-self: start;
   }
 
+  // 8px between the 44px rows: separate taps on a tablet's touch screen.
   ol {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 2px;
+    gap: 8px;
   }
 
   a {
@@ -414,14 +408,6 @@ $landscape: '(min-aspect-ratio: 21/20)';
   }
 }
 
-.chapterIndex {
-  @include mono-label($color-fg-dim);
-
-  [aria-current] & {
-    color: $color-red;
-  }
-}
-
 .storyBody {
   display: grid;
   gap: clamp(88px, 12vw, 160px);
@@ -431,16 +417,16 @@ $landscape: '(min-aspect-ratio: 21/20)';
 .chapter {
   display: grid;
   gap: clamp(24px, 3vw, 36px);
-  scroll-margin-top: calc(var(--header-height, 72px) + 32px);
+  scroll-margin-top: 16px;
 }
 
 .chapterTitle {
   @include section-label;
   margin: 0;
-}
 
-.chapterNo {
-  color: $color-red;
+  &::before {
+    @include section-label-rule;
+  }
 }
 
 .lead {
@@ -469,21 +455,8 @@ $landscape: '(min-aspect-ratio: 21/20)';
 }
 
 .buildStep {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
-  gap: 16px;
   padding: clamp(24px, 3vw, 36px) 0;
   border-bottom: 1px solid $color-hairline;
-
-  @include md {
-    grid-template-columns: 96px minmax(0, 1fr);
-    gap: 24px;
-  }
-}
-
-.buildNo {
-  @include mono-label($color-red);
-  padding-top: 0.6em;
 }
 
 .buildName {
@@ -747,91 +720,6 @@ $landscape: '(min-aspect-ratio: 21/20)';
   .siteScroll[data-still] & {
     display: none;
   }
-}
-
-// ===================================================================
-// On every screen: three phones (desktop drift, phone swipe)
-// ===================================================================
-.phones {
-  --p: 0.5;
-  background: $color-paper;
-  color: $color-ink;
-  border-radius: clamp(24px, 3vw, 40px);
-  padding: clamp(72px, 10vw, 144px) 0;
-  overflow: hidden;
-
-  .sectionLabel {
-    color: $color-ink-muted;
-
-    &::before {
-      background: $color-red-ink;
-    }
-  }
-}
-
-.phonesHead {
-  @include shell;
-  display: grid;
-  gap: 20px;
-  margin-bottom: clamp(40px, 6vw, 80px);
-}
-
-.phonesTitle {
-  @include section-title;
-  max-width: 16em;
-  color: $color-ink;
-}
-
-.phoneTrack {
-  list-style: none;
-  margin: 0;
-  display: flex;
-  gap: 16px;
-  padding: 8px $editorial-gutter 24px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  @include lg {
-    justify-content: center;
-    gap: clamp(24px, 3vw, 48px);
-    overflow: visible;
-  }
-}
-
-.phoneItem {
-  flex: 0 0 min(72vw, 300px);
-  scroll-snap-align: center;
-
-  @include lg {
-    flex: 0 0 clamp(240px, 22vw, 320px);
-    transform: translate3d(0, calc((var(--p) - 0.5) * (var(--i) - 1) * -220px), 0);
-    will-change: transform;
-
-    &:nth-child(2) {
-      margin-top: 64px;
-    }
-  }
-}
-
-.phoneFrame {
-  overflow: hidden;
-  aspect-ratio: 9 / 19.5;
-  border-radius: clamp(26px, 3vw, 40px);
-  border: 6px solid $color-ink;
-  background: $color-ink;
-  box-shadow: 0 40px 80px -30px rgba(11, 11, 12, 0.5);
-}
-
-.phoneShot {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .sources {

@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Backbone from '@/components/backbone/Backbone';
-import { LiveClocks } from '@/components/ui/TimezoneOverlap';
 import { HERO, HERO_PROOF, HERO_REASSURE, PRIMARY_CTA, SECONDARY_CTA } from './content';
 import styles from './Hero.module.scss';
 
@@ -24,10 +23,6 @@ export default function Hero() {
 
       <div className={styles.inner}>
         <div className={styles.copy}>
-          <p className={styles.eyebrow}>
-            <span className={styles.caret} aria-hidden="true" />
-            {HERO.eyebrow}
-          </p>
           <h1 id="home-h1" className={styles.title}>
             {HERO.titleLines.map((runs, line) => (
               <span key={line} className={styles.titleLine}>
@@ -77,7 +72,6 @@ export default function Hero() {
         </div>
 
         <div className={styles.foot}>
-          <LiveClocks className={styles.clocks} />
           {/* Shown once the scene is live, gone after the first touch (CSS :has on the stage's data attributes). */}
           <p className={styles.hint} aria-hidden="true">
             Move through it. It holds.

@@ -7,7 +7,7 @@ import { TEAM, countWord, listWords } from './content';
 import ed from './Company.module.scss';
 import styles from './TeamDirectory.module.scss';
 
-/** Each country's office (the TimezoneOverlap offices): Toronto is headquarters. */
+/** Each country's office (Toronto, Lagos, Kingston): Toronto is headquarters. */
 const OFFICE_OF: Record<string, { city: string; timeZone: string }> = {
   Canada: { city: 'Toronto', timeZone: 'America/Toronto' },
   Nigeria: { city: 'Lagos', timeZone: 'Africa/Lagos' },

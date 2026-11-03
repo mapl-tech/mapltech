@@ -1,5 +1,5 @@
 /**
- * Derived data for /our-work, /our-work/[slug] and /labs.
+ * Derived data for /our-work and /our-work/[slug].
  *
  * Everything here is read from `portfolioProjects`, `labsProjects`,
  * `testimonials` and `pricing` in src/config/site.ts, the service records in
@@ -29,9 +29,8 @@ export {
   type WorkEntry,
   type WorkFilter,
   type WorkFilterKey,
-  type WorkflowStep,
 } from './work-types';
-import { FILTER_KEYS, type WorkEntry, type WorkFilter, type WorkflowStep } from './work-types';
+import { FILTER_KEYS, type WorkEntry, type WorkFilter } from './work-types';
 
 /** `portfolioProjects[].category` → estimator service key (also the `?type=` value). */
 export const CATEGORY_TO_SERVICE: Record<string, EstimateService> = {
@@ -89,7 +88,7 @@ export function toWorkEntry(project: PortfolioProject, index: number): WorkEntry
     image: project.image,
     url: project.url ?? undefined,
     host: hostOf(project.url ?? undefined),
-    isLab: project.tags.includes('MAPL Labs'),
+    isLab: labsProjects.some((own) => own.slug === project.slug),
     tags: [...project.tags],
   };
 }
@@ -128,13 +127,6 @@ export function workFilters(entries: WorkEntry[] = workEntries()): WorkFilter[] 
     label: key === 'all' ? 'All' : SERVICE_META[key].label,
     count: key === 'all' ? entries.length : entries.filter((e) => e.service === key).length,
   }));
-}
-
-/** Distinct service lines that have at least one published project. */
-export function activeServiceLines(entries: WorkEntry[] = workEntries()): EstimateService[] {
-  const seen = new Set<EstimateService>();
-  for (const e of entries) seen.add(e.service);
-  return (['web', 'automation', 'tools', 'cloud'] as const).filter((k) => seen.has(k));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -262,61 +254,3 @@ export function caseMedia(entry: WorkEntry): CaseMedia[] {
 export function approvedTestimonialFor(entry: WorkEntry): Testimonial | undefined {
   return testimonials.find((t) => t.image && t.company === entry.title);
 }
-
-/** The Labs product a portfolio entry points at (MAPL Tours). */
-export function labsProjectFor(entry: WorkEntry): LabsProject | undefined {
-  return entry.isLab ? labsProjects.find((p) => p.slug === entry.slug) : undefined;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Labs                                                                       */
-/* -------------------------------------------------------------------------- */
-
-/**
- * The MAPL Tours workflow, one step per published capability
- * (labsProjects[0].capabilities) in the order the description gives them.
- */
-export const MAPL_TOURS_WORKFLOW: readonly WorkflowStep[] = [
-  {
-    id: 'intake',
-    title: 'Intake',
-    text: "Automated customer communication: the traveller's request comes in and the agent gathers the brief a human planner would ask for.",
-  },
-  {
-    id: 'plan',
-    title: 'Plan',
-    text: 'Autonomous trip planning turns the brief into an AI-generated itinerary, revised in the same conversation.',
-  },
-  {
-    id: 'book',
-    title: 'Book',
-    text: 'The self-operating booking pipeline reserves what the itinerary needs; the pipeline that plans is the pipeline that books.',
-  },
-  {
-    id: 'confirm',
-    title: 'Confirm',
-    text: 'Confirmation and itinerary go back to the traveller automatically. The company runs 24/7 on the stack we sell to agencies.',
-  },
-];
-
-export const LABS_PIPELINE = [
-  { stage: 'Prototype', desc: 'Validate the idea with working software, not slide decks.' },
-  { stage: 'Harden', desc: 'Production infrastructure, monitoring, and security before launch.' },
-  { stage: 'Launch', desc: 'Ship it publicly and put real users on it.' },
-  { stage: 'Operate', desc: 'Keep it running: monitoring, iteration, and support after launch.' },
-] as const;
-
-export const LABS_ETHOS = [
-  {
-    title: 'We ship it',
-    desc: 'Real, production-grade products - not prototypes or slide decks. Same engineering discipline we apply to every client build.',
-  },
-  {
-    title: 'We run it',
-    desc: 'These products are live and operating 24/7 with real users, real infrastructure, and real uptime on the line.',
-  },
-  {
-    title: 'We prove it',
-    desc: 'The AI agents, automations, and cloud systems we sell are the exact stack we trust to run our own companies.',
-  },
-] as const;

@@ -150,14 +150,12 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   a {
     @include text-action($color-fg);
     font-size: 1rem;
-
-    // A down arrow after the words, in CSS (::after is the underline).
-    &::before {
-      content: '\2193';
-      order: 2;
-      color: $color-red;
-    }
   }
+}
+
+// The down arrow after the words: an aria-hidden span, so the link's name is its words alone.
+.cellArrow {
+  color: $color-red;
 }
 
 .asOf {
@@ -178,7 +176,6 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
     radial-gradient(60% 40% at 92% 6%, rgba(217, 28, 63, 0.1) 0%, transparent 70%),
     $color-ground;
   border-top: 1px solid $color-hairline;
-  scroll-margin-top: 72px;
 }
 
 .estimatorInner {
@@ -188,5 +185,5 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 
 // Focus is never hidden under the fixed header (WCAG 2.4.11).
 .estimator :is(a, button, input, select, textarea, summary) {
-  scroll-margin-top: 96px;
+  scroll-margin-top: 8px;
 }

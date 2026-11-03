@@ -1,10 +1,11 @@
 import Image from 'next/image';
-import { PROOF, PROOF_SECTION, SPOTLIGHT } from './content';
+import { PROOF, PROOF_SECTION } from './content';
 import styles from './Proof.module.scss';
 
 /**
- * Why agencies choose us: the live homepage's published numbers, the one
- * approved client quote, and the logos of clients shown on the site.
+ * Why agencies choose us: the live homepage's published numbers and the logos
+ * of clients shown on the site. The one approved client quote sits beside the
+ * hero's ask, so it is not repeated here.
  */
 export default function Proof() {
   return (
@@ -28,25 +29,6 @@ export default function Proof() {
             </div>
           ))}
         </dl>
-
-        {SPOTLIGHT ? (
-          <figure className={styles.quote}>
-            <blockquote className={styles.quoteText}>
-              <p>“{SPOTLIGHT.quote}”</p>
-            </blockquote>
-            <figcaption className={styles.by}>
-              {SPOTLIGHT.image ? (
-                <Image src={SPOTLIGHT.image} alt="" width={56} height={56} className={styles.avatar} />
-              ) : null}
-              <span>
-                <span className={styles.name}>{SPOTLIGHT.name}</span>
-                <span className={styles.role}>
-                  {SPOTLIGHT.role}, {SPOTLIGHT.company}
-                </span>
-              </span>
-            </figcaption>
-          </figure>
-        ) : null}
 
         <ul className={styles.logos} aria-label="Clients">
           {PROOF.logos.map((logo) => (

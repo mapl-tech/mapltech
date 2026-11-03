@@ -750,9 +750,9 @@ export function projectSlug(project: PortfolioProject | LabsProject): string {
 }
 
 /**
- * CreativeWork for a portfolio or Labs project. `url` is the live work when
- * the client site is known, `mainEntityOfPage` is the page on mapltech.com
- * that describes it (defaults to the anchor on /our-work or /labs).
+ * CreativeWork for a portfolio project or one of our own products. `url` is
+ * the live work when the site is known, `mainEntityOfPage` is the page on
+ * mapltech.com that describes it (defaults to the anchor on /our-work).
  */
 export function creativeWork(
   project: PortfolioProject | LabsProject,
@@ -760,8 +760,7 @@ export function creativeWork(
 ): CreativeWork {
   const isLab = 'status' in project;
   const name = isLab ? project.name : project.title;
-  const basePath = isLab ? '/labs' : '/our-work';
-  const pagePath = opts?.path ?? `${basePath}#${projectSlug(project)}`;
+  const pagePath = opts?.path ?? `/our-work#${projectSlug(project)}`;
   const pageUrl = absoluteUrl(pagePath);
   const external = project.url ?? undefined;
 
@@ -776,7 +775,7 @@ export function creativeWork(
     mainEntityOfPage: pageUrl,
     image: imageObject(project.image, name),
     creator: orgId(),
-    genre: isLab ? 'MAPL Labs' : project.category,
+    genre: isLab ? 'Own product' : project.category,
     keywords: (isLab ? project.capabilities : project.tags).join(', '),
     creativeWorkStatus: isLab ? project.status : undefined,
   };

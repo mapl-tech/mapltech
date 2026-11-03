@@ -265,7 +265,7 @@ $measure: 34em;
     letter-spacing: -0.028em;
     color: $color-fg;
     text-wrap: balance;
-    scroll-margin-top: calc(var(--header-height, 72px) + 32px);
+    scroll-margin-top: 16px;
 
     // "— 01": the section label voice, numbered like the contents rail. The
     // number is decoration for assistive tech (the empty alternative text);
@@ -291,7 +291,7 @@ $measure: 34em;
     letter-spacing: -0.016em;
     color: $color-fg;
     text-wrap: balance;
-    scroll-margin-top: calc(var(--header-height, 72px) + 32px);
+    scroll-margin-top: 16px;
   }
 
   h2 + h3 {
@@ -574,7 +574,7 @@ $measure: 34em;
   margin-top: clamp(64px, 8vw, 104px);
   padding-top: 28px;
   border-top: 1px solid $color-hairline-strong;
-  scroll-margin-top: calc(var(--header-height, 72px) + 32px); // the facts row links here
+  scroll-margin-top: 16px; // the facts row links here
 }
 
 .authorMark {

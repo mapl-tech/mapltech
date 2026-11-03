@@ -78,11 +78,11 @@ $rows-wide: 920px;
 .link {
   position: relative;
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 40px;
+  grid-template-columns: minmax(0, 1fr) 40px;
   grid-template-areas:
-    'index name go'
-    '. summary summary'
-    '. meta meta';
+    'name go'
+    'summary summary'
+    'meta meta';
   align-items: baseline;
   row-gap: 10px;
   padding: 24px 0 26px;
@@ -90,8 +90,8 @@ $rows-wide: 920px;
   text-decoration: none;
 
   @container service-rows (min-width: #{$rows-wide}) {
-    grid-template-columns: 96px minmax(0, 1.25fr) minmax(0, 1fr) 150px 48px;
-    grid-template-areas: 'index name summary meta go';
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) 150px 48px;
+    grid-template-areas: 'name summary meta go';
     column-gap: 32px;
     align-items: center;
     padding: 32px 0;
@@ -101,11 +101,6 @@ $rows-wide: 920px;
     outline: $focus-ring-width solid $color-red-ink;
     outline-offset: 4px;
   }
-}
-
-.index {
-  grid-area: index;
-  @include mono-label($color-ink-muted);
 }
 
 .name {
