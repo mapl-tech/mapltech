@@ -47,13 +47,16 @@ export interface MobileNavProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   pathname: string;
+  /** The sheet's ask: the header's (it carries the page's brief link or the estimate). */
+  projectHref?: string;
   /** The hamburger: focus returns here when the sheet closes. */
   returnFocusRef?: RefObject<HTMLElement | null>;
 }
 
-export default function MobileNav({ id, open, onOpenChange, pathname, returnFocusRef }: MobileNavProps) {
-  // On /pricing with an estimate, the sheet's ask carries it like the header's.
-  const projectHref = useEstimateBriefHref(pathname) ?? PROJECT_HREF;
+export default function MobileNav({ id, open, onOpenChange, pathname, projectHref: headerHref, returnFocusRef }: MobileNavProps) {
+  // The header's ask, or on its own (no header) the estimate on /pricing.
+  const estimateHref = useEstimateBriefHref(pathname);
+  const projectHref = headerHref ?? estimateHref ?? PROJECT_HREF;
   const [snap, setSnap] = useState<SnapPoint | null>(SNAP_POINTS[0]);
 
   const close = () => onOpenChange(false);

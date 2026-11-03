@@ -318,6 +318,27 @@ function useHeroCtaView(pathname: string): 'in' | 'out' | undefined {
   return seen?.path === pathname ? seen.view : undefined;
 }
 
+/**
+ * The page's own brief link, when its hero CTA (the element marked
+ * data-hero-cta) opens the brief with context (`/contact-us?svc=web` on a
+ * case or service page): the header's ask then carries the same answer, as
+ * the close band and the phone bar do. Keyed by path, so a previous page's
+ * link never shows.
+ */
+function usePageBriefHref(pathname: string): string | null {
+  const [found, setFound] = useState<{ path: string; href: string | null } | null>(null);
+  useEffect(() => {
+    const cta = document.querySelector('[data-hero-cta]');
+    const link = cta?.matches('a[href]') ? cta : cta?.querySelector('a[href]');
+    const href = link?.getAttribute('href') ?? null;
+    const frame = requestAnimationFrame(() =>
+      setFound({ path: pathname, href: href?.startsWith(`${PROJECT_HREF}?`) ? href : null }),
+    );
+    return () => cancelAnimationFrame(frame);
+  }, [pathname]);
+  return found?.path === pathname ? found.href : null;
+}
+
 export default function Header() {
   const pathname = usePathname() ?? '/';
   const onProjectPage = pathname === PROJECT_HREF;
@@ -325,8 +346,10 @@ export default function Header() {
   const quietCta = pathname.startsWith('/careers') || pathname.startsWith('/referral');
   const compact = useCompact();
   const heroCtaView = useHeroCtaView(pathname);
-  // On /pricing, once there is an estimate, the header's ask carries it into the brief.
-  const projectHref = useEstimateBriefHref(pathname) ?? PROJECT_HREF;
+  // The header's ask carries what the page knows: on /pricing the visitor's
+  // estimate, elsewhere the page's own brief link (a case's or service's line).
+  const pageBriefHref = usePageBriefHref(pathname);
+  const projectHref = useEstimateBriefHref(pathname) ?? pageBriefHref ?? PROJECT_HREF;
   const [menuOpen, setMenuOpen] = useState(false);
   const sheetId = useId();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -389,6 +412,7 @@ export default function Header() {
         open={menuOpen}
         onOpenChange={setMenuOpen}
         pathname={pathname}
+        projectHref={projectHref}
         returnFocusRef={menuButtonRef}
       />
     </header>
