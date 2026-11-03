@@ -50,13 +50,13 @@
   padding-top: 22px;
   border-top: 1px solid $color-ink-hairline;
   font-size: $font-size-base;
-  line-height: 1.55;
+  line-height: 1.7;
   color: $color-ink;
 
+  // Links in a sentence (WCAG 2.5.8 inline exception): inline, with a little
+  // padding for the finger that never reaches the next line when it wraps.
   a {
-    display: inline-block;
-    padding-block: 10px; // a 44px target without moving the line
-    margin-block: -10px;
+    padding-block: 4px;
     color: $color-red-ink;
     font-weight: $font-weight-semibold;
     text-decoration: underline;
