@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type FocusEvent, type FormEvent } from 'react';
-import { checkField, checkForm, normaliseUrl, type FieldRule } from '@/components/company/formErrors';
+import { blurErrors, checkForm, normaliseUrl, summaryWords, type FieldRule } from '@/components/company/formErrors';
 import css from '@/components/company/CareersForm.module.scss';
 import { useUrlParams } from './useUrlState';
 import { field, useContactSubmit } from './useContactSubmit';
@@ -22,7 +22,10 @@ import Arrow from '@/components/ui/Arrow';
  * Accessibility: native labels; required fields say so in the label set-up
  * line, optional ones say "(optional)"; errors appear under their field,
  * linked with aria-describedby and aria-invalid; a failed submit announces a
- * summary and moves focus to the first problem; success takes focus.
+ * summary and moves focus to the first problem; success takes focus. The
+ * summary counts the fields still flagged, so it stays right as they are
+ * fixed: it is announced once per refused send (role="alert"), then changes
+ * quietly, because each field says for itself when it is fixed.
  */
 
 export interface CareersApplyProps {
@@ -46,8 +49,11 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
   const [params, setParams] = useUrlParams();
   const { status, submit, warmUp } = useContactSubmit();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [summary, setSummary] = useState('');
-  const [submittedRole, setSubmittedRole] = useState('');
+  // The last refused send: how many so far, and the errors it found (the
+  // same object until a field changes, so the summary knows when to go quiet).
+  const [refused, setRefused] = useState<{ count: number; errors: Record<string, string> } | null>(null);
+  // The role the sent application was for (null: a general application).
+  const [submittedRole, setSubmittedRole] = useState<string | null>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -71,14 +77,8 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
     if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
     const rule = RULES[target.name];
     if (!rule) return;
-    const message = checkField(target.value, rule);
-    setErrors((prev) => {
-      const flagged = Boolean(prev[target.name]);
-      const next = { ...prev };
-      if (message && (target.value.trim() || flagged)) next[target.name] = message;
-      else delete next[target.name];
-      return next;
-    });
+    const { name, value } = target;
+    setErrors((prev) => blurErrors(prev, name, value, rule));
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -89,11 +89,11 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
     setErrors(found);
     const problems = ORDER.filter((name) => found[name]);
     if (problems.length) {
-      setSummary(`${problems.length === 1 ? 'One field needs' : `${problems.length} fields need`} attention before this can send.`);
+      setRefused((prev) => ({ count: (prev?.count ?? 0) + 1, errors: found }));
       formRef.current?.querySelector<HTMLElement>(`[name="${problems[0]}"]`)?.focus();
       return;
     }
-    setSummary('');
+    setRefused(null);
 
     const link = normaliseUrl(field(data, 'link'));
     const message = [
@@ -112,7 +112,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
       subject: `Application: ${roleLabel}`,
       message,
     });
-    if (ok) setSubmittedRole(roleLabel);
+    if (ok) setSubmittedRole(selected ? roleLabel : null);
   };
 
   if (status === 'success') {
@@ -120,11 +120,18 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
       <div ref={successRef} className={`${forms.status} ${forms.statusSuccess} ${css.done}`} role="status" tabIndex={-1}>
         <strong className={forms.statusTitle}>Application received.</strong>
         <span>
-          Thanks for applying for {submittedRole}. We read every application and reply by email.
+          {submittedRole ? `Thanks for applying for ${submittedRole}.` : 'Thanks for applying to MAPL\u00a0TECH.'} We read every
+          application and reply by email.
         </span>
       </div>
     );
   }
+
+  // Shown after a refused send while any field is still flagged. It is the
+  // alert only while the errors are the ones that send found (a new node per
+  // refusal, so each is announced); once a field changes it is a plain line.
+  const flagged = ORDER.filter((name) => errors[name]).length;
+  const announce = refused?.errors === errors;
 
   const describedBy = (name: string, hint?: string) =>
     [hint, errors[name] ? `apply-${name}-error` : null].filter(Boolean).join(' ') || undefined;
@@ -150,9 +157,9 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
         </p>
       </div>
 
-      {summary ? (
-        <p className={css.summary} role="alert">
-          {summary}
+      {refused && flagged ? (
+        <p key={announce ? `refused-${refused.count}` : 'summary'} className={css.summary} role={announce ? 'alert' : undefined}>
+          {summaryWords(flagged)}
         </p>
       ) : null}
 

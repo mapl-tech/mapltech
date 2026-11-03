@@ -67,18 +67,17 @@
 }
 
 // ---------------------------------------------------------------- spread (/about-us, paper)
-// The DOM runs words, people, ask: phones and tablets stack them in that
-// order. Wide screens put the words and the ask back together in the left
-// column, centred as one block against the two people (the empty 1fr rows
-// share what is left), with the people beside them across all four rows.
+// The DOM runs words, people, ask, and the screen shows them in that order
+// at every width: phones and tablets stack them; wide screens set the words
+// beside the two people, centred against them, and the ask under the
+// people. So the eye and the Tab key agree: the LinkedIn links, then the ask.
 .spread {
   display: grid;
   gap: clamp(48px, 7vw, 72px);
 
   @include lg {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    grid-template-rows: 1fr auto auto 1fr;
-    gap: 0 72px;
+    gap: 56px 72px;
   }
 
   .linkedin {
@@ -106,16 +105,15 @@
   max-width: 38rem;
 
   @include lg {
-    grid-area: 2 / 1;
+    grid-area: 1 / 1;
+    align-self: center;
   }
 }
 
-// The ask: after the people on phones, a beat below the lede on wide screens
-// (the words' own 22px gap plus 6px).
+// The ask: after the people at every width (wide screens: in their column).
 .spreadActions {
   @include lg {
-    grid-area: 3 / 1;
-    margin-top: 28px;
+    grid-area: 2 / 2;
   }
 }
 
@@ -132,7 +130,7 @@
   }
 
   @include lg {
-    grid-area: 1 / 2 / -1 / 3;
+    grid-area: 1 / 2;
   }
 }
 

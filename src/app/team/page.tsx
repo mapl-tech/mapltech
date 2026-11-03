@@ -35,7 +35,8 @@ export const metadata: Metadata = {
  * so they get no photos, no bios and no Person nodes), under the office
  * hours, with the Nigeria and Jamaica groups linked to their branch pages.
  * The page talks to buyers: the hero's reassurance line under the ask, the
- * facts ending on the public price (set large), and the directory ending on
+ * facts (headquarters, the published experience and the public price, at
+ * one size, none of them repeating the lede), and the directory ending on
  * "Start a project", with one small line for job seekers under it. Then the
  * close. The breadcrumb names the page, so the hero has no eyebrow.
  *

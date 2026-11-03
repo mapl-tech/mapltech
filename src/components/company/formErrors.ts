@@ -39,6 +39,27 @@ export function checkForm(data: FormData, rules: Record<string, FieldRule>): Rec
   return errors;
 }
 
+/** The error summary's words for the fields still flagged: "One field needs attention…", "3 fields need attention…". */
+export function summaryWords(count: number): string {
+  return `${count === 1 ? 'One field needs' : `${count} fields need`} attention before this can send.`;
+}
+
+/**
+ * One field's error after it is left: a format problem as soon as there is
+ * a value, a missing required value only if the field was already flagged.
+ * Returns `errors` itself when nothing changed, so a form can tell "a field
+ * changed since the send was refused" by identity.
+ */
+export function blurErrors(errors: Record<string, string>, name: string, value: string, rule: FieldRule): Record<string, string> {
+  const message = checkField(value, rule);
+  const next = message && (value.trim() || errors[name]) ? message : '';
+  if ((errors[name] ?? '') === next) return errors;
+  const updated = { ...errors };
+  if (next) updated[name] = next;
+  else delete updated[name];
+  return updated;
+}
+
 /** "https://" in front of a bare domain so the link in the email is clickable. */
 export function normaliseUrl(value: string): string {
   const v = value.trim();

@@ -6,6 +6,7 @@ import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
 import { HERO_REASSURE } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from '@/components/layout/chrome';
+import { keepNumberWords } from '@/components/pricing/content';
 import { siteConfig } from '@/config/site';
 import { faqPage, getServiceLine, itemList, pageGraph, serviceId } from '@/lib/schema';
 import { SERVICE_META } from '@/lib/estimate';
@@ -103,7 +104,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
               <p className={place.city}>
                 {region.officeCity}, {region.country}
               </p>
-              <LocalTime timeZone={region.timeZone} utcLabel={region.utcLabel} zoneAbbr={region.zoneAbbr} />
+              <LocalTime timeZone={region.timeZone} zoneAbbr={region.zoneAbbr} />
               <p className={place.zone}>
                 {region.zoneName} · {region.utcLabel}
               </p>
@@ -141,8 +142,9 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             </div>
           </header>
 
-          {/* Each row: the service page (its link covers the name, words and arrow), then the price and a brief that opens with that service chosen. */}
-          <ul className={styles.rows} role="list" aria-label={region.services.heading}>
+          {/* Each row: the service page (its link covers the name, words and arrow), then the price and a brief that opens with that service chosen.
+              Every row has its own "Start a project", so the phone bar steps aside over the list (data-bar-stand-down). */}
+          <ul className={styles.rows} role="list" aria-label={region.services.heading} data-bar-stand-down="">
             {services.map(({ row, line, from }) => {
               const name = SERVICE_META[row.service].label;
               return (
@@ -241,7 +243,8 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         </section>
       ) : null}
 
-      {/* Market questions: native <details>, every answer in the HTML; FAQPage JSON-LD from the same items. Ruled only after the dark work section. */}
+      {/* Market questions: native <details>, every answer in the HTML; FAQPage JSON-LD from the same items. Ruled only after the dark work section.
+          Display only: "20‑minute" keeps its number on the line (keepNumberWords, as on /pricing and /referral; the close lede too); the JSON-LD keeps the plain hyphen. */}
       <section id="faq" className={region.work ? `${ed.dark} ${ed.ruled}` : ed.dark} aria-labelledby="faq-title">
         <div className={`${ed.inner} ${styles.faqGrid}`}>
           <div className={styles.faqHead}>
@@ -274,7 +277,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             <Accordion
               name={`${prefix}-faq`}
               defaultOpen={0}
-              items={region.faq.items.map((item, i) => ({ id: `${prefix}-faq-${i + 1}`, question: item.question, answer: item.answer }))}
+              items={region.faq.items.map((item, i) => ({ id: `${prefix}-faq-${i + 1}`, question: item.question, answer: keepNumberWords(item.answer) }))}
             />
             {/* For job seekers: one small line, away from the buyer's contact lines. */}
             {roles.length ? (
@@ -292,7 +295,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
       </section>
 
       {/* The approved client quote under the last ask (the hero has the reassurance line, not the quote). */}
-      <CloseBand title={region.close.title} lede={region.close.lede} placement={`${prefix}_close`} />
+      <CloseBand title={region.close.title} lede={keepNumberWords(region.close.lede)} placement={`${prefix}_close`} />
     </>
   );
 }

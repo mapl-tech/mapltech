@@ -207,6 +207,14 @@ $measure-read: 31em;
   background: $color-ground;
 }
 
+// The band has no bottom padding of its own: a dark section after it opens
+// on its own top padding. A paper section (the regional pages' services)
+// would meet the band's last line, so it starts a section's bottom padding
+// further down, the gap a dark section leaves above a paper one.
+.facts + .paper {
+  margin-top: $editorial-pad-y;
+}
+
 .factsInner {
   @include shell;
 }

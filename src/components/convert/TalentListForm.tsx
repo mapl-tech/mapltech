@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type FocusEvent, type FormEvent } from 'react';
-import { checkField, checkForm, type FieldRule } from '@/components/company/formErrors';
+import { blurErrors, checkForm, summaryWords, type FieldRule } from '@/components/company/formErrors';
 import css from '@/components/company/CareersForm.module.scss';
 import { field, useContactSubmit } from './useContactSubmit';
 import RecaptchaNotice from './RecaptchaNotice';
@@ -11,7 +11,8 @@ import forms from './forms.module.scss';
  * "Don't see your fit?": three fields for people with no listed role yet.
  * Posts to /api/contact as "Talent list". Same error pattern as the apply
  * form: messages under the field, a summary on a failed submit with focus on
- * the first problem, and the success message takes focus.
+ * the first problem (it counts the fields still flagged, announced once per
+ * refused send), and the success message takes focus.
  */
 
 const RULES: Record<string, FieldRule> = {
@@ -25,7 +26,8 @@ const ORDER = ['name', 'email', 'about'] as const;
 export default function TalentListForm({ contactEmail }: { contactEmail?: string }) {
   const { status, submit, warmUp } = useContactSubmit();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [summary, setSummary] = useState('');
+  // The last refused send (as in CareersApply): its number and the errors it found.
+  const [refused, setRefused] = useState<{ count: number; errors: Record<string, string> } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
 
@@ -40,13 +42,8 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
     if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
     const rule = RULES[target.name];
     if (!rule) return;
-    const message = checkField(target.value, rule);
-    setErrors((prev) => {
-      const next = { ...prev };
-      if (message && (target.value.trim() || prev[target.name])) next[target.name] = message;
-      else delete next[target.name];
-      return next;
-    });
+    const { name, value } = target;
+    setErrors((prev) => blurErrors(prev, name, value, rule));
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -57,11 +54,11 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
     setErrors(found);
     const problems = ORDER.filter((name) => found[name]);
     if (problems.length) {
-      setSummary(`${problems.length === 1 ? 'One field needs' : `${problems.length} fields need`} attention before this can send.`);
+      setRefused((prev) => ({ count: (prev?.count ?? 0) + 1, errors: found }));
       formRef.current?.querySelector<HTMLElement>(`[name="${problems[0]}"]`)?.focus();
       return;
     }
-    setSummary('');
+    setRefused(null);
     await submit({
       name: field(data, 'name'),
       email: field(data, 'email'),
@@ -80,6 +77,9 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
   }
 
   const describedBy = (name: string) => (errors[name] ? `talent-${name}-error` : undefined);
+  // The alert only while the errors are the refused send's own; then a plain line.
+  const flagged = ORDER.filter((name) => errors[name]).length;
+  const announce = refused?.errors === errors;
 
   return (
     <form
@@ -96,9 +96,9 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
         All three fields are required.
       </p>
 
-      {summary ? (
-        <p className={css.summary} role="alert">
-          {summary}
+      {refused && flagged ? (
+        <p key={announce ? `refused-${refused.count}` : 'summary'} className={css.summary} role={announce ? 'alert' : undefined}>
+          {summaryWords(flagged)}
         </p>
       ) : null}
 

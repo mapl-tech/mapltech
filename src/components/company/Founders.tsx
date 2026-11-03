@@ -14,10 +14,12 @@ import Arrow from '@/components/ui/Arrow';
  * - `FoundersSpread` (/about-us): on paper, beside the decision to get in
  *   touch: names, titles, one line from each bio, LinkedIn, and the ask
  *   itself ("Start a project" first, the team page beside it). The ask
- *   follows the two people in the DOM, so phones meet the people before
- *   being asked; wide screens place it back under the lede, beside them.
- * - `FounderProfiles` (/team): one entry each with the full team.ts bios
- *   and the `/team#slug` anchors their Person JSON-LD points at.
+ *   follows the two people in the DOM and on screen at every width (wide
+ *   screens set it under them), so the eye and the Tab key meet the people
+ *   first and the ask last.
+ * - `FounderProfiles` (/team): one entry each with the team.ts bios (less
+ *   the opening sentence that restates the name and title set right above
+ *   them) and the `/team#slug` anchors their Person JSON-LD points at.
  *
  * On phones both set the name and role beside the photo and the words full
  * width under them, so no column is a sliver.
@@ -39,6 +41,24 @@ function Portrait({ founder, sizes, className }: { founder: Founder; sizes: stri
       />
     </div>
   );
+}
+
+const escapeRe = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * The bio as a profile shows it. Each team.ts bio opens by restating the
+ * name and title ("Leshan Patterson is Co-Founder and Director of MAPL
+ * TECH."), which the profile sets right above it, so that one sentence is
+ * left out here; a bio that opens any other way is shown whole. team.ts and
+ * the Person JSON-LD keep the full text.
+ */
+function profileBio({ name, title, bio }: Founder): string {
+  const titleWords = title
+    .split(/\s*(?:&|\band\b)\s*/)
+    .map(escapeRe)
+    .join('\\s+(?:&|and)\\s+');
+  const intro = new RegExp(`^${escapeRe(name)}\\s+is\\s+(?:the\\s+)?${titleWords}\\s+of\\s+MAPL\\s+TECH\\.\\s+`, 'i');
+  return bio.replace(intro, '') || bio;
 }
 
 function LinkedIn({ founder, placement }: { founder: Founder; placement: string }) {
@@ -81,7 +101,9 @@ export function FoundersSpread() {
           ))}
         </ul>
 
-        <div className={`${ed.actions} ${styles.spreadActions}`}>
+        {/* One filled ask on screen at a time: while this one is in view the header's is an
+            outline (data-header-quiet) and the phone bar steps aside (data-bar-stand-down). */}
+        <div className={`${ed.actions} ${styles.spreadActions}`} data-header-quiet="" data-bar-stand-down="">
           <Link href={PROJECT_HREF} className={ed.primary} data-cta-placement="about_founders_primary">
             {PROJECT_LABEL}
             <span aria-hidden="true" className={ed.arrow}>
@@ -121,7 +143,7 @@ export function FounderProfiles() {
                 <p className={styles.profileRole}>{founder.title}</p>
               </div>
               <div className={styles.profileBody}>
-                <p className={styles.profileBio}>{founder.bio}</p>
+                <p className={styles.profileBio}>{profileBio(founder)}</p>
                 <LinkedIn founder={founder} placement="team_founders_linkedin" />
               </div>
             </li>

@@ -177,13 +177,15 @@ export const TEAM = {
     title: [{ text: 'The people ' }, { text: 'behind the work.', accent: true }] as readonly TitleRun[],
     lede: `MAPL TECH is led by its co-founders, ${FOUNDER_NAMES}, with a team across Canada, Nigeria and Jamaica.`,
   },
-  // What a buyer checks first, the price set large as on /about-us; the open
+  // What a buyer checks first, each said once on the page and all at one
+  // size: the lede names the founders and the three countries and the
+  // directory gives each office's city, so the band says which one is
+  // headquarters, the published experience and the public price. The open
   // roles are one small line at the foot of the directory.
   facts: [
-    { term: 'Co-founders', detail: FOUNDER_NAMES },
-    { term: 'Home base', detail: 'Toronto, Canada' },
-    { term: 'Offices', detail: 'Toronto · Lagos · Kingston' },
-    PRICE_FIGURE,
+    { term: 'Headquarters', detail: 'Toronto, Canada' },
+    { term: 'Experience', detail: '25+ years combined' },
+    PRICE_FACT,
   ],
   founders: {
     label: 'Leadership',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type MouseEvent } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { placeWords } from '@/components/company/places';
 import { usePrefersReducedMotion } from '@/components/ui/useMediaQuery';
 import { useUrlParams } from './useUrlState';
@@ -17,7 +17,10 @@ import Arrow from '@/components/ui/Arrow';
  * JavaScript it selects the role in the apply form in place and moves focus
  * to the first field left to fill (Name). The list carries
  * `data-bar-stand-down`: every row has its own Apply, so the phone bar's
- * general "Apply" steps aside while the list is on screen.
+ * general "Apply" steps aside while the list is on screen. When a filter
+ * matches nothing it offers the talent list, a closed <details> on the
+ * page: following that link (or arriving at, or going back to, its hash)
+ * opens it, so the form is what lands on screen.
  */
 
 export interface BoardRole {
@@ -43,6 +46,12 @@ export interface CareersBoardProps {
 const ALL = 'all';
 
 const isRemote = (role: BoardRole) => /remote/i.test(role.location);
+
+/** Opens the <details> with this id (the talent list), if that is what it is. */
+function openDetails(id: string) {
+  const details = document.getElementById(id);
+  if (details instanceof HTMLDetailsElement) details.open = true;
+}
 
 export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 'apply-name', talentId = 'talent' }: CareersBoardProps) {
   const [params, setParams] = useUrlParams();
@@ -96,6 +105,19 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
     next.set('role', role.slug);
     return `?${next.toString()}#${applyId}`;
   };
+
+  // The talent list is a native <details>: open it whenever it is linked to.
+  // The link's click opens it before the in-page glide (which updates the URL
+  // with pushState, so no hashchange); a #talent arrival, a typed hash or
+  // Back reach it through the hash.
+  useEffect(() => {
+    const onHash = () => {
+      if (window.location.hash === `#${talentId}`) openDetails(talentId);
+    };
+    onHash();
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, [talentId]);
 
   const apply = (event: MouseEvent<HTMLAnchorElement>, role: BoardRole) => {
     event.preventDefault();
@@ -197,7 +219,11 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
           <button type="button" className={styles.reset} onClick={() => setFilter('loc', ALL)}>
             Show all roles
           </button>{' '}
-          or <a href={`#${talentId}`}>join the talent list</a> and we&apos;ll write when one opens.
+          or{' '}
+          <a href={`#${talentId}`} onClick={() => openDetails(talentId)}>
+            join the talent list
+          </a>{' '}
+          and we&apos;ll write when one opens.
         </p>
       </div>
     </div>

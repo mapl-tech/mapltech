@@ -51,9 +51,10 @@ export const metadata: Metadata = {
  * wide screens place the rail (steps, the team and work pages, email, the
  * talent list) beside it, on the right. Once the hero is gone, the phone bar
  * offers "Apply" (to the form), not the roles the reader is already in, and
- * steps aside over the roles list, where every row has its own Apply. The
- * one email fallback is the rail's (the form's button row holds only the
- * send).
+ * steps aside over the roles list, where every row has its own Apply, and
+ * over the form's card, before and after a send ("Application received."
+ * never gets an "Apply" under it). The one email fallback is the rail's
+ * (the form's button row holds only the send).
  */
 /** Display only: a spaced hyphen used as a dash in the source copy reads as a colon. */
 const tidy = (text: string) => text.replace(/\s+-\s+/, ': ');
@@ -137,7 +138,8 @@ export default function CareersPage() {
           </header>
 
           <div className={styles.applyGrid}>
-            <div id={APPLY_FORM_ID} className={`${ed.card} ${styles.formCard} ${styles.applyForm}`}>
+            {/* data-bar-stand-down: the card, not just its <form>, so the bar stays aside after a send too. */}
+            <div id={APPLY_FORM_ID} className={`${ed.card} ${styles.formCard} ${styles.applyForm}`} data-bar-stand-down="">
               <CareersApply roles={roles} contactEmail={siteConfig.email} />
             </div>
             <div className={styles.applyRail}>

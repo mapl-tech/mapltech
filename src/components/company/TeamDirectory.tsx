@@ -94,7 +94,9 @@ export default function TeamDirectory() {
           })}
         </div>
 
-        <div className={styles.foot}>
+        {/* One filled ask on screen at a time: while this one is in view the header's is an
+            outline (data-header-quiet) and the phone bar steps aside (data-bar-stand-down). */}
+        <div className={styles.foot} data-header-quiet="" data-bar-stand-down="">
           <Link href={PROJECT_HREF} className={ed.primary} data-cta-placement="team_directory_primary">
             {PROJECT_LABEL}
             <span aria-hidden="true" className={ed.arrow}>
