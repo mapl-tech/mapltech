@@ -27,7 +27,7 @@ export default function Footer() {
         <div className={styles.ask}>
           <p className={styles.askLine}>Have a project your clients are waiting on?</p>
           <div className={styles.askActions}>
-            <span data-cta-placement="footer_estimate">
+            <span data-cta-placement="footer_project">
               <MagneticButton href={PROJECT_HREF} size="medium" placement="footer_project">
                 {PROJECT_LABEL}
               </MagneticButton>

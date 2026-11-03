@@ -344,8 +344,9 @@ function usePageBriefHref(pathname: string): string | null {
 export default function Header() {
   const pathname = usePathname() ?? '/';
   const onProjectPage = pathname === PROJECT_HREF;
-  // Pages whose own ask is another form (apply, refer): the header's never fills to compete with it.
-  const quietCta = pathname.startsWith('/careers') || pathname.startsWith('/referral');
+  // Pages whose own ask is something else (apply, refer, a privacy request):
+  // the header's never fills to compete with it.
+  const quietCta = ['/careers', '/referral', '/privacy', '/terms'].some((path) => pathname.startsWith(path));
   const compact = useCompact();
   const heroCtaView = useHeroCtaView(pathname);
   // The header's ask carries what the page knows: on /pricing the visitor's
