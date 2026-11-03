@@ -153,10 +153,10 @@ export default function RootLayout({
       className={`${overpass.variable} ${dmSans.variable}`}
     >
       <head>
-        {/* Preconnect to third-party origins for faster resource loading */}
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        {/* Analytics load after the page is idle (lazyOnload), so their origins get a
+            DNS head start only: a preconnect would open two TLS connections during
+            the critical path, competing with the page's own requests. */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://static.hotjar.com" />
         <link rel="dns-prefetch" href="https://static.hotjar.com" />
 
         {/* Google Analytics - lazyOnload to prioritize page content */}
