@@ -41,7 +41,9 @@ import styles from './WorkIndex.module.scss';
  *   eases sideways after the cursor in a rAF loop that writes `transform`
  *   directly (no React state per frame) and flips to the cursor's left near
  *   the edge. Keyboard: focusing a row right-aligns it with that row. Escape
- *   dismisses it (WCAG 1.4.13); it is aria-hidden and never takes pointer events.
+ *   dismisses it wherever focus is, during a plain mouse hover too, until the
+ *   pointer reaches another row (WCAG 1.4.13); it is aria-hidden and never
+ *   takes pointer events.
  */
 
 const GAP = 28; // pointer to card, as on the homepage
@@ -114,6 +116,8 @@ interface Motion {
   inside: boolean;
   /** The row holding keyboard focus, while the card follows it. */
   focusRow: HTMLElement | null;
+  /** The row whose card Escape put away: it stays away until the pointer reaches another row. */
+  dismissed: string | null;
 }
 
 /** The motion state with the card's size filled in: clamp(300px, 28vw, 420px) at 16:10 until it has mounted and been measured. */
@@ -222,6 +226,7 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     placed: false,
     inside: false,
     focusRow: null,
+    dismissed: null,
   });
 
   // A chip reached with the arrow keys comes fully into the sideways line, and
@@ -246,6 +251,13 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     );
   };
 
+  // While the card shows, Escape puts it away wherever focus is (WCAG 1.4.13):
+  // a plain mouse hover leaves focus outside the list, where the list's own
+  // onKeyDown never hears the key. The listener is on the document only while
+  // the card shows.
+  const escape = useRef<((event: KeyboardEvent) => void) | null>(null);
+  const listening = useRef(false);
+
   /** Show one row's screenshot (or hide with null). The last layer stays active so it shrinks away in place. */
   const show = useCallback((slug: string | null) => {
     const s = m.current;
@@ -254,6 +266,13 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     const el = floatRef.current;
     if (!el) return;
     el.dataset.visible = slug ? 'true' : 'false';
+    if (slug && !listening.current && escape.current) {
+      document.addEventListener('keydown', escape.current);
+      listening.current = true;
+    } else if (!slug && listening.current && escape.current) {
+      document.removeEventListener('keydown', escape.current);
+      listening.current = false;
+    }
     if (!slug) {
       s.placed = false;
       return;
@@ -330,6 +349,8 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     if (!armed) setArmed(true);
     const row = rowIn(rootRef.current, e.target);
     const slug = row?.dataset.slug ?? null;
+    if (slug !== s.dismissed) s.dismissed = null;
+    if (s.dismissed) return;
     request(slug);
     if (row) aimAtPointer(e.clientX, row);
     show(slug);
@@ -337,6 +358,7 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
 
   const onPointerLeave = () => {
     m.current.inside = false;
+    m.current.dismissed = null;
     show(null);
   };
 
@@ -360,6 +382,7 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
       return;
     }
     if (!armed) setArmed(true);
+    m.current.dismissed = null;
     m.current.focusRow = row;
     // After the browser has scrolled the focused row into view.
     requestAnimationFrame(() => placeBeside(row));
@@ -375,6 +398,7 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
 
   const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     if (e.key !== 'Escape') return;
+    m.current.dismissed = m.current.slug;
     m.current.focusRow = null;
     show(null);
   };
@@ -394,6 +418,8 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
         }
         const row = rowIn(rootRef.current, document.elementFromPoint(s.px, s.py));
         const slug = row?.dataset.slug ?? null;
+        if (slug !== s.dismissed) s.dismissed = null;
+        if (s.dismissed) return;
         request(slug);
         if (row) aimAtPointer(s.px, row);
         show(slug);
@@ -419,6 +445,22 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     const s = m.current;
     return () => cancelAnimationFrame(s.raf);
   }, []);
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      const s = m.current;
+      s.dismissed = s.slug;
+      s.focusRow = null;
+      show(null);
+    };
+    escape.current = handler;
+    return () => {
+      document.removeEventListener('keydown', handler);
+      listening.current = false;
+      escape.current = null;
+    };
+  }, [show]);
 
   return (
     <div
