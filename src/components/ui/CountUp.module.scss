@@ -1,0 +1,24 @@
+// CountUp (CountUp.tsx): the real number holds the box; the count is drawn over it.
+.root {
+  position: relative;
+  display: inline-block;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+// While it counts, the real number is still the text (screen readers, find-in-page,
+// copy), only unpainted, and it keeps the box at the final number's width.
+.root[data-counting] > .value {
+  opacity: 0;
+}
+
+// The count: an empty, inline, aria-hidden span (so it adds nothing to the page's text,
+// not even a line break, and nothing to the accessibility tree) whose generated content
+// is laid over the whole number box: same font and line, right-aligned.
+.root[data-counting] > .count::after {
+  content: attr(data-count);
+  position: absolute;
+  inset: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
