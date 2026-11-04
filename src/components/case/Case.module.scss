@@ -67,26 +67,18 @@ $phone-peek: 46px;
   }
 }
 
-// Everything above the product. On phones (with a product to show) it is at
-// least the first screen, less the gap, the chrome and the peek, so the
-// capture's top edge lands the same 46px above the screen's foot on every
-// phone, whatever its height (the slack is needed: without it the capture
-// becomes the LCP image at 412x823). The case itself (kicker, title,
-// headline, facts) stays one group at its usual spacing, set at the cover's
-// foot with the capture just under it; the slack a tall phone has to spare
-// sits above the group, under the breadcrumb, never inside it or over the
-// capture. Where the words alone are taller than the screen (a 640px-tall
-// phone), there is no slack and the capture simply follows the facts.
-.heroLead[data-has-stage] {
+// Everything above the product, read top-down from the title as on every
+// page. On phones the capture may only peek into the first screen (fully in
+// view it becomes the LCP image at 412x823), so the words must fill the rest:
+// a case with published results does it with the glance row (natural flow,
+// the capture follows the facts). A case without them is at least the first
+// screen, less the gap, the chrome and the peek, so its capture still lands
+// 46px above the screen's foot; the room a tall phone has to spare falls
+// under the facts, before the product, never inside the case's own words.
+.heroLead[data-has-stage]:not([data-has-glance]) {
   @media (max-width: #{$breakpoint-md - 1px}) {
-    display: flex;
-    flex-direction: column;
     min-height: calc(100vh - var(--hero-top) - #{$phone-stage-gap + $phone-chrome + $phone-peek});
     min-height: calc(100svh - var(--hero-top) - #{$phone-stage-gap + $phone-chrome + $phone-peek});
-
-    > .tags {
-      margin-top: auto;
-    }
   }
 }
 
@@ -184,6 +176,66 @@ $phone-peek: 46px;
     line-height: 1.38;
     letter-spacing: -0.01em;
   }
+}
+
+// Phones only: the published results in short, between the headline and the
+// facts, so the first screen carries proof instead of empty room (see
+// .heroLead). Ruled and labelled like the facts; from 768px the paper "At a
+// glance" band carries them in full instead.
+.glance {
+  display: none;
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    display: block;
+    padding-top: 18px;
+    border-top: 1px solid $color-hairline-strong;
+  }
+}
+
+.glanceLabel {
+  margin: 0;
+  @include mono-label;
+}
+
+.glanceGrid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 16px;
+  margin: 14px 0 0;
+
+  &[data-count='2'] {
+    --cols: 2;
+  }
+
+  &[data-count='1'] {
+    --cols: 1;
+  }
+}
+
+.glanceItem {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  min-width: 0;
+}
+
+// Sized to the narrowest column: "~2,000" fits a 360px phone's third.
+.glanceValue {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 8vw, 2.25rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: $color-fg;
+  @include tabular;
+}
+
+.glanceText {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  color: $color-fg-muted;
 }
 
 .facts {
@@ -345,6 +397,11 @@ $phone-peek: 46px;
   color: $color-ink;
   border-radius: clamp(24px, 3vw, 40px) clamp(24px, 3vw, 40px) 0 0;
   padding: clamp(72px, 10vw, 144px) 0;
+
+  // Phones show the results in the hero instead (.glance), so they appear once.
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    display: none;
+  }
 
   .sectionLabel {
     color: $color-ink-muted;

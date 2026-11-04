@@ -34,6 +34,8 @@ export interface CaseFact {
 export interface CaseResult {
   value: string;
   label: string;
+  /** The same fact in two or three words, for the phone's first screen (CaseStudy's glance row). */
+  short?: string;
 }
 
 export interface CaseStage {
@@ -101,9 +103,9 @@ export const STORIES: readonly CaseStory[] = [
     // The two 100s are not side by side, so the band does not open on two
     // identical tiles. The first stays first: /our-work and the services rows quote it.
     results: [
-      { value: '100', label: 'Google Lighthouse accessibility score, on mobile and desktop' },
-      { value: '8', label: 'industry expertise pages, one click from the menu' },
-      { value: '100', label: 'Google Lighthouse SEO score, on mobile and desktop' },
+      { value: '100', label: 'Google Lighthouse accessibility score, on mobile and desktop', short: 'Lighthouse accessibility' },
+      { value: '8', label: 'industry expertise pages, one click from the menu', short: 'Industry pages' },
+      { value: '100', label: 'Google Lighthouse SEO score, on mobile and desktop', short: 'Lighthouse SEO' },
     ],
     situation: [
       'LRO Staffing places people across Ottawa and Toronto. Its website has two very different visitors: someone looking for their next role, and an employer trying to fill one.',
@@ -156,9 +158,9 @@ export const STORIES: readonly CaseStory[] = [
       { term: 'Live', detail: 'mapltours.com', href: 'https://mapltours.com/' },
     ],
     results: [
-      { value: '~50%', label: 'of customers now arrive through ChatGPT' },
-      { value: '~2,000', label: 'automated tests run before any change goes live' },
-      { value: 'Live', label: 'real payments, for rides run by a licensed transportation provider' },
+      { value: '~50%', label: 'of customers now arrive through ChatGPT', short: 'Customers via ChatGPT' },
+      { value: '~2,000', label: 'automated tests run before any change goes live', short: 'Tests before each change' },
+      { value: 'Live', label: 'real payments, for rides run by a licensed transportation provider', short: 'Real payments' },
     ],
     situation: [
       'Agencies ask us if software built with AI is ready for real customers. We answered by running a business on it.',
@@ -216,8 +218,8 @@ export const STORIES: readonly CaseStory[] = [
       { term: 'Live', detail: 'chhancr.ca', href: 'https://www.chhancr.ca/' },
     ],
     results: [
-      { value: 'AA', label: 'accessibility rating for colour contrast, on every colour pair the audit checked' },
-      { value: '5', label: 'stages that guide visitors: Noticing, Finding Out, Choosing, Living with it, Giving back' },
+      { value: 'AA', label: 'accessibility rating for colour contrast, on every colour pair the audit checked', short: 'Colour contrast rating' },
+      { value: '5', label: 'stages that guide visitors: Noticing, Finding Out, Choosing, Living with it, Giving back', short: 'Visitor stages' },
     ],
     situation: chha ? [chha.challenge] : undefined,
     // Plain-language versions of site.ts caseStudies `solution` and `results`

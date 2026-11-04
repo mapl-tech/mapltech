@@ -64,12 +64,17 @@ export default function CaseStudy({
       {/* ---------------------------------------------------------- hero */}
       <header className={styles.hero}>
         <div className={styles.heroInner}>
-          {/* Everything above the product. On a phone it fills the first screen
-              but for a ~50px strip, with the facts at its foot, so the capture
-              peeks the same amount on every phone: fully in view it would become
-              the page's LCP image, which Lighthouse's simulated phone scores 93
-              instead of 100 however early it is fetched. */}
-          <div className={styles.heroLead} data-has-stage={story.media ? '' : undefined}>
+          {/* Everything above the product, the title at the top as on every
+              page. On a phone the capture may only peek into the first screen:
+              fully in view it would become the page's LCP image, which
+              Lighthouse's simulated phone scores 93 instead of 100 however early
+              it is fetched. A case with published results fills that room with
+              them (the glance row); one without keeps the room under its facts. */}
+          <div
+            className={styles.heroLead}
+            data-has-stage={story.media ? '' : undefined}
+            data-has-glance={story.results?.length ? '' : undefined}
+          >
             <nav aria-label="Breadcrumb" className={styles.crumbs}>
               <ol role="list">
                 <li>
@@ -94,6 +99,24 @@ export default function CaseStudy({
             {/* Headline, facts, then the product, at every width. */}
             <div className={styles.heroText}>
               <p className={styles.headline}>{story.headline}</p>
+              {story.results?.length ? (
+                // Phones only: the published results, in short, under the
+                // headline. The paper "At a glance" band below carries them in
+                // full from 768px and is hidden on phones, so they appear once.
+                <section className={styles.glance} aria-labelledby="case-glance">
+                  <h2 id="case-glance" className={styles.glanceLabel}>
+                    At a glance
+                  </h2>
+                  <dl className={styles.glanceGrid} data-count={story.results.length}>
+                    {story.results.map((result) => (
+                      <div key={result.label} className={styles.glanceItem}>
+                        <dt className={styles.glanceValue}>{result.value}</dt>
+                        <dd className={styles.glanceText}>{result.short ?? result.label}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+              ) : null}
               <dl className={styles.facts}>
                 {story.facts.map((fact) => (
                   <div key={fact.term} className={styles.fact}>
