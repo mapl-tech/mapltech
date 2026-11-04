@@ -29,10 +29,11 @@
  * - The close: the site's own lede (four questions, a 20-minute call, a
  *   fixed quote) and the client quote.
  *
- * So there is no separate hours section, no FAQ that repeats the team
- * sentence and no second link to the pricing page in the body (the hero and
- * the close both have one).
+ * So there is no separate hours section and no FAQ that repeats the team
+ * sentence. The body's one link to the pricing page is in the cost answer,
+ * where it names the page (the hero and the close have their own).
  */
+import { PRICING_HREF } from '@/components/layout/chrome';
 import { careers } from '@/config/site';
 import type { Country } from '@/config/team';
 import type { ServiceSlug } from '@/lib/schema';
@@ -43,7 +44,10 @@ export type RegionSlug = 'nigeria' | 'jamaica';
 
 export interface RegionFaq {
   question: string;
+  /** Plain text: the FAQPage JSON-LD carries it as written. */
   answer: string;
+  /** Words in the answer that the page sets as a link (the JSON-LD keeps them plain). */
+  link?: { text: string; href: string };
 }
 
 export interface RegionServiceRow {
@@ -107,9 +111,13 @@ export function startingFrom(service: EstimateService): string {
 /**
  * The cost question's answer: what is regional about the price (nothing: the
  * same public prices, in USD). Each service's starting price is in its row
- * and the lowest is in the facts band, so the answer does not list them again.
+ * and the lowest is in the hero's facts, so the answer does not list them
+ * again; the pricing page it names is a link.
  */
-const COST_ANSWER = 'The same public prices as everywhere else, in USD. Every price table is on the pricing page.';
+const COST_ANSWER = {
+  answer: 'The same public prices as everywhere else, in USD. Every price table is on the pricing page.',
+  link: { text: 'the pricing page', href: PRICING_HREF },
+} as const;
 
 /** Published on /contact-us ("We respond within 24 hours"). */
 export const REPLY_TIME = 'Within 24 hours';
@@ -197,7 +205,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         },
         {
           question: 'What does a project cost in Nigeria?',
-          answer: COST_ANSWER,
+          ...COST_ANSWER,
         },
       ],
     },
@@ -288,7 +296,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         },
         {
           question: 'What does a project cost in Jamaica?',
-          answer: COST_ANSWER,
+          ...COST_ANSWER,
         },
         {
           question: 'How do you keep our team informed?',

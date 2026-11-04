@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
@@ -13,8 +14,8 @@ import { SERVICE_META } from '@/lib/estimate';
 import FactsBand from './FactsBand';
 import HeroActions from './HeroActions';
 import LocalTime from './LocalTime';
-import { OFFICE_HOURS_FACT, PRICE_FACT, keepBrand } from './content';
-import { REPLY_TIME, rolesIn, startingFrom, type RegionConfig } from './regions';
+import { OFFICE_HOURS_FACT, PRICE_FACT, countWord, keepBrand } from './content';
+import { REPLY_TIME, rolesIn, startingFrom, type RegionConfig, type RegionFaq } from './regions';
 import ed from './Company.module.scss';
 import place from './PlaceReadout.module.scss';
 import styles from './RegionalPage.module.scss';
@@ -84,6 +85,20 @@ export default function RegionalPage({ region, title, description }: RegionalPag
   const [lineOne, lineTwo] = region.hero.titleLines;
   /** Display only: "3 pm" keeps its number on the line, as "20‑minute" does (the JSON-LD keeps plain text). */
   const display = (text: string) => keepNumberWords(text).replace(/(\d) (am|pm)\b/g, '$1\u00a0$2');
+  /** An answer on screen: `display`, with the words its `link` names set as that link (the JSON-LD keeps them plain). */
+  const answer = ({ answer: text, link }: RegionFaq): ReactNode => {
+    const at = link ? text.indexOf(link.text) : -1;
+    if (!link || at < 0) return display(text);
+    return (
+      <p>
+        {display(text.slice(0, at))}
+        <Link href={link.href} data-cta-placement={`${prefix}_faq${link.href.replace(/\W+/g, '_')}`}>
+          {link.text}
+        </Link>
+        {display(text.slice(at + link.text.length))}
+      </p>
+    );
+  };
 
   return (
     <>
@@ -272,14 +287,14 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             <Accordion
               name={`${prefix}-faq`}
               defaultOpen={0}
-              items={region.faq.items.map((item, i) => ({ id: `${prefix}-faq-${i + 1}`, question: item.question, answer: display(item.answer) }))}
+              items={region.faq.items.map((item, i) => ({ id: `${prefix}-faq-${i + 1}`, question: item.question, answer: answer(item) }))}
             />
             {/* For job seekers: one small line, away from the buyer's contact lines. */}
             {roles.length ? (
               <p className={styles.hiring}>
                 Looking for work? See our{' '}
                 <Link href={`/careers?loc=${region.country.toLowerCase()}#roles`} data-cta-placement={`${prefix}_careers_all`}>
-                  {roles.length} open {typeSet.length === 1 ? `${typeSet[0]} ` : ''}
+                  {countWord(roles.length).toLowerCase()} open {typeSet.length === 1 ? `${typeSet[0]} ` : ''}
                   role{roles.length === 1 ? '' : 's'} in {region.country}
                 </Link>
                 .
