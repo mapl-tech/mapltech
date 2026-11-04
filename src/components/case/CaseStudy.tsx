@@ -69,7 +69,7 @@ export default function CaseStudy({
               peeks the same amount on every phone: fully in view it would become
               the page's LCP image, which Lighthouse's simulated phone scores 93
               instead of 100 however early it is fetched. */}
-          <div className={styles.lead} data-has-stage={story.media ? '' : undefined}>
+          <div className={styles.heroLead} data-has-stage={story.media ? '' : undefined}>
             <nav aria-label="Breadcrumb" className={styles.crumbs}>
               <ol role="list">
                 <li>

@@ -47,7 +47,7 @@ $landscape: '(min-aspect-ratio: 21/20)';
   }
 }
 
-// The phone's first screen, as arithmetic (see .lead): the gap from the facts
+// The phone's first screen, as arithmetic (see .heroLead): the gap from the facts
 // to the product, the browser frame's chrome, and how much of the capture
 // shows above the screen's foot. 46px of a ~290-350px-wide capture is 13-16k
 // px2 against a headline of 25-32k: the headline stays the LCP element (a
@@ -58,7 +58,7 @@ $phone-peek: 46px;
 
 .heroInner {
   @include shell;
-  // Named once: the padding, and the phone's first-screen arithmetic (.lead).
+  // Named once: the padding, and the phone's first-screen arithmetic (.heroLead).
   --hero-top: calc(var(--header-height, 72px) + clamp(40px, 6vw, 88px));
   padding-top: var(--hero-top);
 
@@ -74,7 +74,7 @@ $phone-peek: 46px;
 // a tall phone has to spare sits between the headline and the facts, never
 // as a band over the capture. Where the words alone are taller than the
 // screen (a 640px-tall phone), the capture simply follows the facts.
-.lead[data-has-stage] {
+.heroLead[data-has-stage] {
   @media (max-width: #{$breakpoint-md - 1px}) {
     display: flex;
     flex-direction: column;
@@ -145,7 +145,7 @@ $phone-peek: 46px;
 }
 
 // The headline, then the facts: under it on phones and tablets, beside it on
-// desktops. The product follows the whole .lead; see .stage.
+// desktops. The product follows the whole .heroLead; see .stage.
 .heroText {
   display: grid;
   gap: clamp(28px, 4vw, 48px);
@@ -156,7 +156,7 @@ $phone-peek: 46px;
     margin-top: 24px;
 
     // Filling the first screen: the headline at the top, the facts at the foot.
-    .lead[data-has-stage] & {
+    .heroLead[data-has-stage] & {
       flex: 1 0 auto;
       display: flex;
       flex-direction: column;
@@ -247,8 +247,8 @@ $phone-peek: 46px;
 }
 
 // The product shot: tilted back, straightening and growing as it scrolls in.
-// After the .lead: 48-104px under the facts from 768px; on phones a plain
-// 28px, the first screen's height being set by .lead, so the capture only
+// After the .heroLead: 48-104px under the facts from 768px; on phones a plain
+// 28px, the first screen's height being set by .heroLead, so the capture only
 // peeks (46px) into it on every phone. Any more and its visible area outgrows
 // the headline, it becomes the page's LCP image, and Lighthouse's simulated
 // phone drops the page to 92 (measured on LRO: a 93px peek, 30,329px2 of
