@@ -16,7 +16,8 @@ import Arrow from '@/components/ui/Arrow';
  * in the first screen), a plain sentence as the H1, the path-aware hint in a
  * reserved line (the broken-link report when the path gives no guess), the
  * one primary action and the way home, then the six main pages, as plain
- * rows, and the report after them when a guess took its line.
+ * rows (each link described by its note), and the report after them when a
+ * guess took its line.
  * The ask is the page's own close (`data-page-close`): the footer drops its
  * ask and the phone bar stands down beside it. The hint gets the real service
  * and case study pages (slug and name only), so a mistyped /services/... or
@@ -88,10 +89,18 @@ export default function NotFound() {
             {PLACES.map((place) => (
               <li key={place.href} className={styles.place}>
                 <span className={styles.placeText}>
-                  <Link href={place.href} className={styles.placeName} data-cta-placement={`not_found_${place.name.toLowerCase()}`}>
+                  {/* Named by the page, described by its note ("Pricing", "The public price list and the estimator."). */}
+                  <Link
+                    href={place.href}
+                    className={styles.placeName}
+                    aria-describedby={`nf-note-${place.name.toLowerCase()}`}
+                    data-cta-placement={`not_found_${place.name.toLowerCase()}`}
+                  >
                     {place.name}
                   </Link>
-                  <span className={styles.placeNote}>{place.note}</span>
+                  <span id={`nf-note-${place.name.toLowerCase()}`} className={styles.placeNote}>
+                    {place.note}
+                  </span>
                 </span>
                 <span className={styles.placeArrow} aria-hidden="true">
                   <Arrow />
