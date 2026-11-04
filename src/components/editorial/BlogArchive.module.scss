@@ -514,6 +514,24 @@ $chips-fade: 48px;
   text-align: center;
 }
 
+// The way on when other topics hold matches: the empty state's one filled
+// control (paper on ink 17.6:1; on crimson-ink at hover 7.7:1), so the clear
+// beside it reads as the quieter choice.
+.emptySwitch {
+  @include ink-button;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  background: $color-ink;
+  color: $color-paper;
+
+  &:hover {
+    background: $color-red-ink;
+    border-color: $color-red-ink;
+    color: $color-paper;
+  }
+}
+
 .more:not([hidden]) {
   display: flex;
   flex-wrap: wrap;

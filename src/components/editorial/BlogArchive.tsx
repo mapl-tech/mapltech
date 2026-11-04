@@ -47,7 +47,11 @@ import styles from './BlogArchive.module.scss';
  * - The empty state says what is true and what to try next: a shorter or
  *   different word when nothing matches anywhere; when only other topics have
  *   matches, which ones and how many, with a button that switches to them
- *   (focus moves on to the first match, as "Show more" does).
+ *   (its one filled control; focus moves on to the first match, as "Show
+ *   more" does). The announced line says where those matches are too, and the
+ *   clear control is named for what it clears.
+ * - Each month counts every article of its own that matches, shown yet or not
+ *   ("July 2026, 16 articles" before and after "Show more").
  * - Any link to #archive-q ("Search all articles" in the page hero) lands in
  *   the search field, and so do both clear controls.
  */
@@ -96,14 +100,14 @@ const MONTHS = [
 
 /**
  * The no-script view: every row and month shows (the post presented above
- * stays out), and the search, topic chips, result line, paging and the month
- * counts (rendered for the first page) are dropped, since none of them holds
- * without script. The hero's "Search all articles" link points at the search
- * field, so it goes too.
+ * stays out, and so the month counts, which count every row a month lists,
+ * hold), and the search, topic chips, result line and paging are dropped,
+ * since none of them holds without script. The hero's "Search all articles"
+ * link points at the search field, so it goes too.
  */
 const noscriptCss = [
   `.${styles.group}[hidden]:not([data-featured]),.${styles.item}[hidden]:not([data-featured]){display:block}`,
-  `.${styles.controls},.${styles.status},.${styles.more},.${styles.monthCount},a[href="#archive-q"]{display:none!important}`,
+  `.${styles.controls},.${styles.status},.${styles.more},a[href="#archive-q"]{display:none!important}`,
 ].join('');
 
 /** "September 2026" from "2026-09-07". */
@@ -167,6 +171,8 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
   const lead = browsing ? above : 0;
 
   const visible = useMemo(() => new Set(matches.slice(0, limit).map((row) => row.slug)), [matches, limit]);
+  // Every match, shown yet or not: what each month counts.
+  const matching = useMemo(() => new Set(matches.map((row) => row.slug)), [matches]);
 
   const groups = useMemo(() => {
     const out: { key: string; label: string; rows: ArchiveRow[] }[] = [];
@@ -188,15 +194,21 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
   const current = topics.find((entry) => entry.slug === topic);
   const topicLabel = current?.label;
 
-  // A search that finds nothing in this topic but something in others: those
-  // topics, in chip order, with their counts (the empty state names them).
-  const elsewhere =
-    terms.length && topic !== ALL
-      ? topics.flatMap((entry) => {
-          const count = counts.get(entry.slug) ?? 0;
-          return entry.slug !== topic && count > 0 ? [{ slug: entry.slug, label: entry.label, count }] : [];
-        })
-      : [];
+  /**
+   * A search that finds nothing in this topic but something in others: those
+   * topics, in chip order, with their counts (the empty state names them, and
+   * the announced line says so too).
+   */
+  const elsewhereIn = (pool: readonly ArchiveRow[]) => {
+    if (topic === ALL || pool.some((row) => row.topic === topic)) return [];
+    return topics.flatMap((entry) => {
+      const count = pool.filter((row) => row.topic === entry.slug).length;
+      return count > 0 ? [{ slug: entry.slug, label: entry.label, count }] : [];
+    });
+  };
+  const elsewhere = terms.length ? elsewhereIn(searched) : [];
+  /** The clear control, named for what it clears. */
+  const clearLabel = topic === ALL ? 'Clear the search' : terms.length ? 'Clear search and topic' : 'Show all topics';
 
   /** What the empty state says is true: where the search finds articles, or what to try. */
   const emptyTitle = (): string => {
@@ -211,15 +223,25 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
     return `${joinList(places)} ${total === 1 ? 'matches' : 'match'} “${query.trim()}”.`;
   };
 
-  /** The result line: shown as you type, announced once typing pauses. */
-  const describe = (text: string): string => {
+  /**
+   * The result line: shown as you type, announced once typing pauses. When this
+   * topic has no match but others do, the announced line says where (on screen
+   * the empty state below says it).
+   */
+  const describe = (text: string, announce = false): string => {
     const words = wordsOf(text);
     if (topic === ALL && !words.length) {
       return `Showing ${Math.min(limit, browseRows.length) + above} of ${rows.length} articles, newest first`;
     }
     const pool = find(words);
     const found = topic === ALL ? pool : pool.filter((row) => row.topic === topic);
-    if (!found.length) return `No articles match${words.length ? ` “${text.trim()}”` : ''}${topicLabel ? ` in ${topicLabel}` : ''}`;
+    if (!found.length) {
+      const none = `No articles match${words.length ? ` “${text.trim()}”` : ''}${topicLabel ? ` in ${topicLabel}` : ''}`;
+      const others = announce && words.length ? elsewhereIn(pool) : [];
+      if (!others.length) return none;
+      const total = others.reduce((sum, entry) => sum + entry.count, 0);
+      return `${none}, but ${joinList(others.map((entry) => `${entry.count} in ${entry.label}`))} ${total === 1 ? 'does' : 'do'}`;
+    }
     const noun = found.length === 1 ? 'article' : 'articles';
     const where = topicLabel ? ` in ${topicLabel}` : '';
     const what = words.length ? ` matching “${text.trim()}”` : '';
@@ -400,7 +422,7 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
       <p id="archive-status" className={styles.status} tabIndex={-1} data-touch={touchSubmit ? '' : undefined}>
         <span aria-hidden="true">{describe(query)}</span>
         <span className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
-          {describe(urlQuery)}
+          {describe(urlQuery, true)}
         </span>
       </p>
 
@@ -433,6 +455,7 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
       <div id="archive-all" className={styles.groups}>
         {groups.map((group) => {
           const inView = group.rows.filter((row) => visible.has(row.slug)).length;
+          const inMonth = group.rows.filter((row) => matching.has(row.slug)).length;
           // A month holding only the post shown above stays hidden without JavaScript too.
           const onlyFeatured = group.rows.every((row) => row.slug === featured);
           return (
@@ -446,7 +469,7 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
               <div className={styles.monthHead}>
                 <h3 className={styles.month}>{group.label}</h3>
                 <p className={styles.monthCount}>
-                  {inView} {inView === 1 ? 'article' : 'articles'}
+                  {inMonth} {inMonth === 1 ? 'article' : 'articles'}
                 </p>
               </div>
               <ol className={styles.list} role="list">
@@ -484,14 +507,14 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
           {elsewhere.length ? (
             <button
               type="button"
-              className={styles.emptyButton}
+              className={styles.emptySwitch}
               onClick={() => switchTopic(elsewhere.length === 1 ? elsewhere[0].slug : ALL)}
             >
               {elsewhere.length === 1 ? `Switch to ${elsewhere[0].label}` : 'Switch to all topics'}
             </button>
           ) : null}
           <button type="button" className={styles.emptyButton} onClick={clearAll}>
-            Clear search and topic
+            {clearLabel}
           </button>
         </div>
         <p className={styles.emptyText}>
