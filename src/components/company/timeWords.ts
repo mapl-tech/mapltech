@@ -11,25 +11,28 @@ export function timeWords(hour: number, minute?: number): string {
 }
 
 /**
- * The line under an office's "Open now" or "Closed now": when that changes,
- * from the published working day (`start`/`end` hours, Monday to Friday) and
- * nothing else, so it is never a reply-time promise. Open: "Until 6 pm".
- * Closed: "Back at 9 am" before the day starts, "Back tomorrow at 9 am"
- * after it ends, "Back Monday at 9 am" from Friday evening to Sunday. `zone`
- * ("WAT") follows the time where the reader may be in another zone.
+ * When an office's state next changes, from the published working day
+ * (`start`/`end` hours, Monday to Friday) and nothing else, so it is never a
+ * reply-time promise. Open: "until 6 pm". Closed, the next opening: "opens at
+ * 9 am" before the day starts, "opens tomorrow at 9 am" after a Monday to
+ * Thursday ends, "opens Monday at 9 am" from Friday evening to Sunday.
  * `weekday` 0 is Sunday, as in ui/officeTime's ZoneTime.
  */
-export function nextStateWords(
-  t: { hour: number; weekday: number },
-  open: boolean,
-  start: number,
-  end: number,
-  zone?: string,
-): string {
-  const z = zone ? ` ${zone}` : '';
-  if (open) return `Until ${timeWords(end)}${z}`;
-  const at = `${timeWords(start)}${z}`;
-  if (t.weekday >= 1 && t.weekday <= 5 && t.hour < start) return `Back at ${at}`;
-  if (t.weekday >= 1 && t.weekday <= 4) return `Back tomorrow at ${at}`;
-  return `Back Monday at ${at}`;
+export function openingWords(t: { hour: number; weekday: number }, open: boolean, start: number, end: number): string {
+  if (open) return `until ${timeWords(end)}`;
+  const at = `at ${timeWords(start)}`;
+  if (t.weekday >= 1 && t.weekday <= 5 && t.hour < start) return `opens ${at}`;
+  if (t.weekday >= 1 && t.weekday <= 4) return `opens tomorrow ${at}`;
+  return `opens Monday ${at}`;
+}
+
+/**
+ * The office's state and its next change as one plain line: "Open until
+ * 6 pm", "Closed, opens tomorrow at 9 am". OfficeStatus draws the same words
+ * with a dot for the eye ("Closed · opens…"); this is what a screen reader
+ * hears.
+ */
+export function statusWords(t: { hour: number; weekday: number }, open: boolean, start: number, end: number): string {
+  const next = openingWords(t, open, start, end);
+  return open ? `Open ${next}` : `Closed, ${next}`;
 }

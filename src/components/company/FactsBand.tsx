@@ -10,14 +10,15 @@ export interface Fact {
 }
 
 /**
- * The page's answer-first facts, set as the hero's foot: a ruled row of
- * terms and values (two columns on phones, one row on wide screens). These
- * are the lines a buyer scans first and an assistant quotes; every value is
- * computed or sourced in content.ts / regions.ts. A fact with a `figure`
- * sets it in the display face, so the published numbers are what the eye
- * meets first. `placement="aside"` sets the same list in the hero's aside
- * (PageHeader `aside`, /about-us): a ruled column beside the copy from
- * 1024px, the band's grid under the copy below that. Server Component.
+ * The page's answer-first facts, set as the hero's foot: terms and values
+ * under one rule (a ruled list, one fact a row, on phones; side by side from
+ * 768px). These are the lines a buyer scans first and an assistant quotes;
+ * every value is computed or sourced in content.ts / regions.ts, and each is
+ * said once on its page. A fact with a `figure` sets it in the display face,
+ * so the published numbers are what the eye meets first. `placement="aside"`
+ * sets the same list in the hero's aside (PageHeader `aside`, /about-us and
+ * /team): a ruled column beside the copy from 1024px, the band's layout under
+ * the copy below that. Server Component.
  */
 export default function FactsBand({
   facts,

@@ -219,20 +219,24 @@ $measure-read: 31em;
   @include shell;
 }
 
+// Phones and small tablets: a ruled list, one fact a row (three facts in a
+// two-column grid left an empty cell), each figure on its unit's baseline.
+// From 768px the facts sit side by side under one rule, the figure on a line
+// of its own over its unit (two or four facts make pairs on a tablet), and
+// from 1280px one column per fact.
 .factsGrid {
   --cols: 3;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px 20px;
+  grid-template-columns: minmax(0, 1fr);
   margin: 0;
-  padding-top: 24px;
   border-top: 1px solid $color-hairline-strong;
 
   @include md {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: 32px;
+    gap: 24px 32px;
+    padding-top: 24px;
 
-    // Four facts read as two pairs on a tablet, not three and an orphan.
+    &[data-count='2'],
     &[data-count='4'] {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -240,6 +244,7 @@ $measure-read: 31em;
 
   @include xl {
     &,
+    &[data-count='2'],
     &[data-count='4'] {
       grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
     }
@@ -248,9 +253,27 @@ $measure-read: 31em;
 
 .fact {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   align-content: start;
   min-width: 0;
+  padding: 14px 0;
+
+  & + & {
+    border-top: 1px solid $color-hairline;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  @include md {
+    gap: 8px;
+    padding: 0;
+
+    & + & {
+      border-top: 0;
+    }
+  }
 
   dt {
     @include mono-label;
@@ -266,15 +289,15 @@ $measure-read: 31em;
   }
 
   // A value led by a published figure: the figure in the display face, its
-  // unit on the line under it.
+  // unit beside it on phones and on the line under it from 768px.
   .figured {
     color: $color-fg-muted;
   }
 }
 
 .figure {
-  display: block;
-  margin-bottom: 2px;
+  display: inline;
+  margin-right: 6px;
   font-family: $font-display;
   font-weight: 800;
   font-size: clamp(2rem, 1.45rem + 1.7vw, 3rem); // 32px -> 48px
@@ -283,15 +306,20 @@ $measure-read: 31em;
   white-space: nowrap;
   color: $color-fg;
   @include tabular;
+
+  @include md {
+    display: block;
+    margin: 0 0 2px;
+  }
 }
 
-// The same facts in the hero's aside (FactsBand placement="aside", /about-us).
-// From 1024px they fill the hero's right column: one fact a row under the
-// band's rule, hairlines between, the figure as large as the column allows
-// and its unit on the figure's baseline, so the three rows read as one even
-// ledger beside the copy (the /pricing hero's starting prices are the model)
-// and the last figure ends level with the quote. Below 1024px the aside sits
-// under the copy and keeps the band's grid.
+// The same facts in the hero's aside (FactsBand placement="aside", /about-us,
+// /team). From 1024px they fill the hero's right column: one fact a row under
+// the band's rule, hairlines between, the figure as large as the column
+// allows and its unit on the figure's baseline, so the three rows read as one
+// even ledger beside the copy (the /pricing hero's starting prices are the
+// model). Below 1024px the aside sits under the copy and keeps the band's
+// layout: the ruled list on phones, three across on tablets.
 .factsGrid.asideFacts {
   @include lg {
     grid-template-columns: minmax(0, 1fr);

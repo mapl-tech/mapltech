@@ -28,9 +28,13 @@ $signal-on-paper: #0b7a67;
   color: $color-ink;
 }
 
+// Whether the office is open and when that changes, on a line of its own
+// under the city and its clock. The dot sits on the first line's middle if
+// the words wrap.
 .status {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  flex-basis: 100%;
+  align-items: flex-start;
   gap: 6px;
 }
 
@@ -38,6 +42,7 @@ $signal-on-paper: #0b7a67;
   flex: none;
   width: 8px;
   height: 8px;
+  margin-top: calc(0.7em - 4px); // (line-height 1.4 - 8px) / 2
   border-radius: 50%;
   border: 1.5px solid rgba(11, 11, 12, 0.45);
 
@@ -45,9 +50,4 @@ $signal-on-paper: #0b7a67;
     border-color: $signal-on-paper;
     background: $signal-on-paper;
   }
-}
-
-// When the state changes, on a line of its own under the clock line.
-.next {
-  flex-basis: 100%;
 }
