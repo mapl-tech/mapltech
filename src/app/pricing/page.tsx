@@ -26,7 +26,7 @@ import {
   longDate,
 } from '@/components/pricing/content';
 import sections from '@/components/pricing/PricingSections.module.scss';
-import { keepTogether } from '@/components/services/keepTogether';
+import { keepTogether, withLastWord } from '@/components/services/keepTogether';
 import styles from './page.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -114,9 +114,14 @@ function StartingPrices() {
                 {facts.entry}
               </span>
               <span id={`ledger-${facts.service}-more`} className={styles.cellMore}>
-                All {facts.tierCount} packages
-                <span className={styles.cellArrow} aria-hidden="true">
-                  <Arrow direction="down" />
+                {/* One flex item, so a label that wraps ("All 3" / "packages") keeps the arrow after its last word. */}
+                <span>
+                  {withLastWord(
+                    `All ${facts.tierCount} packages`,
+                    <span className={styles.cellArrow} aria-hidden="true">
+                      <Arrow direction="down" />
+                    </span>,
+                  )}
                 </span>
               </span>
             </a>

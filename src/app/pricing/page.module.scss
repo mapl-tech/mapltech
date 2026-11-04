@@ -222,8 +222,11 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
-// The down arrow after the words: aria-hidden, so the name is the words alone.
+// The down arrow after the words: aria-hidden, so the name is the words alone. An inline
+// block, spaced by a margin, so the underline runs under the words only.
 .cellArrow {
+  display: inline-block;
+  margin-left: 10px;
   color: $color-red-text;
 }
 
