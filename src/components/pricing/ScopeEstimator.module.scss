@@ -29,6 +29,8 @@ $card: #121214;
   @include lg {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     gap: 56px;
+    // Gives back the room .controls takes under the last question, so the section is as tall as before.
+    margin-bottom: calc(48px - #{$editorial-pad-y});
   }
 
   @include xl {
@@ -40,6 +42,14 @@ $card: #121214;
 .controls {
   min-width: 0;
   border-top: 1px solid $color-hairline-strong;
+
+  // Beside the readout, the section's space under the last question is part of this column
+  // (the grid gives it back, so nothing moves): the readout's row then runs on past question 05,
+  // so the card has room to stay on screen until that question has scrolled away, and it comes
+  // to rest 48px above the price list.
+  @include lg {
+    padding-bottom: calc(#{$editorial-pad-y} - 48px);
+  }
 }
 
 .step {
@@ -532,20 +542,11 @@ $card: #121214;
 .rail {
   min-width: 0;
 
-  // Sticky beside the questions. The live total and the primary action sit
-  // in its top 500px; "in writing" and the two disclosures follow, and the
-  // card only scrolls inside itself when a disclosure makes it taller than
-  // the viewport (ScopeEstimator sets data-lenis-prevent then).
+  // Sticky beside the questions. The live total and the primary action sit in the card's top
+  // 500px; "in writing" and the two disclosures follow.
   @include lg {
     position: sticky;
     top: calc(var(--header-height, 72px) + 24px);
-    max-height: calc(100svh - var(--header-height, 72px) - 48px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-    // Room for focus rings and the card's edge inside the scroll box.
-    padding: 4px;
-    margin: -4px;
   }
 }
 
@@ -557,19 +558,64 @@ $card: #121214;
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding: 24px 20px;
   border-radius: clamp(22px, 2.4vw, 32px);
   background:
     radial-gradient(80% 60% at 100% 0%, rgba(217, 28, 63, 0.18) 0%, transparent 65%),
     $card;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07);
 
+  // One screen tall at most, and never taller than the room left before the questions end
+  // (--rail-room, ScopeEstimator): after question 05 the card gets shorter from the bottom
+  // instead of being pushed up under the header, so the total and "Start a project" stay on
+  // screen while any question is. Only once it is down to its head does it scroll away.
+  @include lg {
+    display: flex;
+    flex-direction: column;
+    max-height: min(calc(100svh - var(--header-height, 72px) - 48px), var(--rail-room, 100svh));
+  }
+}
+
+// The label and the total.
+.cardHead {
+  padding: 24px 20px 12px;
+
   @include sm {
-    padding: 32px;
+    padding: 32px 32px 12px;
+  }
+
+  @include lg {
+    flex: none;
   }
 
   @include xl {
-    padding: 36px;
+    padding: 36px 36px 12px;
+  }
+}
+
+// Everything under the total. Wide screens: it scrolls inside the card when a disclosure makes the
+// card taller than the screen (ScopeEstimator sets data-lenis-prevent then), and it only clips while
+// the end of the questions holds the card short (data-squeezed), so the wheel keeps moving the page.
+.cardBody {
+  padding: 0 20px 24px;
+
+  @include sm {
+    padding: 0 32px 32px;
+  }
+
+  @include lg {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+
+    .rail[data-squeezed] & {
+      overflow: hidden;
+    }
+  }
+
+  @include xl {
+    padding: 0 36px 36px;
   }
 }
 
@@ -634,9 +680,8 @@ $card: #121214;
 }
 
 .unit {
-  margin: 12px 0 0;
-  font-size: 1rem;
-  @include phone-floor; // sentences: 17px on phones
+  margin: 0; // 12px under the total: the head's bottom padding
+  font-size: $font-size-base; // 17px: a sentence, at every width
   line-height: 1.5;
   color: rgba(245, 242, 238, 0.86);
 }
@@ -649,15 +694,14 @@ $card: #121214;
 .basis {
   margin: 6px 0 0;
   max-width: 40ch;
-  font-size: 1rem;
-  @include phone-floor; // sentences: 17px on phones
+  font-size: $font-size-base; // 17px: a sentence, at every width
   line-height: 1.5;
   color: $label-muted;
 }
 
 .monthly {
   margin: 8px 0 0;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px, as the lines above it
   line-height: 1.5;
   color: $label-muted;
 }
@@ -803,7 +847,7 @@ $card: #121214;
   list-style: none;
 
   li {
-    font-size: 1rem;
+    font-size: $font-size-base; // 17px, as the readout's other sentences
     line-height: 1.5;
     color: rgba(245, 242, 238, 0.86);
   }
@@ -836,8 +880,7 @@ $card: #121214;
 
 .nextNote {
   margin: 0;
-  font-size: 1rem;
-  @include phone-floor; // sentences: 17px on phones
+  font-size: $font-size-base; // 17px: a sentence, at every width
   line-height: 1.5;
   color: $label-muted;
 }
@@ -920,15 +963,31 @@ $card: #121214;
 
 .error {
   margin: 0;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px, as the readout's other sentences
   line-height: 1.5;
   color: $color-red-text;
+}
+
+// The brief's privacy line under the email field, in its words: muted, the link in the card's text colour.
+.privacy {
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $label-muted;
+
+  a {
+    color: rgba(245, 242, 238, 0.86);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+    @include focus-ring;
+  }
 }
 
 // Google's reCAPTCHA notice (the badge is hidden site-wide): one sentence, inline links.
 .recaptcha {
   margin: 4px 0 0;
-  font-size: 1rem;
+  font-size: $font-size-base;
   line-height: 1.5;
   color: $label-muted;
 
@@ -946,7 +1005,7 @@ $card: #121214;
   padding: 16px;
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba($color-signal, 0.4);
-  font-size: 1rem;
+  font-size: $font-size-base;
   line-height: 1.5;
   color: $color-fg;
 }

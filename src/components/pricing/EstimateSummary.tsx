@@ -24,6 +24,8 @@ import { PROJECT_LABEL } from '@/components/layout/chrome';
 import { keepTogether } from '@/components/services/keepTogether';
 import SendEstimateForm from './SendEstimateForm';
 import {
+  CUSTOM_NOTE,
+  CUSTOM_PRICE,
   QUOTE_NOTE,
   TOGGLE_LABELS,
   TOTAL_SPRING,
@@ -54,7 +56,7 @@ interface SummaryProps {
   result: EstimateResult;
 }
 
-const linePrice = (line: EstimateLine) => (line.isCustom ? 'Custom quote' : formatLineRange(line));
+const linePrice = (line: EstimateLine) => (line.isCustom ? CUSTOM_PRICE : formatLineRange(line));
 
 /** The engine's add-on labels, as /pricing names them (TOGGLE_LABELS). */
 const PLAIN_TOGGLE = new Map(TOGGLE_OPTIONS.map((toggle) => [toggle.label, TOGGLE_LABELS[toggle.key] ?? toggle.label]));
@@ -95,7 +97,7 @@ function caveatsFor(input: EstimateInput, result: EstimateResult): string[] {
     notes.push(`Rush work is billed at our emergency rate, ${priceText(pricing.hourlyRates.emergency)} an hour, on top of this range.`);
   }
   for (const line of result.lines) {
-    if (line.isCustom) notes.push(`${line.tierName} (${line.serviceName}) gets its own quote after the call.`);
+    if (line.isCustom) notes.push(`${line.tierName} (${line.serviceName}) is ${CUSTOM_NOTE.toLowerCase()}.`);
   }
   return notes;
 }
@@ -175,182 +177,193 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
   return (
     <section id="estimate-readout" className={styles.readout} aria-labelledby="estimate-readout-title">
       <div className={styles.card}>
-        <h3 id="estimate-readout-title" className={styles.readoutLabel}>
-          Your estimate
-        </h3>
+        {/* The head: the label and the total. Beside the questions (1024px and up) the card gets
+            shorter from the bottom as the questions end, down to this head (ScopeEstimator). */}
+        <div className={styles.cardHead} data-readout-head="">
+          <h3 id="estimate-readout-title" className={styles.readoutLabel}>
+            Your estimate
+          </h3>
 
-        {/* The total is the live region and the focus target of the package hand-off: one polite
-            announcement in words once the visitor pauses, while the springing digits stay silent
-            (decorative: no live regions of their own nested inside this one). A package quoted
-            after a call is named under the priced range, never folded into a "+" floor. */}
-        <div className={styles.totalBox}>
-          <p className={styles.total} id="estimate-total" tabIndex={-1} aria-live="polite" aria-atomic="true">
-            <span className="visually-hidden">{announced}</span>
-            <span className={styles.digits} aria-hidden="true">
-              {allCustom ? (
-                <span className={styles.live}>Custom</span>
-              ) : headline.high === null ? (
-                <LiveNumber
-                  value={headline.low}
-                  format={formatMoney}
-                  suffix="+"
-                  className={styles.live}
-                  spring={TOTAL_SPRING}
-                  decorative
-                />
-              ) : (
-                <>
-                  <LiveNumber value={headline.low} format={formatMoney} className={styles.live} spring={TOTAL_SPRING} decorative />
-                  <span className={styles.dash}>–</span>
+          {/* The total is the live region and the focus target of the package hand-off: one polite
+              announcement in words once the visitor pauses, while the springing digits stay silent
+              (decorative: no live regions of their own nested inside this one). A package quoted
+              after a call is named under the priced range, never folded into a "+" floor. */}
+          <div className={styles.totalBox}>
+            <p className={styles.total} id="estimate-total" tabIndex={-1} aria-live="polite" aria-atomic="true">
+              <span className="visually-hidden">{announced}</span>
+              <span className={styles.digits} aria-hidden="true">
+                {allCustom ? (
+                  <span className={styles.live}>{CUSTOM_PRICE}</span>
+                ) : headline.high === null ? (
                   <LiveNumber
-                    value={headline.high}
+                    value={headline.low}
                     format={formatMoney}
-                    suffix={headline.openEnded ? '+' : ''}
+                    suffix="+"
                     className={styles.live}
                     spring={TOTAL_SPRING}
                     decorative
                   />
+                ) : (
+                  <>
+                    <LiveNumber value={headline.low} format={formatMoney} className={styles.live} spring={TOTAL_SPRING} decorative />
+                    <span className={styles.dash}>–</span>
+                    <LiveNumber
+                      value={headline.high}
+                      format={formatMoney}
+                      suffix={headline.openEnded ? '+' : ''}
+                      className={styles.live}
+                      spring={TOTAL_SPRING}
+                      decorative
+                    />
+                  </>
+                )}
+              </span>
+              {headline.customNote ? (
+                <span className={styles.totalCustom} aria-hidden="true">
+                  {headline.customNote}
+                </span>
+              ) : null}
+            </p>
+          </div>
+        </div>
+
+        {/* Everything under the total: on wide screens it scrolls inside the card when a disclosure
+            makes the card taller than the screen, and clips while the questions' end holds it short. */}
+        <div className={styles.cardBody} data-readout-body="">
+          {/* What the body holds, measured to tell when the body has to scroll (ScopeEstimator). */}
+          <div data-readout-content="">
+            <p className={styles.unit}>
+              {/* "20-minute" never splits across lines (a no-wrap span, same characters). */}
+              {allCustom ? (
+                CUSTOM_NOTE
+              ) : (
+                <>
+                  One-time cost<span className={styles.unitNote}> · {keepTogether(QUOTE_NOTE)}</span>
                 </>
               )}
-            </span>
-            {headline.customNote ? (
-              <span className={styles.totalCustom} aria-hidden="true">
-                {headline.customNote}
-              </span>
-            ) : null}
-          </p>
-        </div>
+            </p>
 
-        <p className={styles.unit}>
-          {/* "20-minute" never splits across lines (a no-wrap span, same characters). */}
-          {allCustom ? (
-            keepTogether('We quote this after a 20-minute call')
-          ) : (
-            <>
-              One-time cost<span className={styles.unitNote}> · {keepTogether(QUOTE_NOTE)}</span>
-            </>
-          )}
-        </p>
+            {basis ? <p className={styles.basis}>{basis}</p> : null}
 
-        {basis ? <p className={styles.basis}>{basis}</p> : null}
-
-        {monthly ? (
-          <p className={styles.monthly}>
-            <span className={styles.monthlyValue}>+ {monthly}</span>
-            <span className={styles.monthlyName}> for {result.monthly.map((line) => line.name).join(' + ')}</span>
-          </p>
-        ) : null}
-
-        {caveats.length > 0 ? (
-          <ul className={styles.caveats}>
-            {caveats.map((note) => (
-              <li key={note}>{note}</li>
-            ))}
-          </ul>
-        ) : null}
-
-        <div className={styles.next}>
-          {/* The site's one primary ask, carrying this estimate into the brief on /contact-us. */}
-          <Link href={callHref} className={styles.primary} data-cta-placement="pricing_estimate_call">
-            {PROJECT_LABEL}
-            <span className={styles.primaryArrow} aria-hidden="true">
-              <Arrow />
-            </span>
-          </Link>
-          <p className={styles.nextNote}>Your answers are added to the project form for you. {NDA_LINE}</p>
-          <QuoteLine className={styles.quote} />
-        </div>
-
-        <SendEstimateForm result={result} placement="estimate" />
-
-        {/* Every figure above, traced to the line that produced it. */}
-        <details className={styles.disclosure}>
-          <summary className={styles.disclosureSummary}>How this price adds up</summary>
-          <ol className={styles.drivers}>
-            {/* Keys carry what each row says, so a row whose package or price changes
-                settles in again and draws the eye to what moved. */}
-            {result.lines.map((line) => (
-              <li key={`${line.service}-${line.tierIndex}-${linePrice(line)}`} className={styles.driver} data-kind="service">
-                <p className={styles.driverRow}>
-                  <span className={styles.driverName}>
-                    {line.serviceName}: {keepHyphens(line.tierName)}
-                  </span>
-                  <span className={styles.driverPrice}>{linePrice(line)}</span>
-                </p>
-                <ul className={styles.driverSteps}>
-                  {lineSteps(line, input).map((text) => (
-                    <li key={text}>{text}</li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-
-            {result.monthly.length > 0 ? (
-              result.monthly.map((line) => (
-                <li key={`support-${line.service}-${line.name}`} className={styles.driver} data-kind="support">
-                  <p className={styles.driverRow}>
-                    <span className={styles.driverName}>
-                      {level?.label} support: {line.name}
-                      {multi ? <span className={styles.driverFor}> ({SERVICE_META[line.service].shortLabel})</span> : null}
-                    </span>
-                    <span className={styles.driverPrice}>{formatRange(line.low, line.high)} a month</span>
-                  </p>
-                </li>
-              ))
-            ) : (
-              <li className={styles.driver} data-kind="support">
-                <p className={styles.driverRow}>
-                  <span className={styles.driverMuted}>No monthly plan</span>
-                </p>
-              </li>
-            )}
-
-            <li key={`timeline-${input.timeline}`} className={styles.driver} data-kind="timeline">
-              <p className={styles.driverRow}>
-                {input.timeline === 'rush' ? (
-                  <span className={styles.driverName}>Rush timeline: our emergency rate on top</span>
-                ) : (
-                  <span className={styles.driverMuted}>Standard timeline: no extra cost</span>
-                )}
+            {monthly ? (
+              <p className={styles.monthly}>
+                <span className={styles.monthlyValue}>+ {monthly}</span>
+                <span className={styles.monthlyName}> for {result.monthly.map((line) => line.name).join(' + ')}</span>
               </p>
-            </li>
-
-            {result.bundle ? (
-              <li className={styles.driver} data-kind="bundle">
-                <p className={styles.driverRow}>
-                  <span className={styles.driverName}>Monthly partnership: {result.bundle.name}</span>
-                  <span className={styles.driverPrice}>{formatRange(result.bundle.low, result.bundle.high)} a month</span>
-                </p>
-                <p className={styles.bundleNote}>
-                  Covers these {result.lines.length} services for one monthly price.{' '}
-                  <a href="#bundles" className={styles.inlineLink} data-cta-placement="pricing_estimate_bundles">
-                    Compare monthly partnerships
-                  </a>
-                </p>
-              </li>
             ) : null}
-          </ol>
-        </details>
 
-        <details className={styles.disclosure}>
-          <summary className={styles.disclosureSummary}>
-            <span>
-              What&apos;s included <span className={styles.count}>({featureCount})</span>
-            </span>
-          </summary>
-          {result.lines.map((line) => (
-            <div key={line.service} className={styles.includedGroup}>
-              <h4 className={styles.includedTitle}>
-                {line.tierName} · {line.serviceName}
-              </h4>
-              <ul>
-                {line.features.map((feature) => (
-                  <li key={feature}>{feature}</li>
+            {caveats.length > 0 ? (
+              <ul className={styles.caveats}>
+                {caveats.map((note) => (
+                  <li key={note}>{note}</li>
                 ))}
               </ul>
+            ) : null}
+
+            <div className={styles.next}>
+              {/* The site's one primary ask, carrying this estimate into the brief on /contact-us. */}
+              <Link href={callHref} className={styles.primary} data-cta-placement="pricing_estimate_call">
+                {PROJECT_LABEL}
+                <span className={styles.primaryArrow} aria-hidden="true">
+                  <Arrow />
+                </span>
+              </Link>
+              <p className={styles.nextNote}>Your answers are added to the project form for you. {NDA_LINE}</p>
+              <QuoteLine className={styles.quote} />
             </div>
-          ))}
-        </details>
+
+            <SendEstimateForm result={result} placement="estimate" />
+
+            {/* Every figure above, traced to the line that produced it. */}
+            <details className={styles.disclosure}>
+              <summary className={styles.disclosureSummary}>How this price adds up</summary>
+              <ol className={styles.drivers}>
+                {/* Keys carry what each row says, so a row whose package or price changes
+                    settles in again and draws the eye to what moved. */}
+                {result.lines.map((line) => (
+                  <li key={`${line.service}-${line.tierIndex}-${linePrice(line)}`} className={styles.driver} data-kind="service">
+                    <p className={styles.driverRow}>
+                      <span className={styles.driverName}>
+                        {line.serviceName}: {keepHyphens(line.tierName)}
+                      </span>
+                      <span className={styles.driverPrice}>{linePrice(line)}</span>
+                    </p>
+                    <ul className={styles.driverSteps}>
+                      {lineSteps(line, input).map((text) => (
+                        <li key={text}>{text}</li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+
+                {result.monthly.length > 0 ? (
+                  result.monthly.map((line) => (
+                    <li key={`support-${line.service}-${line.name}`} className={styles.driver} data-kind="support">
+                      <p className={styles.driverRow}>
+                        <span className={styles.driverName}>
+                          {level?.label} support: {line.name}
+                          {multi ? <span className={styles.driverFor}> ({SERVICE_META[line.service].shortLabel})</span> : null}
+                        </span>
+                        <span className={styles.driverPrice}>{formatRange(line.low, line.high)} a month</span>
+                      </p>
+                    </li>
+                  ))
+                ) : (
+                  <li className={styles.driver} data-kind="support">
+                    <p className={styles.driverRow}>
+                      <span className={styles.driverMuted}>No monthly plan</span>
+                    </p>
+                  </li>
+                )}
+
+                <li key={`timeline-${input.timeline}`} className={styles.driver} data-kind="timeline">
+                  <p className={styles.driverRow}>
+                    {input.timeline === 'rush' ? (
+                      <span className={styles.driverName}>Rush timeline: our emergency rate on top</span>
+                    ) : (
+                      <span className={styles.driverMuted}>Standard timeline: no extra cost</span>
+                    )}
+                  </p>
+                </li>
+
+                {result.bundle ? (
+                  <li className={styles.driver} data-kind="bundle">
+                    <p className={styles.driverRow}>
+                      <span className={styles.driverName}>Monthly partnership: {result.bundle.name}</span>
+                      <span className={styles.driverPrice}>{formatRange(result.bundle.low, result.bundle.high)} a month</span>
+                    </p>
+                    <p className={styles.bundleNote}>
+                      Covers these {result.lines.length} services for one monthly price.{' '}
+                      <a href="#bundles" className={styles.inlineLink} data-cta-placement="pricing_estimate_bundles">
+                        Compare monthly partnerships
+                      </a>
+                    </p>
+                  </li>
+                ) : null}
+              </ol>
+            </details>
+
+            <details className={styles.disclosure}>
+              <summary className={styles.disclosureSummary}>
+                <span>
+                  What&apos;s included <span className={styles.count}>({featureCount})</span>
+                </span>
+              </summary>
+              {result.lines.map((line) => (
+                <div key={line.service} className={styles.includedGroup}>
+                  <h4 className={styles.includedTitle}>
+                    {line.tierName} · {line.serviceName}
+                  </h4>
+                  <ul>
+                    {line.features.map((feature) => (
+                      <li key={feature}>{feature}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </details>
+          </div>
+        </div>
       </div>
     </section>
   );

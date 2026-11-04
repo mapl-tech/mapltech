@@ -59,7 +59,8 @@ import styles from './ScopeEstimator.module.scss';
 
 const TIMELINE_COPY: Record<EstimateTimeline, { label: string; effect: string }> = {
   standard: { label: 'Standard', effect: 'No extra cost' },
-  rush: { label: 'Rush', effect: `Adds our emergency rate, ${priceText(pricing.hourlyRates.emergency)} an hour` },
+  // The rate and its unit never part: "$150+ an hour" wraps as one (no-break spaces).
+  rush: { label: 'Rush', effect: `Adds our emergency rate, ${priceText(pricing.hourlyRates.emergency)}\u00a0an\u00a0hour` },
 };
 
 /** Add-ons that change the price: all but "design supplied". */
@@ -138,23 +139,68 @@ export default function ScopeEstimator() {
     };
   }, [stacked]);
 
-  // Wide screens: the sticky readout scrolls inside itself only when it is
-  // taller than the viewport (four lines priced at once). Only then does it
-  // opt out of Lenis, so the wheel never changes feel over a short readout.
+  // Wide screens: the readout rides beside the questions, but the questions end
+  // before the card does. Its room is the space from its sticky top to the end
+  // of the questions' column (--rail-room): as that end nears, the card gets
+  // shorter from the bottom (the disclosures go first, then the quote and the
+  // note) instead of being pushed up under the header, so the total and "Start
+  // a project" stay on screen while any question is. Below its head's height
+  // it scrolls away whole. While the room holds it short (data-squeezed) its
+  // body clips, so the wheel keeps moving the page; only a body taller than one
+  // screen (a disclosure open) scrolls inside the card and opts out of Lenis.
+  // One rAF-throttled read of three boxes per scroll frame, then the writes.
   useEffect(() => {
     const rail = readoutRef.current;
-    if (!rail || stacked) return;
+    const controls = controlsRef.current;
+    const head = rail?.querySelector<HTMLElement>('[data-readout-head]');
+    const body = rail?.querySelector<HTMLElement>('[data-readout-body]');
+    const content = body?.querySelector<HTMLElement>('[data-readout-content]');
+    if (stacked || !rail || !controls || !head || !body || !content) return;
+    let frame = 0;
+    let near = false;
     const update = () => {
-      if (rail.scrollHeight > rail.clientHeight + 1) rail.setAttribute('data-lenis-prevent', '');
-      else rail.removeAttribute('data-lenis-prevent');
+      frame = 0;
+      const style = getComputedStyle(rail);
+      const top = parseFloat(style.top) || 0;
+      const screen = window.innerHeight - (parseFloat(style.getPropertyValue('--header-height')) || 72) - 48;
+      const headHeight = head.offsetHeight;
+      const full = headHeight + body.scrollHeight;
+      const room = Math.max(headHeight, Math.round(controls.getBoundingClientRect().bottom - top));
+      const squeezed = room < Math.min(screen, full);
+      rail.style.setProperty('--rail-room', `${room}px`);
+      rail.toggleAttribute('data-squeezed', squeezed);
+      body.toggleAttribute('data-lenis-prevent', !squeezed && full > screen + 1);
     };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    const onScroll = () => {
+      if (near) schedule();
+    };
+    // Scroll work only while the questions are on or near the screen.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        near = entry.isIntersecting;
+        schedule();
+      },
+      { rootMargin: '50% 0px' },
+    );
+    io.observe(controls);
+    const resize = new ResizeObserver(schedule);
+    resize.observe(head);
+    resize.observe(content);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', schedule);
     update();
-    const resize = new ResizeObserver(update);
-    resize.observe(rail);
-    if (rail.firstElementChild) resize.observe(rail.firstElementChild);
     return () => {
+      io.disconnect();
       resize.disconnect();
-      rail.removeAttribute('data-lenis-prevent');
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', schedule);
+      cancelAnimationFrame(frame);
+      rail.style.removeProperty('--rail-room');
+      rail.removeAttribute('data-squeezed');
+      body.removeAttribute('data-lenis-prevent');
     };
   }, [stacked]);
 

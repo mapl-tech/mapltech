@@ -202,35 +202,19 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
-// Where the cell leads, as the site's text action (the underline draws away on hover). Wide
-// screens keep it for assistive tech only: the row's name and price already lead there.
+// Where the cell leads, as the site's text action: a real underline under the words, so a label
+// that wraps ("All 4" / "packages" at 320-360px) is underlined line by line and never struck
+// through. Wide screens keep it for assistive tech only: the row's name and price already lead there.
 .cellMore {
-  position: relative;
-  display: inline-flex;
+  @include text-action($color-fg);
   align-self: flex-start;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
   margin-top: auto;
   padding-top: 10px;
   font-size: 1rem;
-  font-weight: $font-weight-semibold;
-  color: $color-fg;
 
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 8px;
-    height: 1px;
-    background: currentColor;
-    transform-origin: right;
-    transition: transform 0.45s $ease-out-expo;
-  }
-
-  .cell:hover &::after {
-    transform: scaleX(0);
+  // The whole cell is the link, so hovering any of it fades the underline.
+  .cell:hover & {
+    text-decoration-color: transparent;
   }
 
   @include lg {
