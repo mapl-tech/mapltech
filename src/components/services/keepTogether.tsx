@@ -9,13 +9,22 @@ const UNBREAKABLE = /(\d+-[A-Za-z]+(?:-[A-Za-z]+)*|\$?\d[\d,]*(?:–| to )\$?\d[
 const NOWRAP: CSSProperties = { whiteSpace: 'nowrap' };
 
 /**
+ * The hyphen inside a capitalised name ("E-Commerce", "AI-Powered", "Multi-Client") as a
+ * non-breaking hyphen (U+2011, the same glyph in DM Sans): a package name never splits across
+ * lines, and every place that shows one sets the same character. All-caps names ("CHHA-NCR")
+ * keep their plain hyphen, as everywhere else on the site. Display only: structured data and
+ * the data itself keep the plain hyphen.
+ */
+export const nameHyphens = (text: string): string => text.replace(/\b([A-Z][A-Za-z]*)-(?=[A-Z][a-z])/g, '$1\u2011');
+
+/**
  * Typography for prices and timelines in running text: wraps the pieces a
  * line must never split ("20-" / "minute", "$3,500–" / "$5,000", "$4,000 to" /
  * "$12,000") in a no-wrap span. Text without them comes back unchanged.
  */
 export function keepTogether(text: string): ReactNode {
-  const parts = text.split(UNBREAKABLE);
-  if (parts.length === 1) return text;
+  const parts = nameHyphens(text).split(UNBREAKABLE);
+  if (parts.length === 1) return parts[0];
   return parts.map((part, i) =>
     i % 2 === 1 ? (
       <span key={i} style={NOWRAP}>

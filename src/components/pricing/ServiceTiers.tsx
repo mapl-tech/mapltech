@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { SERVICE_META, SIZE_OPTIONS, parsePriceLabel, recurringLinesFor, tiersFor } from '@/lib/estimate';
-import { CUSTOM_NOTE, cleanDash, priceText, type ServiceFacts } from './content';
+import { CUSTOM_NOTE, cleanDash, keepHyphens, priceText, type ServiceFacts } from './content';
 import EstimateBriefLink from './EstimateBriefLink';
 import LoadIntoEstimator from './LoadIntoEstimator';
 import PriceGroup, { ActionLabel } from './PriceGroup';
@@ -40,7 +40,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
           return (
             <li key={tier.name} className={styles.tier}>
               <div className={styles.tierHead}>
-                <h4 className={styles.tierName}>{tier.name}</h4>
+                <h4 className={styles.tierName}>{keepHyphens(tier.name)}</h4>
                 <p className={styles.tierPrice}>
                   <span className={styles.unitRow}>
                     <span className={styles.tierUnit}>{unit}</span>
@@ -65,13 +65,13 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
                 >
                   <ul className={styles.features} role="list">
                     {tier.features.map((feature) => (
-                      <li key={feature}>{feature}</li>
+                      <li key={feature}>{keepHyphens(feature)}</li>
                     ))}
                   </ul>
                 </TierDetails>
                 {!size ? (
                   <Link href={PROJECT_HREF} className={styles.tierAction} data-cta-placement={`pricing_tier_${facts.service}_call`}>
-                    <ActionLabel label={PROJECT_LABEL} hidden={`: ${tier.name}`} />
+                    <ActionLabel label={PROJECT_LABEL} hidden={`: ${keepHyphens(tier.name)}`} />
                   </Link>
                 ) : parsed.isCustom ? (
                   <EstimateBriefLink
@@ -80,11 +80,11 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
                     className={styles.tierAction}
                     placement={`pricing_tier_${facts.service}_call`}
                   >
-                    <ActionLabel label={PROJECT_LABEL} hidden={`: ${tier.name}`} />
+                    <ActionLabel label={PROJECT_LABEL} hidden={`: ${keepHyphens(tier.name)}`} />
                   </EstimateBriefLink>
                 ) : (
                   <LoadIntoEstimator service={facts.service} size={size.key} className={styles.tierAction}>
-                    <ActionLabel label="Price this package" hidden={`: ${facts.name}, ${tier.name}`} direction="up" />
+                    <ActionLabel label="Price this package" hidden={`: ${facts.name}, ${keepHyphens(tier.name)}`} direction="up" />
                   </LoadIntoEstimator>
                 )}
               </div>
@@ -100,7 +100,7 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
         <ul className={styles.monthlyList} role="list">
           {lines.map((line) => (
             <li key={line.name} className={styles.monthlyRow}>
-              <span className={styles.monthlyName}>{line.name}</span>
+              <span className={styles.monthlyName}>{keepHyphens(line.name)}</span>
               <span className={styles.monthlyPrice}>
                 {priceText(line.price)}
                 <span className={styles.per}> a month</span>

@@ -82,7 +82,7 @@ function supportEffect(services: readonly EstimateService[], level: SupportLevel
     lines.reduce((sum, line) => sum + line.low, 0),
     lines.reduce((sum, line) => sum + line.high, 0),
   );
-  return { meta: lines.length === 1 ? lines[0].name : `${lines.length} monthly plans`, price };
+  return { meta: lines.length === 1 ? keepHyphens(lines[0].name) : `${lines.length} monthly plans`, price };
 }
 
 /**

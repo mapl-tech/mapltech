@@ -11,6 +11,7 @@
  * band); the estimator keeps "Price your project" as the hero's way into it.
  */
 import { pricing } from '@/config/site';
+import { nameHyphens } from '@/components/services/keepTogether';
 import {
   SERVICE_META,
   TOGGLE_OPTIONS,
@@ -49,8 +50,11 @@ export function priceText(label: string): string {
   return formatRange(parsed.low, parsed.high, { openEnded: parsed.openEnded });
 }
 
-/** Tier names with non-breaking hyphens, so "E-Commerce" and "AI-Powered" never split across lines. */
-export const keepHyphens = (text: string): string => text.replace(/-/g, '‑');
+/**
+ * Tier names with non-breaking hyphens, so "E-Commerce" and "AI-Powered" never split across lines:
+ * the site's one rule for names (services/keepTogether nameHyphens), so every page sets the same character.
+ */
+export const keepHyphens = nameHyphens;
 
 /** "20‑minute" for plain string props (the close band's lede): one rule, shared with the service pages. */
 export { keepNumberWords } from '@/components/services/keepTogether';

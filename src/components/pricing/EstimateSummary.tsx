@@ -248,7 +248,7 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
             {monthly ? (
               <p className={styles.monthly}>
                 <span className={styles.monthlyValue}>+ {monthly}</span>
-                <span className={styles.monthlyName}> for {result.monthly.map((line) => line.name).join(' + ')}</span>
+                <span className={styles.monthlyName}> for {result.monthly.map((line) => keepHyphens(line.name)).join(' + ')}</span>
               </p>
             ) : null}
 
@@ -301,7 +301,7 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
                     <li key={`support-${line.service}-${line.name}`} className={styles.driver} data-kind="support">
                       <p className={styles.driverRow}>
                         <span className={styles.driverName}>
-                          {level?.label} support: {line.name}
+                          {level?.label} support: {keepHyphens(line.name)}
                           {multi ? <span className={styles.driverFor}> ({SERVICE_META[line.service].shortLabel})</span> : null}
                         </span>
                         <span className={styles.driverPrice}>{formatRange(line.low, line.high)} a month</span>
@@ -352,11 +352,11 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
               {result.lines.map((line) => (
                 <div key={line.service} className={styles.includedGroup}>
                   <h4 className={styles.includedTitle}>
-                    {line.tierName} · {line.serviceName}
+                    {keepHyphens(line.tierName)} · {line.serviceName}
                   </h4>
                   <ul>
                     {line.features.map((feature) => (
-                      <li key={feature}>{feature}</li>
+                      <li key={feature}>{keepHyphens(feature)}</li>
                     ))}
                   </ul>
                 </div>

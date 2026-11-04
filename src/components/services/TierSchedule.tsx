@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import { pricing } from '@/config/site';
 import { formatMoney } from '@/lib/estimate';
-import { keepTogether, withLastWord } from './keepTogether';
+import { keepTogether, nameHyphens, withLastWord } from './keepTogether';
 import {
   QUOTE_LINE,
   TIER_HIGHLIGHTS,
@@ -96,7 +96,7 @@ export default function TierSchedule({ view }: { view: LayerView }) {
             <dl className={styles.plans} style={{ '--plans': view.recurring.length + 1 } as CSSProperties}>
               {view.recurring.map((line) => (
                 <div key={line.name} className={styles.plan}>
-                  <dt className={styles.planName}>{line.name}</dt>
+                  <dt className={styles.planName}>{nameHyphens(line.name)}</dt>
                   <dd className={styles.planPrice}>
                     <Amount label={line.price} />
                   </dd>
@@ -144,13 +144,13 @@ function PriceNote({ tier }: { tier: TierView }) {
 function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
   const top = tier.features.slice(0, TIER_HIGHLIGHTS);
   const rest = tier.features.slice(TIER_HIGHLIGHTS);
-  const builds = tier.builds ? <p className={styles.builds}>{tier.builds}, plus:</p> : null;
+  const builds = tier.builds ? <p className={styles.builds}>{nameHyphens(tier.builds)}, plus:</p> : null;
   const item = (feature: string) => <li key={feature}>{keepTogether(feature)}</li>;
 
   return (
     <li id={tier.id} className={styles.tier}>
       <div className={styles.top}>
-        <h3 className={styles.tierName}>{tier.name}</h3>
+        <h3 className={styles.tierName}>{nameHyphens(tier.name)}</h3>
         <div className={styles.priceBlock}>
           <p className={styles.price} data-long={tier.price.length > 8 ? '' : undefined}>
             {tier.isFloor ? <span className={styles.from}>From </span> : null}
@@ -169,7 +169,7 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
         <details className={styles.more} data-rest={rest.length ? undefined : 'none'}>
           <summary className={styles.summary}>
             What’s included
-            <span className="visually-hidden"> in {tier.name}</span>
+            <span className="visually-hidden"> in {nameHyphens(tier.name)}</span>
             <span className={styles.chevron} aria-hidden="true" />
           </summary>
           <div className={styles.moreBody}>
@@ -187,7 +187,7 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
           {/* No-break hyphens ("AI‑Powered" never splits), and the last word and the arrow in one
               no-wrap span, so a long name wraps without leaving the arrow alone on a line. */}
           {withLastWord(
-            `Choose ${tier.name.replace(/-/g, '\u2011')}`,
+            `Choose ${nameHyphens(tier.name)}`,
             <>
               {'\u00a0'}
               <span aria-hidden="true" className={styles.arrow}>
@@ -198,7 +198,7 @@ function TierCard({ tier, slug }: { tier: TierView; slug: string }) {
         </Link>
         {tier.isCustom ? null : (
           <Link href={tier.href} className={styles.priceLink} data-cta-placement={`${slug}_${tier.id}`}>
-            Price this package<span className="visually-hidden">: {tier.name}</span>
+            Price this package<span className="visually-hidden">: {nameHyphens(tier.name)}</span>
           </Link>
         )}
       </div>
