@@ -14,6 +14,7 @@ import { SERVICE_META } from '@/lib/estimate';
 import FactsBand from './FactsBand';
 import HeroActions from './HeroActions';
 import LocalTime from './LocalTime';
+import OfficeMap from './OfficeMap';
 import { OFFICE_HOURS_FACT, PRICE_FACT, countWord, keepBrand } from './content';
 import { REPLY_TIME, rolesIn, startingFrom, type RegionConfig, type RegionFaq } from './regions';
 import ed from './Company.module.scss';
@@ -34,21 +35,16 @@ export interface RegionalPageProps {
  * review fixes).
  *
  * A sense of place without stock photography: the branch city's live local
- * time (and when the office next opens) in a card, the page's one home for
- * the zone, and under it, in the hero's aside as /about-us and /team set
- * theirs, three facts a director needs first and that the page says nowhere
- * else (the office hours, the lowest public price, the reply time). From
- * 1024px card and facts end level with the copy's last line (the site's
- * reassurance line), so the facts are in the first screen at 1366x768 and
- * above, and nothing sits at the hero's foot for the fold to cut (the
- * to-scale map of the offices stays on /about-us and /careers: beside the
- * card and the facts it made the hero taller than the copy). Then what the
- * local team builds with each service's own "from" price and a direct way
- * to start each one (paper), a real local project where one exists (no
- * stand-in section where none does), the market questions (the Toronto
- * overlap is worked out there) with the branch's contact lines, and the
- * close: the site's own lede and the approved client quote. regions.ts
- * lists where each fact lives.
+ * time (and when the office next opens) under a to-scale drawing of the
+ * three offices, under the site's reassurance line; the card is the page's
+ * one home for the zone. Then three facts a director needs first and that
+ * the page says nowhere else (the office hours, the lowest public price, the
+ * reply time), what the local team builds with each service's own "from"
+ * price and a direct way to start each one (paper), a real local project
+ * where one exists (no stand-in section where none does), the market
+ * questions (the Toronto overlap is worked out there) with the branch's
+ * contact lines, and the close: the site's own lede and the approved client
+ * quote. regions.ts lists where each fact lives.
  *
  * Schema (unchanged): WebPage + BreadcrumbList + ItemList of the four
  * services + FAQPage, all built from the same arrays the page renders. No
@@ -106,6 +102,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
 
       <PageHeader
         size="l"
+        fill
         crumbs={[{ label: 'About', href: '/about-us' }, { label: region.brandName }]}
         label={region.brandName}
         title={
@@ -123,6 +120,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         note={HERO_REASSURE}
         aside={
           <div className={styles.place}>
+            <OfficeMap focus={region.officeCity} captionHidden axes={false} draw="load" className={styles.placeMap} />
             <div className={place.readout}>
               <p className={place.city}>
                 {region.officeCity}, {region.country}
@@ -133,14 +131,11 @@ export default function RegionalPage({ region, title, description }: RegionalPag
               </p>
               <p className={place.coords}>{region.coordinates}</p>
             </div>
-            <FactsBand
-              facts={[OFFICE_HOURS_FACT, PRICE_FACT, { term: 'Reply time', detail: REPLY_TIME }]}
-              label={`${region.brandName} at a glance`}
-              placement="aside"
-            />
           </div>
         }
       />
+
+      <FactsBand facts={[OFFICE_HOURS_FACT, PRICE_FACT, { term: 'Reply time', detail: REPLY_TIME }]} label={`${region.brandName} at a glance`} />
 
       {/* What the local team builds, on paper: the four services with real prices, then the local realities. */}
       <section id="services" className={ed.paper} aria-labelledby="services-title">

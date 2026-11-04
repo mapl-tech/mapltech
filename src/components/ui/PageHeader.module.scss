@@ -7,6 +7,17 @@
   isolation: isolate;
   overflow: clip;
   background: $color-ground;
+
+  // fill: one screen tall on a landscape screen, so the section after the
+  // hero starts at the fold. Up to 1100px tall: above that the hero's own
+  // height already leaves the next section's first lines in the first screen.
+  &[data-fill] {
+    @include lg {
+      @media (orientation: landscape) and (max-height: 1100px) {
+        min-height: 100svh;
+      }
+    }
+  }
 }
 
 // The hero light, quieter than the homepage's: one crimson glow and grain.

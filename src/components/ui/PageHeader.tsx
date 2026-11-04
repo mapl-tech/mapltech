@@ -31,6 +31,7 @@ export default function PageHeader({
   id = 'page-title',
   size = 'xl',
   asideAlign = 'end',
+  fill = false,
 }: {
   label?: string;
   title: ReactNode;
@@ -52,6 +53,11 @@ export default function PageHeader({
    * lines, so the first screen keeps the proof).
    */
   asideAlign?: 'end' | 'start' | 'body';
+  /**
+   * Landscape screens from 1024px: the hero is at least one screen tall, so the section after it
+   * starts at the fold and the fold never cuts its first lines (the regional pages' facts band).
+   */
+  fill?: boolean;
 }) {
   // The label names the page's section; when the breadcrumb already ends on
   // that same name ("Pricing / Pricing"), the label is left out.
@@ -59,7 +65,7 @@ export default function PageHeader({
   const showLabel = Boolean(label) && label?.trim().toLowerCase() !== lastCrumb?.trim().toLowerCase();
 
   return (
-    <header className={styles.header} aria-labelledby={id}>
+    <header className={styles.header} aria-labelledby={id} data-fill={fill ? '' : undefined}>
       <div className={styles.light} aria-hidden="true" />
       <div className={styles.inner} data-has-aside={aside ? '' : undefined} data-aside-align={aside ? asideAlign : undefined}>
         <div className={styles.copy}>
