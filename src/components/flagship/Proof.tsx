@@ -1,13 +1,14 @@
+import Image from 'next/image';
 import CountUp from '@/components/ui/CountUp';
 import ClientsMarquee from './ClientsMarquee';
-import { PROOF, PROOF_SECTION } from './content';
+import { PROOF, PROOF_SECTION, VOICES } from './content';
 import styles from './Proof.module.scss';
 
 /**
  * Why agencies choose us: the reasons first (the white-label guarantees the
- * FAQ makes, in its words), then the live homepage's published numbers and
- * the logos of clients shown on the site. The one approved client quote sits
- * beside the hero's ask, so it is not repeated here.
+ * FAQ makes, in its words), then the live homepage's published numbers, the
+ * site's testimonials in full (the approved client quote and the CHHA-NCR
+ * audit's verdict) and the logos of clients shown on the site.
  */
 export default function Proof() {
   return (
@@ -39,6 +40,34 @@ export default function Proof() {
             </div>
           ))}
         </dl>
+
+        {VOICES.length ? (
+          <section className={styles.voices} aria-labelledby="voices-title">
+            <h3 id="voices-title" className={styles.voicesLabel}>
+              {PROOF_SECTION.voicesLabel}
+            </h3>
+            <ul className={styles.voiceList} role="list">
+              {VOICES.map((voice) => (
+                <li key={voice.name} className={styles.voiceItem}>
+                  <figure className={styles.voice}>
+                    <blockquote className={styles.voiceQuote}>
+                      <p>“{voice.quote}”</p>
+                    </blockquote>
+                    <figcaption className={styles.voiceBy}>
+                      {voice.image ? (
+                        <Image src={voice.image} alt="" width={48} height={48} className={styles.voiceAvatar} />
+                      ) : null}
+                      <span>
+                        <span className={styles.voiceName}>{voice.name}</span>
+                        <span className={styles.voiceDetail}>{voice.detail}</span>
+                      </span>
+                    </figcaption>
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         <ClientsMarquee label={PROOF.clientsLabel} logos={PROOF.logos} />
       </div>

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Faq } from '@/components/flagship/Acts';
 import CloseBand from '@/components/flagship/CloseBand';
-import { CLIENTS_LINE, HERO_REASSURE, PRICE_REASSURE } from '@/components/flagship/content';
+import { HERO_REASSURE, PRICE_REASSURE } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import HeroActions from './HeroActions';
@@ -58,8 +58,8 @@ function ServicePrices() {
  *   white-label questions, answered as on the homepage → the crimson close.
  *
  * The homepage's reassurance (a fixed quote after one call, an NDA first)
- * sits under the hero's buttons and the close's, the approved client quote
- * under the hero's, and the close names the clients instead of repeating it.
+ * sits under the hero's buttons and the close's; the approved client quote
+ * sits beside the close's ask, so the hero keeps to the ask and its note.
  * Server Component; the index preview is the only client island. Copy is
  * sourced in serviceContent.ts.
  */
@@ -83,7 +83,6 @@ export default function ServicesIndex() {
         actions={
           <HeroActions page="services" secondary={{ label: PRICING_LABEL, href: PRICING_HREF }} note={PRICE_REASSURE} />
         }
-        proof
         asideAlign="body"
         aside={<ServicePrices />}
       />
@@ -134,7 +133,6 @@ export default function ServicesIndex() {
         lede="Tell us about the project. We will help you choose the right service and agree the scope with you."
         note={keepNumberWords(HERO_REASSURE)}
         placement="services_close"
-        proofLine={CLIENTS_LINE}
       />
     </>
   );

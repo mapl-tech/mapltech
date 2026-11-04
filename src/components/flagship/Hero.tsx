@@ -1,8 +1,7 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import Backbone from '@/components/backbone/Backbone';
 import { keepTogether } from '@/components/services/keepTogether';
-import { HERO, HERO_PROOF, PRICE_REASSURE, PRIMARY_CTA, SECONDARY_CTA } from './content';
+import { HERO, PRICE_REASSURE, PRIMARY_CTA, SECONDARY_CTA } from './content';
 import styles from './Hero.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -57,20 +56,9 @@ export default function Hero() {
               {SECONDARY_CTA.label}
             </Link>
           </div>
+          {/* The ask and the trust line only: the testimonials are given in full
+              in the track record below, where they are read, not skimmed. */}
           <p className={styles.reassure}>{keepTogether(PRICE_REASSURE)}</p>
-          {HERO_PROOF ? (
-            <figure className={styles.proof}>
-              {HERO_PROOF.image ? (
-                <Image src={HERO_PROOF.image} alt="" width={40} height={40} className={styles.avatar} />
-              ) : null}
-              <blockquote className={styles.proofQuote}>
-                <p>“{HERO_PROOF.quote}”</p>
-              </blockquote>
-              <figcaption className={styles.proofBy}>
-                {HERO_PROOF.name}, {HERO_PROOF.role}
-              </figcaption>
-            </figure>
-          ) : null}
         </div>
 
         <div className={styles.foot}>

@@ -213,8 +213,7 @@ export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') 
 
 /**
  * Beside the hero ask: the risk answer (all three facts are the FAQ's own
- * answers, src/components/home/data.ts) and the first sentence of the approved
- * quote. HERO_REASSURE is the site-wide trust line, under the hero ask and as
+ * answers, src/components/home/data.ts). HERO_REASSURE is the site-wide trust line, under the hero ask and as
  * the `note` beside other asks; it is display copy only (never JSON-LD), so
  * "20‑minute" carries a non-breaking hyphen (U+2011) and never splits, even
  * where a note renders without keepTogether(). The NDA sentence stands alone
@@ -235,6 +234,11 @@ export const HERO_REASSURE = `A fixed quote after one 20\u2011minute call. An\u0
 export const PRICE_REASSURE = `Projects from ${money(LOWEST_PRICE)}, with a fixed quote after one 20\u2011minute call. An\u00a0NDA before you share anything, and we never approach your clients.`;
 /** The trust line without the quote, where the fixed quote is already said beside it (service heroes, article closes). */
 export const WHITE_LABEL_NOTE = 'We sign an NDA before you share anything, and we never approach your clients.';
+/**
+ * The approved quote's first sentence as one line of proof beside an ask on
+ * the other pages (QuoteLine). The homepage gives the testimonials in full in
+ * its track record (VOICES) and keeps its hero to the ask and the trust line.
+ */
 export const HERO_PROOF = SPOTLIGHT
   ? {
       quote: SPOTLIGHT.quote.match(/^[^.!?]+[.!?]/)?.[0] ?? SPOTLIGHT.quote,
@@ -247,9 +251,10 @@ export const HERO_PROOF = SPOTLIGHT
 export const MOBILE_BAR_CONTEXT = `Public prices, from ${money(LOWEST_PRICE)}`;
 
 /**
- * The close band's proof where the page's hero already carries the approved
- * quote (home, /services, the service pages): the clients whose projects have
- * published case studies on /our-work, by the names those cases use.
+ * The close band's proof where the page already gives the approved quote
+ * elsewhere (the homepage's track record, /referral's hero, a case's own
+ * quote): the clients whose projects have published case studies on
+ * /our-work, by the names those cases use.
  */
 export const CLIENTS_LINE = 'Clients include LRO Staffing, CHHA-NCR, FOCAS Canada and Crowned Spice.';
 
@@ -312,7 +317,24 @@ export const PROOF_SECTION = {
     'Everything we make carries your brand.',
     'You and your client own the code.',
   ],
+  // A client's words and an audit's verdict, so not "What clients say".
+  voicesLabel: 'In their words',
 } as const;
+
+/**
+ * The testimonials the live site publishes (site.ts `testimonials`), in full:
+ * the approved client quote, then the CHHA-NCR post-launch audit's verdict,
+ * which is attributed to the audit, not to a person (it has no photo, the
+ * test llms.ts uses too). A person reads "role, company"; the audit reads
+ * "relaunch, month".
+ */
+export const VOICES = testimonials.map((t) => ({
+  quote: t.quote,
+  name: t.name,
+  // The company's name held on one line (U+00A0), so "LRO Staffing" never splits.
+  detail: t.image ? `${t.role}, ${t.company.replace(/ /g, '\u00a0')}` : `${t.company}, ${t.role}`,
+  image: t.image || null,
+}));
 
 /**
  * The close adds what the hero's reassurance does not: what the call is for

@@ -42,7 +42,7 @@ export default function CloseBand({
   href?: string;
   /** The approved client quote under the ask (off where the page already shows it nearby). */
   proof?: boolean;
-  /** A sourced proof line in place of the quote (the homepage, whose hero already has the quote). */
+  /** A sourced proof line in place of the quote (the homepage, whose track record gives the testimonials in full). */
   proofLine?: string;
 }) {
   // Only proof that renders opens the second column (QuoteLine is empty without an approved quote).

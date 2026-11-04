@@ -30,14 +30,14 @@ export const metadata: Metadata = {
 
 /*
  * /about-us, Nov 2026 simplify pass. What the company does, said plainly, as
- * the first screen, with the site's reassurance line and the approved client
- * quote under the ask (a fixed quote after one 20-minute call, an NDA first),
+ * the first screen, with the site's reassurance line under the ask (a fixed
+ * quote after one 20-minute call, an NDA first),
  * and the three published figures in the hero's aside (beside the copy from
  * 1024px, a ruled list under it on phones), then: our story, in the founders'
  * voice, ending on the page's route to the work ("See the work") -> the two
  * founders (paper), with the ask after them -> the three offices -> the
- * crimson close, which says what the call is for (the homepage's close) and
- * names the clients instead of repeating the quote. How the work runs is
+ * crimson close, which says what the call is for (the homepage's close),
+ * with the approved client quote beside its ask. How the work runs is
  * told once, on the homepage. Text links follow the site's rule: a quiet
  * secondary beside a filled button is words only ("See pricing", "Meet the
  * team"); a text action on its own carries the arrow ("See the work").
@@ -77,7 +77,6 @@ export default function AboutPage() {
           />
         }
         note={HERO_REASSURE}
-        proof
         asideAlign="body"
         aside={<FactsBand facts={ABOUT.facts} label="MAPL TECH at a glance" placement="aside" />}
       />
@@ -88,7 +87,7 @@ export default function AboutPage() {
 
       <Offices />
 
-      <CloseBand title={ABOUT.close.title} placement="about_close" proofLine={ABOUT.close.proofLine} />
+      <CloseBand title={ABOUT.close.title} placement="about_close" />
     </>
   );
 }

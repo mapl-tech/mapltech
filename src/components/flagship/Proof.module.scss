@@ -108,7 +108,7 @@
   padding: 18px 0;
   border-bottom: 1px solid $color-hairline;
 
-  // The clients row below draws its own rule; two would frame an empty band.
+  // The row below (the testimonials) draws its own rule; two would frame an empty band.
   &:last-child {
     border-bottom: 0;
   }
@@ -156,6 +156,114 @@
   color: $color-fg-muted;
   font-size: $font-size-base;
   line-height: 1.45;
+}
+
+// In their words: the site's testimonials in full, set as the clients row
+// below is (the label in the title's column, under one rule), from 1280px:
+// at 1024 that column left each quote ~28 characters a line, so up to 1280
+// the label sits over them. The two sit side by side from 768px with a
+// hairline between them, as the numbers above do, and who said each lines
+// up along the foot of the row.
+.voices {
+  display: grid;
+  gap: 24px;
+  padding-top: clamp(20px, 2.4vw, 32px);
+  border-top: 1px solid $color-hairline;
+
+  @include xl {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 48px;
+  }
+}
+
+// Level with the quotes' first line, not centred on the row (the label is an
+// inline-flex box, so a stretched grid item would centre its words).
+.voicesLabel {
+  @include section-label;
+  align-self: start;
+
+  @include xl {
+    padding-top: 0.5em;
+  }
+}
+
+.voiceList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+// Phones: one under the other, a hairline between.
+.voiceItem {
+  & + & {
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid $color-hairline;
+  }
+
+  @include md {
+    padding-right: 32px;
+
+    & + & {
+      margin-top: 0;
+      padding: 0 0 0 32px;
+      border-top: 0;
+      border-left: 1px solid $color-hairline;
+    }
+  }
+}
+
+.voice {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 24px;
+  height: 100%;
+  margin: 0;
+}
+
+.voiceQuote {
+  margin: 0;
+
+  p {
+    margin: 0;
+    max-width: 34em;
+    font-size: clamp(1.1875rem, 1rem + 0.5vw, 1.5rem); // 19px -> 24px
+    line-height: 1.45;
+    color: $color-fg;
+    text-wrap: pretty;
+  }
+}
+
+.voiceBy {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: $font-size-base;
+  line-height: 1.4;
+}
+
+.voiceAvatar {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.voiceName {
+  display: block;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.voiceDetail {
+  display: block;
+  color: $color-fg-muted;
 }
 
 // Selected clients (ClientsMarquee): the label and the loop's pause control

@@ -224,7 +224,7 @@ $short-band: max(30svh, 192px);
 
 .reassure {
   margin: 16px 0 0;
-  font-size: $font-size-base; // 17px at every width, as the quote line beside every other ask
+  font-size: $font-size-base; // 17px at every width, as the trust line beside every other ask
   line-height: 1.5;
   color: $color-fg-muted;
   // Three promises in two sentences: even lines, never "approach your clients." left alone on the last one.
@@ -236,72 +236,6 @@ $short-band: max(30svh, 192px);
 
   @include motion-ok {
     animation: rise 0.9s $ease-out 0.34s both;
-  }
-}
-
-// Attributable proof beside the ask: avatar, the quote's first sentence, who said it.
-.proof {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
-  column-gap: 14px;
-  row-gap: 2px;
-  align-items: center;
-  max-width: 34em;
-  margin: clamp(22px, 3vh, 32px) 0 0;
-  padding-top: clamp(18px, 2.4vh, 24px);
-  border-top: 1px solid $color-hairline;
-
-  // Phones: the quote takes the full width (one line at 17px from 360px), who said it beside the
-  // avatar under it, so the whole line still ends inside a 390x844 first screen.
-  @media #{$portrait} and (max-width: $phone-max) {
-    grid-template-areas:
-      'quote quote'
-      'avatar by';
-    row-gap: 4px;
-    margin-top: 16px;
-    padding-top: 14px;
-  }
-
-  @include motion-ok {
-    animation: rise 0.9s $ease-out 0.4s both;
-  }
-}
-
-.avatar {
-  grid-row: span 2;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-
-  @media #{$portrait} and (max-width: $phone-max) {
-    grid-area: avatar;
-  }
-}
-
-.proofQuote {
-  margin: 0;
-
-  @media #{$portrait} and (max-width: $phone-max) {
-    grid-area: quote;
-  }
-
-  p {
-    margin: 0;
-    font-size: $font-size-base;
-    line-height: 1.4;
-    color: $color-fg;
-  }
-}
-
-// 17px at every width, as the quote itself (and as QuoteLine sets it on every other page).
-.proofBy {
-  font-size: $font-size-base;
-  line-height: 1.4;
-  color: $color-fg-muted;
-
-  @media #{$portrait} and (max-width: $phone-max) {
-    grid-area: by;
   }
 }
 

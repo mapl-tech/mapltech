@@ -172,8 +172,6 @@ export const ABOUT = {
   close: {
     // The story's point (a complex project without hiring an engineering department), as the next step.
     title: 'Say yes to the project you would normally turn down.',
-    // The homepage close's line (app/page.tsx): the hero already carries the quote.
-    proofLine: 'Clients include LRO Staffing, CHHA-NCR, FOCAS Canada and Crowned Spice.',
   },
 } as const;
 
