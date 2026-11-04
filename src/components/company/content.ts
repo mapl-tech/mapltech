@@ -10,9 +10,10 @@
  *   (the homepage FAQ: "every deliverable carries your brand").
  * - Founders: `executives` in config/team.ts (names, titles, bios, LinkedIn,
  *   photos, the same two the homepage shows).
- * - "Why MAPL TECH exists": the previous about page ("MAPL TECH exists because
- *   agencies shouldn't need to hire a full engineering department...", "We
- *   don't compete with you") and flagship/content.ts WORK_INTRO.
+ * - The about story ("Our story"): the previous about page ("MAPL TECH exists
+ *   because agencies shouldn't need to hire a full engineering department...",
+ *   "We don't compete with you") and flagship/content.ts WORK_INTRO ("Most of
+ *   what we build carries our partners' brands"), which leads to the work.
  * - Offices: the published 9 am to 6 pm local office hours (ui/officeTime)
  *   and the published offsets (Lagos 5-6 hours ahead of Toronto; Kingston
  *   keeps no daylight saving time).
@@ -58,7 +59,7 @@ export interface Founder extends Executive {
 }
 
 const FOCUS: Record<string, string> = {
-  'Leshan Patterson': 'Leads how our systems are designed and built, from automation to speed, and sets the technical direction for the whole company.',
+  'Leshan Patterson': 'Leads how our systems are designed and built, and sets the technical direction for the whole company.',
   'Mercy Akuma': 'Leads our growth in new countries, our partnerships and our operations, and keeps work across all three countries on track.',
 };
 
@@ -112,6 +113,16 @@ export const PRICE_FACT = { term: 'Public prices from', detail: `${LOWEST} USD` 
 /** The same price with the figure set large (FactsBand `figure`), where the band leads with numbers. */
 const PRICE_FIGURE = { term: PRICE_FACT.term, figure: LOWEST, detail: 'USD' } as const;
 
+/**
+ * The office hours as a fact (the regional pages' band): the same published
+ * working day as OFFICE_HOURS below and ui/officeTime (WORK_START/WORK_END),
+ * written out because this file stays free of client modules.
+ */
+export const OFFICE_HOURS_FACT = { term: 'Office hours', detail: '9 am to 6 pm, Monday to Friday' } as const;
+
+/** The published combined experience, figure first. */
+const EXPERIENCE_FIGURE = { term: 'Experience', figure: '25+', detail: 'years combined' } as const;
+
 /** Every office's hours (ui/officeTime), in the words /about-us uses. */
 const OFFICE_HOURS = 'Every team works 9 am to 6 pm local time, Monday to Friday.';
 
@@ -131,22 +142,20 @@ export const ABOUT = {
   },
   // The three published figures, set large. Who founded it and where the
   // teams are get their own sections below, so the band does not repeat them.
-  facts: [
-    { term: 'Projects supported', figure: '200+' },
-    { term: 'Experience', figure: '25+', detail: 'years combined' },
-    PRICE_FIGURE,
-  ],
+  facts: [{ term: 'Projects supported', figure: '200+' }, EXPERIENCE_FIGURE, PRICE_FIGURE],
   story: {
-    label: 'Why MAPL TECH exists',
+    // A plain kicker: the heading itself says why MAPL TECH exists.
+    label: 'Our story',
     lead: [
       { text: 'Agencies shouldn’t need to hire a full engineering department to take on a complex project. ' },
       { text: 'That is why MAPL TECH exists.', accent: true },
     ] as readonly TitleRun[],
     paragraphs: [
-      `${FOUNDER_NAMES} started MAPL TECH to be the team behind the agency. Our senior engineers build what you sell, under your name. Then we hand it over, ready for your own developers to look after.`,
+      `${FOUNDER_NAMES} started MAPL TECH to be the team behind the agency. Our engineers build what you sell, under your name. Then we hand it over, ready for your own developers to look after.`,
       'We don’t compete with you, and we never list your client as ours. Most of what we build carries our partners’ names.',
     ],
-    workLink: { before: 'The projects that carry ours are on ', label: 'our work page', href: '/our-work', after: '.' },
+    // The page body's route to the work, after the line about whose names the work carries.
+    work: { label: 'See the work', href: '/our-work' },
     signature: 'Co-founders, MAPL TECH',
   },
   offices: {
@@ -156,6 +165,8 @@ export const ABOUT = {
   },
   founders: {
     label: 'Who leads it',
+    title: 'The founders.',
+    lede: 'Both are directors of the company. Both are on LinkedIn under their own names, so you can see who you will work with.',
   },
   close: {
     // The story's point (a complex project without hiring an engineering department), as the next step.
@@ -178,20 +189,19 @@ export const TEAM = {
     title: [{ text: 'The people ' }, { text: 'behind the work.', accent: true }] as readonly TitleRun[],
     lede: `MAPL TECH is led by its co-founders, ${FOUNDER_NAMES}, with a team across Canada, Nigeria and Jamaica.`,
   },
-  // What a buyer checks first, each said once on the page and all at one
-  // size: the lede names the founders and the three countries and the
-  // directory gives each office's city, so the band says which one is
-  // headquarters, the published experience and the public price. The open
-  // roles are one small line at the foot of the directory.
-  facts: [
-    { term: 'Headquarters', detail: 'Toronto, Canada' },
-    { term: 'Experience', detail: '25+ years combined' },
-    PRICE_FACT,
-  ],
+  // What a buyer checks first, each said once on the page, set in the hero's
+  // aside as /about-us sets its figures: the lede names the founders and the
+  // three countries and the directory gives each office's city, so the aside
+  // says which one is headquarters, the published experience and the public
+  // price. The open roles are one small line at the foot of the directory.
+  facts: [{ term: 'Headquarters', figure: 'Toronto', detail: 'Canada' }, EXPERIENCE_FIGURE, PRICE_FIGURE],
   founders: {
     label: 'Leadership',
     title: 'The founders.',
-    lede: 'Both are directors of the company. Both are on LinkedIn under their own names, so you can see who you will work with.',
+    // Distilled from the two bios below (team.ts), nothing added; /about-us has its own lede.
+    lede: 'Leshan leads how we build. Mercy leads how we grow. Together they guide the work in all three countries.',
+    // The page body's route to the work: the people, then what they have built.
+    work: { label: 'See the work', href: '/our-work' },
   },
   directory: {
     label: 'The team',
@@ -245,13 +255,14 @@ export const CAREERS = {
   hero: {
     label: 'Careers',
     title: [{ text: 'Build the systems ' }, { text: 'agencies sell.', accent: true }] as readonly TitleRun[],
-    lede: `${careers.length} ${typeWord}roles in ${listWords(roleCountries)}. ${remoteRoles} of them can be done remotely. To apply, fill in one short form.`,
+    // Numbers in words in prose (the meta description says "seven" too); the facts band keeps numerals.
+    // How to apply (one short form, no upload) is said once, in the apply section's lede over the form.
+    lede: `${countWord(careers.length)} ${typeWord}roles in ${listWords(roleCountries)}. ${countWord(remoteRoles)} of them can be done remotely.`,
   },
   facts: [
     { term: 'Open roles', detail: `${careers.length}${roleTypes.length === 1 ? `, all ${roleTypes[0].toLowerCase()}` : ''}` },
     { term: 'On site', detail: listWords(onSiteCities) },
     { term: 'Remote', detail: `${remoteRoles} of ${careers.length} roles` },
-    { term: 'To apply', detail: 'One short form, no upload' },
   ],
   map: {
     notes: ROLE_NOTES,

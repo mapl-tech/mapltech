@@ -22,15 +22,16 @@ export interface Executive {
 export const executives: Executive[] = [
   {
     name: 'Leshan Patterson',
-    title: 'Co-Founder & Director',
-    bio: 'Leshan Patterson is Co-Founder and Director of MAPL TECH. He leads how our systems are designed and built, including automation and speed. He specializes in fast web platforms, AI-powered applications and large business systems built to grow. Leshan sets the technical direction in every country we work in, so everything we build is fast, secure and ready to scale.',
+    // "Co-founder": a prefixed compound keeps its second part lower case, as in "Co-founders, MAPL TECH".
+    title: 'Co-founder & Director',
+    bio: 'Leshan Patterson is Co-founder and Director of MAPL TECH. He leads how our systems are designed and built, including automation and performance. He specializes in web platforms, AI-powered applications and large business systems. Leshan sets the technical direction in every country we work in.',
     linkedin: 'https://www.linkedin.com/in/lpattersonn/',
     image: '/images/team/leshan-patterson.jpg',
   },
   {
     name: 'Mercy Akuma',
-    title: 'Co-Founder & Director',
-    bio: 'Mercy Akuma is Co-Founder and Director of MAPL TECH. She leads our growth in new countries, our partnerships and the expansion of our operations. She makes sure the work in every country follows the company’s long-term plan, so MAPL TECH runs with precision and discipline as it grows.',
+    title: 'Co-founder & Director',
+    bio: 'Mercy Akuma is Co-founder and Director of MAPL TECH. She leads our growth in new countries, our partnerships and the expansion of our operations. She makes sure the work in every country follows the company’s long-term plan.',
     linkedin: 'https://www.linkedin.com/in/mercyakuma/',
     image: '/images/team/mercy-akuma.jpg',
   },
@@ -40,7 +41,7 @@ export const teamMembers: TeamMember[] = [
   // Canada
   {
     name: 'Daniel Okafor',
-    title: 'Senior Full Stack Engineer',
+    title: 'Senior Full-Stack Engineer',
     country: 'Canada',
     department: 'Engineering',
     bio: 'Leads AI integration and SaaS platform development, building scalable systems that power complex agency operations.',

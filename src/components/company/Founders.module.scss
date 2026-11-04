@@ -69,8 +69,10 @@
 // ---------------------------------------------------------------- spread (/about-us, paper)
 // The DOM runs words, people, ask, and the screen shows them in that order
 // at every width: phones and tablets stack them; wide screens set the words
-// beside the two people, centred against them, and the ask under the
-// people. So the eye and the Tab key agree: the LinkedIn links, then the ask.
+// beside the two people, their label level with the top of the first
+// portrait (as every other section's label sits level with its content),
+// and the ask under the people. So the eye and the Tab key agree: the
+// LinkedIn links, then the ask.
 .spread {
   display: grid;
   gap: clamp(48px, 7vw, 72px);
@@ -106,7 +108,7 @@
 
   @include lg {
     grid-area: 1 / 1;
-    align-self: center;
+    align-self: start;
   }
 }
 
@@ -263,12 +265,14 @@
   }
 }
 
+// A clear step under the section's H2 (section-title, 36px -> 76px): the
+// display-m scale, 28px -> 48px (49px against 73px at 1440).
 .profileName {
   margin: 0;
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(1.875rem, 0.9rem + 3.4vw, 4.75rem); // 30px -> 76px
-  line-height: 0.95;
+  font-size: clamp(1.75rem, 1.1rem + 2.2vw, 3rem); // 28px -> 48px
+  line-height: 1;
   letter-spacing: -0.035em;
   color: $color-fg;
   overflow-wrap: break-word;

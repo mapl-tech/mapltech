@@ -33,11 +33,14 @@ export const metadata: Metadata = {
  * the first screen, with the site's reassurance line and the approved client
  * quote under the ask (a fixed quote after one 20-minute call, an NDA first),
  * and the three published figures in the hero's aside (beside the copy from
- * 1024px, under it on phones), then: why MAPL TECH exists, in the
- * founders' voice -> the two founders (paper), with the ask after them -> the
- * three offices -> the crimson close, which says what the call is for (the
- * homepage's close) and names the clients instead of repeating the quote.
- * How the work runs is told once, on the homepage.
+ * 1024px, a ruled list under it on phones), then: our story, in the founders'
+ * voice, ending on the page's route to the work ("See the work") -> the two
+ * founders (paper), with the ask after them -> the three offices -> the
+ * crimson close, which says what the call is for (the homepage's close) and
+ * names the clients instead of repeating the quote. How the work runs is
+ * told once, on the homepage. Text links follow the site's rule: a quiet
+ * secondary beside a filled button is words only ("See pricing", "Meet the
+ * team"); a text action on its own carries the arrow ("See the work").
  *
  * Structured data: AboutPage (mainEntity: the Organization from the root
  * layout) + BreadcrumbList + the two founders, from the same arrays the page

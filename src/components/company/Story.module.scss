@@ -55,19 +55,11 @@
   }
 }
 
-.inline {
-  color: $color-fg;
-  text-decoration: underline;
-  text-decoration-color: rgba($color-red, 0.8);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 5px;
-  transition: text-decoration-color 0.3s ease;
-
-  &:hover {
-    text-decoration-color: currentColor;
-  }
-
-  @include focus-ring;
+// The last paragraph and the route to the work under it, in one column.
+.closing {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
 }
 
 // The sign-off, the way a founders' letter ends.

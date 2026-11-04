@@ -13,13 +13,16 @@ import Arrow from '@/components/ui/Arrow';
  *
  * - `FoundersSpread` (/about-us): on paper, beside the decision to get in
  *   touch: names, titles, one line from each bio, LinkedIn, and the ask
- *   itself ("Start a project" first, the team page beside it). The ask
+ *   itself ("Start a project" first, the team page beside it as the site's
+ *   quiet secondary: words only, like every text link paired with a filled
+ *   button, the hero's and the close's "See pricing" included). The ask
  *   follows the two people in the DOM and on screen at every width (wide
  *   screens set it under them), so the eye and the Tab key meet the people
  *   first and the ask last.
  * - `FounderProfiles` (/team): one entry each with the team.ts bios (less
  *   the opening sentence that restates the name and title set right above
- *   them) and the `/team#slug` anchors their Person JSON-LD points at.
+ *   them) and the `/team#slug` anchors their Person JSON-LD points at. The
+ *   head carries Team's own lede and the page body's route to the work.
  *
  * On phones both set the name and role beside the photo and the words full
  * width under them, so no column is a sliver.
@@ -47,7 +50,7 @@ const escapeRe = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
  * The bio as a profile shows it. Each team.ts bio opens by restating the
- * name and title ("Leshan Patterson is Co-Founder and Director of MAPL
+ * name and title ("Leshan Patterson is Co-founder and Director of MAPL
  * TECH."), which the profile sets right above it, so that one sentence is
  * left out here; a bio that opens any other way is shown whole. team.ts and
  * the Person JSON-LD keep the full text.
@@ -80,9 +83,9 @@ export function FoundersSpread() {
         <div className={styles.spreadText}>
           <p className={ed.label}>{ABOUT.founders.label}</p>
           <h2 id="founders-title" className={ed.title}>
-            {TEAM.founders.title}
+            {ABOUT.founders.title}
           </h2>
-          <p className={ed.lede}>{TEAM.founders.lede}</p>
+          <p className={ed.lede}>{ABOUT.founders.lede}</p>
         </div>
 
         <ul className={styles.people} role="list">
@@ -112,9 +115,6 @@ export function FoundersSpread() {
           </Link>
           <Link href="/team" className={ed.action} data-cta-placement="about_founders_team">
             Meet the team
-            <span aria-hidden="true" className={ed.arrow}>
-              <Arrow />
-            </span>
           </Link>
         </div>
       </div>
@@ -132,6 +132,14 @@ export function FounderProfiles() {
             {TEAM.founders.title}
           </h2>
           <p className={ed.lede}>{TEAM.founders.lede}</p>
+          <div className={ed.headNote}>
+            <Link href={TEAM.founders.work.href} className={ed.action} data-cta-placement="team_founders_work">
+              {TEAM.founders.work.label}
+              <span aria-hidden="true" className={ed.arrow}>
+                <Arrow />
+              </span>
+            </Link>
+          </div>
         </header>
 
         <ol className={styles.profiles} role="list">

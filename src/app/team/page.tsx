@@ -35,10 +35,13 @@ export const metadata: Metadata = {
  * so they get no photos, no bios and no Person nodes), under the office
  * hours, with the Nigeria and Jamaica groups linked to their branch pages.
  * The page talks to buyers: the hero's reassurance line under the ask, the
- * facts (headquarters, the published experience and the public price, at
- * one size, none of them repeating the lede), and the directory ending on
- * "Start a project", with one small line for job seekers under it. Then the
- * close. The breadcrumb names the page, so the hero has no eyebrow.
+ * facts in the hero's aside as /about-us sets its figures (headquarters, the
+ * published experience and the public price, none of them repeating the
+ * lede; beside the lede and the ask from 1024px, so they are in the first
+ * screen, and a ruled list under the copy on phones), the founders with the
+ * page's route to the work, and the directory ending on "Start a project",
+ * with one small line for job seekers under it. Then the close. The
+ * breadcrumb names the page, so the hero has no eyebrow.
  *
  * Structured data (unchanged): AboutPage + BreadcrumbList + one Person node
  * per founder, from the same records the page renders.
@@ -72,9 +75,9 @@ export default function TeamPage() {
           />
         }
         note={HERO_REASSURE}
+        asideAlign="body"
+        aside={<FactsBand facts={TEAM.facts} label="The team at a glance" placement="aside" />}
       />
-
-      <FactsBand facts={TEAM.facts} label="The team at a glance" />
 
       <FounderProfiles />
 

@@ -1,18 +1,22 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import Arrow from '@/components/ui/Arrow';
 import { ABOUT, FOUNDERS, FOUNDER_NAMES } from './content';
 import ed from './Company.module.scss';
 import styles from './Story.module.scss';
 
 /**
- * Why MAPL TECH exists, in the founders' voice: the reason, set large and
- * fully lit from the first frame, then the two paragraphs that explain it,
- * signed by the two people who wrote it. It follows the page hero directly
- * (the figures sit in the hero's aside), so the seam takes the family's
- * hairline, as /pricing's estimator does under its hero.
+ * Our story, in the founders' voice: the reason, set large and fully lit
+ * from the first frame, then the two paragraphs that explain it, signed by
+ * the two people who wrote it. The second paragraph ends on whose names the
+ * work carries, so the page's route to the work ("See the work", the site's
+ * text action) sits right under it, in the same column. It follows the page
+ * hero directly (the figures sit in the hero's aside), so the seam takes the
+ * family's hairline, as /pricing's estimator does under its hero.
  */
 export default function Story() {
   const { story } = ABOUT;
+  const last = story.paragraphs.length - 1;
   return (
     <section id="why" className={`${ed.dark} ${ed.ruled}`} aria-labelledby="story-title">
       <div className={`${ed.inner} ${styles.grid}`}>
@@ -33,22 +37,21 @@ export default function Story() {
           </h2>
 
           <div className={styles.columns}>
-            {story.paragraphs.map((paragraph, i) => (
-              <p key={paragraph.slice(0, 32)}>
-                {paragraph}
-                {/* The work link closes the last paragraph, in the founders' own sentence. */}
-                {i === story.paragraphs.length - 1 ? (
-                  <>
-                    {' '}
-                    {story.workLink.before}
-                    <Link href={story.workLink.href} className={styles.inline} data-cta-placement="about_story_work">
-                      {story.workLink.label}
-                    </Link>
-                    {story.workLink.after}
-                  </>
-                ) : null}
-              </p>
-            ))}
+            {story.paragraphs.map((paragraph, i) =>
+              i === last ? (
+                <div key={paragraph.slice(0, 32)} className={styles.closing}>
+                  <p>{paragraph}</p>
+                  <Link href={story.work.href} className={ed.action} data-cta-placement="about_story_work">
+                    {story.work.label}
+                    <span aria-hidden="true" className={ed.arrow}>
+                      <Arrow />
+                    </span>
+                  </Link>
+                </div>
+              ) : (
+                <p key={paragraph.slice(0, 32)}>{paragraph}</p>
+              ),
+            )}
           </div>
 
           <div className={styles.sign}>
