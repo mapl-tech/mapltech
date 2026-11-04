@@ -447,10 +447,12 @@
   line-height: 1.55;
   color: $color-fg-muted;
 
+  // Inline, so the link wraps with the sentence and its full stop stays on
+  // its last line ("three open contract roles in Nigeria" fills a 320px line).
+  // Block padding on an inline box takes no room in the line, so it widens
+  // the target without moving anything.
   a {
-    display: inline-block;
-    padding-block: 10px; // a 44px target without moving the line
-    margin-block: -10px;
+    padding-block: 10px;
     color: $color-fg;
     text-decoration: underline;
     text-decoration-color: rgba($color-red, 0.8);
