@@ -207,14 +207,8 @@ $measure-read: 31em;
   background: $color-ground;
 }
 
-// The band has no bottom padding of its own: a dark section after it opens
-// on its own top padding. A paper section (the regional pages' services)
-// would meet the band's last line, so it starts a section's bottom padding
-// further down, the gap a dark section leaves above a paper one.
-.facts + .paper {
-  margin-top: $editorial-pad-y;
-}
-
+// The band has no bottom padding of its own: the dark section after it
+// (/careers' roles) opens on its own top padding.
 .factsInner {
   @include shell;
 }
@@ -314,7 +308,8 @@ $measure-read: 31em;
 }
 
 // The same facts in the hero's aside (FactsBand placement="aside", /about-us,
-// /team). From 1024px they fill the hero's right column: one fact a row under
+// /team, and the regional pages under their clock card). From 1024px they
+// fill the hero's right column: one fact a row under
 // the band's rule, hairlines between, the figure as large as the column
 // allows and its unit on the figure's baseline, so the three rows read as one
 // even ledger beside the copy (the /pricing hero's starting prices are the

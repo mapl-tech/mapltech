@@ -16,9 +16,10 @@ export interface Fact {
  * every value is computed or sourced in content.ts / regions.ts, and each is
  * said once on its page. A fact with a `figure` sets it in the display face,
  * so the published numbers are what the eye meets first. `placement="aside"`
- * sets the same list in the hero's aside (PageHeader `aside`, /about-us and
- * /team): a ruled column beside the copy from 1024px, the band's layout under
- * the copy below that. Server Component.
+ * sets the same list in the hero's aside (PageHeader `aside`: /about-us,
+ * /team, and under the clock card on /nigeria and /jamaica): a ruled column
+ * beside the copy from 1024px, the band's layout under the copy below that.
+ * Server Component.
  */
 export default function FactsBand({
   facts,

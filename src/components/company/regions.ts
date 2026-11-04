@@ -18,9 +18,9 @@
  *
  * - The hero: the cities served (lede); the branch city, its live local time
  *   and when the office next opens, and the zone's name and UTC offset (the
- *   "you are here" card, their one home).
- * - The facts band under it: the office hours, the lowest public price and
- *   the reply time, added by the template (the same for every branch).
+ *   "you are here" card, their one home); under the card, the office hours,
+ *   the lowest public price and the reply time, added by the template (the
+ *   same for every branch).
  * - What we build: who does the work (lede), each service's own starting
  *   price (rows), the local needs (list).
  * - The questions: the overlap with Toronto, worked out from the published

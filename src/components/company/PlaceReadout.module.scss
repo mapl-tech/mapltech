@@ -4,15 +4,15 @@
 
 // The "you are here" card on a regional page: city, live local time, whether
 // the office is open and when that changes (one line: "Closed · opens at
-// 9 am"), the zone, coordinates (not on phones, where the card is the hero's
-// only figure). The card is the page's one home for the zone's name and UTC
-// offset. A #121214 card; on wide screens it sits on the map's foot.
+// 9 am"), the zone, coordinates (not on phones, so the facts under the card
+// come sooner). The card is the page's one home for the zone's name and UTC
+// offset. A #121214 card; on wide screens it spans the hero's right column,
+// over the branch's facts.
 // The numerals are plain text colour so the card never outshouts the hero's
 // button; the live state's teal is the status dot alone.
 
 .readout {
   position: relative;
-  z-index: 1;
   width: min(100%, 22rem);
   padding: 22px 24px 20px;
   border-radius: 22px;
@@ -20,8 +20,7 @@
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 30px 60px -24px rgba(0, 0, 0, 0.85);
 
   @include lg {
-    width: min(100% - 24px, 22rem);
-    margin: -56px 0 0 24px;
+    width: 100%;
   }
 }
 
