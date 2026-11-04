@@ -8,7 +8,7 @@ import CaseStage from './CaseStage';
 import ChapterNav from './ChapterNav';
 import SiteScroll from './SiteScroll';
 import { FULL_PAGES } from './fullPages';
-import { heroTags, type CaseStory } from './stories';
+import { heroTags, otherClientsLine, type CaseStory } from './stories';
 import styles from './Case.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -46,9 +46,9 @@ export default function CaseStudy({
   // A real capture only, never a mockup: a project without one gets a text-only row.
   const nextShot = next?.story?.media?.desktop;
   // The close's proof where the story's own quote keeps the band's quote line
-  // off: its first published result, in the words "At a glance" uses.
-  const firstResult = story.results?.[0];
-  const closeProof = story.quote && firstResult ? `${story.client}: ${firstResult.value} ${firstResult.label}.` : undefined;
+  // off: the site's client line, less this case's own client, so it adds
+  // names instead of repeating a result the page has already shown twice.
+  const closeProof = story.quote ? otherClientsLine(story) : undefined;
 
   const chapters = [
     story.situation?.length ? { id: 'situation', label: 'The situation' } : null,
@@ -64,62 +64,66 @@ export default function CaseStudy({
       {/* ---------------------------------------------------------- hero */}
       <header className={styles.hero}>
         <div className={styles.heroInner}>
-          <nav aria-label="Breadcrumb" className={styles.crumbs}>
-            <ol role="list">
-              <li>
-                <Link href="/our-work">Work</Link>
-              </li>
-              <li aria-current="page">{story.client}</li>
-            </ol>
-          </nav>
-          <p className={styles.tags}>
-            <span className={styles.tagLead}>Case study</span>
-            {heroTags(story).map((tag) => (
-              <span key={tag}>
-                <span aria-hidden="true"> · </span>
-                <span className="visually-hidden">, </span>
-                {tag}
-              </span>
-            ))}
-          </p>
-          <h1 id="case-title" className={styles.title}>
-            {story.client}
-          </h1>
-          {/* Headline, facts, then the product, at every width. On a phone the
-              capture peeks into the first screen under the facts: fully in view it
-              becomes the page's LCP image, which Lighthouse's simulated phone
-              scores 93 instead of 100 however early it is fetched. */}
-          <div className={styles.heroFoot}>
-            <p className={styles.headline}>{story.headline}</p>
-            <dl className={styles.facts}>
-              {story.facts.map((fact) => (
-                <div key={fact.term} className={styles.fact}>
-                  <dt>{fact.term}</dt>
-                  <dd>
-                    {fact.href ? (
-                      <a href={fact.href} target="_blank" rel="noopener noreferrer">
-                        {fact.detail}
-                        <span className="visually-hidden"> (opens in a new tab)</span>
-                         <Arrow direction="up-right" />
-                      </a>
-                    ) : (
-                      fact.detail
-                    )}
-                  </dd>
-                </div>
+          {/* Everything above the product. On a phone it fills the first screen
+              but for a ~50px strip, with the facts at its foot, so the capture
+              peeks the same amount on every phone: fully in view it would become
+              the page's LCP image, which Lighthouse's simulated phone scores 93
+              instead of 100 however early it is fetched. */}
+          <div className={styles.lead} data-has-stage={story.media ? '' : undefined}>
+            <nav aria-label="Breadcrumb" className={styles.crumbs}>
+              <ol role="list">
+                <li>
+                  <Link href="/our-work">Work</Link>
+                </li>
+                <li aria-current="page">{story.client}</li>
+              </ol>
+            </nav>
+            <p className={styles.tags}>
+              <span className={styles.tagLead}>Case study</span>
+              {heroTags(story).map((tag) => (
+                <span key={tag}>
+                  <span aria-hidden="true"> · </span>
+                  <span className="visually-hidden">, </span>
+                  {tag}
+                </span>
               ))}
-            </dl>
-            {story.media ? (
-              <CaseStage
-                slug={entry.slug}
-                url={live?.detail}
-                desktop={story.media.desktop}
-                mobile={story.media.mobile}
-                alt={story.media.alt}
-                caption={story.media.caption}
-              />
-            ) : null}
+            </p>
+            <h1 id="case-title" className={styles.title}>
+              {story.client}
+            </h1>
+            {/* Headline, facts, then the product, at every width. */}
+            <div className={styles.heroText}>
+              <p className={styles.headline}>{story.headline}</p>
+              <dl className={styles.facts}>
+                {story.facts.map((fact) => (
+                  <div key={fact.term} className={styles.fact}>
+                    <dt>{fact.term}</dt>
+                    <dd>
+                      {fact.href ? (
+                        <a href={fact.href} target="_blank" rel="noopener noreferrer">
+                          {fact.detail}
+                          <span className="visually-hidden"> (opens in a new tab)</span>
+                           <Arrow direction="up-right" />
+                        </a>
+                      ) : (
+                        fact.detail
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
+          {story.media ? (
+            <CaseStage
+              slug={entry.slug}
+              url={live?.detail}
+              desktop={story.media.desktop}
+              mobile={story.media.mobile}
+              alt={story.media.alt}
+              caption={story.media.caption}
+            />
+          ) : null}
         </div>
       </header>
 

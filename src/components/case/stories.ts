@@ -11,6 +11,7 @@
  * omitted by the template, never padded.
  */
 import { caseStudies, testimonials } from '@/config/site';
+import { CLIENTS_LINE } from '@/components/flagship/content';
 import type { EstimateService, EstimateToggles, SizeByService } from '@/lib/estimate';
 
 /**
@@ -126,7 +127,8 @@ export const STORIES: readonly CaseStory[] = [
     quote: alita ? { text: alita.quote, name: alita.name, role: `${alita.role}, ${alita.company}`, image: alita.image || undefined } : undefined,
     matters: {
       heading: 'Why this matters if your agency sells websites',
-      text: 'Sites with two audiences often go wrong: one audience gets the homepage and the other gets a link at the bottom. We plan the structure with you before any design starts, then build it to pass the same checks your client will run after launch.',
+      // 28 words (was 45, seven lines at 390): the same three points, plainly.
+      text: 'Sites with two audiences often bury one. We plan the structure with you before design starts, then build it to pass the checks your client runs after launch.',
     },
     sources: 'Lighthouse results for lrostaffing.com as published on leshanpatterson.com (November 2026). Client quote approved for publication.',
     media: {
@@ -258,7 +260,8 @@ export const STORIES: readonly CaseStory[] = [
     quote: chhaAudit ? { text: chhaAudit.quote, name: chhaAudit.name, role: chhaAudit.role } : undefined,
     matters: {
       heading: 'Why this matters if you build for government and non-profit clients',
-      text: 'For these clients, accessibility is required and an audit will follow. We build to the WCAG AA standard from the start, then hand over a site the client’s own team can update without calling an agency.',
+      // 28 words (was 36).
+      text: 'For these clients, accessibility is required and an audit follows. We build to WCAG AA from the start, and their team can update the site without an agency.',
     },
     sources: chha?.sourceNote,
     media: {
@@ -409,4 +412,22 @@ export function findStory(slug: string): CaseStory | undefined {
 /** The tags under the case hero's breadcrumb: the story's own, less those its facts already say. */
 export function heroTags(story: CaseStory): readonly string[] {
   return story.tags.filter((tag) => !story.tagsInFacts?.includes(tag));
+}
+
+/**
+ * The site's client line (flagship/content.ts CLIENTS_LINE) without this
+ * case's own client: the names are the case stories' own, kept in the line's
+ * order, so nothing is retyped and a client the line does not name never
+ * appears. The story's own client is left out by its name and by its Client
+ * fact ("LRO Staffing" on the salary guide's page).
+ */
+export function otherClientsLine(story: CaseStory): string | undefined {
+  const own = new Set([story.client, ...story.facts.filter((fact) => fact.term === 'Client').map((fact) => fact.detail)]);
+  const isOwn = (name: string) => [...own].some((detail) => detail === name || detail.startsWith(`${name},`) || detail.startsWith(`${name} (`));
+  const names = [...new Set(STORIES.map((entry) => entry.client))]
+    .filter((name) => CLIENTS_LINE.includes(name) && !isOwn(name))
+    .sort((a, b) => CLIENTS_LINE.indexOf(a) - CLIENTS_LINE.indexOf(b));
+  if (!names.length) return undefined;
+  const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
+  return `Other clients include ${list}.`;
 }
