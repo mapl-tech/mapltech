@@ -14,7 +14,7 @@ import FactsBand from './FactsBand';
 import HeroActions from './HeroActions';
 import LocalTime from './LocalTime';
 import OfficeMap from './OfficeMap';
-import { PRICE_FACT, keepBrand } from './content';
+import { OFFICE_HOURS_FACT, PRICE_FACT, keepBrand } from './content';
 import { REPLY_TIME, rolesIn, startingFrom, type RegionConfig } from './regions';
 import ed from './Company.module.scss';
 import place from './PlaceReadout.module.scss';
@@ -34,13 +34,16 @@ export interface RegionalPageProps {
  * review fixes).
  *
  * A sense of place without stock photography: the branch city's live local
- * time (and when the office is next open) beside a to-scale drawing of the
- * three offices, under the site's reassurance line. Then the market facts
- * (the working hours are said there, once), what the local team builds with
- * real "from" prices and a direct way to start each one (paper), a real
- * local project where one exists (no stand-in section where none does), the
- * market questions with the branch's contact lines, and the close, which
- * carries the approved client quote.
+ * time (and when the office next opens) beside a to-scale drawing of the
+ * three offices, under the site's reassurance line; the card is the page's
+ * one home for the zone. Then three facts a director needs first and that
+ * the page says nowhere else (the office hours, the lowest public price, the
+ * reply time), what the local team builds with each service's own "from"
+ * price and a direct way to start each one (paper), a real local project
+ * where one exists (no stand-in section where none does), the market
+ * questions (the Toronto overlap is worked out there) with the branch's
+ * contact lines, and the close: the site's own lede and the approved client
+ * quote. regions.ts lists where each fact lives.
  *
  * Schema (unchanged): WebPage + BreadcrumbList + ItemList of the four
  * services + FAQPage, all built from the same arrays the page renders. No
@@ -75,6 +78,8 @@ export default function RegionalPage({ region, title, description }: RegionalPag
   });
 
   const [lineOne, lineTwo] = region.hero.titleLines;
+  /** Display only: "3 pm" keeps its number on the line, as "20‑minute" does (the JSON-LD keeps plain text). */
+  const display = (text: string) => keepNumberWords(text).replace(/(\d) (am|pm)\b/g, '$1\u00a0$2');
 
   return (
     <>
@@ -114,14 +119,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         }
       />
 
-      <FactsBand
-        facts={[
-          ...region.facts,
-          PRICE_FACT,
-          { term: 'Reply time', detail: REPLY_TIME },
-        ]}
-        label={`${region.brandName} at a glance`}
-      />
+      <FactsBand facts={[OFFICE_HOURS_FACT, PRICE_FACT, { term: 'Reply time', detail: REPLY_TIME }]} label={`${region.brandName} at a glance`} />
 
       {/* What the local team builds, on paper: the four services with real prices, then the local realities. */}
       <section id="services" className={ed.paper} aria-labelledby="services-title">
@@ -132,14 +130,6 @@ export default function RegionalPage({ region, title, description }: RegionalPag
               {keepBrand(region.team.heading)}
             </h2>
             <p className={ed.lede}>{region.team.body}</p>
-            <div className={ed.headNote}>
-              <Link href={PRICING_HREF} className={ed.action} data-cta-placement={`${prefix}_services_pricing`}>
-                See all prices
-                <span aria-hidden="true" className={ed.arrow}>
-                  <Arrow />
-                </span>
-              </Link>
-            </div>
           </header>
 
           {/* Each row: the service page (its link covers the name, words and arrow), then the price and a brief that opens with that service chosen.
@@ -244,7 +234,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
       ) : null}
 
       {/* Market questions: native <details>, every answer in the HTML; FAQPage JSON-LD from the same items. Ruled only after the dark work section.
-          Display only: "20‑minute" keeps its number on the line (keepNumberWords, as on /pricing and /referral; the close lede too); the JSON-LD keeps the plain hyphen. */}
+          Display only: number words and times keep their parts on one line (`display`); the JSON-LD keeps the plain text. */}
       <section id="faq" className={region.work ? `${ed.dark} ${ed.ruled}` : ed.dark} aria-labelledby="faq-title">
         <div className={`${ed.inner} ${styles.faqGrid}`}>
           <div className={styles.faqHead}>
@@ -252,7 +242,6 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             <h2 id="faq-title" className={ed.title}>
               {region.faq.heading}
             </h2>
-            <p className={ed.lede}>Short answers, with the same prices and hours as the rest of this site.</p>
             <dl className={styles.branch}>
               <div>
                 <dt>Email</dt>
@@ -277,7 +266,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             <Accordion
               name={`${prefix}-faq`}
               defaultOpen={0}
-              items={region.faq.items.map((item, i) => ({ id: `${prefix}-faq-${i + 1}`, question: item.question, answer: keepNumberWords(item.answer) }))}
+              items={region.faq.items.map((item, i) => ({ id: `${prefix}-faq-${i + 1}`, question: item.question, answer: display(item.answer) }))}
             />
             {/* For job seekers: one small line, away from the buyer's contact lines. */}
             {roles.length ? (
@@ -294,8 +283,8 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         </div>
       </section>
 
-      {/* The approved client quote under the last ask (the hero has the reassurance line, not the quote). */}
-      <CloseBand title={region.close.title} lede={keepNumberWords(region.close.lede)} placement={`${prefix}_close`} />
+      {/* The site's close lede, and the approved client quote under the last ask (the hero has the reassurance line, not the quote). */}
+      <CloseBand title={region.close.title} placement={`${prefix}_close`} />
     </>
   );
 }

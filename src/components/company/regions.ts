@@ -14,27 +14,32 @@
  * Jamaica gets a real local project instead: MAPL Tours, the travel company
  * MAPL TECH built and runs in Jamaica (case study in case/stories.ts).
  *
- * Each fact is said once (Nov 2026 review): the working hours in the facts
- * row, the overlap with Toronto in the hours question, who does the work in
- * the services lede. So there is no separate hours section, and no FAQ that
- * repeats the team sentence.
+ * Each fact is said once (Nov 2026 reviews), where a director looks for it:
  *
- * The close ledes join three published lines: the 24-hour reply (/contact-us),
- * the fixed quote after a 20-minute call (the homepage close) and the USD
- * pricing these pages already stated.
+ * - The hero: the cities served (lede); the branch city, its live local time
+ *   and when the office next opens, and the zone's name and UTC offset (the
+ *   "you are here" card, their one home).
+ * - The facts band under it: the office hours, the lowest public price and
+ *   the reply time, added by the template (the same for every branch).
+ * - What we build: who does the work (lede), each service's own starting
+ *   price (rows), the local needs (list).
+ * - The questions: the overlap with Toronto, worked out from the published
+ *   hours and the real offsets (the hours question); payments; data rules;
+ *   that prices are the same everywhere, in USD (no second price list).
+ * - The close: the site's own lede (four questions, a 20-minute call, a
+ *   fixed quote) and the client quote.
+ *
+ * So there is no separate hours section, no FAQ that repeats the team
+ * sentence and no second link to the pricing page in the body (the hero and
+ * the close both have one).
  */
 import { careers } from '@/config/site';
 import type { Country } from '@/config/team';
 import type { ServiceSlug } from '@/lib/schema';
-import { ESTIMATE_SERVICES, SERVICE_META, formatMoney, parsePriceLabel, tiersFor, type EstimateService } from '@/lib/estimate';
+import { formatMoney, parsePriceLabel, tiersFor, type EstimateService } from '@/lib/estimate';
 import type { OfficeCity } from './OfficeMap';
 
 export type RegionSlug = 'nigeria' | 'jamaica';
-
-export interface RegionFact {
-  term: string;
-  detail: string;
-}
 
 export interface RegionFaq {
   question: string;
@@ -71,21 +76,20 @@ export interface RegionConfig {
   /** Plain-language zone name and its fixed UTC offset (neither country observes daylight saving). */
   zoneName: string;
   utcLabel: string;
-  /** The zone's standard abbreviation, after times in the place readout ("Back at 9 am WAT"). */
+  /** The zone's standard abbreviation: the place readout's clock line before the clock hydrates ("WAT"). */
   zoneAbbr: string;
   /** Office city coordinates, for the place readout (public geographic fact). */
   coordinates: string;
   serves: readonly string[];
   hero: { titleLines: readonly [string, string]; lede: string };
-  /** Market facts for the hero row. Starting price and reply time are added by the template. */
-  facts: readonly RegionFact[];
   team: { heading: string; body: string; realitiesHeading: string; realities: readonly string[] };
   /** `heading` names the service list for assistive tech. */
   services: { heading: string; rows: readonly RegionServiceRow[] };
   /** A real local project; without one the section is left out and the close carries the client quote. */
   work?: RegionWork;
   faq: { heading: string; items: readonly RegionFaq[] };
-  close: { title: string; lede: string };
+  /** The close's title; its lede is the site's (CloseBand's default). */
+  close: { title: string };
 }
 
 /* ------------------------------------------------------------------ */
@@ -100,14 +104,12 @@ export function startingFrom(service: EstimateService): string {
   return formatMoney(Math.min(...lows));
 }
 
-/** "Web Development from $5,000, Automation & AI from $3,500, ..." */
-function priceList(): string {
-  return ESTIMATE_SERVICES.map((service) => `${SERVICE_META[service].label} from ${startingFrom(service)}`).join(', ');
-}
-
-function costAnswer(country: string): string {
-  return `The same public prices as everywhere else, in USD for ${country}: ${priceList()}. You get a fixed quote after a 20-minute call, and every price table is on the pricing page.`;
-}
+/**
+ * The cost question's answer: what is regional about the price (nothing: the
+ * same public prices, in USD). Each service's starting price is in its row
+ * and the lowest is in the facts band, so the answer does not list them again.
+ */
+const COST_ANSWER = 'The same public prices as everywhere else, in USD. Every price table is on the pricing page.';
 
 /** Published on /contact-us ("We respond within 24 hours"). */
 export const REPLY_TIME = 'Within 24 hours';
@@ -136,14 +138,8 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     serves: ['Lagos', 'Abuja', 'Port Harcourt'],
     hero: {
       titleLines: ['Engineering for', 'Nigerian agencies.'],
-      lede: 'We work alongside agencies in Lagos, Abuja and Port Harcourt to build websites, automation, internal tools and cloud systems. Our team works in West Africa Time.',
+      lede: 'We work alongside agencies in Lagos, Abuja and Port Harcourt to build websites, automation, internal tools and cloud systems.',
     },
-    facts: [
-      { term: 'Branch', detail: 'Lagos, Nigeria' },
-      { term: 'Serves', detail: 'Lagos, Abuja and Port Harcourt' },
-      { term: 'Working hours', detail: '9\u00a0am to 6\u00a0pm West Africa Time (UTC+1)' },
-      { term: 'Payments we integrate', detail: 'Paystack and Flutterwave' },
-    ],
     team: {
       heading: 'What MAPL TECH Nigeria builds.',
       body: 'Our engineers and project managers live and work in Nigeria. Our Toronto headquarters and 25+ years of combined experience stand behind them.',
@@ -185,8 +181,9 @@ export const regions: Record<RegionSlug, RegionConfig> = {
       items: [
         {
           question: 'Do you work in Nigerian business hours?',
+          // Lagos keeps UTC+1 all year; Toronto is UTC-5 in winter and UTC-4 in summer. Both offices work 9 am to 6 pm local time.
           answer:
-            'Yes. Our Nigeria team works in West Africa Time (UTC+1), so you can talk to us during your working day, with no overnight delays. Our Toronto headquarters is online every weekday afternoon, Lagos time.',
+            'Yes. Our Nigeria team keeps Lagos office hours. Lagos is six hours ahead of Toronto in winter and five in summer, so both offices are open from 3 pm to 6 pm Lagos time in winter and from 2 pm to 6 pm in summer.',
         },
         {
           question: 'Can you integrate Paystack or Flutterwave?',
@@ -194,19 +191,18 @@ export const regions: Record<RegionSlug, RegionConfig> = {
             'Yes. Dashboards, client portals and reports can take local payments, including Paystack and Flutterwave, in more than one currency.',
         },
         {
-          question: 'Is the work NDPR compliant?',
+          question: 'How do you handle NDPR?',
           answer:
             'We plan for NDPR, Nigeria’s data protection rules, from the start of every Nigerian build. We also use the same engineering standards as our Toronto headquarters.',
         },
         {
           question: 'What does a project cost in Nigeria?',
-          answer: costAnswer('Nigeria'),
+          answer: COST_ANSWER,
         },
       ],
     },
     close: {
       title: 'Building something for a Nigerian client?',
-      lede: 'Tell us what you are building. We reply within 24 hours, then talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote in USD.',
     },
   },
 
@@ -224,14 +220,8 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     serves: ['Kingston', 'Montego Bay'],
     hero: {
       titleLines: ['Engineering for', 'Jamaican agencies.'],
-      lede: 'We work alongside agencies in Kingston and Montego Bay to build websites, automation, internal tools and cloud systems. Kingston is within an hour of our Toronto headquarters all year.',
+      lede: 'We work alongside agencies in Kingston and Montego Bay to build websites, automation, internal tools and cloud systems.',
     },
-    facts: [
-      { term: 'Branch', detail: 'Kingston, Jamaica' },
-      { term: 'Serves', detail: 'Kingston and Montego Bay' },
-      { term: 'Working hours', detail: '9\u00a0am to 6\u00a0pm Eastern Standard Time (UTC−5)' },
-      { term: 'How we deliver', detail: 'Weekly updates and documented decisions' },
-    ],
     team: {
       heading: 'What MAPL TECH Jamaica builds.',
       body: 'Our engineers and project managers have Caribbean roots. Our Toronto headquarters and 25+ years of combined experience stand behind them.',
@@ -287,8 +277,9 @@ export const regions: Record<RegionSlug, RegionConfig> = {
       items: [
         {
           question: 'Do you work in Jamaican business hours?',
+          // Kingston keeps UTC-5 all year; Toronto is UTC-5 in winter and UTC-4 in summer. Both offices work 9 am to 6 pm local time.
           answer:
-            'Yes. Our Jamaica team works in Eastern Standard Time (UTC−5), within an hour of Toronto all year, so you can talk to us during your working day, with no overnight delays.',
+            'Yes. Our Jamaica team keeps Kingston office hours. Kingston is on the same time as Toronto in winter and one hour behind in summer, so both offices are open together all day in winter and from 9 am to 5 pm Kingston time in summer.',
         },
         {
           question: 'Do you build for Caribbean payment providers and island internet?',
@@ -297,7 +288,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         },
         {
           question: 'What does a project cost in Jamaica?',
-          answer: costAnswer('Jamaica'),
+          answer: COST_ANSWER,
         },
         {
           question: 'How do you keep our team informed?',
@@ -308,7 +299,6 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     },
     close: {
       title: 'Building something for a Jamaican client?',
-      lede: 'Tell us what you are building. We reply within 24 hours, then talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote in USD.',
     },
   },
 };

@@ -383,7 +383,8 @@
 
   > div {
     display: grid;
-    grid-template-columns: 88px minmax(0, 1fr);
+    // "Email" and "Phone" need ~50px: a 72px label column keeps the address on one line at 320px.
+    grid-template-columns: 72px minmax(0, 1fr);
     align-items: center;
     gap: 16px;
     min-height: 56px;
