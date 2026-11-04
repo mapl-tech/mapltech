@@ -69,21 +69,6 @@ $measure-read: 31em;
   }
 }
 
-// A note under a head's lede (a footnote, a link).
-.headNote {
-  display: grid;
-  gap: 12px;
-  justify-items: start;
-  max-width: 44rem;
-
-  p {
-    margin: 0;
-    font-size: $font-size-base;
-    line-height: 1.55;
-    color: $color-fg-muted;
-  }
-}
-
 .label {
   @include section-label;
   align-self: start;

@@ -18,11 +18,14 @@ import Arrow from '@/components/ui/Arrow';
  *   button, the hero's and the close's "See pricing" included). The ask
  *   follows the two people in the DOM and on screen at every width (wide
  *   screens set it under them), so the eye and the Tab key meet the people
- *   first and the ask last.
+ *   first and the ask last. From 1024px the words stay in view beside the
+ *   portraits while they scroll (sticky, clear of the fixed header).
  * - `FounderProfiles` (/team): one entry each with the team.ts bios (less
  *   the opening sentence that restates the name and title set right above
  *   them) and the `/team#slug` anchors their Person JSON-LD points at. The
- *   head carries Team's own lede and the page body's route to the work.
+ *   head is the label and the title only (the bios say who leads what), set
+ *   at the rows' left edge as the spread sets its words; after the two
+ *   people comes the page body's route to the work.
  *
  * On phones both set the name and role beside the photo and the words full
  * width under them, so no column is a sliver.
@@ -126,20 +129,11 @@ export function FounderProfiles() {
   return (
     <section id="founders" className={ed.dark} aria-labelledby="founders-title">
       <div className={ed.inner}>
-        <header className={ed.head}>
+        <header className={styles.profilesHead}>
           <p className={ed.label}>{TEAM.founders.label}</p>
           <h2 id="founders-title" className={ed.title}>
             {TEAM.founders.title}
           </h2>
-          <p className={ed.lede}>{TEAM.founders.lede}</p>
-          <div className={ed.headNote}>
-            <Link href={TEAM.founders.work.href} className={ed.action} data-cta-placement="team_founders_work">
-              {TEAM.founders.work.label}
-              <span aria-hidden="true" className={ed.arrow}>
-                <Arrow />
-              </span>
-            </Link>
-          </div>
         </header>
 
         <ol className={styles.profiles} role="list">
@@ -157,6 +151,15 @@ export function FounderProfiles() {
             </li>
           ))}
         </ol>
+
+        <p className={styles.profilesFoot}>
+          <Link href={TEAM.founders.work.href} className={ed.action} data-cta-placement="team_founders_work">
+            {TEAM.founders.work.label}
+            <span aria-hidden="true" className={ed.arrow}>
+              <Arrow />
+            </span>
+          </Link>
+        </p>
       </div>
     </section>
   );

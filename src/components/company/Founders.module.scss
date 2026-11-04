@@ -72,7 +72,10 @@
 // beside the two people, their label level with the top of the first
 // portrait (as every other section's label sits level with its content),
 // and the ask under the people. So the eye and the Tab key agree: the
-// LinkedIn links, then the ask.
+// LinkedIn links, then the ask. The words are far shorter than the two
+// staggered portraits, so from 1024px they stay in view beside them while
+// they scroll (sticky, clear of the fixed header) instead of leaving a
+// column of empty paper.
 .spread {
   display: grid;
   gap: clamp(48px, 7vw, 72px);
@@ -109,6 +112,8 @@
   @include lg {
     grid-area: 1 / 1;
     align-self: start;
+    position: sticky;
+    top: calc(var(--header-height, 72px) + 40px);
   }
 }
 
@@ -205,6 +210,20 @@
 }
 
 // ---------------------------------------------------------------- profiles (/team, dark)
+// The head starts at the rows' left edge, over the photos (as the spread sets
+// its words), so the title and the portraits under it share one edge.
+.profilesHead {
+  display: grid;
+  gap: 22px;
+  justify-items: start;
+  margin-bottom: clamp(48px, 7vw, 96px);
+}
+
+// After the two people: the page body's route to the work.
+.profilesFoot {
+  margin: clamp(28px, 3.5vw, 40px) 0 0;
+}
+
 .profiles {
   margin: 0;
   padding: 0;
