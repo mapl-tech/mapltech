@@ -39,9 +39,17 @@ export function checkForm(data: FormData, rules: Record<string, FieldRule>): Rec
   return errors;
 }
 
-/** The error summary's words for the fields still flagged: "One field needs attention…", "3 fields need attention…". */
+const COUNT_WORDS = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+
+/**
+ * The error summary's words for the fields still flagged, counted in words
+ * from one to nine as the site's prose counts ("four short questions"):
+ * "One field needs attention…", "Three fields need attention…". It counts
+ * down as fields are fixed.
+ */
 export function summaryWords(count: number): string {
-  return `${count === 1 ? 'One field needs' : `${count} fields need`} attention before this can send.`;
+  const number = COUNT_WORDS[count - 1] ?? String(count);
+  return `${number} ${count === 1 ? 'field needs' : 'fields need'} attention before this can send.`;
 }
 
 /**

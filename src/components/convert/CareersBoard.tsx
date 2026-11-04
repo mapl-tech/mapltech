@@ -223,7 +223,7 @@ export default function CareersBoard({ roles, applyId = 'apply', applyFieldId = 
           <a href={`#${talentId}`} onClick={() => openDetails(talentId)}>
             join the talent list
           </a>{' '}
-          and we&apos;ll write when one opens.
+          and we’ll write when one opens.
         </p>
       </div>
     </div>

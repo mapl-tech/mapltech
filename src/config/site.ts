@@ -449,14 +449,14 @@ export const careers = [
     type: 'Contract',
     location: 'Remote',
     country: 'Canada',
-    description: 'Build and maintain custom web applications, internal tools, and automation pipelines for agency clients.',
+    description: 'Build and maintain custom web applications, internal tools and automation pipelines for agency clients.',
   },
   {
     title: 'Cloud / DevOps Engineer',
     type: 'Contract',
     location: 'Remote',
     country: 'Canada',
-    description: 'Design, deploy, and manage cloud infrastructure on AWS, GCP, or Azure. Build CI/CD pipelines, IaC modules, and observability stacks for agency clients.',
+    description: 'Design, deploy and manage cloud infrastructure on AWS, GCP or Azure. Build CI/CD pipelines, IaC modules and observability stacks for agency clients.',
   },
   // Nigeria
   {
@@ -464,21 +464,21 @@ export const careers = [
     type: 'Contract',
     location: 'Lagos / Remote',
     country: 'Nigeria',
-    description: 'Build and maintain custom web applications, internal tools, and automation pipelines for agency clients across West Africa.',
+    description: 'Build and maintain custom web applications, internal tools and automation pipelines for agency clients across West Africa.',
   },
   {
     title: 'Cloud / DevOps Engineer',
     type: 'Contract',
     location: 'Lagos / Remote',
     country: 'Nigeria',
-    description: 'Build and maintain cloud infrastructure, CI/CD pipelines, and monitoring systems for agency clients across Africa.',
+    description: 'Build and maintain cloud infrastructure, CI/CD pipelines and monitoring systems for agency clients across Africa.',
   },
   {
     title: 'Project Coordinator',
     type: 'Contract',
     location: 'Lagos / Abuja',
     country: 'Nigeria',
-    description: 'Manage project timelines, client communication, and deliverables for our Nigeria branch operations.',
+    description: 'Manage project timelines, client communication and deliverables for our Nigeria branch.',
   },
   // Jamaica
   {
@@ -486,14 +486,14 @@ export const careers = [
     type: 'Contract',
     location: 'Kingston / Remote',
     country: 'Jamaica',
-    description: 'Develop custom-coded websites and web applications optimized for Caribbean audiences and local infrastructure.',
+    description: 'Develop custom-coded websites and web applications built for Caribbean audiences and local infrastructure.',
   },
   {
     title: 'Client Success Manager',
     type: 'Contract',
     location: 'Kingston / Montego Bay',
     country: 'Jamaica',
-    description: 'Own client relationships for our Jamaica branch: onboarding, ongoing support, and ensuring project success across the Caribbean.',
+    description: 'Own client relationships for our Jamaica branch across the Caribbean: onboarding, ongoing support and keeping projects on track.',
   },
 ];
 

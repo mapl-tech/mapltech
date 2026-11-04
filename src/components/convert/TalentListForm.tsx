@@ -71,7 +71,7 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
     return (
       <div ref={successRef} className={`${forms.status} ${forms.statusSuccess} ${css.done}`} role="status" tabIndex={-1}>
         <strong className={forms.statusTitle}>You&apos;re on the list.</strong>
-        <span>We&apos;ll be in touch when a matching role opens.</span>
+        <span>We’ll be in touch when a matching role opens.</span>
       </div>
     );
   }
@@ -169,7 +169,7 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
 
       {status === 'error' ? (
         <p className={css.failed} role="alert">
-          That didn&apos;t send. Try again
+          That didn’t send. Try again
           {contactEmail ? (
             <>
               , or email <a href={`mailto:${contactEmail}?subject=${encodeURIComponent('Talent list')}`}>{contactEmail}</a>

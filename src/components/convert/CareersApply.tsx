@@ -12,7 +12,10 @@ import Arrow from '@/components/ui/Arrow';
 
 /**
  * Careers apply form: role (pre-selected from ?role=, which the board's
- * "Apply" links set), name, email, an optional link, a short note. Posts to
+ * "Apply" links set), name, email, an optional link, a short note. With no
+ * role chosen (a general application) the head, the form's name and the
+ * note's label, hint and error speak to that case; the note is still sent
+ * as `note`. Posts to
  * /api/contact with the subject "Application: <role>"; the API takes JSON, so
  * there is no upload. The button row holds the one action (the page's rail
  * offers email instead); a failed send offers email with the same subject.
@@ -36,11 +39,29 @@ export interface CareersApplyProps {
 
 const GENERAL = 'general';
 
-const RULES: Record<string, FieldRule> = {
+/** The note's words: for a listed role, and for a general application (no role chosen). */
+const NOTE = {
+  role: {
+    label: 'Why this role fits you',
+    hint: 'A few sentences on your experience and how you found us is plenty.',
+    required: 'Tell us in a sentence or two why the role fits you.',
+  },
+  general: {
+    label: 'About you and the role you want',
+    hint: 'A few sentences on your experience, the role you want and how you found us is plenty.',
+    required: 'Tell us in a sentence or two about you and the role you want.',
+  },
+} as const;
+
+const BASE_RULES: Record<string, FieldRule> = {
   name: { required: 'Enter your name.' },
   email: { required: 'Enter your email address.', email: true },
   link: { url: true },
-  note: { required: 'Tell us in a sentence or two why the role fits you.' },
+};
+
+const RULES: Record<keyof typeof NOTE, Record<string, FieldRule>> = {
+  role: { ...BASE_RULES, note: { required: NOTE.role.required } },
+  general: { ...BASE_RULES, note: { required: NOTE.general.required } },
 };
 
 const ORDER = ['name', 'email', 'link', 'note'] as const;
@@ -61,6 +82,9 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
   const selectedSlug = fromUrl && roles.some((role) => role.slug === fromUrl) ? fromUrl : GENERAL;
   const selected = roles.find((role) => role.slug === selectedSlug);
   const roleLabel = selected ? `${selected.title}, ${selected.country}` : 'General application';
+  const kind = selected ? 'role' : 'general';
+  const note = NOTE[kind];
+  const rules = RULES[kind];
 
   useEffect(() => {
     if (status === 'success') successRef.current?.focus();
@@ -75,7 +99,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
   const onBlur = (event: FocusEvent<HTMLFormElement>) => {
     const target = event.target;
     if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
-    const rule = RULES[target.name];
+    const rule = rules[target.name];
     if (!rule) return;
     const { name, value } = target;
     setErrors((prev) => blurErrors(prev, name, value, rule));
@@ -85,7 +109,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
     event.preventDefault();
     if (status === 'sending') return;
     const data = new FormData(event.currentTarget);
-    const found = checkForm(data, RULES);
+    const found = checkForm(data, rules);
     setErrors(found);
     const problems = ORDER.filter((name) => found[name]);
     if (problems.length) {
@@ -144,13 +168,18 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
       onBlur={onBlur}
       onFocusCapture={warmUp}
       noValidate
-      aria-labelledby="apply-form-title"
+      // "Applying for Cloud / DevOps Engineer, Canada"; with no role chosen, just "General application".
+      aria-labelledby={selected ? 'apply-form-label apply-form-role' : 'apply-form-role'}
       aria-describedby="apply-form-note"
     >
       <div className={css.head}>
-        <p id="apply-form-title" className={css.applying}>
-          <span className={css.applyingLabel}>Applying for</span>{' '}
-          <span className={css.applyingRole}>{roleLabel}</span>
+        <p className={css.applying}>
+          <span id="apply-form-label" className={css.applyingLabel}>
+            {selected ? 'Applying for' : 'No listed role'}
+          </span>{' '}
+          <span id="apply-form-role" className={css.applyingRole}>
+            {roleLabel}
+          </span>
         </p>
         <p id="apply-form-note" className={css.note}>
           Every field is required unless it says optional.
@@ -258,7 +287,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
 
       <div className={forms.field}>
         <label className={forms.label} htmlFor="apply-note">
-          Why this role fits you
+          {note.label}
         </label>
         <textarea
           id="apply-note"
@@ -270,18 +299,19 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
           aria-describedby={describedBy('note', 'apply-note-hint')}
         />
         <p id="apply-note-hint" className={`${forms.hint} ${css.hint}`}>
-          A few sentences on your experience and how you found us is plenty.
+          {note.hint}
         </p>
+        {/* The note's only check is that it is filled in, so its error follows the case even after the role changes. */}
         {errors.note ? (
           <p id="apply-note-error" className={forms.error}>
-            {errors.note}
+            {note.required}
           </p>
         ) : null}
       </div>
 
       {status === 'error' ? (
         <p className={css.failed} role="alert">
-          That didn&apos;t send. Try again, or email{' '}
+          That didn’t send. Try again, or email{' '}
           <a href={`mailto:${contactEmail}?subject=${encodeURIComponent(`Application: ${roleLabel}`)}`}>{contactEmail}</a> with the
           same details.
         </p>
