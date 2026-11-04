@@ -15,11 +15,14 @@ import {
   WHITE_LABEL_FAQ,
   briefHref,
   capabilityViews,
+  CUSTOM_NOTE,
+  CUSTOM_PRICE,
   cleanCopy,
   costTitle,
   faqItems,
   indexMetadata,
   proofCases,
+  rangeLabel,
   rowExample,
   sentenceCase,
   serviceMetadata,
@@ -49,9 +52,11 @@ const words = (text: string) => text.split(/\s+/).filter(Boolean).length;
 const sentences = (text: string) => text.split(/(?<=[.?!])\s+/).filter(Boolean);
 
 describe('cleanCopy', () => {
-  it('turns numeric hyphens into en dashes and spaced hyphens into punctuation', () => {
-    expect(cleanCopy('$3,500-$5,000')).toBe('$3,500–$5,000');
-    expect(cleanCopy('Starter sites typically ship in 3-4 weeks.')).toBe('Starter sites typically ship in 3–4 weeks.');
+  it('reads numeric ranges as "to" and turns spaced hyphens into punctuation', () => {
+    // A range in a sentence says "to", site-wide (ASCII or en dash in the config alike).
+    expect(cleanCopy('$3,500-$5,000')).toBe('$3,500 to $5,000');
+    expect(cleanCopy('Starter sites typically ship in 3-4 weeks.')).toBe('Starter sites typically ship in 3 to 4 weeks.');
+    expect(cleanCopy('30–90 days depending on the package')).toBe('30 to 90 days depending on the package');
     expect(cleanCopy('engineered from scratch - custom WordPress themes')).toBe(
       'engineered from scratch: custom WordPress themes',
     );
@@ -60,8 +65,13 @@ describe('cleanCopy', () => {
     );
     expect(cleanCopy('a 5-year-old Android')).toBe('a 5-year-old Android');
     // The tier name is data: only its range changes.
-    expect(cleanCopy('Foundation Automation ($3,500-$5,000)')).toBe('Foundation Automation ($3,500–$5,000)');
+    expect(cleanCopy('Foundation Automation ($3,500-$5,000)')).toBe('Foundation Automation ($3,500 to $5,000)');
     expect(cleanCopy("what's slowing your clients' team")).toBe('what’s slowing your clients’ team');
+  });
+
+  it('keeps the en dash in compact price labels only', () => {
+    expect(rangeLabel('$3,500-$5,000')).toBe('$3,500–$5,000');
+    expect(rangeLabel('$12,000-$25,000+')).toBe('$12,000–$25,000+');
   });
 });
 
@@ -189,18 +199,24 @@ describe('service pages', () => {
 
   it('prices every tier from site.ts', () => {
     const webView = LAYER_VIEWS[0];
-    expect(tierViews(webView).map((t) => t.price)).toEqual(pricing.webDevelopment.tiers.map((t) => cleanCopy(t.price)));
+    // A package without a public price is "Custom quote", "Priced with you on a call", on every page.
+    expect(tierViews(webView).map((t) => t.price)).toEqual(
+      pricing.webDevelopment.tiers.map((t) => (t.price === 'Custom' ? CUSTOM_PRICE : rangeLabel(t.price))),
+    );
+    expect(CUSTOM_PRICE).toBe('Custom quote');
+    expect(CUSTOM_NOTE).toBe('Priced with you on a call');
     expect(costTitle(webView)).toBe('Four packages, from $5,000.');
     expect(costTitle(LAYER_VIEWS[1])).toBe('Three packages, from $3,500.');
+    // Said in a sentence ("usually live in 3 to 4 weeks"), so the range reads "to".
     expect(tierViews(webView).map((t) => t.timeline?.label ?? null)).toEqual([
-      '3–4 weeks',
-      '5–8 weeks',
-      '8–14 weeks',
-      '8–14 weeks',
+      '3 to 4 weeks',
+      '5 to 8 weeks',
+      '8 to 14 weeks',
+      '8 to 14 weeks',
     ]);
-    // A starting price reads "From $5,000"; only Custom carries a note. Never "Starting price".
+    // A starting price reads "From $5,000"; only the custom quote carries a note. Never "Starting price".
     expect(tierViews(webView).map((t) => t.isFloor)).toEqual([true, true, true, false]);
-    expect(tierViews(webView).map((t) => t.priceNote)).toEqual([null, null, null, 'Priced with you on a call']);
+    expect(tierViews(webView).map((t) => t.priceNote)).toEqual([null, null, null, CUSTOM_NOTE]);
     // An open end ("$20,000+") is a floor too; a range stays a range, even an open one.
     const cloudTiers = tierViews(LAYER_VIEWS[3]);
     expect(cloudTiers.map((t) => [t.price, t.isFloor])).toEqual([
@@ -257,15 +273,17 @@ describe('service pages', () => {
     );
     expect(support.list?.lead).toBe('Three monthly plans.');
     expect(support.list?.points[0]).toBe('Light Monitoring & Tweaks: $750 a month');
-    // Web prices are starting prices; the custom tier is priced per project.
+    // Web prices are starting prices; the custom tier is named as on its card.
     const [webCost] = faqItems(LAYER_VIEWS[0]);
     expect(webCost.list?.lead).toBe('From $5,000, across four packages.');
     expect(webCost.list?.points).toEqual([
       'Starter: from $5,000',
       'Growth / E-Commerce: from $8,500',
       'Advanced / AI-Powered: from $12,000',
-      'Enterprise: priced per project',
+      'Enterprise: custom quote, priced with you on a call',
     ]);
+    // Ranges in the answers (and the JSON-LD built from them) read "to", never an en dash.
+    for (const view of LAYER_VIEWS) for (const faq of faqItems(view)) expect(faq.answer, faq.answer).not.toMatch(/\d–\$?\d/);
     // An open-ended tier reads like the price card: "from $20,000".
     expect(faqItems(LAYER_VIEWS[3])[0].list?.points[2]).toBe('Enterprise Cloud Platform: from $20,000');
     for (const view of LAYER_VIEWS) for (const faq of faqItems(view)) expect(faq.answer).not.toMatch(/\/month/);

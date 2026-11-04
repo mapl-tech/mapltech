@@ -34,10 +34,17 @@ export const PRICING_TITLE = 'Pricing: public prices and a project estimator';
 
 const NUMBER_WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
 
+/**
+ * A package without a public price, named as on the service pages (serviceContent.ts CUSTOM_PRICE and
+ * CUSTOM_NOTE): the price label, and the line that says how it is priced. Plain ASCII, as JSON-LD needs.
+ */
+export const CUSTOM_PRICE = 'Custom quote';
+export const CUSTOM_NOTE = 'Priced with you on a call';
+
 /** "$5,000", "$3,500–$5,000", "$12,000–$25,000+", "Custom quote": a site.ts label for display. */
 export function priceText(label: string): string {
   const parsed = parsePriceLabel(label);
-  if (parsed.isCustom) return 'Custom quote';
+  if (parsed.isCustom) return CUSTOM_PRICE;
   if (parsed.high === null || parsed.high === parsed.low) return `${formatMoney(parsed.low ?? 0)}${parsed.openEnded ? '+' : ''}`;
   return formatRange(parsed.low, parsed.high, { openEnded: parsed.openEnded });
 }
@@ -136,9 +143,15 @@ export const factsOf = (service: EstimateService): ServiceFacts =>
 /* Monthly lines: monthly partnerships (site.ts `bundles`) and hourly    */
 /* ------------------------------------------------------------------ */
 
+/**
+ * A range inside a sentence: "$4,000 to $7,500", "$12,000 to $25,000+" (site-wide, prose says "to";
+ * only compact price labels, such as a package's price or a tile's, keep the en dash of formatRange).
+ */
+export const inWords = (range: string): string => range.replace(/(\$?[\d,]+)–(\$?[\d,]+\+?)/g, '$1 to $2');
+
 const bundleRange = (label: string) => {
   const parsed = parsePriceLabel(label);
-  return formatRange(parsed.low, parsed.high);
+  return inWords(formatRange(parsed.low, parsed.high));
 };
 
 /** The monthly partnerships in short sentences (the price list row and the pricing FAQ). */
@@ -151,7 +164,7 @@ const standard = parsePriceLabel(pricing.hourlyRates.standard);
 const emergency = parsePriceLabel(pricing.hourlyRates.emergency);
 
 export const HOURLY = {
-  answer: `Standard work is ${formatRange(standard.low, standard.high)} an hour. Urgent fixes and AI specialist work are ${formatRange(emergency.low, emergency.high)} an hour.`,
+  answer: `Standard work is ${inWords(formatRange(standard.low, standard.high))} an hour. Urgent fixes and AI specialist work are ${inWords(formatRange(emergency.low, emergency.high))} an hour.`,
   // Names match the OfferCatalog JSON-LD (src/lib/schema.ts offerCatalog) word for word.
   rates: [
     { name: 'Standard hourly rate', price: pricing.hourlyRates.standard, description: 'Development work for any of our four services.' },
@@ -262,7 +275,7 @@ export interface EstimateHeadline {
   high: number | null;
   /** A trailing "+" on a full range ("$12,000–$25,000+"). */
   openEnded: boolean;
-  /** Every package is quoted after the call: the total reads "Custom". */
+  /** No package has a public price: the total reads "Custom quote". */
   allCustom: boolean;
   /** "and a custom quote for Enterprise" beside a priced range; null when every package has a price. */
   customNote: string | null;
@@ -281,9 +294,9 @@ export function estimateHeadline(result: EstimateResult): EstimateHeadline {
   };
 }
 
-/** The headline as text: "$3,500–$5,000", "$12,000+", "$12,000–$25,000+", "Custom". */
+/** The headline as text: "$3,500–$5,000", "$12,000+", "$12,000–$25,000+", "Custom quote". */
 export const headlineRange = (headline: EstimateHeadline): string =>
-  headline.allCustom ? 'Custom' : formatRange(headline.low, headline.high, { openEnded: headline.openEnded });
+  headline.allCustom ? CUSTOM_PRICE : formatRange(headline.low, headline.high, { openEnded: headline.openEnded });
 
 /**
  * The estimate's springing digits (ui/LiveNumber): critically damped and

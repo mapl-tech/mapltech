@@ -281,7 +281,7 @@ export const services: readonly ServiceRecord[] = [
       {
         question: 'How long does a website take?',
         answer:
-          'Starter sites usually take 3–4 weeks. Growth / E-Commerce projects take 5–8 weeks. Advanced and Enterprise builds usually launch within 8–14 weeks. We agree a timeline with you at the start and keep to it.',
+          'Starter sites usually take 3 to 4 weeks. Growth / E-Commerce projects take 5 to 8 weeks. Advanced and Enterprise builds usually launch within 8 to 14 weeks. We agree a timeline with you at the start and keep to it.',
       },
       {
         question: 'Can you build from our designs?',
@@ -291,12 +291,12 @@ export const services: readonly ServiceRecord[] = [
       {
         question: 'What happens after launch?',
         answer:
-          'Every package includes 30–90 days of support after launch, depending on the package. After that, a monthly plan keeps your site secure, fast and up to date.',
+          'Every package includes 30 to 90 days of support after launch, depending on the package. After that, a monthly plan keeps your site secure, fast and up to date.',
       },
       PAYMENT_PLANS_FAQ,
     ],
     typicalTimeline: '3–4 weeks Starter · 5–8 weeks Growth / E-Commerce · 8–14 weeks Advanced and Enterprise',
-    postLaunchSupport: '30–90 days depending on the package',
+    postLaunchSupport: '30 to 90 days depending on the package',
     // Voice pass (Nov 3, 2026): the close speaks to an agency with a client project, and says what we do together.
     ctaBand: {
       heading: 'Building a website for a client?',

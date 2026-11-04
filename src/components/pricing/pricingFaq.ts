@@ -1,7 +1,7 @@
 import type { FaqItem } from '@/lib/schema';
 import { pricing } from '@/config/site';
 import { formatMoney } from '@/lib/estimate';
-import { BUNDLES_ANSWER, factsOf, priceText } from './content';
+import { BUNDLES_ANSWER, factsOf, inWords, priceText } from './content';
 
 /**
  * The pricing FAQ. Rendered by the native <details> accordion and emitted
@@ -45,6 +45,6 @@ export const pricingFaq: FaqItem[] = [
   },
   {
     question: 'What does urgent work cost?',
-    answer: `Urgent fixes and AI specialist work are billed at our emergency rate, ${priceText(pricing.hourlyRates.emergency)} an hour. Standard work is ${priceText(pricing.hourlyRates.standard)} an hour. Choosing Rush in the estimator adds the emergency rate on top of the range.`,
+    answer: `Urgent fixes and AI specialist work are billed at our emergency rate, ${priceText(pricing.hourlyRates.emergency)} an hour. Standard work is ${inWords(priceText(pricing.hourlyRates.standard))} an hour. Choosing Rush in the estimator adds the emergency rate on top of the range.`,
   },
 ];

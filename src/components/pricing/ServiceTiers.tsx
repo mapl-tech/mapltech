@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { SERVICE_META, SIZE_OPTIONS, parsePriceLabel, recurringLinesFor, tiersFor } from '@/lib/estimate';
-import { cleanDash, priceText, type ServiceFacts } from './content';
+import { CUSTOM_NOTE, cleanDash, priceText, type ServiceFacts } from './content';
 import EstimateBriefLink from './EstimateBriefLink';
 import LoadIntoEstimator from './LoadIntoEstimator';
 import PriceGroup, { ActionLabel } from './PriceGroup';
@@ -35,7 +35,8 @@ export default function ServiceTiers({ facts }: { facts: ServiceFacts }) {
         {tiers.map((tier, index) => {
           const parsed = parsePriceLabel(tier.price);
           const size = SIZE_OPTIONS[facts.service].find((option) => option.tierIndex === index);
-          const unit = parsed.isCustom ? 'Quoted after a call' : facts.service === 'web' ? 'From' : 'One-time';
+          // A package without a public price: "Custom quote", "Priced with you on a call", as on its service page.
+          const unit = parsed.isCustom ? CUSTOM_NOTE : facts.service === 'web' ? 'From' : 'One-time';
           return (
             <li key={tier.name} className={styles.tier}>
               <div className={styles.tierHead}>

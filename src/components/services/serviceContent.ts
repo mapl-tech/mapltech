@@ -19,8 +19,10 @@
  * Voice: plain English for a diverse audience (short sentences, no jargon,
  * canonical service names in labels). Punctuation is normalised at render
  * time by `cleanCopy` (a spaced hyphen used as a dash becomes a colon or a
- * comma, numeric ranges get an en dash, apostrophes curl), because the config
- * keeps ASCII ranges the price parser reads. Wording is fixed at the source;
+ * comma, a numeric range in a sentence reads "3 to 4 weeks", apostrophes
+ * curl), because the config keeps ASCII ranges the price parser reads. Only
+ * compact price labels (a package's or a plan's price) keep an en dash, all
+ * of them, through `rangeLabel` and `humanPrice`. Wording is fixed at the source;
  * the spec fails if banned, retired or jargon words come back. FAQ JSON-LD is
  * built from the same cleaned strings the page renders, so markup and
  * structured data cannot disagree.
@@ -50,6 +52,7 @@ import {
 } from '@/lib/estimate';
 import { findStory } from '@/components/case/stories';
 import { APPROACH, LAYERS } from '@/components/flagship/content';
+import { CUSTOM_NOTE, CUSTOM_PRICE } from '@/components/pricing/content';
 import { FAQ_ITEMS, type FaqEntry } from '@/components/home/data';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import type { Step } from './Steps';
@@ -64,19 +67,28 @@ export const SERVICES_REVISED = '2026-11-02';
 /** Words after a spaced hyphen that read better after a comma than a colon. */
 const COMMA_AFTER = /^(so|and|all|baked|for|not)\b/;
 
+/** A numeric range as config writes it: "3-4", "3–4", "$3,500-$5,000", "$12,000-$25,000+". */
+const RANGE = /(\d)\s*[-–]\s*(\$?\d)/g;
+
 /**
- * Config strings → visible copy: "3-4 weeks" → "3–4 weeks", "$3,500-$5,000" →
- * "$3,500–$5,000", "from scratch - custom themes" → "from scratch: custom
- * themes", "automatically - so your team" → "automatically, so your team",
- * "what's" → "what’s".
+ * Config strings → visible copy, for sentences: "3-4 weeks" → "3 to 4 weeks",
+ * "$3,500-$5,000" → "$3,500 to $5,000" (a range in running text says "to",
+ * site-wide), "from scratch - custom themes" → "from scratch: custom themes",
+ * "automatically - so your team" → "automatically, so your team", "what's" →
+ * "what’s".
  */
 export function cleanCopy(text: string): string {
   return text
-    .replace(/(\d)\s*-\s*(\$?\d)/g, '$1–$2')
+    .replace(RANGE, '$1 to $2')
     .replace(/\s+-\s+(\S)/g, (_match, next: string, offset: number, whole: string) =>
       COMMA_AFTER.test(whole.slice(offset).replace(/^\s+-\s+/, '')) ? `, ${next}` : `: ${next}`,
     )
     .replace(/(\w)'/g, '$1’');
+}
+
+/** A compact price label: "$3,500-$5,000" → "$3,500–$5,000" (every price label on the site sets a range this way). */
+export function rangeLabel(label: string): string {
+  return label.replace(RANGE, '$1–$2');
 }
 
 const ACRONYM = /^[A-Z0-9/&+.]{2,}[,.]?$/;
@@ -104,11 +116,16 @@ function statement(heading: string): string {
   return /[.?!]$/.test(text) ? text : `${text}.`;
 }
 
-/** "$750/month" → "$750 a month", "$65-$120/hour" → "$65–$120 an hour". */
+/** A plan's price label: "$750/month" → "$750 a month", "$65-$120/hour" → "$65–$120 an hour". */
 export function humanPrice(label: string): string {
-  return cleanCopy(label)
+  return rangeLabel(label)
     .replace(/\s*\/\s*month/i, ' a month')
     .replace(/\s*\/\s*hour/i, ' an hour');
+}
+
+/** The same price inside a sentence: "$65-$120/hour" → "$65 to $120 an hour". */
+export function pricePhrase(label: string): string {
+  return cleanCopy(humanPrice(label));
 }
 
 function lowOf(label: string): number | null {
@@ -204,7 +221,7 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     meta: {
       title: 'Custom Web Development for Agencies',
       description:
-        'Web Development for agencies from $5,000: custom-coded sites, Starter typically live in 3–4 weeks. Four public packages, real case studies, a fixed quote.',
+        'Web Development for agencies from $5,000: custom-coded sites, Starter typically live in 3 to 4 weeks. Four public packages, real case studies, a fixed quote.',
     },
     og: {
       src: '/images/cases/lro-desktop.jpg',
@@ -407,7 +424,7 @@ export const LOWEST_MONTHLY = Math.min(
   ...LAYER_VIEWS.map((view) => view.lowestMonthly?.amount ?? Number.POSITIVE_INFINITY),
 );
 
-/** Support after launch stated for web builds ("30–90 days"), without its "depending on the package" tail. */
+/** Support after launch stated for web builds ("30 to 90 days"), without its "depending on the package" tail. */
 export function supportWindow(view: LayerView): string | null {
   return view.record.postLaunchSupport ? cleanCopy(view.record.postLaunchSupport.replace(/ depending on the package/, '')) : null;
 }
@@ -419,16 +436,26 @@ export function supportWindow(view: LayerView): string | null {
 /** How many inclusions a tier card shows before the rest fold into "What’s included". */
 export const TIER_HIGHLIGHTS = 3;
 
+/**
+ * A package without a public price (web's Enterprise) is named the same way on every page and in the
+ * JSON-LD: CUSTOM_PRICE ("Custom quote") and CUSTOM_NOTE ("Priced with you on a call"), from the
+ * client-safe pricing content the estimator shares.
+ */
+export { CUSTOM_NOTE, CUSTOM_PRICE };
+
 export interface TierView {
   id: string;
   name: string;
   /** Tier description from site.ts, cleaned: who the tier is for. */
   who: string;
-  /** "$5,000", "$3,500–$5,000", "$12,000–$25,000+", "Custom"; a floor ("$20,000+") shows its amount, after "From". */
+  /**
+   * "$5,000", "$3,500–$5,000", "$12,000–$25,000+", "Custom quote"; a floor ("$20,000+") shows its amount, after
+   * "From". A package without a public price is named "Custom quote", "Priced with you on a call", everywhere.
+   */
   price: string;
-  /** A starting price ("$5,000", "$20,000+"): the card reads "From $5,000". Ranges and Custom read as they are. */
+  /** A starting price ("$5,000", "$20,000+"): the card reads "From $5,000". Ranges and custom quotes read as they are. */
   isFloor: boolean;
-  /** Under the price, for Custom only: how it is priced. */
+  /** Under the price, for a custom quote only: how it is priced. */
   priceNote: string | null;
   isCustom: boolean;
   /** "Everything in Starter" when the tier builds on the one before it. */
@@ -503,13 +530,14 @@ export function tierViews(view: LayerView): TierView[] {
         .replace(/^-|-$/g, '')}`,
       name: tier.name,
       who: cleanCopy(tier.description),
-      price: parsed.isCustom ? 'Custom' : isFloor && parsed.low !== null ? formatMoney(parsed.low) : cleanCopy(tier.price),
+      price: parsed.isCustom ? CUSTOM_PRICE : isFloor && parsed.low !== null ? formatMoney(parsed.low) : rangeLabel(tier.price),
       isFloor,
-      priceNote: parsed.isCustom ? 'Priced with you on a call' : null,
+      priceNote: parsed.isCustom ? CUSTOM_NOTE : null,
       isCustom: parsed.isCustom,
       builds,
       features: tier.features.filter((feature) => feature !== builds).map(cleanCopy),
-      timeline: timeline ? { label: `${timeline.min}–${timeline.max} weeks`, ...timeline } : null,
+      // Said in a sentence ("usually live in 3 to 4 weeks"), so the range reads "to".
+      timeline: timeline ? { label: `${timeline.min} to ${timeline.max} weeks`, ...timeline } : null,
       href: parsed.isCustom ? '/contact-us' : tierEstimateHref(view.service, index),
       brief: briefHref(view.service, index),
     };
@@ -568,12 +596,13 @@ function priceList(view: LayerView, answer: string): FaqView['list'] {
   const tiers = tierViews(view);
   const tierShape = tiers.every((tier, i) => answer.includes(`${tier.name} (${cleanCopy(view.tiers[i].price)})`));
   if (tierShape && tiers.length > 1) {
+    // The points are the answer's sentences (and the JSON-LD's), so a range reads "to" here.
     return {
       lead: `From ${view.fromMoney}, across ${COUNT_WORDS[tiers.length]?.toLowerCase() ?? tiers.length} packages.`,
       points: tiers.map((tier) =>
         tier.isCustom
-          ? `${tier.name}: priced per project`
-          : `${tier.name}: ${tier.isFloor ? `from ${tier.price}` : tier.price}`,
+          ? `${tier.name}: ${CUSTOM_PRICE.toLowerCase()}, ${CUSTOM_NOTE.toLowerCase()}`
+          : `${tier.name}: ${tier.isFloor ? `from ${tier.price}` : cleanCopy(tier.price)}`,
       ),
       close: answer.match(/You get a fixed quote[^.]*\./)?.[0],
     };
@@ -586,7 +615,7 @@ function priceList(view: LayerView, answer: string): FaqView['list'] {
   if (planShape) {
     return {
       lead: `${answer.slice(0, answer.indexOf(':'))}.`,
-      points: plans.map((plan) => `${plan.name}: ${humanPrice(plan.price)}`),
+      points: plans.map((plan) => `${plan.name}: ${pricePhrase(plan.price)}`),
     };
   }
   return undefined;
