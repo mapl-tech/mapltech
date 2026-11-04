@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { findStory } from '@/components/case/stories';
+import { WORK } from '@/components/flagship/content';
 import { FAQ_ITEMS } from '@/components/home/data';
 import { services } from '@/config/services';
 import { pricing } from '@/config/site';
@@ -318,20 +319,29 @@ describe('services index', () => {
       { client: 'LRO Staffing', href: '/our-work/lro-staffing' },
       { client: 'Crowned Spice', href: '/our-work/crowned-spice' },
       { client: 'LRO Interactive Salary Guide', href: '/our-work/lro-salary-guide' },
-      { client: 'MAPL Tours', href: '/our-work/mapl-tours' },
+      { client: 'MAPL Tours, our own product', href: '/our-work/mapl-tours' },
     ]);
     // MAPL Tours, our own product, is one row's example, not two.
     expect(examples.filter((example) => example?.href === '/our-work/mapl-tours')).toHaveLength(1);
-    // Every metric is one stories.ts publishes for that case; a case without numbers (Crowned Spice,
-    // the salary guide) shows one stage of what was built, in the case study's own words.
+    // Every metric is the homepage card's result for that case (same words on both pages) or one
+    // stories.ts publishes; a case without numbers (Crowned Spice, the salary guide) shows one stage
+    // of what was built, in the case study's own words.
     LAYER_VIEWS.forEach((view, i) => {
       const example = examples[i];
       const story = findStory(view.example ?? '');
-      if (example?.metric) expect(story?.results).toContainEqual(example.metric);
+      const home = WORK.find((card) => card.slug === view.example);
+      if (example?.metric) expect([...(home?.metrics ?? []), ...(story?.results ?? [])]).toContainEqual(example.metric);
       if (example?.fact) expect(story?.built?.stages.map((stage) => stage.text)).toContain(example.fact);
       expect(Boolean(example?.metric) || Boolean(example?.fact), view.slug).toBe(true);
     });
     expect(examples.map((example) => example?.metric?.value ?? null)).toEqual(['100', null, null, '~2,000']);
+    // LRO Staffing reads as on the homepage, and the case study publishes both of its scores.
+    expect(examples[0]?.metric?.label).toBe('Google Lighthouse score for accessibility and SEO, mobile and desktop');
+    const lro = findStory('lro-staffing')?.results ?? [];
+    expect(lro.filter((r) => r.value === '100').map((r) => r.label)).toEqual([
+      expect.stringMatching(/accessibility/),
+      expect.stringMatching(/SEO/),
+    ]);
     expect(examples.map((example) => example?.fact ?? null)).toEqual([
       null,
       'Shipping starts automatically when an order is ready.',

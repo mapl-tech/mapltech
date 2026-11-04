@@ -172,7 +172,7 @@
 
 .pointerText {
   margin: 0;
-  max-width: 40em;
+  max-width: $measure-lede; // ~65 characters a line (40em ran 81)
   font-size: $font-size-base;
   line-height: 1.55;
   color: $color-text-body;

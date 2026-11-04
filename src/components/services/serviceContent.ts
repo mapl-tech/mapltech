@@ -51,7 +51,7 @@ import {
   type SizeKey,
 } from '@/lib/estimate';
 import { findStory } from '@/components/case/stories';
-import { APPROACH, LAYERS } from '@/components/flagship/content';
+import { APPROACH, LAYERS, WORK } from '@/components/flagship/content';
 import { CUSTOM_NOTE, CUSTOM_PRICE } from '@/components/pricing/content';
 import { FAQ_ITEMS, type FaqEntry } from '@/components/home/data';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
@@ -686,6 +686,7 @@ function caseKind(tags: readonly string[]): string {
 }
 
 export interface RowExample {
+  /** The client as the row's link names it; our own product says so ("MAPL Tours, our own product"). */
   client: string;
   href: string;
   /** The case's first published result, as evidence beside the link (a cloud row keeps to delivery facts); null when it has none. */
@@ -696,16 +697,27 @@ export interface RowExample {
   stages: readonly string[];
 }
 
-/** The one real project beside a /services row: a listed case study, or null when there is none. */
+/**
+ * The one real project beside a /services row: a listed case study, or null when there is none.
+ * Where the homepage shows the same case, the row quotes the homepage card's result (content.ts
+ * WORK), so the two pages say it in the same words: LRO Staffing's "100" is "Google Lighthouse
+ * score for accessibility and SEO, mobile and desktop" on both, and stories.ts publishes both
+ * scores (accessibility 100, SEO 100). Otherwise, or when no homepage result passes the row's
+ * filter, it is the case study's own first result.
+ */
 export function rowExample(view: LayerView): RowExample | null {
   if (!view.example || !listed.has(view.example)) return null;
   const story = findStory(view.example);
   if (!story) return null;
   const filter = view.proofFilter;
-  const metric = (story.results ?? []).find((result) => !filter || filter.results.test(result.label)) ?? null;
+  const passes = (result: { label: string }) => !filter || filter.results.test(result.label);
+  const homeCard = WORK.find((card) => card.slug === view.example);
+  const metric = homeCard?.metrics.find(passes) ?? (story.results ?? []).find(passes) ?? null;
   const stage = metric ? undefined : story.built?.stages.find((item) => item.name === view.exampleStage);
+  // stories.ts tags MAPL TECH's own product first ("Our own product"); the row says so in its link.
+  const own = story.tags[0] === 'Our own product';
   return {
-    client: story.client,
+    client: own ? `${story.client}, our own product` : story.client,
     href: `/our-work/${view.example}`,
     metric,
     fact: stage?.text ?? null,

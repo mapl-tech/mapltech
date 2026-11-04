@@ -229,7 +229,7 @@ export const services: readonly ServiceRecord[] = [
       },
       {
         title: 'Fast pages',
-        description: 'We keep pages light so they load quickly. Fast sites win more customers and rank higher on Google.',
+        description: 'We keep pages light so they load quickly.',
       },
       {
         title: 'Works on every device',

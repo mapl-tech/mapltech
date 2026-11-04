@@ -464,7 +464,7 @@
 
 .afterIntro {
   margin: 0;
-  max-width: 40em;
+  max-width: $measure-lede; // ~65 characters a line (40em ran 84)
   font-size: $font-size-base;
   line-height: 1.55;
   color: $color-ink-muted;
