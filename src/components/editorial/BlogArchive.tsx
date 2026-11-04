@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useUrlParams } from '@/components/convert/useUrlState';
 import { ESTIMATE_HREF } from '@/components/layout/chrome';
 import { useIsClient } from '@/components/ui/useMediaQuery';
-import { searchable } from '@/components/convert/blog-utils';
+import { archiveText, matchesWords, wordsOf } from './archiveSearch';
 import ArticleRow from './ArticleRow';
 import type { ServiceLink } from './services';
 import styles from './BlogArchive.module.scss';
@@ -36,12 +36,18 @@ import styles from './BlogArchive.module.scss';
  *   <noscript> style shows every row and drops the controls that need script
  *   (search, topics, paging).
  * - A search term matches where a word starts ("ai" finds "AI agents", not
- *   "maintain"; "access" still finds "accessibility" as you type).
+ *   "maintain"; "access" still finds "accessibility" as you type). The
+ *   matcher lives in archiveSearch.ts, which the 404 counts with too.
  * - Topic counts are facets: they follow the current search.
  * - One polite live region reports the result count, inside the visible
  *   result line. Enter (a phone keyboard's Search key) applies the search at
  *   once and moves focus to that line, so the keyboard closes over the
- *   results, not on them. The empty state says what to try next.
+ *   results, not on them. The line shows a focus ring unless the search was
+ *   started by touch, where the closing keyboard is the cue.
+ * - The empty state says what is true and what to try next: a shorter or
+ *   different word when nothing matches anywhere; when only other topics have
+ *   matches, which ones and how many, with a button that switches to them
+ *   (focus moves on to the first match, as "Show more" does).
  * - Any link to #archive-q ("Search all articles" in the page hero) lands in
  *   the search field, and so do both clear controls.
  */
@@ -105,16 +111,9 @@ const monthOf = (iso: string) => `${MONTHS[Number(iso.slice(5, 7)) - 1]} ${iso.s
 /** "Sep 7" from "2026-09-07". */
 const dayOf = (iso: string) => `${MONTHS[Number(iso.slice(5, 7)) - 1].slice(0, 3)} ${Number(iso.slice(8, 10))}`;
 
-/** The term begins a word of the text (both already `searchable`). */
-function startsWord(text: string, term: string): boolean {
-  for (let at = text.indexOf(term); at !== -1; at = text.indexOf(term, at + 1)) {
-    if (at === 0 || !/[a-z0-9]/.test(text[at - 1])) return true;
-  }
-  return false;
-}
-
-/** The query's words, normalised like the index. */
-const wordsOf = (text: string) => searchable(text).split(/\s+/).filter(Boolean);
+/** "A, B and C" (no serial comma). */
+const joinList = (items: readonly string[]) =>
+  items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
 
 export default function BlogArchive({ rows, topics, services = [], featured, pageSize = 24 }: BlogArchiveProps) {
   const [params, setParams] = useUrlParams();
@@ -128,20 +127,23 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
   const [draft, setDraft] = useState<string | null>(null);
   const query = draft ?? urlQuery;
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Whether the last search was sent by touch (a phone's on-screen Search key):
+  // the result line it focuses then shows no ring (see onSubmit).
+  const byTouch = useRef(false);
+  const [touchSubmit, setTouchSubmit] = useState(false);
 
   const labels = useMemo(() => new Map(topics.map((entry) => [entry.slug, entry.label])), [topics]);
 
   // The search text is derived here, not shipped: ~100 short strings normalise in
   // well under a millisecond.
   const index = useMemo(
-    () => new Map(rows.map((row) => [row, searchable(`${row.title} ${row.answer} ${labels.get(row.topic) ?? ''}`)])),
+    () => new Map(rows.map((row) => [row, archiveText(row.title, row.answer, labels.get(row.topic) ?? '')])),
     [rows, labels],
   );
   const terms = useMemo(() => wordsOf(query), [query]);
   /** The rows holding every word, each where a word starts. */
   const find = useCallback(
-    (words: readonly string[]) =>
-      words.length ? rows.filter((row) => words.every((word) => startsWord(index.get(row) ?? '', word))) : rows,
+    (words: readonly string[]) => (words.length ? rows.filter((row) => matchesWords(index.get(row) ?? '', words)) : rows),
     [rows, index],
   );
   const searched = useMemo(() => find(terms), [find, terms]);
@@ -186,6 +188,29 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
   const current = topics.find((entry) => entry.slug === topic);
   const topicLabel = current?.label;
 
+  // A search that finds nothing in this topic but something in others: those
+  // topics, in chip order, with their counts (the empty state names them).
+  const elsewhere =
+    terms.length && topic !== ALL
+      ? topics.flatMap((entry) => {
+          const count = counts.get(entry.slug) ?? 0;
+          return entry.slug !== topic && count > 0 ? [{ slug: entry.slug, label: entry.label, count }] : [];
+        })
+      : [];
+
+  /** What the empty state says is true: where the search finds articles, or what to try. */
+  const emptyTitle = (): string => {
+    if (!terms.length) return 'Try another topic.';
+    if (!elsewhere.length) return terms.length > 1 ? 'Try fewer words, or different ones.' : 'Try a shorter word, or a different one.';
+    const [first, ...others] = elsewhere;
+    const total = elsewhere.reduce((sum, entry) => sum + entry.count, 0);
+    const places = [
+      `${first.count} ${first.count === 1 ? 'article' : 'articles'} in ${first.label}`,
+      ...others.map((entry) => `${entry.count} in ${entry.label}`),
+    ];
+    return `${joinList(places)} ${total === 1 ? 'matches' : 'match'} “${query.trim()}”.`;
+  };
+
   /** The result line: shown as you type, announced once typing pauses. */
   const describe = (text: string): string => {
     const words = wordsOf(text);
@@ -213,6 +238,23 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
     };
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
+  }, []);
+
+  // How the page was last used: a tap or a pen (a phone's keyboard opens for
+  // the field) or not (a mouse, a trackpad); Tab hands it back to the keyboard.
+  useEffect(() => {
+    const onPointer = (event: PointerEvent) => {
+      byTouch.current = event.pointerType === 'touch' || event.pointerType === 'pen';
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Tab') byTouch.current = false;
+    };
+    document.addEventListener('pointerdown', onPointer, true);
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('pointerdown', onPointer, true);
+      document.removeEventListener('keydown', onKey, true);
+    };
   }, []);
 
   const writeQuery = (value: string) => {
@@ -245,6 +287,15 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
     });
   };
 
+  // This button sits in the empty state too, which hides once the matches show:
+  // they render now, then focus moves on to the first one's link (as "Show
+  // more" does), and the result line reports the new count politely.
+  const switchTopic = (slug: string) => {
+    const first = slug === ALL ? searched[0] : searched.find((row) => row.topic === slug);
+    flushSync(() => chooseTopic(slug));
+    if (first) document.getElementById(`post-${first.slug}`)?.querySelector('a')?.focus();
+  };
+
   // The button sits in the empty state, which hides once the list is back, so
   // focus moves to the field first (as "Clear the search" does).
   const clearAll = () => {
@@ -268,10 +319,15 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
   // Enter, or a phone keyboard's Search key: the search applies now (the line
   // is current before focus reaches it), the field lets go, so the keyboard
   // closes, and focus lands on the result line without scrolling the page.
+  // Sent by touch, the closing keyboard is the cue and the line shows no
+  // ring; from a mouse or any hardware keyboard (a tablet's too) it does.
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     clearTimeout(timer.current);
-    flushSync(() => writeQuery(query));
+    flushSync(() => {
+      writeQuery(query);
+      setTouchSubmit(byTouch.current);
+    });
     document.getElementById('archive-q')?.blur();
     document.getElementById('archive-status')?.focus({ preventScroll: true });
   };
@@ -341,7 +397,7 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
 
       {/* Seen as you type; read out (the live part) once typing pauses. Focus lands
           here after a search is submitted, and reads the live part once. */}
-      <p id="archive-status" className={styles.status} tabIndex={-1}>
+      <p id="archive-status" className={styles.status} tabIndex={-1} data-touch={touchSubmit ? '' : undefined}>
         <span aria-hidden="true">{describe(query)}</span>
         <span className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
           {describe(urlQuery)}
@@ -357,9 +413,10 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
           service is delivered under your brand, from&nbsp;{current.service.from}.
         </p>
       ) : services.length ? (
-        // All and Industry: the four services, each one tap away, with its public price.
+        // All and Industry: the four services, each one tap away, with its public price
+        // (the hero's note has already said they are delivered under your brand).
         <p className={styles.service}>
-          Our services, delivered under your brand:{' '}
+          Each service has a public price:{' '}
           {services.map((entry, i) => (
             <Fragment key={entry.href}>
               {i === 0 ? null : i === services.length - 1 ? ' and ' : ', '}
@@ -419,11 +476,24 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
         })}
       </div>
 
-      {/* The result line above already says nothing matched: this says what to do next. */}
+      {/* The result line above already says nothing matched here: this says what is
+          true (other topics' matches, or none anywhere) and what to do next. */}
       <div className={styles.empty} hidden={matches.length > 0}>
-        <p className={styles.emptyTitle}>
-          {terms.length ? 'Try a shorter word, or another topic.' : 'Try another topic.'}
-        </p>
+        <p className={styles.emptyTitle}>{emptyTitle()}</p>
+        <div className={styles.emptyActions}>
+          {elsewhere.length ? (
+            <button
+              type="button"
+              className={styles.emptyButton}
+              onClick={() => switchTopic(elsewhere.length === 1 ? elsewhere[0].slug : ALL)}
+            >
+              {elsewhere.length === 1 ? `Switch to ${elsewhere[0].label}` : 'Switch to all topics'}
+            </button>
+          ) : null}
+          <button type="button" className={styles.emptyButton} onClick={clearAll}>
+            Clear search and topic
+          </button>
+        </div>
         <p className={styles.emptyText}>
           Want a price instead? The estimator shows your price before we ask for anything:{' '}
           <Link href={current?.service?.estimate ?? ESTIMATE.href} data-cta-placement="blog_archive_empty_estimate">
@@ -431,9 +501,6 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
           </Link>
           .
         </p>
-        <button type="button" className={styles.emptyButton} onClick={clearAll}>
-          Clear search and topic
-        </button>
       </div>
 
       <div className={styles.more} hidden={remaining <= 0}>

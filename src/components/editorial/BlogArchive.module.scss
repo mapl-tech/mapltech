@@ -312,7 +312,9 @@ $chips-fade: 48px;
 }
 
 // The result line. A submitted search moves focus here (tabindex -1): a mouse
-// or keyboard user sees the ring; on touch the keyboard closing is the cue.
+// or hardware-keyboard user sees the ring on any device (a tablet with a
+// keyboard too); a search sent by touch (a phone's on-screen Search key) is
+// marked data-touch, and there the keyboard closing is the cue.
 .status {
   min-height: 1.5em;
   margin: 20px 0 0;
@@ -324,12 +326,10 @@ $chips-fade: 48px;
     outline: none;
   }
 
-  @include pointer-fine {
-    &:focus-visible {
-      outline: $focus-ring-width solid $color-red-ink;
-      outline-offset: 4px;
-      border-radius: 2px;
-    }
+  &:focus-visible:not([data-touch]) {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 4px;
+    border-radius: 2px;
   }
 }
 
@@ -449,8 +449,17 @@ $chips-fade: 48px;
   color: $color-ink;
 }
 
+// The switch (when other topics have matches) and the clear, side by side; on
+// a phone a long topic name wraps inside its button instead of overflowing.
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
 .emptyText {
-  margin: 12px 0 0;
+  margin: 20px 0 0;
   max-width: 40em;
   font-size: $font-size-base;
   line-height: 1.6;
@@ -500,7 +509,9 @@ $chips-fade: 48px;
 
 .emptyButton {
   @include ink-button;
-  margin-top: 20px;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
 }
 
 .more:not([hidden]) {
