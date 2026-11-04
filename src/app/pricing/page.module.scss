@@ -36,9 +36,11 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   font-size: 1.0625rem;
 }
 
-// Its own line under the buttons (a basis of 100% with no max-width, so it always wraps).
+// Its own line under the buttons (a basis of 100%, so it always wraps), at the lede measure
+// (~65 characters a line; uncapped it ran 79 in one line).
 .trust {
   flex: 0 0 100%;
+  max-width: $measure-lede;
   margin: 4px 0 0;
   font-size: $font-size-base; // 17px: a sentence, never under the phone floor
   line-height: 1.5;

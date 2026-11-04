@@ -406,7 +406,7 @@ $accent: $color-red-ink;
   gap: 12px;
   min-height: 48px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: $font-size-base; // 17px, as every summary on the page
   font-weight: $font-weight-semibold;
   line-height: 1.3;
   color: $ink;
