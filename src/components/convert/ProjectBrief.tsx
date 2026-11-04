@@ -23,6 +23,7 @@ import {
   estimateLinkFor,
   isBriefKind,
   kindLabel,
+  mailtoLink,
   readPrefill,
   sizeOptions,
   sizeQuestion,
@@ -53,9 +54,10 @@ import Arrow from '@/components/ui/Arrow';
  *   has to be remembered between steps; the segmented progress bar starts on
  *   step one, partly filled, and fills further once the step is answered.
  * - A pointer pick advances by itself after a short beat, long enough to see
- *   the answer take (the hint under the first question says so, WCAG 3.2.2);
- *   keyboard users choose with the arrow keys and continue with Enter or the
- *   button, so arrowing never jumps away. Each new step moves focus to its
+ *   the answer take; keyboard users choose with the arrow keys and continue
+ *   with Enter or the button, so arrowing never jumps away. The hints under
+ *   the first two questions say both, so each is true for a mouse, a finger
+ *   and a keyboard alike (WCAG 3.2.2). Each new step moves focus to its
  *   question, which announces it. The choices of steps 1 and 2 are marked
  *   required for assistive tech (the form validates itself: noValidate).
  * - Links from the estimator (?svc=&size.<svc>=...), the pricing bundles
@@ -403,19 +405,16 @@ export default function ProjectBrief({
           </h2>
           <p className={styles.doneText}>
             It is in our inbox at {siteConfig.email}. We will reply{' '}
-            {sent.reply === 'phone' ? (
-              <>
-                with a call to <strong>{sent.phone}</strong>
-              </>
-            ) : (
-              <>
-                by email to <strong>{sent.email}</strong>
-              </>
-            )}
-            .
+            {sent.reply === 'phone' ? 'with a call to the number below' : 'to the email address below'}.
           </p>
+          {/* What was sent, read back: the service (and size), then the visitor's own
+              address on every path, and the number when they chose a call, so a typo shows. */}
           <dl className={styles.doneList}>
-            {sent.lines.map((line) => (
+            {[
+              ...sent.lines,
+              { label: 'Your email', value: sent.email },
+              ...(sent.reply === 'phone' ? [{ label: 'Your phone', value: sent.phone }] : []),
+            ].map((line) => (
               <div key={line.label}>
                 <dt>{line.label}</dt>
                 <dd>{line.value}</dd>
@@ -453,10 +452,7 @@ export default function ProjectBrief({
   const answered = step === 1 ? kind !== null : step === 2 ? size !== null : step === 3 ? details.trim().length > 0 : false;
 
   /** If sending fails, the same brief opens in the visitor's mail app, already written. */
-  const mailFallback = () => {
-    const { subject, message } = composeBrief(answers, prefill);
-    return `mailto:${siteConfig.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-  };
+  const mailFallback = () => mailtoLink(composeBrief(answers, prefill));
 
   const setQuestionRef = (at: Step) => (el: HTMLElement | null) => {
     questionRefs.current[at] = el;
@@ -540,8 +536,9 @@ export default function ProjectBrief({
         <legend ref={setQuestionRef(1)} tabIndex={-1} className={styles.question}>
           What are we building?
         </legend>
+        {/* True for every input: a click or tap moves on by itself; arrow keys only choose (see pointerPick). */}
         <p id="brief-kind-hint" className={styles.hint}>
-          Pick one to move on. You can change it before you send.
+          Click or tap one to move on, or use the arrow keys, then Continue. You can change it before you send.
         </p>
         <Options
           name="kind"
@@ -566,8 +563,8 @@ export default function ProjectBrief({
         </legend>
         <p id="brief-size-hint" className={styles.hint}>
           {kind === 'partner'
-            ? 'Each partnership shows its public monthly price. Pick one to move on.'
-            : 'Each size shows its public price. Pick one to move on.'}
+            ? 'Each partnership shows its public monthly price. Click or tap one to move on, or use the arrow keys, then Continue.'
+            : 'Each size shows its public price. Click or tap one to move on, or use the arrow keys, then Continue.'}
         </p>
         <Options
           name="size"

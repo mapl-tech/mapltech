@@ -88,11 +88,21 @@ $accent: $color-red-ink;
 }
 
 // ---------------------------------------------------------------- aside
+// One rhythm down the column: every block after the first opens on a hairline
+// with the same space above and below it (28px on phones, 40px from 1440),
+// and the steps end on their last line, so no gap carries hidden padding.
 .aside {
+  --rhythm: clamp(28px, 3vw, 40px);
   grid-area: aside;
   display: grid;
-  gap: clamp(40px, 5vw, 56px);
+  align-content: start;
   min-width: 0;
+
+  > * + * {
+    margin-top: var(--rhythm);
+    padding-top: var(--rhythm);
+    border-top: 1px solid $hair;
+  }
 
   // A column rule beside the brief on wide screens.
   @include lg {
@@ -105,6 +115,11 @@ $accent: $color-red-ink;
   display: grid;
   gap: 20px;
   min-width: 0;
+
+  // The last step's own bottom padding would add to the rhythm's gap below it.
+  li:last-child {
+    padding-bottom: 0;
+  }
 }
 
 // h2s in the section-label voice ("— What happens next").
@@ -117,13 +132,17 @@ $accent: $color-red-ink;
 }
 
 // ---------------------------------------------------------------- proof (one client, in her words)
-// Beside the brief from 1024px; below that the quote line under the brief stands in for it.
+// Beside the brief from 1024px, last in the aside, so it sits level with "Send
+// the brief" at the last step; below that the quote line under the brief
+// stands in for it.
 .proof {
   @include rise-in;
   display: none;
   gap: 20px;
   min-width: 0;
-  margin: 0;
+  // The figure's own margins off; its top margin is the aside's rhythm.
+  margin-inline: 0;
+  margin-bottom: 0;
 
   @include lg {
     display: grid;
@@ -208,14 +227,12 @@ $accent: $color-red-ink;
 
 // ---------------------------------------------------------------- direct line
 // A quiet block on the paper, in the aside's own voice: the other way in, so
-// never louder than the brief's "Send the brief", which it sits level with on
-// desktop once the brief reaches its last step. Plain ink links, 48px tall.
+// never louder than the brief's buttons. Plain ink links, 48px tall. Its rule
+// and spacing come from the aside's rhythm.
 .direct {
   display: grid;
   gap: 16px;
   min-width: 0;
-  padding-top: clamp(28px, 3vw, 36px);
-  border-top: 1px solid $hair;
 }
 
 .directLabel {

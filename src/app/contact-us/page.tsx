@@ -19,8 +19,9 @@ import styles from '@/components/convert/ContactLayout.module.scss';
  * answers are on the first screen), four questions, one at a time
  * (ProjectBrief; fields, validation, submission and analytics unchanged).
  * Beside it (under it on phones), three things only: what happens after you
- * send it, one client in her own words (the approved LRO Staffing quote), and
- * the email and phone number. Below 1024px, where all of that follows the
+ * send it, the email and phone number, and one client in her own words (the
+ * approved LRO Staffing quote), last, so it sits level with "Send the brief"
+ * at the brief's last step. Below 1024px, where all of that follows the
  * whole form, the quote moves up as one line under the brief's button. No
  * close band: the sheet carries `data-page-close`, so the footer drops its
  * own ask.
@@ -123,28 +124,6 @@ export default function ContactPage() {
               <Steps steps={NEXT_STEPS.map(({ name, text }) => ({ title: name, text }))} tone="paper" />
             </section>
 
-            {PROOF ? (
-              <figure className={styles.proof}>
-                <blockquote className={styles.proofQuote}>
-                  <p>{PROOF.quote}</p>
-                </blockquote>
-                <figcaption className={styles.proofBy}>
-                  {PROOF.image ? (
-                    <Image src={PROOF.image} alt="" width={48} height={48} className={styles.avatar} />
-                  ) : null}
-                  <span>
-                    <span className={styles.proofName}>{PROOF.name}</span>
-                    <span className={styles.proofRole}>
-                      {PROOF.role}, {PROOF.company}
-                    </span>
-                  </span>
-                </figcaption>
-                <Link href="/our-work/lro-staffing" className={styles.proofLink} data-cta-placement="contact_proof_case">
-                  Read the LRO Staffing case study
-                </Link>
-              </figure>
-            ) : null}
-
             <section className={styles.direct} aria-labelledby="direct-title">
               <h2 id="direct-title" className={styles.directLabel}>
                 Talk to us
@@ -168,6 +147,30 @@ export default function ContactPage() {
                 Our offices in Toronto, Lagos and Kingston are open 9&nbsp;am to 6&nbsp;pm local time, Monday to Friday.
               </p>
             </section>
+
+            {/* Last in the aside, so from 1024px it sits level with "Send the brief" once
+                the brief reaches its last step: the proof beside the decision it supports. */}
+            {PROOF ? (
+              <figure className={styles.proof}>
+                <blockquote className={styles.proofQuote}>
+                  <p>{PROOF.quote}</p>
+                </blockquote>
+                <figcaption className={styles.proofBy}>
+                  {PROOF.image ? (
+                    <Image src={PROOF.image} alt="" width={48} height={48} className={styles.avatar} />
+                  ) : null}
+                  <span>
+                    <span className={styles.proofName}>{PROOF.name}</span>
+                    <span className={styles.proofRole}>
+                      {PROOF.role}, {PROOF.company}
+                    </span>
+                  </span>
+                </figcaption>
+                <Link href="/our-work/lro-staffing" className={styles.proofLink} data-cta-placement="contact_proof_case">
+                  Read the LRO Staffing case study
+                </Link>
+              </figure>
+            ) : null}
           </div>
 
           {/* Phones only: after the reading, a way back up. The mobile bar repeats it

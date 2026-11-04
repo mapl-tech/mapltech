@@ -915,6 +915,8 @@ $short: '(max-height: 760px)';
     font-size: 1.0625rem;
     line-height: 1.5;
     color: $ink;
+    // The visitor's own address, read back in full: a long one wraps, never overflows at 320px.
+    overflow-wrap: anywhere;
   }
 }
 
