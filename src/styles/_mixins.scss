@@ -1,3 +1,4 @@
+@use 'sass:map';
 @use 'variables' as *;
 
 // ============================================
@@ -357,7 +358,7 @@ $arrow-paths: (
 );
 
 @mixin arrow-glyph($direction: right) {
-  $path: map-get($arrow-paths, $direction);
+  $path: map.get($arrow-paths, $direction);
   $svg: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='#{$path}' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
   content: '';
   display: inline-block;
