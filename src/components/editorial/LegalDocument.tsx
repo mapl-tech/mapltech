@@ -4,6 +4,7 @@ import { siteConfig } from '@/config/site';
 import { PROJECT_HREF } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import ArticleToc from './ArticleToc';
+import MailHint from './MailHint';
 import TocDisclosure from './TocDisclosure';
 import styles from './Legal.module.scss';
 import Arrow from '@/components/ui/Arrow';
@@ -82,8 +83,8 @@ function withEmailLink(text: string, href: string): ReactNode {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** Read with each email button's name: it opens the mail app, not a page (the site's "opens in a new tab" pattern). */
-const MAIL_HINT = <span className="visually-hidden"> (opens your email app)</span>;
+/** The ask on a page without a request of its own (terms): the closing button and the phone bar. */
+const QUESTION_LABEL = 'Email your question';
 
 /**
  * Privacy policy and terms of use (Nov 2026 award pass). Legal pages get
@@ -94,17 +95,20 @@ const MAIL_HINT = <span className="visually-hidden"> (opens your email app)</spa
  * numbered, anchored and listed in a sticky contents rail (phones and
  * tablets: a contents disclosure above the short version, so it is in reach
  * at the top of the document). The page's task, when it has one, is the
- * phone bar's action too (`data-hero-cta` on the hero's email link). Each way
+ * phone bar's action too (`data-hero-cta` on the hero's email link); without
+ * one (terms) the bar offers the hero's question address under the closing
+ * button's words, so it never puts a sales ask on a legal page. Each way
  * to ask has a second route, the contact form, and every email opens with a
  * neutral prompt in its body. The request looks the same wherever it is a
  * button (the hero, the closing panel), and says it opens the email app. The
  * closing panel is the page's close (`data-page-close`: the phone bar stands
  * down beside it and the footer drops its own ask), with the sibling document
  * and the way back into the site; it points to the ways to ask without
- * repeating the address and number the last section has just given.
- * Printed, the document is ink on white with the site chrome, the contents
- * and the buttons left out, and each link's destination printed after it (a
- * page as its address, a section by its name). The legal wording is unchanged.
+ * repeating the address and number the last section has just given. A link
+ * to a section is named for it ("section 8, Your rights"), on screen and on
+ * paper. Printed, the document is ink on white with the site chrome, the
+ * contents and the buttons left out, and each page link's address printed
+ * after it. The legal wording is unchanged.
  */
 export default function LegalDocument({
   title,
@@ -139,7 +143,7 @@ export default function LegalDocument({
               {/* The phone bar repeats this action under its label alone (data-bar-label). */}
               <a href={requestHref} className={styles.requestButton} data-hero-cta="" data-bar-label={action.label}>
                 {action.label}
-                {MAIL_HINT}
+                <MailHint />
               </a>
               <Link href={PROJECT_HREF} className={styles.heroLink} data-cta-placement="legal_hero_form">
                 Or use the contact form
@@ -158,7 +162,15 @@ export default function LegalDocument({
             <div>
               <dt>Questions</dt>
               <dd>
-                <a href={questionHref}>{siteConfig.email}</a>
+                {/* No request of its own (terms): this address is the page's ask, and the
+                    phone bar repeats it under the closing button's words. */}
+                <a
+                  href={questionHref}
+                  data-hero-cta={action ? undefined : ''}
+                  data-bar-label={action ? undefined : QUESTION_LABEL}
+                >
+                  {siteConfig.email}
+                </a>
               </dd>
             </div>
           </dl>
@@ -217,16 +229,15 @@ export default function LegalDocument({
                 {questions}
               </h2>
               {/* The address and number are in the last section, just above: this says which way to ask.
-                  data-section: printed after the link, so "section 8" keeps its name on paper. */}
+                  The section link carries its name ("section 8, Your rights"), so it reads the same on paper. */}
               {action ? (
                 <p className={styles.questionsText}>
-                  To use a right from{' '}
-                  <a href={`#${action.section}`} data-section={titleOf(action.section)}>
-                    section {number(action.section)}
-                  </a>{' '}
-                  ({action.rights}), email us and say which one, or use the{' '}
-                  <Link href={PROJECT_HREF}>contact form</Link>. Our Toronto office is open 9&nbsp;am to 6&nbsp;pm
-                  Eastern time, Monday to Friday.
+                  Email us to use a right from{' '}
+                  <a href={`#${action.section}`}>
+                    section&nbsp;{number(action.section)}, {titleOf(action.section)}
+                  </a>
+                  : {action.rights}. Say which one, or use the <Link href={PROJECT_HREF}>contact form</Link>. Our
+                  Toronto office is open 9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               ) : (
                 <p className={styles.questionsText}>
@@ -237,8 +248,8 @@ export default function LegalDocument({
               {/* data-header-quiet: while this filled ask is on screen the header's steps back to an outline. */}
               <p className={styles.questionsActions} data-header-quiet="">
                 <a href={requestHref ?? questionHref} className={styles.requestButton}>
-                  {action ? action.label : 'Email your question'}
-                  {MAIL_HINT}
+                  {action ? action.label : QUESTION_LABEL}
+                  <MailHint />
                 </a>
                 <Link href={sibling.href} className={styles.textLink}>
                   {sibling.label}

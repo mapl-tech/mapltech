@@ -572,16 +572,13 @@ $ink-body: rgba(11, 11, 12, 0.86);
     text-decoration-color: currentColor;
   }
 
-  // Where each link goes, after its words: a page as its address ("contact
-  // form (mapltech.com/contact-us)"), a section by its name ("section 8 (Your
-  // rights)"). Email addresses and phone numbers already say where they go.
+  // Where each page link goes, after its words: "contact form
+  // (mapltech.com/contact-us)". A section link already names its section
+  // ("section 8, Your rights"), and email addresses and phone numbers already
+  // say where they go.
   .prose a[href^='/']::after,
   .questionsText a[href^='/']::after {
     content: ' (mapltech.com' attr(href) ')';
-  }
-
-  .questionsText a[data-section]::after {
-    content: ' (' attr(data-section) ')';
   }
 
   .questions {
