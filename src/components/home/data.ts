@@ -36,7 +36,7 @@ const highOf = (label: string): string => {
 
 // The live site's title and purpose, kept: systems, automation and infrastructure for agencies.
 export const HOME_PAGE_NAME = `${siteConfig.name} | Systems, Automation & Infrastructure for Agencies`;
-export const HOME_PAGE_DESCRIPTION = `The engineering backbone behind digital agencies: websites, AI automation, internal tools and cloud, built by senior engineers in Toronto, Lagos and Kingston.`;
+export const HOME_PAGE_DESCRIPTION = `The engineering backbone behind digital agencies: websites, AI automation, internal tools and cloud, built by our engineers in Toronto, Lagos and Kingston.`;
 
 /* ------------------------------------------------------------------ */
 /* FAQ (also the FAQPage JSON-LD source)                               */
@@ -72,8 +72,8 @@ function pricingFaq(): FaqEntry {
       `${SERVICE_META.tools.label} from ${fromOf(tools[0].price)}`,
       `${SERVICE_META.cloud.label} from ${fromOf(cloud[0].price)}`,
       `Monthly partnerships: ${bundleLow} to ${bundleHigh} a month`,
-      // "$65-$120/hour" in site.ts reads as "$65–$120 an hour" here, like every other range.
-      `Hourly work: ${pricing.hourlyRates.standard.replace(/^(\$[\d,]+)-(\$[\d,]+)\/hour$/, '$1–$2 an hour')}`,
+      // "$65-$120/hour" in site.ts reads "$65 to $120 an hour": a range in a sentence says "to", as above.
+      `Hourly work: ${pricing.hourlyRates.standard.replace(/^(\$[\d,]+)-(\$[\d,]+)\/hour$/, '$1 to $2 an hour')}`,
     ],
     close: 'You get a fixed quote after a 20-minute call.',
   };
