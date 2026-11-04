@@ -162,7 +162,7 @@
   }
 }
 
-// Keyboard focus gets the same answer as a hover: crimson underlined title, filled arrow.
+// Keyboard focus gets the same answer as a hover: crimson underlined title, filled (and nudged) arrow.
 .row:has(.link:focus-visible) {
   .title {
     color: $color-red-ink;
@@ -198,9 +198,17 @@
   }
 }
 
-// ...and the arrow nudges on toward the article, as every arrow on the site does.
+// ...and the arrow nudges on toward the article, as every arrow on the site
+// does: on a real mouse's hover, and on keyboard focus from any device. Still
+// under reduced motion (the fill alone answers).
 @include pointer-fine-motion {
   .row:hover .go svg {
+    transform: translateX(3px);
+  }
+}
+
+@include motion-ok {
+  .row:has(.link:focus-visible) .go svg {
     transform: translateX(3px);
   }
 }
