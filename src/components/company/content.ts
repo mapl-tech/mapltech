@@ -161,7 +161,8 @@ export const ABOUT = {
   offices: {
     label: 'Where we work',
     title: 'Three cities. One team.',
-    lede: `Toronto is our headquarters. We also have teams in Lagos, Nigeria and Kingston, Jamaica. ${OFFICE_HOURS}`,
+    // Each team with its country in its own clause, so the two city-country pairs never run together.
+    lede: `Toronto is our headquarters. Our Nigeria team is in Lagos and our Jamaica team is in Kingston. ${OFFICE_HOURS}`,
   },
   founders: {
     label: 'Who leads it',
@@ -197,10 +198,9 @@ export const TEAM = {
   facts: [{ term: 'Headquarters', figure: 'Toronto', detail: 'Canada' }, EXPERIENCE_FIGURE, PRICE_FIGURE],
   founders: {
     label: 'Leadership',
+    // No lede: the two bios right under the title say who leads what.
     title: 'The founders.',
-    // Distilled from the two bios below (team.ts), nothing added; /about-us has its own lede.
-    lede: 'Leshan leads how we build. Mercy leads how we grow. Together they guide the work in all three countries.',
-    // The page body's route to the work: the people, then what they have built.
+    // The page body's route to the work, after the two people: the people, then what they have built.
     work: { label: 'See the work', href: '/our-work' },
   },
   directory: {
@@ -255,14 +255,16 @@ export const CAREERS = {
   hero: {
     label: 'Careers',
     title: [{ text: 'Build the systems ' }, { text: 'agencies sell.', accent: true }] as readonly TitleRun[],
-    // Numbers in words in prose (the meta description says "seven" too); the facts band keeps numerals.
-    // How to apply (one short form, no upload) is said once, in the apply section's lede over the form.
-    lede: `${countWord(careers.length)} ${typeWord}roles in ${listWords(roleCountries)}. ${countWord(remoteRoles)} of them can be done remotely.`,
+    // What is open, counted in words as prose counts (the meta description says "seven" too). Where
+    // the work happens is the facts band's (the remote count in numerals, the on-site cities), so
+    // each count is said once. How to apply (one short form, no upload) is said once, in the apply
+    // section's lede over the form.
+    lede: `${countWord(careers.length)} ${typeWord}roles in ${listWords(roleCountries)}.`,
   },
+  // Where the roles are done; the lede has already said how many there are and that they are contracts.
   facts: [
-    { term: 'Open roles', detail: `${careers.length}${roleTypes.length === 1 ? `, all ${roleTypes[0].toLowerCase()}` : ''}` },
+    { term: 'Remote', detail: `${remoteRoles} ${remoteRoles === 1 ? 'role' : 'roles'}` },
     { term: 'On site', detail: listWords(onSiteCities) },
-    { term: 'Remote', detail: `${remoteRoles} of ${careers.length} roles` },
   ],
   map: {
     notes: ROLE_NOTES,
