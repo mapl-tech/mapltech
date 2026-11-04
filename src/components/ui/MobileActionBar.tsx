@@ -7,6 +7,7 @@ import { useEstimateBriefHref } from './useEstimateBriefHref';
 import { useMediaQuery, usePrefersReducedMotion } from './useMediaQuery';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { MOBILE_BAR_CONTEXT } from '@/components/flagship/content';
+import MailHint from '@/components/editorial/MailHint';
 import styles from './MobileActionBar.module.scss';
 
 /**
@@ -200,10 +201,13 @@ export default function MobileActionBar({
     >
       <div className={styles.row} data-solo={line ? undefined : ''}>
         {line ? <p className={styles.line}>{line}</p> : null}
-        {/* Same-page fragments are plain anchors (no router round trip). */}
-        {href.startsWith('#') ? (
+        {/* Same-page fragments and email links (a legal page's request) are
+            plain anchors: no router round trip, and an email link says it
+            opens the mail app, as the page's own email buttons do. */}
+        {href.startsWith('#') || href.startsWith('mailto:') ? (
           <a href={href} {...linkProps}>
             {label}
+            {href.startsWith('mailto:') ? <MailHint /> : null}
           </a>
         ) : (
           <Link href={href} {...linkProps}>

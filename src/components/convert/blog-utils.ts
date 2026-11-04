@@ -154,11 +154,3 @@ export function preparePost(
   const [before, after] = splitBeforeHeading(anchored, 2);
   return { before, after, headings };
 }
-
-/** Lower-cased, accent-free text used by the archive search. */
-export function searchable(text: string): string {
-  return text
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase();
-}
