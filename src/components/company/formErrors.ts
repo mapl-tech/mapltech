@@ -1,7 +1,9 @@
 /**
  * Field checks for the careers forms. Messages say how to fix the problem,
  * never just that there is one. Required fields are checked on submit (and on
- * blur once flagged); format problems are checked when the field is left.
+ * blur once flagged, or once a send has been tried); format problems are
+ * checked when the field is left. While the visitor types, an error only ever
+ * clears (`typingErrors`), so the layout settles before the next press.
  */
 
 export interface FieldRule {
@@ -54,17 +56,36 @@ export function summaryWords(count: number): string {
 
 /**
  * One field's error after it is left: a format problem as soon as there is
- * a value, a missing required value only if the field was already flagged.
- * Returns `errors` itself when nothing changed, so a form can tell "a field
- * changed since the send was refused" by identity.
+ * a value, a missing required value only if the field was already flagged
+ * or a send has been tried (`attempted`). Returns `errors` itself when
+ * nothing changed, so a form can tell "a field changed since the send was
+ * refused" by identity.
  */
-export function blurErrors(errors: Record<string, string>, name: string, value: string, rule: FieldRule): Record<string, string> {
+export function blurErrors(
+  errors: Record<string, string>,
+  name: string,
+  value: string,
+  rule: FieldRule,
+  attempted = false,
+): Record<string, string> {
   const message = checkField(value, rule);
-  const next = message && (value.trim() || errors[name]) ? message : '';
+  const next = message && (value.trim() || errors[name] || attempted) ? message : '';
   if ((errors[name] ?? '') === next) return errors;
   const updated = { ...errors };
   if (next) updated[name] = next;
   else delete updated[name];
+  return updated;
+}
+
+/**
+ * One field's error while the visitor types in it: it clears as soon as the
+ * value is fixed, and is never added or reworded (a new problem waits for the
+ * blur or the next send). Returns `errors` itself when nothing changed.
+ */
+export function typingErrors(errors: Record<string, string>, name: string, value: string, rule: FieldRule): Record<string, string> {
+  if (!errors[name] || checkField(value, rule)) return errors;
+  const updated = { ...errors };
+  delete updated[name];
   return updated;
 }
 

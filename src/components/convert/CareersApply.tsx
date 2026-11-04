@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState, type FocusEvent, type FormEvent } from 'react';
-import { blurErrors, checkForm, normaliseUrl, summaryWords, type FieldRule } from '@/components/company/formErrors';
+import { useEffect, useRef, useState, type ChangeEvent, type FocusEvent, type FormEvent } from 'react';
+import { blurErrors, checkForm, normaliseUrl, summaryWords, typingErrors, type FieldRule } from '@/components/company/formErrors';
+import { useAfterPress } from '@/components/company/useAfterPress';
 import css from '@/components/company/CareersForm.module.scss';
 import { useUrlParams } from './useUrlState';
 import { field, useContactSubmit } from './useContactSubmit';
@@ -29,6 +30,13 @@ import Arrow from '@/components/ui/Arrow';
  * summary counts the fields still flagged, so it stays right as they are
  * fixed: it is announced once per refused send (role="alert"), then changes
  * quietly, because each field says for itself when it is fixed.
+ *
+ * One press sends after a refused send (the referral form's rule): each error
+ * clears while the visitor types, as soon as its value is fixed, and the blur
+ * check of the field left waits until the pointer lifts (useAfterPress). The
+ * press that leaves the last field is the one that sends; an error line or
+ * the summary removed mid-press would move "Send application" out from under
+ * the pointer or finger and swallow it.
  */
 
 export interface CareersApplyProps {
@@ -73,10 +81,13 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
   // The last refused send: how many so far, and the errors it found (the
   // same object until a field changes, so the summary knows when to go quiet).
   const [refused, setRefused] = useState<{ count: number; errors: Record<string, string> } | null>(null);
+  // Once a send has been tried, a field left empty is flagged on blur too.
+  const [attempted, setAttempted] = useState(false);
   // The role the sent application was for (null: a general application).
   const [submittedRole, setSubmittedRole] = useState<string | null>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const afterPress = useAfterPress();
 
   const fromUrl = params.get('role');
   const selectedSlug = fromUrl && roles.some((role) => role.slug === fromUrl) ? fromUrl : GENERAL;
@@ -94,15 +105,27 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
     if (status === 'error') formRef.current?.querySelector<HTMLButtonElement>('button[type="submit"]')?.focus();
   }, [status]);
 
+  // While typing, errors only ever clear: each one as soon as its value is
+  // fixed. New ones wait for the blur or the next send.
+  const onChange = (event: ChangeEvent<HTMLFormElement>) => {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
+    const rule = rules[target.name];
+    if (!rule) return;
+    const { name, value } = target;
+    setErrors((prev) => typingErrors(prev, name, value, rule));
+  };
+
   // Format problems are flagged when the field is left; a missing required
-  // value only once the field has already been flagged (or on submit).
+  // value once the field has been flagged or a send tried (or on submit).
+  // Never mid-press: the check waits until the pointer lifts.
   const onBlur = (event: FocusEvent<HTMLFormElement>) => {
     const target = event.target;
     if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
     const rule = rules[target.name];
     if (!rule) return;
     const { name, value } = target;
-    setErrors((prev) => blurErrors(prev, name, value, rule));
+    afterPress(() => setErrors((prev) => blurErrors(prev, name, value, rule, attempted)));
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -111,6 +134,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
     const data = new FormData(event.currentTarget);
     const found = checkForm(data, rules);
     setErrors(found);
+    setAttempted(true);
     const problems = ORDER.filter((name) => found[name]);
     if (problems.length) {
       setRefused((prev) => ({ count: (prev?.count ?? 0) + 1, errors: found }));
@@ -165,6 +189,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
       ref={formRef}
       className={`${forms.form} ${css.form}`}
       onSubmit={onSubmit}
+      onChange={onChange}
       onBlur={onBlur}
       onFocusCapture={warmUp}
       noValidate
