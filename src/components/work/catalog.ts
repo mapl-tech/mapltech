@@ -22,18 +22,10 @@
  * A field without a source is absent; the row is one line shorter, never padded.
  */
 import { findStory, type CaseStory } from '@/components/case/stories';
+import { PROOF } from '@/components/flagship/content';
 import type { EstimateService } from '@/lib/estimate';
 import { approvedTestimonialFor, workEntries, workFilters, type WorkEntry } from './work-data';
 import type { PreviewItem, WorkFilter } from './work-types';
-
-/** Metadata and JSON-LD share these strings, so the two can never drift. */
-export const WORK_PAGE = {
-  path: '/our-work',
-  title: 'Client work and case studies',
-  name: 'Client work and case studies',
-  description:
-    'Client work by MAPL TECH, white-label engineers for agencies: websites, internal tools and AI automation, each labelled with what we built and what changed.',
-} as const;
 
 export interface CatalogItem {
   slug: string;
@@ -155,3 +147,44 @@ const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'sev
 export function countWord(n: number): string {
   return NUMBER_WORDS[n] ?? String(n);
 }
+
+/** "Three" for a count word at the start of a sentence. */
+export const capitalize = (word: string): string => word.charAt(0).toUpperCase() + word.slice(1);
+
+/** "A, B and C" (no serial comma). */
+function listWords(words: readonly string[]): string {
+  return words.length > 1 ? `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}` : (words[0] ?? '');
+}
+
+/**
+ * The rows whose case study publishes a result. Not every case does (most of
+ * them record what we built, not a number), so the copy counts them rather
+ * than promising "what changed" on every page.
+ */
+export function resultItems(items: readonly CatalogItem[] = catalogItems()): CatalogItem[] {
+  return items.filter((item) => item.result);
+}
+
+/**
+ * The close's proof: the figures the homepage publishes (flagship/content.ts
+ * PROOF.stats), as one line, read from that data, never retyped. The page
+ * already names every client in its rows, so the site's client line would
+ * only repeat them.
+ */
+export function figuresLine(): string {
+  return PROOF.stats
+    .map((stat) => {
+      const offices = /^offices:\s*(.+)$/i.exec(stat.label);
+      return offices ? `Offices in ${listWords(offices[1].split(/,\s*/))}.` : `${stat.value}${stat.suffix} ${stat.label}.`;
+    })
+    .join(' ');
+}
+
+/** Metadata and JSON-LD share these strings, so the two can never drift. */
+export const WORK_PAGE = {
+  path: '/our-work',
+  title: 'Client work and case studies',
+  name: 'Client work and case studies',
+  // What every row has (what we built), and how many publish a result: both counted from the case data.
+  description: `${capitalize(countWord(catalogItems().length))} projects by MAPL TECH, white-label engineers for agencies: websites, tools and AI automation. Each shows what we built, and ${countWord(resultItems().length)} publish their results.`,
+} as const;

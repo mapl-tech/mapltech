@@ -35,14 +35,17 @@ import styles from './WorkIndex.module.scss';
  *   result is announced politely.
  * - The preview card, on wide screens with a fine pointer and motion allowed,
  *   mounted on the first visit to the list (so phones, reduced motion and
- *   crawlers pay nothing). Pointer: the card eases after the cursor in a rAF
- *   loop that writes `transform` directly (no React state per frame) and flips
- *   to the cursor's left near the edge. Keyboard: focusing a row places it
- *   beside that row, never over the text being read. Escape dismisses it
- *   (WCAG 1.4.13); it is aria-hidden and never takes pointer events.
+ *   crawlers pay nothing). It never covers the row it previews: it sits just
+ *   above that row (over the one already read), or below it when there is no
+ *   room above, so the row's name and facts stay readable. Pointer: the card
+ *   eases sideways after the cursor in a rAF loop that writes `transform`
+ *   directly (no React state per frame) and flips to the cursor's left near
+ *   the edge. Keyboard: focusing a row right-aligns it with that row. Escape
+ *   dismisses it (WCAG 1.4.13); it is aria-hidden and never takes pointer events.
  */
 
 const GAP = 28; // pointer to card, as on the homepage
+const ROW_GAP = 12; // row edge to card
 const EDGE = 16;
 const TOP_CLEAR = 88; // the fixed header
 const EASE = 0.16; // share of the remaining distance covered per frame (homepage value)
@@ -122,11 +125,26 @@ function sized(s: Motion): Motion {
   return s;
 }
 
-/** The slug of the index row under `target`, if that row belongs to `root`. */
-function rowSlugIn(root: HTMLElement | null, target: EventTarget | null): string | null {
+/** The index row under `target`, if that row belongs to `root`. */
+function rowIn(root: HTMLElement | null, target: EventTarget | null): HTMLElement | null {
   if (!(target instanceof Element)) return null;
   const row = target.closest<HTMLElement>(ROW);
-  return row && root?.contains(row) ? (row.dataset.slug ?? null) : null;
+  return row && root?.contains(row) ? row : null;
+}
+
+/**
+ * The card's top, clear of `row`: just above it if the card fits under the
+ * header there, else just below it if it fits above the screen's foot, else
+ * (a tall row mid-screen on a short window) on whichever side has more room,
+ * running under the header or off the screen's foot rather than over the row.
+ */
+function clearOfRow(row: HTMLElement, h: number): number {
+  const r = row.getBoundingClientRect();
+  const above = r.top - ROW_GAP - h;
+  const below = r.bottom + ROW_GAP;
+  if (above >= TOP_CLEAR) return above;
+  if (below + h <= window.innerHeight - EDGE) return below;
+  return window.innerHeight - r.bottom > r.top - TOP_CLEAR ? below : above;
 }
 
 /** One animation frame: ease the card a share of the way to its target; stop when it arrives. */
@@ -256,11 +274,15 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     [items],
   );
 
-  /** Move the target; snap (rather than fly) when the card is appearing. */
+  /**
+   * Move the target; snap (rather than fly) when the card is appearing. Only x
+   * is kept on screen: y comes from clearOfRow, which keeps it on screen
+   * whenever that leaves the row clear, and otherwise lets it run off the edge.
+   */
   const aimAt = useCallback((x: number, y: number) => {
     const s = sized(m.current);
     s.tx = clamp(x, EDGE, window.innerWidth - s.w - EDGE);
-    s.ty = clamp(y, TOP_CLEAR, window.innerHeight - s.h - EDGE);
+    s.ty = y;
     if (!s.placed) {
       s.x = s.tx;
       s.y = s.ty;
@@ -272,12 +294,13 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     }
   }, []);
 
+  /** Sideways after the cursor (its left near the edge); up and down, clear of the hovered row. */
   const aimAtPointer = useCallback(
-    (clientX: number, clientY: number) => {
+    (clientX: number, row: HTMLElement) => {
       const s = sized(m.current);
       const right = clientX + GAP;
       const x = right + s.w > window.innerWidth - EDGE ? clientX - GAP - s.w : right;
-      aimAt(x, clientY - s.h / 2);
+      aimAt(x, clearOfRow(row, s.h));
     },
     [aimAt],
   );
@@ -305,9 +328,10 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     s.px = e.clientX;
     s.py = e.clientY;
     if (!armed) setArmed(true);
-    const slug = rowSlugIn(rootRef.current, e.target);
+    const row = rowIn(rootRef.current, e.target);
+    const slug = row?.dataset.slug ?? null;
     request(slug);
-    if (slug) aimAtPointer(e.clientX, e.clientY);
+    if (row) aimAtPointer(e.clientX, row);
     show(slug);
   };
 
@@ -316,15 +340,11 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
     show(null);
   };
 
-  /** Keyboard: right-aligned with the focused row, below it if the card fits there, else above. */
+  /** Keyboard: right-aligned with the focused row, clear of it as the pointer's card is. */
   const placeBeside = useCallback(
     (row: HTMLElement) => {
       const s = sized(m.current);
-      const r = row.getBoundingClientRect();
-      const fitsBelow = r.bottom + 16 + s.h <= window.innerHeight - EDGE;
-      const fitsAbove = r.top - 16 - s.h >= TOP_CLEAR;
-      const y = fitsBelow || !fitsAbove ? r.bottom + 16 : r.top - s.h - 16;
-      aimAt(r.right - s.w, y);
+      aimAt(row.getBoundingClientRect().right - s.w, clearOfRow(row, s.h));
     },
     [aimAt],
   );
@@ -372,10 +392,10 @@ export default function WorkIndex({ items, filters, total, heading, children }: 
           placeBeside(s.focusRow);
           return;
         }
-        const hit = document.elementFromPoint(s.px, s.py);
-        const slug = rowSlugIn(rootRef.current, hit);
+        const row = rowIn(rootRef.current, document.elementFromPoint(s.px, s.py));
+        const slug = row?.dataset.slug ?? null;
         request(slug);
-        if (slug) aimAtPointer(s.px, s.py);
+        if (row) aimAtPointer(s.px, row);
         show(slug);
       });
     };

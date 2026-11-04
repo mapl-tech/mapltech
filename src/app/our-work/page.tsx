@@ -7,7 +7,17 @@ import CloseBand from '@/components/flagship/CloseBand';
 import { HERO_REASSURE, WORK_SECTION } from '@/components/flagship/content';
 import { PrimaryCta, TextCta } from '@/components/work/Cta';
 import WorkIndex from '@/components/work/WorkIndex';
-import { WORK_PAGE, catalogFilters, catalogItems, catalogVoice, countWord, type CatalogItem } from '@/components/work/catalog';
+import {
+  WORK_PAGE,
+  capitalize,
+  catalogFilters,
+  catalogItems,
+  catalogVoice,
+  countWord,
+  figuresLine,
+  resultItems,
+  type CatalogItem,
+} from '@/components/work/catalog';
 import { findProject } from '@/components/work/work-data';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { creativeWork, imageObject, itemList, pageGraph } from '@/lib/schema';
@@ -16,12 +26,13 @@ import Arrow from '@/components/ui/Arrow';
 
 /*
  * /our-work (Nov 2026 simplify pass): four parts, in reading order. The page
- * hero says the honest line (most of our work ships under partners' names),
- * with the risk answer under its ask, in the compact size so the first
- * project reaches the first screen; the index lists every project in the
+ * hero says the honest line (most of our work ships under partners' names,
+ * and only some cases publish a result), with the risk answer under its ask
+ * and, from 1024px, the published results beside it, each a link to its case,
+ * so the first screen carries proof; the index lists every project in the
  * owner's order, each with its real capture and a link to its case study,
- * filterable by service line; one client quote, said once and in full (the
- * work is the hero's proof); the ask.
+ * filterable by service line; one client quote, said once and in full; the
+ * ask, with the published figures beside it.
  *
  * Every row's capture carries the case hero's view-transition name, so it
  * morphs into the case study's browser frame on navigation (one element per
@@ -35,6 +46,7 @@ export default function OurWorkPage() {
   const items = catalogItems();
   const filters = catalogFilters();
   const voice = catalogVoice();
+  const withResults = resultItems(items);
 
   const graph = pageGraph({
     path: WORK_PAGE.path,
@@ -76,9 +88,10 @@ export default function OurWorkPage() {
         label="Our work"
         title="Websites, tools and automation we built."
         lede={
+          // Every case says what we built; only some publish a result, so they are counted, not promised.
           <p>
             Most of our work is published under our partners’ names. These {countWord(items.length)} projects carry ours.
-            Open any one to see what we built and what changed.
+            Open any one to see what we built. {capitalize(countWord(withResults.length))} include published results.
           </p>
         }
         actions={
@@ -92,6 +105,8 @@ export default function OurWorkPage() {
           </>
         }
         note={HERO_REASSURE}
+        asideAlign="body"
+        aside={withResults.length ? <HeroResults items={withResults} /> : undefined}
       />
 
       {/* ------------------------------------------------------------ the index */}
@@ -145,17 +160,18 @@ export default function OurWorkPage() {
       ) : null}
 
       {/* The homepage's ask after its work, with the hero's risk answer under it.
-          The lede carries the two white-label promises the note does not
-          (the homepage's "Why agencies work with us", from the FAQ), so the
-          band never says the fixed quote or "never approach" twice. The band's
-          own quote line stays off: the client voice sits right above it. */}
+          The title already says "under your brand", so the lede carries two
+          published promises neither it nor the note makes (you own the code;
+          the weekly check-in, the homepage's "How it works"). The proof beside
+          the ask is the published figures: the client voice sits right above,
+          and the rows already name every client. */}
       <CloseBand
         id="work-close-title"
         placement="work_close"
         title={WORK_SECTION.ask}
-        lede="Your brand goes on the work. You and your client own the code."
+        lede="You and your client own the code. We check in with your team every week."
         note={HERO_REASSURE}
-        proof={!voice}
+        proofLine={figuresLine()}
       />
     </>
   );
@@ -248,5 +264,42 @@ function Row({ item }: { item: CatalogItem }) {
         <Arrow />
       </span>
     </li>
+  );
+}
+
+/**
+ * Beside the hero's ask from 1024px: the result each case study publishes
+ * first (the one its row quotes below), each row a link to that case, so the
+ * first screen holds sourced proof, not an empty half. Text only: below 1024px
+ * the rows follow the hero directly, so it is left out and the phone's first
+ * screen stays text-led.
+ */
+function HeroResults({ items }: { items: readonly CatalogItem[] }) {
+  return (
+    <section className={styles.heroResults} aria-labelledby="work-results-title">
+      <h2 id="work-results-title" className={styles.heroResultsLabel}>
+        Published results
+      </h2>
+      <ul className={styles.heroResultRows} role="list">
+        {items.map((item) =>
+          item.result ? (
+            <li key={item.slug}>
+              {/* Read as "LRO Staffing: 100, Google Lighthouse accessibility score…"; set with the figure first. */}
+              <Link href={item.path} className={styles.heroResult} data-cta-placement={`work_hero_result_${item.slug}`}>
+                <span className={styles.heroResultClient}>
+                  {item.client}
+                  <span className="visually-hidden">:</span>
+                </span>
+                <span className={styles.heroResultValue}>
+                  {item.result.value}
+                  <span className="visually-hidden">,</span>
+                </span>
+                <span className={styles.heroResultMeaning}>{item.result.label}</span>
+              </Link>
+            </li>
+          ) : null,
+        )}
+      </ul>
+    </section>
   );
 }
