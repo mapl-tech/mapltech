@@ -55,7 +55,7 @@
 .lede {
   @include lede;
   margin: 0;
-  max-width: 44em;
+  max-width: $measure-lede; // the site's lede measure, ~65 characters a line (44em ran ~87 at 1440)
   color: $color-ink-muted;
 
   @include lg {

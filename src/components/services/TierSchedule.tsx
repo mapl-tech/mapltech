@@ -10,6 +10,7 @@ import {
   cleanCopy,
   costTitle,
   humanPrice,
+  pricePhrase,
   supportWindow,
   tierViews,
   type LayerView,
@@ -55,7 +56,8 @@ export default function TierSchedule({ view }: { view: LayerView }) {
   const tiers = tierViews(view);
   const support = supportWindow(view);
   const monthly = view.lowestMonthly ? `${formatMoney(view.lowestMonthly.amount)} a month` : null;
-  const hourly = humanPrice(pricing.hourlyRates.standard);
+  // In a sentence, so the range reads "to"; the plan list below keeps the price label's en dash.
+  const hourly = pricePhrase(pricing.hourlyRates.standard);
   const afterIntro = [
     support ? `Every package includes ${support} of support after launch.` : 'Once it is live, we can keep looking after it.',
     monthly ? (support ? `After that, plans cost from ${monthly}.` : `Plans cost from ${monthly}.`) : null,
@@ -75,7 +77,9 @@ export default function TierSchedule({ view }: { view: LayerView }) {
           <p className={styles.lede}>{keepTogether(`Every price is public. Pick the package closest to your project. ${QUOTE_LINE}`)}</p>
         </header>
 
-        <ol className={styles.grid} data-count={tiers.length}>
+        {/* Every package carries its own two actions ("Choose…", "Price this package"), so the phone
+            bar's plain "Start a project" steps aside while the list is on screen (MobileActionBar). */}
+        <ol className={styles.grid} data-count={tiers.length} data-bar-stand-down="">
           {tiers.map((tier) => (
             <TierCard key={tier.id} tier={tier} slug={view.slug} />
           ))}
