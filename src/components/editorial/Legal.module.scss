@@ -572,12 +572,13 @@ $ink-body: rgba(11, 11, 12, 0.86);
     text-decoration-color: currentColor;
   }
 
-  // Where each page link goes, after its words: "contact form
-  // (mapltech.com/contact-us)". A section link already names its section
-  // ("section 8, Your rights"), and email addresses and phone numbers already
-  // say where they go.
+  // Where each page link goes, after its words ("(mapltech.com/terms)"). A
+  // section link already names its section ("section 8, Your rights"); email
+  // addresses and phone numbers already say where they go; and the closing
+  // card's "call us" needs no address on paper: the number is printed just
+  // above it, in the last section.
   .prose a[href^='/']::after,
-  .questionsText a[href^='/']::after {
+  .questionsText a[href^='/']:not([href*='#'])::after {
     content: ' (mapltech.com' attr(href) ')';
   }
 

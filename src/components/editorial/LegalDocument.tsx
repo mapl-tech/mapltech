@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
-import { PROJECT_HREF } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import ArticleToc from './ArticleToc';
 import MailHint from './MailHint';
@@ -87,6 +86,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
 const QUESTION_LABEL = 'Email your question';
 
 /**
+ * The second way to ask: the contact page's "Talk to us" section (email,
+ * phone and hours), never the four-step project brief above it, so a legal
+ * page makes no sales ask.
+ */
+const TALK_HREF = '/contact-us#direct-title';
+
+/**
  * Privacy policy and terms of use (Nov 2026 award pass). Legal pages get
  * landed on directly, so they open like a landing page: the page hero with the
  * last-updated date and a way to ask, then the document itself on paper. It
@@ -98,7 +104,8 @@ const QUESTION_LABEL = 'Email your question';
  * phone bar's action too (`data-hero-cta` on the hero's email link); without
  * one (terms) the bar offers the hero's question address under the closing
  * button's words, so it never puts a sales ask on a legal page. Each way
- * to ask has a second route, the contact form, and every email opens with a
+ * to ask has a second route, a call (the contact page's "Talk to us", never
+ * the project brief: no sales ask on a legal page), and every email opens with a
  * neutral prompt in its body. The request looks the same wherever it is a
  * button (the hero, the closing panel), and says it opens the email app. The
  * closing panel is the page's close (`data-page-close`: the phone bar stands
@@ -145,8 +152,8 @@ export default function LegalDocument({
                 {action.label}
                 <MailHint />
               </a>
-              <Link href={PROJECT_HREF} className={styles.heroLink} data-cta-placement="legal_hero_form">
-                Or use the contact form
+              <Link href={TALK_HREF} className={styles.heroLink} data-cta-placement="legal_hero_call">
+                Or call us
               </Link>
             </>
           ) : undefined
@@ -236,13 +243,13 @@ export default function LegalDocument({
                   <a href={`#${action.section}`}>
                     section&nbsp;{number(action.section)}, {titleOf(action.section)}
                   </a>
-                  : {action.rights}. Say which one, or use the <Link href={PROJECT_HREF}>contact form</Link>. Our
-                  Toronto office is open 9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
+                  : {action.rights}. Say which one, or <Link href={TALK_HREF}>call us</Link>. Our Toronto office
+                  is open 9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               ) : (
                 <p className={styles.questionsText}>
-                  Email us, or use the <Link href={PROJECT_HREF}>contact form</Link>. Our Toronto office is open
-                  9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
+                  Email us, or <Link href={TALK_HREF}>call us</Link>. Our Toronto office is open 9&nbsp;am to
+                  6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               )}
               {/* data-header-quiet: while this filled ask is on screen the header's steps back to an outline. */}
