@@ -191,15 +191,31 @@
 // Three identical lists side by side, each sliding left by its own width, so
 // the seam never shows. Phones and tablets run it edge to edge of the screen;
 // from lg it stays in its column. The ends fade so marks glide in and out.
+// An eased fade over each end ($edge of the row): the linear 8-12% ramp it replaced still read as
+// a hard cut where a mark crossed the edge.
+@function loop-fade($edge) {
+  @return linear-gradient(
+    90deg,
+    transparent,
+    rgba(#000, 0.3) $edge * 0.35,
+    rgba(#000, 0.75) $edge * 0.7,
+    #000 $edge,
+    #000 100% - $edge,
+    rgba(#000, 0.75) 100% - $edge * 0.7,
+    rgba(#000, 0.3) 100% - $edge * 0.35,
+    transparent
+  );
+}
+
 .loop {
   display: flex;
   overflow: hidden;
   margin-inline: calc(-1 * #{$editorial-gutter});
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: loop-fade(20%);
 
   @include lg {
     margin-inline: 0;
-    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: loop-fade(14%);
   }
 }
 
