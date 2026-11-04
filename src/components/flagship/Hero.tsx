@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Backbone from '@/components/backbone/Backbone';
 import { keepTogether } from '@/components/services/keepTogether';
-import { HERO, HERO_PROOF, HERO_REASSURE, PRIMARY_CTA, SECONDARY_CTA } from './content';
+import { HERO, HERO_PROOF, PRICE_REASSURE, PRIMARY_CTA, SECONDARY_CTA } from './content';
 import styles from './Hero.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -57,7 +57,7 @@ export default function Hero() {
               {SECONDARY_CTA.label}
             </Link>
           </div>
-          <p className={styles.reassure}>{keepTogether(HERO_REASSURE)}</p>
+          <p className={styles.reassure}>{keepTogether(PRICE_REASSURE)}</p>
           {HERO_PROOF ? (
             <figure className={styles.proof}>
               {HERO_PROOF.image ? (

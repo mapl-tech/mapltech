@@ -174,7 +174,7 @@ export const WORK: readonly WorkCard[] = (
       kind: 'Website · Ottawa and Toronto',
       outcome: 'One website for two audiences: people looking for work and employers looking to hire.',
       metrics: [
-        { value: '100', label: 'Google Lighthouse score for accessibility and SEO, phone and desktop' },
+        { value: '100', label: 'Google Lighthouse score for accessibility and SEO, mobile and desktop' },
         { value: '8', label: 'industry pages, one click from the menu' },
       ],
       image: { src: '/images/case-lro-website.jpg', alt: 'LRO Staffing homepage with its job search panel.' },
@@ -223,9 +223,16 @@ export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') 
  * said beside it (the service pages' hero facts, the article close's lede).
  */
 export const NDA_LINE = 'We sign an NDA before you share anything.';
-// The published price floor leads (LOWEST_PRICE, from site.ts): public prices are what set us
-// apart. "An NDA" is held together (U+00A0), so a wrapped line never ends on "An".
-export const HERO_REASSURE = `Projects from ${money(LOWEST_PRICE)}, with a fixed quote after one 20\u2011minute call. An\u00a0NDA before you share anything, and we never approach your clients.`;
+// "An NDA" is held together (U+00A0), so a wrapped line never ends on "An".
+export const HERO_REASSURE = `A fixed quote after one 20\u2011minute call. An\u00a0NDA before you share anything, and we never approach your clients.`;
+/**
+ * The trust line led by the published price floor (LOWEST_PRICE, from
+ * site.ts): public prices are what set us apart, so the first screens of the
+ * homepage and /services carry it. Everywhere else the page already shows its
+ * prices (about, team, regional, blog), or a service's own "from" price is
+ * beside the ask (cases, articles), so the note goes without the floor.
+ */
+export const PRICE_REASSURE = `Projects from ${money(LOWEST_PRICE)}, with a fixed quote after one 20\u2011minute call. An\u00a0NDA before you share anything, and we never approach your clients.`;
 /** The trust line without the quote, where the fixed quote is already said beside it (service heroes, article closes). */
 export const WHITE_LABEL_NOTE = 'We sign an NDA before you share anything, and we never approach your clients.';
 export const HERO_PROOF = SPOTLIGHT

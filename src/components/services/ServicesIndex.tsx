@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Faq } from '@/components/flagship/Acts';
 import CloseBand from '@/components/flagship/CloseBand';
-import { CLIENTS_LINE, HERO_REASSURE } from '@/components/flagship/content';
+import { CLIENTS_LINE, HERO_REASSURE, PRICE_REASSURE } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import HeroActions from './HeroActions';
@@ -81,7 +81,7 @@ export default function ServicesIndex() {
           </p>
         }
         actions={
-          <HeroActions page="services" secondary={{ label: PRICING_LABEL, href: PRICING_HREF }} note={HERO_REASSURE} />
+          <HeroActions page="services" secondary={{ label: PRICING_LABEL, href: PRICING_HREF }} note={PRICE_REASSURE} />
         }
         proof
         asideAlign="body"
