@@ -641,8 +641,11 @@ $phone-peek: 46px;
     column-gap: 48px;
   }
 
+  // One group spans the story column alone: held to the build steps' measure
+  // (38em of body text, plus the bullet's 28px), not the column's ~110 characters.
   &[data-count='1'] {
     grid-template-columns: minmax(0, 1fr);
+    max-width: 42rem;
   }
 }
 
