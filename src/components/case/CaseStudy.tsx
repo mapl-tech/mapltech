@@ -101,8 +101,9 @@ export default function CaseStudy({
               <p className={styles.headline}>{story.headline}</p>
               {story.results?.length ? (
                 // Phones only: the published results, in short, under the
-                // headline. The paper "At a glance" band below carries them in
-                // full from 768px and is hidden on phones, so they appear once.
+                // headline, with the band's "Price a project like this". The
+                // paper "At a glance" band below carries them in full from
+                // 768px and is hidden on phones, so they appear once.
                 <section className={styles.glance} aria-labelledby="case-glance">
                   <h2 id="case-glance" className={styles.glanceLabel}>
                     At a glance
@@ -115,6 +116,9 @@ export default function CaseStudy({
                       </div>
                     ))}
                   </dl>
+                  <Link href={estimateHref} className={styles.glanceAction} data-cta-placement={`case_${entry.slug}_glance`}>
+                    Price a project like this <Arrow />
+                  </Link>
                 </section>
               ) : null}
               <dl className={styles.facts}>

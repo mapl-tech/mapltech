@@ -238,6 +238,13 @@ $phone-peek: 46px;
   color: $color-fg-muted;
 }
 
+// The band's action under the phone's results: a low-commitment next step
+// beside the proof (the band, and its action, are hidden on phones).
+.glanceAction {
+  @include text-action($color-fg);
+  margin-top: 12px;
+}
+
 .facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
