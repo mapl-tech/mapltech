@@ -61,7 +61,8 @@ export default function NotFound() {
           <div className={styles.copy}>
             <p className={styles.label}>Error 404</p>
             <h1 id="nf-title" className={styles.title}>
-              We can&rsquo;t find that page.
+              We can&rsquo;t find <br className={styles.titleBreak} />
+              that page.
             </h1>
             <p className={styles.lede}>
               The link may be out of date, or the page has moved. The main pages are listed below.

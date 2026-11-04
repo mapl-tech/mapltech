@@ -19,6 +19,9 @@ import { matchesWords, wordsOf } from './archiveSearch';
  *   to the longer word. Else the search itself.
  * - Under any other real section (/pricing, /team, /careers, ... and the
  *   names people guess for them, such as /contact or /jobs): that section.
+ *   A section name typed with one slip ("/pricng", "/servces", "/contcat")
+ *   counts as that section: 5+ letter names only, and only when no other
+ *   section is as close.
  * - A top-level slug: the service it names ("/web-development"), else an
  *   article search when it reads like an article's slug (3+ topic words) and
  *   finds something, else the nearest service or case study by any shared word.
@@ -44,6 +47,8 @@ export interface HintPages {
 export interface Hint {
   lead: string;
   label: string;
+  /** What the destination holds, said after the label ("2 articles"). */
+  detail?: string;
   href: string;
   /** A page guessed from the path itself: shown as the page's filled button. */
   specific?: boolean;
@@ -143,6 +148,20 @@ export function nearest(missing: string, known: readonly HintPage[], least = 1):
   return best;
 }
 
+/** Edits between two words, a swap of neighbours counting as one ("contcat" to "contact": 1). Stops counting at 2. */
+function editDistance(a: string, b: string): number {
+  if (Math.abs(a.length - b.length) > 1) return 2;
+  const d: number[][] = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+    }
+  }
+  return d[a.length][b.length];
+}
+
 /** A known page whose whole slug appears in the path, word for word ("lro-staffing" in "/case-study/lro-staffing"). */
 export function namedIn(path: string, known: readonly HintPage[]): HintPage | null {
   const words = `-${tokens(path).join('-')}-`;
@@ -190,10 +209,26 @@ const ALIASES: Readonly<Record<string, string>> = {
   contact: 'contact-us',
   jobs: 'careers',
   career: 'careers',
+  teams: 'team', // said outright, so it never reads as a slip for "terms"
   'privacy-policy': 'privacy',
   'terms-of-service': 'terms',
   'terms-of-use': 'terms',
 };
+
+/**
+ * A section (or another name for it) typed with one slip: a letter missing,
+ * extra, wrong or swapped with its neighbour ("/pricng", "/servces",
+ * "/contcat"). Conservative: names of 5+ letters only (short ones have too
+ * many neighbours), and only when every name that close means one section.
+ */
+function nearSection(head: string): string | null {
+  if (head.length < 5) return null;
+  const found = new Set<string>();
+  for (const name of [...Object.keys(SECTIONS), ...Object.keys(ALIASES)]) {
+    if (name.length >= 5 && editDistance(head, name) === 1) found.add(Object.hasOwn(ALIASES, name) ? ALIASES[name] : name);
+  }
+  return found.size === 1 ? [...found][0] : null;
+}
 
 const serviceHint = (page: HintPage): Hint => ({
   lead: SECTIONS.services.lead,
@@ -212,14 +247,15 @@ const caseHint = (page: HintPage): Hint => ({
 /** A blog search for the most specific of the words, or null when none finds anything. */
 function articleHint(words: readonly string[], count: CountWord): Hint | null {
   const word = bestWord(words, count);
-  return word
-    ? {
-        lead: SECTIONS.blog.lead,
-        label: `Search the blog for “${word}”`,
-        href: `/blog?q=${encodeURIComponent(word)}#archive`,
-        specific: true,
-      }
-    : null;
+  if (!word) return null;
+  const found = count(word);
+  return {
+    lead: SECTIONS.blog.lead,
+    label: `Search the blog for “${word}”`,
+    detail: `${found} ${found === 1 ? 'article' : 'articles'}`,
+    href: `/blog?q=${encodeURIComponent(word)}#archive`,
+    specific: true,
+  };
 }
 
 export interface HintOptions {
@@ -243,7 +279,11 @@ export function hintFor(
   if (segments.length && LOCALE.test(segments[0])) segments.shift();
   const [first = '', ...rest] = segments;
   const head = first.replace(/\.(html?|php|aspx?)$/, '');
-  const section = Object.hasOwn(ALIASES, head) ? ALIASES[head] : head;
+  const section = Object.hasOwn(ALIASES, head)
+    ? ALIASES[head]
+    : Object.hasOwn(SECTIONS, head)
+      ? head
+      : (nearSection(head) ?? head);
   const tail = rest.join('-');
   const slug = [head, ...rest].join('-');
 

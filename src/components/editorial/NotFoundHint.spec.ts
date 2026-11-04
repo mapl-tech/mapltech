@@ -89,6 +89,7 @@ describe('a blog search is the filled button only when it finds something', () =
     expect(hintFor('/blog/wcag-guide', PAGES, { count: fixed({ wcag: 1 }) })).toEqual({
       lead: 'Looking for an article?',
       label: 'Search the blog for “wcag”',
+      detail: '1 article',
       href: '/blog?q=wcag#archive',
       specific: true,
     });
@@ -114,7 +115,10 @@ describe('a blog search is the filled button only when it finds something', () =
 describe('the most specific word', () => {
   it('prefers the fewest non-zero results over the longest word', () => {
     const count = fixed({ agents: 7, voice: 2, thing: 0 });
-    expect(hintFor('/agents-voice-thing', PAGES, { count })).toMatchObject({ label: 'Search the blog for “voice”' });
+    expect(hintFor('/agents-voice-thing', PAGES, { count })).toMatchObject({
+      label: 'Search the blog for “voice”',
+      detail: '2 articles',
+    });
     expect(bestWord(['agents', 'voice', 'thing'], count)).toBe('voice');
   });
 
@@ -127,6 +131,38 @@ describe('the most specific word', () => {
     expect(searchWords('the-iam-misconfiguration-problem-2026')).toEqual(['misconfiguration', 'problem']);
     expect(searchWords('wcag-wcag-audit')).toEqual(['wcag', 'audit']);
     expect(searchWords('case-study-search-page')).toEqual([]);
+  });
+});
+
+describe('a section typed with one slip', () => {
+  it.each([
+    ['/pricng', '/pricing'],
+    ['/servces', '/services'],
+    ['/contcat', '/contact-us'],
+    ['/carers', '/careers'],
+    ['/our-wrok', '/our-work'],
+    ['/abuot', '/about-us'],
+  ])('%s -> %s', (path, href) => {
+    expect(hintFor(path, PAGES, { count: NONE })).toMatchObject({ href });
+  });
+
+  it('then reads the rest of the path as usual', () => {
+    expect(hintFor('/servces/web-design', PAGES)).toMatchObject({ href: '/services/web-development' });
+  });
+
+  it.each([
+    ['/prcng', 'two slips'],
+    ['/tems', 'under 5 letters'],
+    ['/tean', 'under 5 letters'],
+    ['/tearms', 'one slip from both terms and teams'],
+    ['/carrot', 'not close'],
+    ['/xyzzy', 'not close'],
+  ])('%s is not guessed (%s)', (path) => {
+    expect(hintFor(path, PAGES, { count: NONE })).toBeNull();
+  });
+
+  it('a name of its own is never read as a slip for another', () => {
+    expect(hintFor('/teams', PAGES)).toMatchObject({ href: '/team' }); // not /terms
   });
 });
 

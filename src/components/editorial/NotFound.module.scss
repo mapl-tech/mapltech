@@ -176,6 +176,19 @@
   text-wrap: balance;
 }
 
+// Under 408.5px Overpass sets the title on two lines ("We can’t find / that
+// page.": 367.7px of text at 36px, in a column 90% of the screen wide). The
+// narrower fallback font (350px) fits it on one line until Overpass arrives,
+// which pushed everything below down 36px on a 390px phone, so at those
+// widths the break is written in.
+.titleBreak {
+  display: none;
+
+  @media (max-width: 408.5px) {
+    display: inline;
+  }
+}
+
 .lede {
   @include lede;
   margin: 20px 0 0;
@@ -235,16 +248,24 @@
 }
 
 // Path-aware recovery line under the lede (NotFoundHint). The server HTML
-// holds the broken-link report; once the browser knows the path, a guess
-// replaces it inside the reserved box, so the actions below never move.
-// Two lines of text, or a button that wraps to two lines (59px: a long
-// service or case name on a phone or in the half-width column).
+// holds the broken-link report, unseen; once the browser knows the path, a
+// guess or the report itself fills the reserved box, so the actions below
+// never move. Two lines of text, or a button that wraps to two lines (59px: a
+// long service or case name on a phone or in the half-width column; a
+// search's count drops when it would need a third).
 .hint {
   min-height: max(calc(2em * 1.55), 60px);
   margin: 16px 0 0;
   font-size: $font-size-base;
   line-height: 1.55;
   color: $color-text-body;
+}
+
+// Until the guess is known the box keeps its size with the report in it,
+// unseen and unread, so the report never shows only to be swapped out (a
+// <noscript> style shows it when there is no JavaScript to guess with).
+.hintWaiting {
+  visibility: hidden;
 }
 
 // The specific hint: the filled button. A long name wraps inside it rather
