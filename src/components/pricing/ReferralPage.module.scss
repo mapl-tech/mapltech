@@ -14,8 +14,21 @@ $pad-y: clamp(48px, 7vw, 104px);
 // ---------------------------------------------------------------- hero
 // Each sentence of the H1 on its own line; the condition in crimson (large
 // text: red-display, 6.4:1).
+//
+// From 1024px the title shares the hero with the form, in the 7fr column: at
+// PageHeader's "l" size it ran five lines (433px at 1440) and pushed the
+// client quote under the fold. Sized to that column instead (~0.1 of its
+// width, 50px at 1024, 72px from 1440), the two sentences set in three lines
+// ("Introduce an agency." / "Earn a bonus when" / "they become a client.")
+// and the quote ends inside a 900px screen. Each line is a block, so its own
+// font size sets its line boxes; the tracking is restated in its own ems.
 .titleLine {
   display: block;
+
+  @include lg {
+    font-size: clamp(3rem, 5.2vw - 0.1875rem, 4.5rem);
+    letter-spacing: -0.04em;
+  }
 }
 
 .titleAccent {

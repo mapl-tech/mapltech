@@ -308,6 +308,14 @@ export function composeBrief(answers: BriefAnswers, prefill: BriefPrefill | null
   return { subject, message: body.join('\n') };
 }
 
+/**
+ * A composed message as a mailto: link to the site's inbox, subject and body
+ * already written: the way out when sending fails (the brief and the referral form).
+ */
+export function mailtoLink({ subject, message }: ComposedBrief): string {
+  return `mailto:${siteConfig.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+}
+
 /** The estimator, opened on what the brief describes (services keep their size). */
 export function estimateLinkFor(answers: Pick<BriefAnswers, 'kind' | 'size'>): string {
   const { kind, size } = answers;

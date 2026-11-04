@@ -8,6 +8,7 @@
  * referral bonus). No bonus amount, percentage or payment date is published,
  * so none is stated anywhere. Prices are read from site.ts.
  */
+import { siteConfig } from '@/config/site';
 import type { FaqItem } from '@/lib/schema';
 import { factsOf } from './content';
 
@@ -51,11 +52,12 @@ export const REFERRAL_FORM = {
  */
 export const REFERRAL_TERMS: FaqItem[] = [
   {
-    // The answer says what the bonus is for, not when it is paid: no payment
-    // date or amount is published (the owner sets those terms), so the
-    // question does not ask for one.
-    question: 'What do I get for a referral?',
-    answer: 'When the agency you referred becomes a client, we thank you with a referral bonus for making the introduction.',
+    // Asked the way referrers ask it, and answered with what is published: no
+    // amount or payment date is (the owner sets those terms), so the answer
+    // says so, restates only the live page's promise, and points to the
+    // published address for the rest. No terms are added.
+    question: 'How much is the referral bonus?',
+    answer: `We don’t publish the amount or when it is paid. The bonus is our thank-you once the agency you introduced becomes a client. To ask about it before you refer, email ${siteConfig.email}.`,
   },
   {
     question: 'Who can I refer?',

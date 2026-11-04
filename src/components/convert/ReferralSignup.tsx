@@ -1,8 +1,18 @@
 'use client';
 
-import { useEffect, useId, useRef, useState, type FocusEvent, type FormEvent, type ReactNode } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FocusEvent,
+  type FormEvent,
+  type ReactNode,
+} from 'react';
 import Link from 'next/link';
 import { ESTIMATE_SERVICES, SERVICE_META } from '@/lib/estimate';
+import { mailtoLink, type ComposedBrief } from './brief';
 import { GENERIC_ERROR, field, isEmail, useContactSubmit } from './useContactSubmit';
 import styles from '@/components/pricing/ReferralForm.module.scss';
 import RecaptchaNotice from './RecaptchaNotice';
@@ -12,21 +22,30 @@ import RecaptchaNotice from './RecaptchaNotice';
  * show, you and the person you are introducing (name and email each); the
  * four optional ones (their agency's name, what they need, notes, your
  * company) folded behind "Add details (optional)", a native disclosure, so
- * the short form looks short. Required fields are validated on submit, then
- * again on blur once a first attempt has been made; their email must not be
- * your own. Each error sits under its field in the brief's pattern (a "!"
- * disc, then the sentence), is linked with aria-describedby, and focus moves
- * to the first one; the button is aria-disabled while sending, so it keeps
- * focus. Beside the button, the brief's own
- * privacy line, with the link to the policy. On success the form is replaced
- * by a status panel that takes focus. Posts to /api/contact with the subject
- * "Referral: <name>".
+ * the short form looks short. Required fields are validated on submit; their
+ * email must not be your own. Each error sits under its field in the brief's
+ * pattern (a "!" disc, then the sentence), is linked with aria-describedby,
+ * and focus moves to the first one; the button is aria-disabled while
+ * sending, so it keeps focus. Beside the button, the brief's own privacy
+ * line, with the link to the policy. On success the form is replaced by a
+ * status panel that takes focus. Posts to /api/contact with the subject
+ * "Referral: <name>"; if that fails, the same referral opens in the
+ * visitor's mail app, already written.
+ *
+ * After a first attempt, errors follow the brief's rules: each one clears as
+ * soon as its value is fixed (while typing), and a field is checked again on
+ * blur, but never in the middle of a press. The press that moves focus out of
+ * the last field is the one that sends; an error line added or removed under
+ * that field mid-press would move "Send referral" out from under the pointer
+ * or finger and swallow the press.
  */
 
 type FieldKey = 'name' | 'email' | 'refName' | 'refEmail';
 type Errors = Partial<Record<FieldKey, string>>;
 
 const ORDER: FieldKey[] = ['name', 'email', 'refName', 'refEmail'];
+
+const isFieldKey = (name: string): name is FieldKey => (ORDER as string[]).includes(name);
 
 function validate(data: FormData): Errors {
   const errors: Errors = {};
@@ -42,6 +61,31 @@ function validate(data: FormData): Errors {
   else if (isEmail(email) && refEmail.toLowerCase() === email.toLowerCase())
     errors.refEmail = 'That is your own email. Enter theirs, so we can reach them.';
   return errors;
+}
+
+/** The referral as it is sent: the subject and message /api/contact gets, and the mail app's fallback. */
+function composeReferral(data: FormData): ComposedBrief {
+  const refName = field(data, 'refName');
+  const refCompany = field(data, 'refCompany');
+  const yourCompany = field(data, 'yourCompany');
+  const notes = field(data, 'refNotes');
+  const needLabel = ESTIMATE_SERVICES.find((service) => service === field(data, 'refNeed'));
+
+  const message = [
+    'Referral',
+    `Referral's name: ${refName}`,
+    `Referral's email: ${field(data, 'refEmail')}`,
+    refCompany ? `Referral's company: ${refCompany}` : null,
+    `What they need: ${needLabel ? SERVICE_META[needLabel].label : 'Not sure yet'}`,
+    '',
+    `Referred by: ${field(data, 'name')}${yourCompany ? ` (${yourCompany})` : ''}`,
+    '',
+    notes ? `Notes:\n${notes}` : 'No additional notes.',
+  ]
+    .filter((line): line is string => line !== null)
+    .join('\n');
+
+  return { subject: `Referral: ${refName}${refCompany ? ` (${refCompany})` : ''}`, message };
 }
 
 interface FieldProps {
@@ -81,6 +125,8 @@ export default function ReferralSignup() {
   const [attempted, setAttempted] = useState(false);
   const [sentTo, setSentTo] = useState('');
   const [botSent, setBotSent] = useState(false);
+  // What a failed send carried, kept current while the visitor edits: the mail-app fallback.
+  const [unsent, setUnsent] = useState<ComposedBrief | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
 
@@ -92,10 +138,75 @@ export default function ReferralSignup() {
     if (sent) statusRef.current?.focus();
   }, [sent]);
 
+  // As in the brief: a blur check waits while a pointer is pressed, then runs
+  // once it lifts (after the press's click has landed).
+  const pointerDown = useRef(false);
+  const pendingBlur = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    const down = () => {
+      pointerDown.current = true;
+    };
+    const up = () => {
+      window.setTimeout(() => {
+        pointerDown.current = false;
+        const run = pendingBlur.current;
+        pendingBlur.current = null;
+        run?.();
+      }, 0);
+    };
+    document.addEventListener('pointerdown', down, true);
+    document.addEventListener('pointerup', up, true);
+    document.addEventListener('pointercancel', up, true);
+    return () => {
+      document.removeEventListener('pointerdown', down, true);
+      document.removeEventListener('pointerup', up, true);
+      document.removeEventListener('pointercancel', up, true);
+    };
+  }, []);
+
+  // While typing, errors only ever clear: each one as soon as its value is fixed
+  // (their email clears too once your own changes). New ones wait for the blur or the next send.
+  const onChange = (event: ChangeEvent<HTMLFormElement>) => {
+    const form = formRef.current;
+    if (!form) return;
+    const data = new FormData(form);
+    if (status === 'error') setUnsent(composeReferral(data));
+    if (!(event.target instanceof HTMLInputElement) || !ORDER.some((key) => errors[key])) return;
+    const now = validate(data);
+    setErrors((current) => {
+      const fixedKeys = ORDER.filter((key) => current[key] && !now[key]);
+      if (!fixedKeys.length) return current;
+      const next = { ...current };
+      for (const key of fixedKeys) delete next[key];
+      return next;
+    });
+  };
+
+  // After a first attempt, the field just left is checked again: only that
+  // field, and never mid-press. A tap's blur comes in the middle of its own
+  // click, so even with no pointer down the check waits one task.
   const onBlur = (event: FocusEvent<HTMLFormElement>) => {
-    if (!attempted || !formRef.current) return;
-    if (!(event.target instanceof HTMLInputElement)) return;
-    setErrors(validate(new FormData(formRef.current)));
+    const target = event.target;
+    if (!attempted || !(target instanceof HTMLInputElement) || !isFieldKey(target.name)) return;
+    const key = target.name;
+    const check = () => {
+      const form = formRef.current;
+      if (!form) return;
+      const found = validate(new FormData(form))[key];
+      setErrors((current) => (current[key] === found ? current : { ...current, [key]: found }));
+    };
+    if (pointerDown.current) {
+      const earlier = pendingBlur.current;
+      pendingBlur.current = earlier
+        ? () => {
+            earlier();
+            check();
+          }
+        : check;
+    } else {
+      window.setTimeout(check, 0);
+    }
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -119,31 +230,9 @@ export default function ReferralSignup() {
       return;
     }
 
-    const refCompany = field(data, 'refCompany');
-    const yourCompany = field(data, 'yourCompany');
-    const notes = field(data, 'refNotes');
-    const needLabel = ESTIMATE_SERVICES.find((service) => service === field(data, 'refNeed'));
-
-    const message = [
-      'Referral',
-      `Referral's name: ${refName}`,
-      `Referral's email: ${field(data, 'refEmail')}`,
-      refCompany ? `Referral's company: ${refCompany}` : null,
-      `What they need: ${needLabel ? SERVICE_META[needLabel].label : 'Not sure yet'}`,
-      '',
-      `Referred by: ${field(data, 'name')}${yourCompany ? ` (${yourCompany})` : ''}`,
-      '',
-      notes ? `Notes:\n${notes}` : 'No additional notes.',
-    ]
-      .filter((line): line is string => line !== null)
-      .join('\n');
-
-    const ok = await submit({
-      name: field(data, 'name'),
-      email: field(data, 'email'),
-      subject: `Referral: ${refName}${refCompany ? ` (${refCompany})` : ''}`,
-      message,
-    });
+    const composed = composeReferral(data);
+    setUnsent(composed);
+    const ok = await submit({ name: field(data, 'name'), email: field(data, 'email'), ...composed });
     if (ok) setSentTo(refName);
   };
 
@@ -154,6 +243,7 @@ export default function ReferralSignup() {
     setAttempted(false);
     setNeed('');
     setSentTo('');
+    setUnsent(null);
   };
 
   if (sent) {
@@ -175,6 +265,7 @@ export default function ReferralSignup() {
       ref={formRef}
       className={styles.form}
       onSubmit={onSubmit}
+      onChange={onChange}
       onFocusCapture={warmUp}
       onBlurCapture={onBlur}
       noValidate
@@ -317,13 +408,14 @@ export default function ReferralSignup() {
         </label>
       </div>
 
-      {/* As the brief says it: a titled box, the API's own words when it sent some, then the way out. */}
-      {status === 'error' ? (
+      {/* As the brief says it: a titled box, the API's own words when it sent some, then the
+          way out: the same referral in the visitor's mail app, already written. */}
+      {status === 'error' && unsent ? (
         <div className={styles.formError} role="alert">
           <p className={styles.formErrorTitle}>That did not send.</p>
           <p className={styles.formErrorText}>
-            {error && error !== GENERIC_ERROR ? `${error} ` : ''}Your answers are still here, so you can try again, or
-            email the details to <a href="mailto:contact@mapltech.com">contact@mapltech.com</a>.
+            {error && error !== GENERIC_ERROR ? `${error} ` : ''}Your answers are still here, so you can try again, or{' '}
+            <a href={mailtoLink(unsent)}>email the referral instead</a> (it opens already written).
           </p>
         </div>
       ) : null}

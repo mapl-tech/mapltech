@@ -1,7 +1,10 @@
+import type { ReactNode } from 'react';
 import Accordion from '@/components/ui/Accordion';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
+import { CLIENTS_LINE } from '@/components/flagship/content';
 import JsonLd from '@/components/seo/JsonLd';
+import { siteConfig } from '@/config/site';
 import { faqPage, howTo, pageGraph } from '@/lib/schema';
 import ReferralSignup from '@/components/convert/ReferralSignup';
 import Steps from '@/components/services/Steps';
@@ -28,8 +31,22 @@ import styles from '@/components/pricing/ReferralPage.module.scss';
  * with a way back to the form, and the crimson close for visitors with a
  * project of their own. Sections sit on a tighter rhythm than the long pages
  * (48-104px). Metadata (title, description, canonical, Open Graph) lives in
- * ./layout.tsx. No bonus amount is published, so none is stated.
+ * ./layout.tsx. No bonus amount is published, so none is stated, and the
+ * questions say so.
  */
+
+/** On screen, the site's address in an answer is a link; the FAQPage JSON-LD keeps the plain text. */
+function linkEmail(text: string): ReactNode {
+  const at = text.indexOf(siteConfig.email);
+  if (at < 0) return text;
+  return (
+    <>
+      {text.slice(0, at)}
+      <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+      {text.slice(at + siteConfig.email.length)}
+    </>
+  );
+}
 
 const referralGraph = pageGraph({
   path: REFERRAL_PATH,
@@ -119,7 +136,7 @@ export default function ReferralPage() {
               items={REFERRAL_TERMS.map((item, index) => ({
                 id: `terms-${index + 1}`,
                 question: item.question,
-                answer: keepNumberWords(item.answer),
+                answer: linkEmail(keepNumberWords(item.answer)),
               }))}
             />
             <a href="#signup" className={styles.termsAction} data-cta-placement="referral_terms_refer">
@@ -129,13 +146,14 @@ export default function ReferralPage() {
         </div>
       </section>
 
-      {/* No quote line: the hero already has it beside the form. */}
+      {/* The hero already has the quote beside the form, so the close names the
+          clients instead, as the homepage and the service pages do. */}
       <CloseBand
         id="referral-close-title"
         placement="referral_close"
         title={REFERRAL_CLOSE.title}
         lede={keepNumberWords(REFERRAL_CLOSE.lede)}
-        proof={false}
+        proofLine={CLIENTS_LINE}
       />
     </>
   );
