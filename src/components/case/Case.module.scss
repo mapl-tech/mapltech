@@ -68,18 +68,25 @@ $phone-peek: 46px;
 }
 
 // Everything above the product. On phones (with a product to show) it is at
-// least the first screen, less the gap, the chrome and the peek, with the
-// facts at its foot: so the capture's top edge lands the same 46px above the
-// screen's foot on every phone, whatever the screen's height, and the space
-// a tall phone has to spare sits between the headline and the facts, never
-// as a band over the capture. Where the words alone are taller than the
-// screen (a 640px-tall phone), the capture simply follows the facts.
+// least the first screen, less the gap, the chrome and the peek, so the
+// capture's top edge lands the same 46px above the screen's foot on every
+// phone, whatever its height (the slack is needed: without it the capture
+// becomes the LCP image at 412x823). The case itself (kicker, title,
+// headline, facts) stays one group at its usual spacing, set at the cover's
+// foot with the capture just under it; the slack a tall phone has to spare
+// sits above the group, under the breadcrumb, never inside it or over the
+// capture. Where the words alone are taller than the screen (a 640px-tall
+// phone), there is no slack and the capture simply follows the facts.
 .heroLead[data-has-stage] {
   @media (max-width: #{$breakpoint-md - 1px}) {
     display: flex;
     flex-direction: column;
     min-height: calc(100vh - var(--hero-top) - #{$phone-stage-gap + $phone-chrome + $phone-peek});
     min-height: calc(100svh - var(--hero-top) - #{$phone-stage-gap + $phone-chrome + $phone-peek});
+
+    > .tags {
+      margin-top: auto;
+    }
   }
 }
 
@@ -154,17 +161,6 @@ $phone-peek: 46px;
   @media (max-width: #{$breakpoint-md - 1px}) {
     gap: 24px;
     margin-top: 24px;
-
-    // Filling the first screen: the headline at the top, the facts at the foot.
-    .heroLead[data-has-stage] & {
-      flex: 1 0 auto;
-      display: flex;
-      flex-direction: column;
-
-      > .facts {
-        margin-top: auto;
-      }
-    }
   }
 
   @include lg {
