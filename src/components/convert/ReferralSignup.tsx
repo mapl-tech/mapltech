@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import Link from 'next/link';
+import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { ESTIMATE_SERVICES, SERVICE_META } from '@/lib/estimate';
 import { mailtoLink, type ComposedBrief } from './brief';
 import { GENERIC_ERROR, field, isEmail, useContactSubmit } from './useContactSubmit';
@@ -256,6 +257,13 @@ export default function ReferralSignup() {
         <button type="button" className={styles.secondary} onClick={startOver}>
           Refer another agency
         </button>
+        {/* One quiet way on for a referrer with work of their own: a lone link, so the text-action style with its arrow. */}
+        <p className={styles.successMore}>
+          Have a project of your own?{' '}
+          <Link href={PROJECT_HREF} className={styles.successLink} data-cta-placement="referral_success_project">
+            {PROJECT_LABEL}
+          </Link>
+        </p>
       </div>
     );
   }

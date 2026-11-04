@@ -383,3 +383,32 @@ $paired: 420px;
   margin-top: 6px;
   @include focus-ring;
 }
+
+// After "Refer another agency": one quiet way on for a referrer with a project
+// of their own. The question in the body voice, the link a lone text action
+// (underlined, the drawn arrow after it in CSS, so nothing extra is read out).
+.successMore {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 10px;
+  margin: 6px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: $color-text-body;
+}
+
+.successLink {
+  @include text-action($color-fg);
+
+  &::before {
+    @include arrow-glyph(right);
+    order: 2;
+    color: $color-red-text;
+    transition: transform 0.4s $ease-out-expo;
+  }
+
+  &:hover::before {
+    transform: translateX(4px);
+  }
+}
