@@ -607,8 +607,11 @@ $index-line: '(min-width: #{$breakpoint-lg}) and (hover: hover) and (pointer: fi
     margin: 0;
     font-family: $font-display;
     font-weight: 600;
-    font-size: clamp(1.625rem, 1rem + 2.2vw, 3rem); // 26px -> 48px
-    line-height: 1.16;
+    // 22px -> 34px: the quote is Alita's four-sentence Google review (Nov 5, 2026), which at the
+    // old 48px filled the screen as a block; this size keeps it a quote you read, not a wall.
+    max-width: 32em;
+    font-size: clamp(1.375rem, 1rem + 1.2vw, 2.125rem);
+    line-height: 1.3;
     letter-spacing: -0.02em;
     color: $color-fg;
     text-wrap: pretty;

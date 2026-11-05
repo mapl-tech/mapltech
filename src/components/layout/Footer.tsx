@@ -14,7 +14,8 @@ import styles from './Footer.module.scss';
  *
  * Order: the one ask (same label as everywhere; hidden on pages that end on
  * their own close section, marked `data-page-close`) → four plainly named
- * link columns (Services, Company, Offices, Contact) → newsletter → legal →
+ * link columns (Services, Company, Offices, Contact) → newsletter → the
+ * social row → legal →
  * the wordmark set at composition scale, the last thing on every page.
  * One step darker than the page ground; on phones the bottom padding clears
  * the sticky action bar.
@@ -97,7 +98,6 @@ export default function Footer() {
                 <FooterLink href="/contact-us">Contact form</FooterLink>
               </li>
             </ul>
-            <SocialLinks links={siteConfig.social} className={styles.social} />
           </div>
         </div>
 
@@ -107,6 +107,12 @@ export default function Footer() {
             <p className={styles.newsText}>Practical notes on websites, automation and software, written for agency teams.</p>
           </div>
           <NewsletterForm />
+        </div>
+
+        {/* A full-width row of its own, so the five rings stay on one line at every width. */}
+        <div className={styles.follow}>
+          <h2 className={styles.heading}>Follow MAPL TECH</h2>
+          <SocialLinks links={siteConfig.social} />
         </div>
 
         <div className={styles.legal}>

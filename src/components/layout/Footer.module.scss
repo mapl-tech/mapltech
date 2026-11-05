@@ -124,12 +124,15 @@
   font-family: $font-body;
 }
 
-.column > .social,
+// ---------------------------------------------------------------- social
+// Ringed circles in the brand's colours (Leshan, Nov 5, 2026, from a reference: thin rings, the
+// icon in the accent). The icon is the brand pink-red (8.4:1 on the ground); on hover the ring
+// fills crimson and the icon turns white (5.8:1).
 .social {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 16px 0 0;
+  gap: 12px;
+  margin: 0;
   padding: 0;
   list-style: none;
 
@@ -137,15 +140,22 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba($color-fg, 0.14);
     border-radius: 50%;
-    color: rgba($color-fg, 0.74);
-    transition: color 140ms ease-out, background-color 140ms ease-out;
+    color: $color-red-text;
+    transition: color 160ms ease-out, background-color 160ms ease-out, border-color 160ms ease-out;
+
+    @include md {
+      width: 52px;
+      height: 52px;
+    }
 
     &:hover {
-      color: $color-fg;
-      background: rgba($color-fg, 0.06);
+      color: $color-white;
+      background: $color-red-deep;
+      border-color: $color-red-deep;
     }
 
     @include focus-ring;
@@ -246,6 +256,24 @@
 }
 
 // ---------------------------------------------------------------- legal
+// ---------------------------------------------------------------- follow
+// Its own full-width row, not the narrow Contact column (148px to 206px on phones and tablets),
+// so the five rings stay on one line: the label left and the icons right from 640px, stacked
+// on phones.
+.follow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  padding: 28px 0;
+  border-top: 1px solid $color-hairline;
+
+  > .heading {
+    margin: 0;
+  }
+}
+
 .legal {
   display: flex;
   flex-wrap: wrap;

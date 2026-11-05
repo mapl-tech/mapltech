@@ -5,8 +5,10 @@ import { SOCIAL_LABELS } from './chrome';
 import styles from './Footer.module.scss';
 
 /**
- * Social icon links (44px targets). A client island only because react-icons
- * reads an IconContext, which is not available to Server Components.
+ * Social icon links: ringed circles with the icon in the brand's pink-red,
+ * filled crimson on hover (48px targets, 52px from 768px; Footer.module.scss
+ * .social). A client island only because react-icons reads an IconContext,
+ * which is not available to Server Components.
  */
 
 const ICONS = {
@@ -38,7 +40,7 @@ export default function SocialLinks({ links, className = '' }: SocialLinksProps)
               rel="noopener noreferrer"
               aria-label={`MAPL TECH on ${SOCIAL_LABELS[key] ?? key}`}
             >
-              <Icon size={16} aria-hidden="true" />
+              <Icon size={20} aria-hidden="true" />
             </a>
           </li>
         );

@@ -99,10 +99,24 @@ $card-wide: 920px;
 }
 
 .slot {
-  // Stacking only where a whole card fits on screen (desktop); phones scroll a plain list.
   @include lg {
     position: sticky;
     top: calc(var(--header-height, 72px) + 16px + var(--i) * 18px);
+  }
+
+  // Phones and tablets stack too (Leshan, Nov 5, 2026: "keep the scroll craft animation on
+  // mobile"). A card here is often taller than the screen, so it sticks only once its bottom is
+  // in view above the phone action bar (64px plus the safe area, so 72px), then the next card
+  // slides over it; a card that fits sticks under the header, as on desktop. WorkStack measures
+  // each card (--h) and sets data-measured, so without JavaScript the list scrolls plainly.
+  @media (max-width: #{$breakpoint-lg - 1px}) {
+    .stack[data-measured] & {
+      position: sticky;
+      top: min(
+        calc(var(--header-height, 60px) + 12px + var(--i) * 10px),
+        calc(100svh - var(--h) - 72px - env(safe-area-inset-bottom, 0px))
+      );
+    }
   }
 }
 

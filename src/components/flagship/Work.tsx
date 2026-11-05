@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { PRIMARY_CTA, TRUST_ITEMS, WORK, WORK_SECTION } from './content';
 import TrustList from './TrustList';
+import WorkStack from './WorkStack';
 import styles from './Work.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -16,7 +17,8 @@ const SHOTS: Record<string, { desktop: string; mobile: string; url: string }> = 
 
 /**
  * Selected work: the featured cases as cards that stack as they
- * scroll, each one sliding over the last, then the ask while the proof is
+ * scroll, each one sliding over the last, on phones too (WorkStack measures
+ * the cards there), then the ask while the proof is
  * still on screen (with the hero's reassurance under it). Every number on a
  * card is sourced in content.ts.
  */
@@ -37,7 +39,7 @@ export default function Work() {
         </div>
       </div>
 
-      <ol className={styles.stack}>
+      <WorkStack className={styles.stack}>
         {WORK.map((card, i) => {
           const shots = SHOTS[card.slug];
           return (
@@ -105,7 +107,7 @@ export default function Work() {
             </li>
           );
         })}
-      </ol>
+      </WorkStack>
 
       {/* One filled ask on screen at a time: while this one is in view the header's is an
           outline (data-header-quiet) and the phone bar steps aside (data-bar-stand-down). */}
