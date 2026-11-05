@@ -104,12 +104,9 @@ function caveatsFor(input: EstimateInput, result: EstimateResult): string[] {
 
 /**
  * Where the range comes from, in plain sentences, exactly as estimate.ts
- * computes it: a Web Development package runs from its own starting price to
- * where the next package starts (no top when the next one is a custom quote);
- * any other package shows its listed range; several packages are added
- * together. The top of a Web Development range is named as the next
- * package's start, so it never reads as the price of the visitor's own
- * ("Starter up to $8,500"). When an add-on, not the size, chose the package,
+ * computes it: a Web Development package shows its own starting price, as the
+ * live site lists it ("$5,000+"); any other package shows its listed range;
+ * several packages are added together. When an add-on, not the size, chose the package,
  * the line says so first ("Content editing (CMS) needs Growth / E-Commerce"),
  * so a dearer package never appears without its reason. Null when nothing has
  * a public price (the unit line covers "Custom").
@@ -136,9 +133,8 @@ function rangeBasis(result: EstimateResult): string | null {
     : from
       ? `${name} starts at ${from}.`
       : `${name} has a starting price.`;
-  const next = tiersFor(line.service)[line.tierIndex + 1];
-  if (line.high === null || !next) return `${starts} The next package is a custom quote, so the range has no upper end.`;
-  return `${starts} The range ends at ${formatMoney(line.high)}, where ${keepHyphens(next.name)} starts.`;
+  // Web packages are starting prices, as the live site lists them ("$5,000+"): the fixed quote sets the rest.
+  return `${starts} This is its listed starting price; the fixed quote sets the final figure.`;
 }
 
 /**

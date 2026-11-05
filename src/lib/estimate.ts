@@ -4,9 +4,10 @@
  * Pure, deterministic, framework-free. Every number here is parsed from the
  * `pricing` object in `src/config/site.ts` at call time, so a price change in
  * site.ts changes the estimator, the tier tables and the JSON-LD together.
- * Nothing is invented: the only derived figure is the upper bound of a web
- * tier, which is the *next* web tier's starting price (web tiers are
- * "starting at" prices; the other three service lines are already ranges).
+ * Nothing is invented. Web tiers are "starting at" prices, so a web line is
+ * open-ended ("$5,000+", as the live site prints them); the other three
+ * service lines are already ranges. (Until Nov 5, 2026 a web range ran to the
+ * next tier's start, "$5,000–$8,500": a figure the live site never shows.)
  *
  * Used by: /pricing (#estimator), the per-service mini-scopers, the homepage
  * estimate teaser, the contact wizard prefill and the referral estimator.
@@ -121,7 +122,7 @@ export interface EstimateLine {
   features: string[];
   /** The price string exactly as site.ts prints it ("$8,500", "$3,500-$5,000", "Custom"). */
   priceLabel: string;
-  /** Web tiers are "starting at" prices; the range runs to the next tier's start. */
+  /** Web tiers are "starting at" prices, so a web line has no upper bound ("$5,000+"). */
   startingAt: boolean;
   low: number | null;
   high: number | null;
@@ -514,7 +515,6 @@ export function resolveTier(service: EstimateService, size: SizeKey | undefined,
 }
 
 function buildLine(service: EstimateService, input: EstimateInput): EstimateLine {
-  const tiers = tiersFor(service);
   const { index, tier, drivers } = resolveTier(service, input.size[service], input.toggles);
   const parsed = parsePriceLabel(tier.price);
   const startingAt = service === 'web';
@@ -524,11 +524,9 @@ function buildLine(service: EstimateService, input: EstimateInput): EstimateLine
   let isOpenEnded = parsed.openEnded;
 
   if (!parsed.isCustom && startingAt) {
-    // Web tiers are "starting at" prices: the range runs to the next tier's start.
-    const next = tiers[index + 1];
-    const nextParsed = next ? parsePriceLabel(next.price) : null;
-    high = nextParsed && !nextParsed.isCustom ? nextParsed.low : null;
-    isOpenEnded = high === null;
+    // Web tiers are "starting at" prices: open-ended, "$5,000+", as the live site lists them.
+    high = null;
+    isOpenEnded = true;
   }
 
   if (parsed.isCustom) {
@@ -819,9 +817,7 @@ export function estimateSummaryText(result: EstimateResult, opts?: { shareUrl?: 
   for (const line of result.lines) {
     const price = line.isCustom
       ? 'Custom'
-      : line.startingAt
-        ? `${formatLineRange(line)}, starting at ${line.priceLabel}`
-        : formatLineRange(line);
+      : formatLineRange(line);
     out.push(`${line.serviceName} — ${line.tierName} (${price})`);
     for (const driver of line.drivers) out.push(`  - ${driver}`);
     out.push('');

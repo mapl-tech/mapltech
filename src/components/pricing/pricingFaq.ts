@@ -21,9 +21,8 @@ const web = factsOf('web');
 export const pricingFaq: FaqItem[] = [
   {
     question: 'How accurate is the estimator?',
-    // The top of a web range is where the next package starts, said as such: "your package's price to
-    // the next package's price" read as "Starter up to $8,500".
-    answer: `It uses the same prices as this page. Each answer matches a published package, and an add-on moves you to the package that includes it. ${web.name} packages list a starting price, so a ${web.name} range starts at your package’s price and ends where the next package starts. You get a fixed quote after a 20-minute call.`,
+    // Web packages are starting prices on the live site ("$5,000+"), so a web estimate is too.
+    answer: `It uses the same prices as this page. Each answer matches a published package, and an add-on moves you to the package that includes it. ${web.name} packages list a starting price, so a ${web.name} estimate shows your package’s starting price, such as ${formatMoney(web.from)}+. You get a fixed quote after a 20-minute call.`,
   },
   {
     question: `How long does a typical ${web.name} project take?`,

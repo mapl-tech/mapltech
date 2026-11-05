@@ -43,9 +43,9 @@ const one = (service: EstimateService, size: SizeKey, extra: Partial<EstimateInp
 
 describe('service × size → tier (synthesis §2.3)', () => {
   it.each<[EstimateService, SizeKey, string, number | null, number | null, boolean]>([
-    // Web: "starting at" prices → range to the next tier's start
-    ['web', 'starter', 'Starter', 5000, 8500, false],
-    ['web', 'growth', 'Growth / E-Commerce', 8500, 12000, false],
+    // Web: "starting at" prices, open-ended as the live site lists them ("$5,000+")
+    ['web', 'starter', 'Starter', 5000, null, false],
+    ['web', 'growth', 'Growth / E-Commerce', 8500, null, false],
     ['web', 'advanced', 'Advanced / AI-Powered', 12000, null, false],
     ['web', 'enterprise', 'Enterprise', null, null, true],
     // Automation: $3,500–5,000 / $6,000–10,000 / $10,000–18,000
@@ -236,10 +236,17 @@ describe('ongoing support maps to the matching maintenance / retainer line', () 
 
 describe('totals', () => {
   it('sums lows and highs across priced lines', () => {
+    const result = estimate({ services: ['automation', 'tools'], size: { automation: 'foundation', tools: 'dashboard' } });
+    expect(result.oneTimeLow).toBe(8500);
+    expect(result.oneTimeHigh).toBe(13000);
+    expect(formatEstimateRange(result)).toBe('$8,500–$13,000');
+  });
+
+  it('a web line (a starting price) makes the total open-ended', () => {
     const result = estimate({ services: ['web', 'automation'], size: { web: 'growth', automation: 'foundation' } });
     expect(result.oneTimeLow).toBe(12000);
-    expect(result.oneTimeHigh).toBe(17000);
-    expect(formatEstimateRange(result)).toBe('$12,000–$17,000');
+    expect(result.oneTimeHigh).toBeNull();
+    expect(formatEstimateRange(result)).toBe('$12,000+');
   });
 
   it('a custom line beside priced lines makes the total open-ended', () => {
@@ -433,9 +440,9 @@ describe('estimateSummaryText / estimateSubjectText', () => {
     const result = estimate(one('web', 'growth', { toggles: { cms: true }, support: 'growth', timeline: 'rush' }));
     const text = estimateSummaryText(result, { shareUrl: 'https://mapltech.com/pricing?svc=web&size.web=growth&cms=1#estimator' });
     expect(text.startsWith('MAPL TECH scope estimate')).toBe(true);
-    expect(text).toContain('One-time build: $8,500–$12,000');
+    expect(text).toContain('One-time build: $8,500+');
     expect(text).toContain('Ongoing support: $1,000–$2,000 a month');
-    expect(text).toContain('Web Development — Growth / E-Commerce ($8,500–$12,000, starting at $8,500)');
+    expect(text).toContain('Web Development — Growth / E-Commerce ($8,500+)');
     expect(text).toContain('  - CMS integration (headless or WordPress) → included in Growth / E-Commerce');
     expect(text).toContain('  - Growth support → Growth Support, $1,000–$2,000 a month');
     expect(text).toContain(FIXED_QUOTE_NOTE);
@@ -445,7 +452,7 @@ describe('estimateSummaryText / estimateSubjectText', () => {
 
   it('subject names the services and the headline range', () => {
     expect(estimateSubjectText(estimate({ services: ['web', 'tools'], size: { web: 'starter', tools: 'dashboard' } }))).toBe(
-      'Scope estimate: Web Development + Custom Internal Tools · $10,000–$16,500',
+      'Scope estimate: Web Development + Custom Internal Tools · $10,000+',
     );
   });
 });
