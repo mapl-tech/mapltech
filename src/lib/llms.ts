@@ -8,7 +8,7 @@
  * that does not exist. External client sites are named, not linked.
  */
 import { siteConfig, pricing, listedProjects, labsProjects, careers, testimonials } from '@/config/site';
-import { executives, teamMembers, countries } from '@/config/team';
+import { displayName, executives, teamMembers, countries } from '@/config/team';
 import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
 import { findStory } from '@/components/case/stories';
 import { absoluteUrl, isSitemapPath, toISODate } from '@/config/routes';
@@ -135,8 +135,8 @@ function header(): string {
   const titles = [...new Set(executives.map((exec) => exec.title))];
   const leadership =
     titles.length === 1 && executives.length > 1
-      ? `${listJoin(executives.map((exec) => exec.name))}, each ${titles[0]}`
-      : listJoin(executives.map((exec) => `${exec.name} (${exec.title})`));
+      ? `${listJoin(executives.map((exec) => displayName(exec)))}, each ${titles[0]}`
+      : listJoin(executives.map((exec) => `${displayName(exec)} (${exec.title})`));
   const servicesLine = SERVICE_LINES.map((line) => {
     const from = startingPrice(line);
     return from ? `${line.shortName} (from ${from})` : line.shortName;
@@ -368,7 +368,7 @@ function workFull(): string {
 
 function teamFull(withBios: boolean): string {
   const leaders = executives.map((exec) =>
-    withBios ? `- **${exec.name}**, ${exec.title}: ${exec.bio}` : `- **${exec.name}**, ${exec.title}`,
+    withBios ? `- **${displayName(exec)}**, ${exec.title}: ${exec.bio}` : `- **${displayName(exec)}**, ${exec.title}`,
   );
   const byCountry = countries.flatMap((country) => {
     const members = teamMembers.filter((m) => m.country === country);

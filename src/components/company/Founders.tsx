@@ -96,7 +96,7 @@ export function FoundersSpread() {
             <li key={founder.slug} className={styles.person}>
               <Portrait founder={founder} sizes="(min-width: 1024px) 340px, (min-width: 640px) 44vw, 38vw" className={styles.personPhoto} />
               <div className={styles.personHead}>
-                <h3 className={styles.personName}>{founder.name}</h3>
+                <h3 className={styles.personName}>{founder.displayName}</h3>
                 <p className={styles.personRole}>{founder.title}</p>
               </div>
               <div className={styles.personBody}>
@@ -141,7 +141,7 @@ export function FounderProfiles() {
             <li key={founder.slug} id={founder.slug} className={styles.profile}>
               <Portrait founder={founder} sizes="(min-width: 1024px) 320px, 40vw" className={styles.profilePhoto} />
               <div className={styles.profileHead}>
-                <h3 className={styles.profileName}>{founder.name}</h3>
+                <h3 className={styles.profileName}>{founder.displayName}</h3>
                 <p className={styles.profileRole}>{founder.title}</p>
               </div>
               <div className={styles.profileBody}>

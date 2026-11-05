@@ -25,7 +25,7 @@
 import type { StaticImageData } from 'next/image';
 import { LOWEST_PRICE } from '@/components/flagship/content';
 import { careers } from '@/config/site';
-import { executives, type Executive } from '@/config/team';
+import { displayName, executives, type Executive } from '@/config/team';
 import { formatMoney } from '@/lib/estimate';
 import { slugify } from '@/lib/schema';
 import type { OfficeCity } from './OfficeMap';
@@ -48,6 +48,8 @@ export interface TitleRun {
 
 export interface Founder extends Executive {
   slug: string;
+  /** The name as shown, with its title ("Dr. Mercy Akuma"); `name` stays the key. */
+  displayName: string;
   /** The published photo (public path): shown, and used in JSON-LD. */
   image: string;
   /** One line distilled from the team.ts bio, nothing added. */
@@ -78,6 +80,7 @@ export const FOUNDERS: readonly Founder[] = executives.map((exec) => {
   return {
     ...exec,
     slug: slugify(exec.name),
+    displayName: displayName(exec),
     image,
     focus: FOCUS[exec.name] ?? exec.title,
     objectPosition: CROP[exec.name] ?? '50% 30%',
@@ -85,8 +88,8 @@ export const FOUNDERS: readonly Founder[] = executives.map((exec) => {
   };
 });
 
-/** "Leshan Patterson and Mercy Akuma" */
-export const FOUNDER_NAMES = FOUNDERS.map((f) => f.name).join(' and ');
+/** "Leshan Patterson and Dr. Mercy Akuma" */
+export const FOUNDER_NAMES = FOUNDERS.map((f) => f.displayName).join(' and ');
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                              */
@@ -182,7 +185,7 @@ export const ABOUT = {
 export const TEAM = {
   title: 'Leadership & Global Team',
   description:
-    'Meet the people behind MAPL TECH: co-founders Leshan Patterson and Mercy Akuma, and our team in Canada, Nigeria and Jamaica.',
+    `Meet the people behind MAPL TECH: co-founders ${FOUNDER_NAMES}, and our team in Canada, Nigeria and Jamaica.`,
   // No eyebrow: the breadcrumb (About / Team) already names the page.
   hero: {
     title: [{ text: 'The people ' }, { text: 'behind the work.', accent: true }] as readonly TitleRun[],

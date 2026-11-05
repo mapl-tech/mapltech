@@ -12,7 +12,12 @@ export interface TeamMember {
 }
 
 export interface Executive {
+  /** The name without a title: the key every map and the /team anchor (#mercy-akuma) use. */
   name: string;
+  /** Said before the name wherever it is shown ("Dr."); JSON-LD honorificPrefix. */
+  honorific?: string;
+  /** The degree, for JSON-LD honorificSuffix ("PhD"); never shown beside "Dr.". */
+  credentials?: string;
   title: string;
   bio: string;
   linkedin: string;
@@ -30,12 +35,20 @@ export const executives: Executive[] = [
   },
   {
     name: 'Mercy Akuma',
+    // Leshan, Nov 5, 2026: "Mercy is a doctor", "Phd".
+    honorific: 'Dr.',
+    credentials: 'PhD',
     title: 'Co-founder & Director',
-    bio: 'Mercy Akuma is Co-founder and Director of MAPL TECH. She leads our growth in new countries, our partnerships and the expansion of our operations. She makes sure the work in every country follows the company’s long-term plan.',
+    bio: 'Dr. Mercy Akuma is Co-founder and Director of MAPL TECH. She leads our growth in new countries, our partnerships and the expansion of our operations. She makes sure the work in every country follows the company’s long-term plan.',
     linkedin: 'https://www.linkedin.com/in/mercyakuma/',
     image: '/images/team/mercy-akuma.jpg',
   },
 ];
+
+/** The name as shown: with its title where there is one ("Dr. Mercy Akuma"). */
+export function displayName(member: { name: string; honorific?: string }): string {
+  return member.honorific ? `${member.honorific} ${member.name}` : member.name;
+}
 
 export const teamMembers: TeamMember[] = [
   // Canada

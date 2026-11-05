@@ -315,10 +315,13 @@ export function personId(name: string): string {
 }
 
 export function personRef(member: Executive | TeamMember): PersonNode {
+  const titled = 'honorific' in member ? member : undefined;
   return {
     '@type': 'Person',
     '@id': personId(member.name),
     name: member.name,
+    ...(titled?.honorific ? { honorificPrefix: titled.honorific } : {}),
+    ...(titled?.credentials ? { honorificSuffix: titled.credentials } : {}),
     jobTitle: member.title,
     url: personId(member.name),
   };
