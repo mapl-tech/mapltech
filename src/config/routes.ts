@@ -47,6 +47,8 @@ export const staticRoutes: readonly RouteEntry[] = [
   { path: '/pricing', lastModified: REDESIGN_DATE },
   { path: '/our-work', lastModified: REDESIGN_DATE },
   { path: '/about-us', lastModified: REDESIGN_DATE },
+  // How white-label work runs, for agency founders (Nov 5, 2026).
+  { path: '/white-label', lastModified: REDESIGN_DATE },
   { path: '/contact-us', lastModified: REDESIGN_DATE },
 
   // Blog index

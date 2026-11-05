@@ -1,0 +1,168 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// /white-label (Nov 5, 2026). The company family's shells and heads
+// (Company.module.scss); this file holds the page's own pieces: the roles
+// split, the fit guide and the quote.
+
+// ---------------------------------------------------------------- who does what (paper)
+// Two ruled lists, side by side from 768px. Each line: a bold lead, then one sentence.
+.roles {
+  display: grid;
+  gap: 40px 48px;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.side {
+  min-width: 0;
+}
+
+.sideHeading {
+  margin: 0 0 4px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba($color-ink, 0.16);
+  font-family: $font-display;
+  font-size: clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: $color-ink;
+}
+
+.sideList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sideItem {
+  padding: 16px 0 15px;
+  border-bottom: 1px solid rgba($color-ink, 0.1);
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-ink-muted;
+}
+
+.lead {
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+}
+
+// ---------------------------------------------------------------- when to bring us in (dark)
+// Three options in a row from 1024px. Ours is last, marked by a crimson rule and its ask.
+.options {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include lg {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 0 8px;
+  border-top: 1px solid $color-hairline-strong;
+
+  &[data-ours] {
+    border-top: 2px solid $color-red;
+    padding-top: 23px;
+  }
+}
+
+.optionHeading {
+  margin: 0;
+  font-family: $font-display;
+  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: $color-fg;
+}
+
+.optionText {
+  margin: 0;
+  max-width: 30em;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-fg-muted;
+}
+
+.optionAction {
+  @include text-action($color-fg);
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.35s $ease-out-expo;
+
+  a:hover & {
+    transform: translateX(4px);
+  }
+}
+
+// ---------------------------------------------------------------- in their words (dark, ruled)
+.voice {
+  display: grid;
+  gap: 28px;
+  margin: clamp(24px, 3vw, 36px) 0 0;
+}
+
+.voiceQuote {
+  margin: 0;
+
+  p {
+    margin: 0;
+    max-width: 30em;
+    font-family: $font-display;
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem); // 24px -> 40px
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: $color-fg;
+    text-wrap: pretty;
+  }
+}
+
+.voiceBy {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: $font-size-base;
+  line-height: 1.4;
+}
+
+.voiceAvatar {
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.voiceName {
+  display: block;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.voiceRole {
+  display: block;
+  color: $color-fg-muted;
+}
+
+.voiceAction {
+  @include text-action($color-fg);
+  display: inline-flex;
+  margin-top: clamp(28px, 3.4vw, 40px);
+}

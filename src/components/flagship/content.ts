@@ -306,12 +306,17 @@ export const APPROACH = {
   label: 'Process',
   title: 'How it works.',
   lede: 'From your first message to launch day, you know what happens next.',
+  /** The white-label page: who does what, when to bring us in, the FAQ. */
+  more: { label: 'How we work with agencies', href: '/white-label' },
   steps: [
     // The first step can be taken from here: it links to the brief.
-    { title: 'Tell us what you need', text: 'Answer four short questions. Then we talk for 20 minutes.', href: PRIMARY_CTA.href },
+    // How the white-label work runs, in published facts only (competitor gap, Nov 5, 2026): the reply
+    // time (/contact-us), Slack and the check-ins (the timezone FAQ), who the client talks to and who
+    // owns the code (the white-label FAQ), and the support window (the after-launch FAQ).
+    { title: 'Tell us what you need', text: 'Answer four short questions. We reply within 24 hours, then we talk for 20 minutes.', href: PRIMARY_CTA.href },
     { title: 'Get a fixed quote', text: 'We agree the scope with you, then send one fixed price.' },
-    { title: 'We build it with you', text: 'Your brand on the work, and a check-in with your team every week.' },
-    { title: 'Launch and support', text: 'We launch, hand over documented code, and support you after launch.' },
+    { title: 'We build it with you', text: 'We join your Slack and your weekly check-ins. Your client only hears from your team.' },
+    { title: 'Launch and support', text: 'Documented code that you and your client own, plus 30 to 90 days of support.' },
   ],
 } as const;
 

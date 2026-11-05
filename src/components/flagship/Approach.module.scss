@@ -67,3 +67,18 @@
     align-self: last baseline;
   }
 }
+
+// The white-label page, under the steps: a text action on its own carries the arrow.
+.more {
+  @include text-action($color-ink);
+  margin-top: clamp(32px, 4vw, 48px);
+}
+
+.moreArrow {
+  display: inline-block;
+  transition: transform 0.35s $ease-out-expo;
+
+  .more:hover & {
+    transform: translateX(4px);
+  }
+}

@@ -29,6 +29,8 @@ export const siteConfig = {
     { label: 'Pricing', href: '/pricing' },
     { label: 'About', href: '/about-us', children: [
       { label: 'About MAPL TECH', href: '/about-us' },
+      // How white-label work runs, for agency founders (Nov 5, 2026).
+      { label: 'How we work', href: '/white-label' },
       { label: 'Team', href: '/team' },
       { label: 'Careers', href: '/careers' },
       { label: 'Blog', href: '/blog' },

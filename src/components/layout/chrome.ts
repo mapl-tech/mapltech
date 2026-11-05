@@ -42,6 +42,7 @@ export const FOOTER_SERVICES: readonly ChromeLink[] = [
 /** Footer · "Company": who we are, the work, and the ways to join or refer. */
 export const FOOTER_COMPANY: readonly ChromeLink[] = [
   { label: 'About MAPL TECH', href: '/about-us' },
+  { label: 'How we work', href: '/white-label' },
   { label: 'Our work', href: '/our-work' },
   { label: 'Team', href: '/team' },
   { label: 'Careers', href: '/careers' },
