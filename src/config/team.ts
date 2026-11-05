@@ -94,20 +94,13 @@ export const teamMembers: TeamMember[] = [
     bio: 'Builds booking systems and hospitality technology platforms optimized for Caribbean tourism and travel industries.',
     image: '/images/team/placeholder.jpg',
   },
+  // Leshan (Nov 5, 2026): "Make Keisha Brown a Project Manager" (the old frontend bio no longer
+  // fits, so it went) and "Remove Michael Thompson".
   {
     name: 'Keisha Brown',
-    title: 'Frontend Developer',
-    country: 'Jamaica',
-    department: 'Engineering',
-    bio: 'Crafts high-performance marketing sites and interactive web experiences with a focus on speed and accessibility.',
-    image: '/images/team/placeholder.jpg',
-  },
-  {
-    name: 'Michael Thompson',
-    title: 'Technical Project Coordinator',
+    title: 'Project Manager',
     country: 'Jamaica',
     department: 'Operations',
-    bio: 'Manages client execution and delivery timelines, ensuring projects ship on schedule with consistent quality standards.',
     image: '/images/team/placeholder.jpg',
   },
 ];
