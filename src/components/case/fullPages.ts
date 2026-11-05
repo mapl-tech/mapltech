@@ -34,5 +34,9 @@ export const FULL_PAGES: Partial<Record<string, { desktop: FullCapture; mobile: 
     desktop: { src: '/images/cases/full/focas-desktop.jpg', width: 1440, height: 5691 },
     mobile: { src: '/images/cases/full/focas-mobile.jpg', width: 780, height: 7000 },
   },
+  'dodo-island-discoveries': {
+    desktop: { src: '/images/cases/full/dodo-desktop.jpg', width: 1440, height: 4953 },
+    mobile: { src: '/images/cases/full/dodo-mobile.jpg', width: 780, height: 7000 },
+  },
 
 };

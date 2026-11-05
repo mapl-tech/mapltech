@@ -259,7 +259,8 @@ $phone-peek: 46px;
   @media (max-width: #{$breakpoint-md - 1px}) {
     row-gap: 16px;
 
-    > :first-child {
+    > :first-child,
+    > [data-wide] {
       grid-column: 1 / -1;
     }
   }

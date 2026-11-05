@@ -9,12 +9,13 @@ import Arrow from '@/components/ui/Arrow';
 /** Real captures per case (public/images/cases): the live desktop site and its phone view. */
 const SHOTS: Record<string, { desktop: string; mobile: string; url: string }> = {
   'lro-staffing': { desktop: 'lro-desktop', mobile: 'lro-mobile', url: 'lrostaffing.com' },
+  'dodo-island-discoveries': { desktop: 'dodo-desktop', mobile: 'dodo-mobile', url: 'dodoislanddiscoveries.com' },
   'mapl-tours': { desktop: 'tours-desktop', mobile: 'tours-mobile', url: 'mapltours.com' },
   'chha-ncr': { desktop: 'chha-desktop', mobile: 'chha-mobile', url: 'chhancr.ca' },
 };
 
 /**
- * Selected work: the three featured cases as cards that stack as they
+ * Selected work: the featured cases as cards that stack as they
  * scroll, each one sliding over the last, then the ask while the proof is
  * still on screen (with the hero's reassurance under it). Every number on a
  * card is sourced in content.ts.

@@ -52,6 +52,8 @@ export interface CatalogItem {
 const BUILT: Partial<Record<string, string>> = {
   // stories.ts facts: "What we built: The complete website"; "Stack: WordPress, custom theme, PHP".
   'lro-staffing': 'The complete website, on a custom WordPress theme',
+  // stories.ts facts: "What we built: The complete website"; the tour pages' booking calendar.
+  'dodo-island-discoveries': 'The complete website, with tour booking',
   // site.ts: "Full relaunch ... all on a CMS volunteers can maintain themselves".
   'chha-ncr': 'A full relaunch that volunteers can update themselves',
   // site.ts: "Interactive salary guide tool with ... role-based salary benchmarking

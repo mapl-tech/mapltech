@@ -29,6 +29,12 @@ export interface CaseFact {
   term: string;
   detail: string;
   href?: string;
+  /**
+   * Phones: the fact takes both columns, for a value too long for half the
+   * width (a long domain broke mid-word). Set it on facts in pairs, so the
+   * two-up rows above them stay whole.
+   */
+  wide?: boolean;
 }
 
 export interface CaseResult {
@@ -97,8 +103,9 @@ export const STORIES: readonly CaseStory[] = [
       { term: 'Client', detail: 'LRO Staffing, full-service search and staffing' },
       { term: 'Where', detail: 'Ottawa and Toronto' },
       { term: 'What we built', detail: 'The complete website' },
-      { term: 'Built with', detail: 'WordPress, custom theme, PHP' },
-      { term: 'Live', detail: 'lrostaffing.com', href: 'https://www.lrostaffing.com/' },
+      // Both across the phone's width, as Dodo Island Discoveries' (at 320 the arrow fell to its own line).
+      { term: 'Built with', detail: 'WordPress, custom theme, PHP', wide: true },
+      { term: 'Live', detail: 'lrostaffing.com', href: 'https://www.lrostaffing.com/', wide: true },
     ],
     // The two 100s are not side by side, so the band does not open on two
     // identical tiles. The first stays first: /our-work and the services rows quote it.
@@ -142,6 +149,48 @@ export const STORIES: readonly CaseStory[] = [
     // before the homepage, job search and blog. CMS: built on WordPress, with a
     // blog the team publishes to. No logins or 13+ page count is published.
     estimate: { service: 'web', size: 'growth', toggles: { cms: true } },
+  },
+  {
+    slug: 'dodo-island-discoveries',
+    client: 'Dodo Island Discoveries',
+    tags: ['Web Development', 'Travel and tours', 'Mauritius'],
+    // The Client fact says the business (small-group tours), Where the place.
+    tagsInFacts: ['Travel and tours', 'Mauritius'],
+    headline: 'A Mauritius tour company’s website, where visitors choose a small-group tour, pick a date and request a booking.',
+    // Every line is what the live site shows (dodoislanddiscoveries.com, Nov 4, 2026): the
+    // footer ("Website by MAPL TECH"), its own WordPress theme, the tour pages (photos,
+    // duration, group size, start time, "Things to know", "Cancellation policy", "Ask us a
+    // question"), their booking calendar (places left, "Request Booking"), the currency
+    // switcher (Rs MUR, $ USD, € EUR, C$ CAD), the homepage's date search and its
+    // TravelAgency structured data. No results are published, so none are stated.
+    facts: [
+      { term: 'Client', detail: 'Dodo Island Discoveries, small-group tours led by locals' },
+      { term: 'Where', detail: 'Mauritius' },
+      { term: 'What we built', detail: 'The complete website' },
+      // Both across the phone's width: the domain is longer than half of it, and the pair stays whole.
+      { term: 'Built with', detail: 'WordPress, custom theme, WooCommerce', wide: true },
+      { term: 'Live', detail: 'dodoislanddiscoveries.com', href: 'https://dodoislanddiscoveries.com/', wide: true },
+    ],
+    built: {
+      stages: [
+        { name: 'Tours', text: 'A page for each tour, with photos, the duration, group size and start time, what to know and the cancellation policy.' },
+        { name: 'Booking', text: 'A calendar to choose a date, see how many places are left and request a booking, with a form to ask a question first.' },
+        { name: 'Currencies', text: 'Prices in Mauritian rupees, US dollars, euros or Canadian dollars, switched from the header.' },
+        { name: 'Search', text: 'A date search on the homepage, and structured data that tells search engines the business is a travel agency.' },
+      ],
+    },
+    matters: {
+      heading: 'Why this matters if your client sells tours or experiences',
+      text: 'A traveller decides on one page: what they will do, when, and what it costs in their own currency. We build each tour page to answer all three, with booking on the same page.',
+    },
+    media: {
+      desktop: '/images/cases/dodo-desktop.jpg',
+      mobile: '/images/cases/dodo-mobile.jpg',
+      alt: 'The Dodo Island Discoveries homepage: “Small-group tours of Mauritius, led by locals” above a date search.',
+    },
+    // CMS: built on WordPress. "E-commerce or booking": the tour booking and its
+    // WooCommerce cart. No page count is published (five tours on one template): no size chosen.
+    estimate: { service: 'web', toggles: { cms: true, ecommerce: true } },
   },
   {
     slug: 'mapl-tours',

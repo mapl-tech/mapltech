@@ -123,7 +123,7 @@ export default function CaseStudy({
               ) : null}
               <dl className={styles.facts}>
                 {story.facts.map((fact) => (
-                  <div key={fact.term} className={styles.fact}>
+                  <div key={fact.term} className={styles.fact} data-wide={fact.wide ? '' : undefined}>
                     <dt>{fact.term}</dt>
                     <dd>
                       {fact.href ? (

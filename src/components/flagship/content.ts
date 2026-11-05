@@ -162,7 +162,9 @@ const listedSlugs = new Set(listedProjects().map((p) => p.slug));
 
 /**
  * Sources: LRO Staffing metrics from the build (eight expertise hubs) and the
- * live-site Lighthouse result published on leshanpatterson.com; MAPL Tours
+ * live-site Lighthouse result published on leshanpatterson.com; Dodo Island
+ * Discoveries counted on its live site (Nov 4, 2026: five tour pages, four
+ * currencies in its price switcher; facts, not results); MAPL Tours
  * figures as published on leshanpatterson.com (Nov 2026); CHHA-NCR from the
  * independent August 2026 audit (site.ts `caseStudies`).
  */
@@ -179,6 +181,18 @@ export const WORK: readonly WorkCard[] = (
       ],
       image: { src: '/images/case-lro-website.jpg', alt: 'LRO Staffing homepage with its job search panel.' },
       href: '/our-work/lro-staffing',
+    },
+    {
+      slug: 'dodo-island-discoveries',
+      client: 'Dodo Island Discoveries',
+      kind: 'Website · Mauritius',
+      outcome: 'A tour company’s website where visitors choose a tour, pick a date and request a booking.',
+      metrics: [
+        { value: '5', label: 'tours, each with its own page and booking calendar' },
+        { value: '4', label: 'currencies for every price: rupees, US dollars, euros and Canadian dollars' },
+      ],
+      image: { src: '/images/case-dodo-island-discoveries.jpg', alt: 'The Dodo Island Discoveries homepage with its date search.' },
+      href: '/our-work/dodo-island-discoveries',
     },
     {
       slug: 'mapl-tours',
@@ -256,7 +270,7 @@ export const MOBILE_BAR_CONTEXT = `Public prices, from ${money(LOWEST_PRICE)}`;
  * quote): the clients whose projects have published case studies on
  * /our-work, by the names those cases use.
  */
-export const CLIENTS_LINE = 'Clients include LRO Staffing, CHHA-NCR, FOCAS Canada and Crowned Spice.';
+export const CLIENTS_LINE = 'Clients include LRO Staffing, Dodo Island Discoveries, CHHA-NCR, FOCAS Canada and Crowned Spice.';
 
 /* ------------------------------------------------------------------ */
 /* Homepage sections (Nov 2026 simplify pass): the live site's purpose, */

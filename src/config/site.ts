@@ -320,6 +320,18 @@ export const portfolioProjects = [
     url: 'https://www.lrostaffing.com/',
   },
   {
+    title: 'Dodo Island Discoveries',
+    slug: 'dodo-island-discoveries',
+    order: 2, // second on /our-work, after LRO Staffing (owner request, 2026-11-04)
+    category: 'Web Development',
+    // From the live site (footer: "Website by MAPL TECH"): its own WordPress theme, a page and a
+    // booking calendar per tour (dates, places left, "Request Booking"), prices in MUR, USD, EUR or CAD.
+    description: 'Complete website for a Mauritius tour company - a custom WordPress theme with a page for each small-group tour, a booking calendar that shows the places left, and prices in four currencies.',
+    tags: ['WordPress', 'Custom Theme', 'Tour Booking'],
+    image: '/images/case-dodo-island-discoveries.jpg',
+    url: 'https://dodoislanddiscoveries.com/',
+  },
+  {
     title: 'LRO Interactive Salary Guide',
     slug: 'lro-salary-guide',
     category: 'Custom Internal Tools',
@@ -331,7 +343,7 @@ export const portfolioProjects = [
   {
     title: 'MAPL Tours',
     slug: 'mapl-tours',
-    order: 3, // third on /our-work: the next project with published results
+    order: 4, // fourth on /our-work: the third project with published results
     category: 'Automation and AI Workflows',
     description: 'Our own product: a travel and tourism company fully managed by AI - from trip planning and booking to customer communication and itinerary generation. Built and run in-house by MAPL TECH.',
     tags: ['Own product', 'AI', 'Automation'],
@@ -398,7 +410,7 @@ export const portfolioProjects = [
   {
     title: 'CHHA-NCR',
     slug: 'chha-ncr',
-    order: 2, // second on /our-work, after LRO Staffing
+    order: 3, // third on /our-work, after LRO Staffing and Dodo Island Discoveries
     category: 'Web Development',
     description: 'Full relaunch for the Canadian Hard of Hearing Association\'s National Capital Region branch - a journey-based information architecture, a searchable hearing-clinic directory, and WCAG accessibility built into every page, all on a CMS volunteers can maintain themselves.',
     tags: ['Non-Profit', 'Accessibility', 'Web Development'],
