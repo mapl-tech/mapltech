@@ -406,8 +406,8 @@ export default function ProjectBrief({
             Brief sent.
           </h2>
           <p className={styles.doneText}>
-            It is in our inbox at {siteConfig.email}. We will{' '}
-            {sent.reply === 'phone' ? 'call you at the number below' : 'reply to the email address below'}. Next, we talk for
+            It is in our inbox at {siteConfig.email}. We reply within 24 hours,{' '}
+            {sent.reply === 'phone' ? 'with a call to the number below' : 'to the email address below'}. Next, we talk for
             20&nbsp;minutes, agree the scope with you, and send a fixed quote.
           </p>
           {/* What was sent, read back: the service (and size), then the visitor's own

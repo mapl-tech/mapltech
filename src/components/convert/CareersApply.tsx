@@ -5,41 +5,48 @@ import { blurErrors, checkForm, normaliseUrl, summaryWords, typingErrors, type F
 import { useAfterPress } from '@/components/company/useAfterPress';
 import css from '@/components/company/CareersForm.module.scss';
 import { useUrlParams } from './useUrlState';
-import { field, useContactSubmit } from './useContactSubmit';
+import { GENERIC_ERROR, field, useContactSubmit } from './useContactSubmit';
 import type { BoardRole } from './CareersBoard';
+import FieldError from './FieldError';
+import FileField from './FileField';
+import { RESUME_MESSAGES } from './resume';
 import forms from './forms.module.scss';
 import Recaptcha from './Recaptcha';
 import Arrow from '@/components/ui/Arrow';
 
 /**
  * Careers apply form: role (pre-selected from ?role=, which the board's
- * "Apply" links set), name, email, an optional link, a short note. With no
- * role chosen (a general application) the head, the form's name and the
- * note's label, hint and error speak to that case; the note is still sent
- * as `note`. Posts to
- * /api/contact with the subject "Application: <role>"; the API takes JSON, so
- * there is no upload. The button row holds the one action (the page's rail
- * offers email instead); a failed send offers email with the same subject.
- * The URL is the only record of the chosen role: the select writes ?role=
- * too, so a row's "Apply" always wins over an earlier pick.
+ * "Apply" links set), name, email, the resume (required), an optional link,
+ * a short note. With no role chosen (a general application) the head, the
+ * form's name and the note's label, hint and error speak to that case.
+ * Posts multipart to /api/apply (useContactSubmit's `submitForm`) so the
+ * resume goes with it, as an attachment on the email; the server checks the
+ * file by its bytes before anything is sent. A failed send offers email with
+ * the same subject. The URL is the only record of the chosen role: the
+ * select writes ?role= too, so a row's "Apply" always wins over an earlier
+ * pick.
  *
- * Accessibility: native labels; required fields say so in the label set-up
- * line, optional ones say "(optional)"; errors appear under their field,
- * linked with aria-describedby and aria-invalid; a failed submit announces a
- * summary and moves focus to the first problem; success takes focus. The
- * summary counts the fields still flagged, so it stays right as they are
- * fixed: it is announced once per refused send (role="alert"), then changes
- * quietly, because each field says for itself when it is fixed.
+ * The resume is required here: an application is a request to be considered
+ * for a role, and the resume is what that is judged on (the note says why
+ * this role; the resume says what you have done). The talent list keeps it
+ * optional.
+ *
+ * Accessibility: visible labels; required fields say so in the set-up line,
+ * optional ones say "(optional)"; errors appear under their field with the
+ * "!" disc (FieldError), linked with aria-describedby and aria-invalid; a
+ * refused send announces a summary and moves focus to the first problem; a
+ * refusal from the server that names a field (a resume it would not take)
+ * goes under that field the same way; success takes focus. The summary
+ * counts the fields still flagged, so it stays right as they are fixed. The
+ * button stays focusable while sending (aria-disabled), so focus never drops.
  *
  * One press sends after a refused send (the referral form's rule): each error
  * clears while the visitor types, as soon as its value is fixed, and the blur
- * check of the field left waits until the pointer lifts (useAfterPress). The
- * press that leaves the last field is the one that sends; an error line or
- * the summary removed mid-press would move "Send application" out from under
- * the pointer or finger and swallow it.
+ * check of the field left waits until the pointer lifts (useAfterPress).
  *
- * With a site key set, the "I'm not a robot" box (dark, on the dark card)
- * sits just before "Send application"; it is checked once the fields pass.
+ * Bots that fill the hidden "website" field get the same confirmation and
+ * nothing is sent (the server checks it too). With a site key set, the "I'm
+ * not a robot" box sits just before "Send application".
  */
 
 export interface CareersApplyProps {
@@ -49,6 +56,7 @@ export interface CareersApplyProps {
 }
 
 const GENERAL = 'general';
+const RESUME_ID = 'apply-resume';
 
 /** The note's words: for a listed role, and for a general application (no role chosen). */
 const NOTE = {
@@ -75,19 +83,25 @@ const RULES: Record<keyof typeof NOTE, Record<string, FieldRule>> = {
   general: { ...BASE_RULES, note: { required: NOTE.general.required } },
 };
 
-const ORDER = ['name', 'email', 'link', 'note'] as const;
+const ORDER = ['name', 'email', 'resume', 'link', 'note'] as const;
+type FieldKey = (typeof ORDER)[number];
+const isFieldKey = (name: string | undefined): name is FieldKey => (ORDER as readonly string[]).includes(name ?? '');
+
+/** Where focus goes for a field's error. */
+const fieldId = (name: FieldKey) => (name === 'resume' ? RESUME_ID : `apply-${name}`);
 
 export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply-role' }: CareersApplyProps) {
   const [params, setParams] = useUrlParams();
-  const { status, submit, captcha } = useContactSubmit('careers_application');
+  const { status, error: sendError, errorField, submitForm, captcha } = useContactSubmit('careers_application');
   const [errors, setErrors] = useState<Record<string, string>>({});
   // The last refused send: how many so far, and the errors it found (the
   // same object until a field changes, so the summary knows when to go quiet).
   const [refused, setRefused] = useState<{ count: number; errors: Record<string, string> } | null>(null);
   // Once a send has been tried, a field left empty is flagged on blur too.
   const [attempted, setAttempted] = useState(false);
-  // The role the sent application was for (null: a general application).
-  const [submittedRole, setSubmittedRole] = useState<string | null>(null);
+  const [resume, setResume] = useState<File | null>(null);
+  // What the confirmation reads back: the role (null: a general application) and the file.
+  const [sent, setSent] = useState<{ role: string | null; file: string } | null>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const afterPress = useAfterPress();
@@ -99,14 +113,11 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
   const kind = selected ? 'role' : 'general';
   const note = NOTE[kind];
   const rules = RULES[kind];
+  const done = Boolean(sent) && (status === 'success' || status === 'idle');
 
   useEffect(() => {
-    if (status === 'success') successRef.current?.focus();
-    // The submit button was disabled while sending, which drops focus to the
-    // page; put it back on the button so a retry is one key away (the alert
-    // below announces what happened).
-    if (status === 'error') formRef.current?.querySelector<HTMLButtonElement>('button[type="submit"]')?.focus();
-  }, [status]);
+    if (done) successRef.current?.focus();
+  }, [done]);
 
   // While typing, errors only ever clear: each one as soon as its value is
   // fixed. New ones wait for the blur or the next send.
@@ -131,48 +142,69 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
     afterPress(() => setErrors((prev) => blurErrors(prev, name, value, rule, attempted)));
   };
 
+  const chooseResume = (file: File | null) => {
+    setResume(file);
+    // A chosen file fixes the field; removing it flags it again only once a send was tried.
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.resume;
+      return file || !attempted ? next : { ...next, resume: RESUME_MESSAGES.required };
+    });
+  };
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (status === 'sending') return;
     const data = new FormData(event.currentTarget);
     const found = checkForm(data, rules);
+    if (!resume) found.resume = RESUME_MESSAGES.required;
     setErrors(found);
     setAttempted(true);
     const problems = ORDER.filter((name) => found[name]);
     if (problems.length) {
       setRefused((prev) => ({ count: (prev?.count ?? 0) + 1, errors: found }));
-      formRef.current?.querySelector<HTMLElement>(`[name="${problems[0]}"]`)?.focus();
+      document.getElementById(fieldId(problems[0]))?.focus();
       return;
     }
     setRefused(null);
 
-    const link = normaliseUrl(field(data, 'link'));
-    const message = [
-      `Role: ${roleLabel}`,
-      selected ? `Location: ${selected.location} · ${selected.type}` : null,
-      link ? `LinkedIn / portfolio: ${link}` : null,
-      '',
-      field(data, 'note'),
-    ]
-      .filter((line): line is string => line !== null)
-      .join('\n');
+    // Honeypot: bots get the same confirmation and nothing is sent.
+    if (field(data, 'website')) {
+      setSent({ role: selected ? roleLabel : null, file: resume?.name ?? '' });
+      return;
+    }
 
-    const ok = await submit({
-      name: field(data, 'name'),
-      email: field(data, 'email'),
-      subject: `Application: ${roleLabel}`,
-      message,
-    });
-    if (ok) setSubmittedRole(selected ? roleLabel : null);
+    const body = new FormData();
+    body.set('form', 'application');
+    body.set('role', roleLabel);
+    if (selected) body.set('location', `${selected.location} · ${selected.type}`);
+    body.set('name', field(data, 'name'));
+    body.set('email', field(data, 'email'));
+    body.set('link', normaliseUrl(field(data, 'link')));
+    body.set('note', field(data, 'note'));
+    if (resume) body.set('resume', resume, resume.name);
+
+    const ok = await submitForm(body);
+    if (ok) setSent({ role: selected ? roleLabel : null, file: resume?.name ?? '' });
   };
 
-  if (status === 'success') {
+  // A refusal the server tied to a field: its words go under that field, and focus goes to it.
+  useEffect(() => {
+    if (status !== 'error' || !isFieldKey(errorField)) return;
+    const frame = requestAnimationFrame(() => {
+      setErrors((prev) => ({ ...prev, [errorField]: sendError }));
+      document.getElementById(fieldId(errorField))?.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [status, errorField, sendError]);
+
+  if (done && sent) {
     return (
       <div ref={successRef} className={`${forms.status} ${forms.statusSuccess} ${css.done}`} role="status" tabIndex={-1}>
         <strong className={forms.statusTitle}>Application received.</strong>
         <span>
-          {submittedRole ? `Thanks for applying for ${submittedRole}.` : 'Thanks for applying to MAPL\u00a0TECH.'} We read every
-          application and reply by email.
+          {sent.role ? `Thanks for applying for ${sent.role}.` : 'Thanks for applying to MAPL TECH.'}
+          {sent.file ? ` Your resume, ${sent.file}, came with it.` : ''} We read every application and reply by email.
         </span>
       </div>
     );
@@ -183,6 +215,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
   // refusal, so each is announced); once a field changes it is a plain line.
   const flagged = ORDER.filter((name) => errors[name]).length;
   const announce = refused?.errors === errors;
+  const failed = status === 'error' && !isFieldKey(errorField);
 
   const describedBy = (name: string, hint?: string) =>
     [hint, errors[name] ? `apply-${name}-error` : null].filter(Boolean).join(' ') || undefined;
@@ -257,11 +290,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
             aria-invalid={errors.name ? true : undefined}
             aria-describedby={describedBy('name')}
           />
-          {errors.name ? (
-            <p id="apply-name-error" className={forms.error}>
-              {errors.name}
-            </p>
-          ) : null}
+          {errors.name ? <FieldError id="apply-name-error">{errors.name}</FieldError> : null}
         </div>
         <div className={forms.field}>
           <label className={forms.label} htmlFor="apply-email">
@@ -273,19 +302,18 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
             type="email"
             inputMode="email"
             autoComplete="email"
+            autoCapitalize="off"
             spellCheck={false}
             className={forms.input}
             required
             aria-invalid={errors.email ? true : undefined}
             aria-describedby={describedBy('email')}
           />
-          {errors.email ? (
-            <p id="apply-email-error" className={forms.error}>
-              {errors.email}
-            </p>
-          ) : null}
+          {errors.email ? <FieldError id="apply-email-error">{errors.email}</FieldError> : null}
         </div>
       </div>
+
+      <FileField id={RESUME_ID} label="Resume" required file={resume} onChange={chooseResume} error={errors.resume} />
 
       <div className={forms.field}>
         <label className={forms.label} htmlFor="apply-link">
@@ -297,6 +325,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
           type="url"
           inputMode="url"
           autoComplete="url"
+          autoCapitalize="off"
           spellCheck={false}
           className={forms.input}
           aria-invalid={errors.link ? true : undefined}
@@ -305,11 +334,7 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
         <p id="apply-link-hint" className={`${forms.hint} ${css.hint}`}>
           LinkedIn, GitHub or a portfolio.
         </p>
-        {errors.link ? (
-          <p id="apply-link-error" className={forms.error}>
-            {errors.link}
-          </p>
-        ) : null}
+        {errors.link ? <FieldError id="apply-link-error">{errors.link}</FieldError> : null}
       </div>
 
       <div className={forms.field}>
@@ -329,18 +354,21 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
           {note.hint}
         </p>
         {/* The note's only check is that it is filled in, so its error follows the case even after the role changes. */}
-        {errors.note ? (
-          <p id="apply-note-error" className={forms.error}>
-            {note.required}
-          </p>
-        ) : null}
+        {errors.note ? <FieldError id="apply-note-error">{note.required}</FieldError> : null}
       </div>
 
-      {status === 'error' ? (
+      <div className={forms.honeypot} aria-hidden="true">
+        <label>
+          Website
+          <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
+
+      {failed ? (
         <p className={css.failed} role="alert">
-          That didn’t send. Try again, or email{' '}
-          <a href={`mailto:${contactEmail}?subject=${encodeURIComponent(`Application: ${roleLabel}`)}`}>{contactEmail}</a> with the
-          same details.
+          That didn’t send. {sendError && sendError !== GENERIC_ERROR ? `${sendError} ` : ''}Try again, or email{' '}
+          <a href={`mailto:${contactEmail}?subject=${encodeURIComponent(`Job application: ${roleLabel}`)}`}>{contactEmail}</a> with the
+          same details and your resume attached.
         </p>
       ) : null}
 
@@ -349,14 +377,20 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
         control={captcha}
         theme="dark"
         renderError={(errorId, message) => (
-          <p id={errorId} className={forms.error} role="alert">
+          <FieldError id={errorId} alert>
             {message}
-          </p>
+          </FieldError>
         )}
       />
 
       <div className={`${forms.actions} ${css.actions}`}>
-        <button type="submit" className={css.submit} disabled={status === 'sending'} data-cta-placement="careers_apply_submit">
+        {/* aria-disabled while sending, as on the brief: a disabled button would drop keyboard focus. */}
+        <button
+          type="submit"
+          className={css.submit}
+          aria-disabled={status === 'sending' ? true : undefined}
+          data-cta-placement="careers_apply_submit"
+        >
           {status === 'sending' ? 'Sending…' : 'Send application'}
           <span aria-hidden="true" className={css.submitArrow}>
             <Arrow />

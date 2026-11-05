@@ -9,6 +9,7 @@ import { withLastWord } from '@/components/services/keepTogether';
 import Recaptcha, { useRecaptcha, type RecaptchaControl } from '@/components/convert/Recaptcha';
 import { RECAPTCHA_ENABLED } from '@/components/convert/recaptchaLoader';
 import { announceLead } from '@/components/convert/lead';
+import FieldError from '@/components/convert/FieldError';
 import styles from './ScopeEstimator.module.scss';
 import own from './SendEstimateForm.module.scss';
 
@@ -142,7 +143,7 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
         <div role="status">
           {sent ? (
             <p ref={sentRef} tabIndex={-1} className={styles.sentText}>
-              Sent. We’ll reply to <strong>{sent.email}</strong> with this estimate in writing.
+              Sent. We’ll reply to <strong>{sent.email}</strong> within 24 hours, with this estimate in writing.
             </p>
           ) : null}
         </div>
@@ -203,7 +204,16 @@ function SendDisclosure({
       <summary id={`${id}-title`} className={styles.disclosureSummary}>
         Want it in writing?
       </summary>
-      <form action={formAction} className={styles.send} noValidate aria-labelledby={`${id}-title`}>
+      {/* While sending, the button stays focusable (aria-disabled) and a second press is stopped here. */}
+      <form
+        action={formAction}
+        onSubmit={(event) => {
+          if (pending) event.preventDefault();
+        }}
+        className={styles.send}
+        noValidate
+        aria-labelledby={`${id}-title`}
+      >
         <label htmlFor={`${id}-email`} className={styles.sendLabel}>
           Your email
         </label>
@@ -231,12 +241,17 @@ function SendDisclosure({
             theme="dark"
             className={own.captcha}
             renderError={(captchaErrorId, message) => (
-              <p id={captchaErrorId} className={styles.error} role="alert">
+              <FieldError id={captchaErrorId} alert>
                 {message}
-              </p>
+              </FieldError>
             )}
           />
-          <button type="submit" className={styles.secondary} disabled={pending} data-cta-placement={`pricing_${placement}_send`}>
+          <button
+            type="submit"
+            className={`${styles.secondary} ${own.button}`}
+            aria-disabled={pending || undefined}
+            data-cta-placement={`pricing_${placement}_send`}
+          >
             {pending ? 'Sending…' : 'Get it in writing'}
           </button>
         </div>
@@ -249,9 +264,9 @@ function SendDisclosure({
         {/* A check error is read with the field focus moves to; a failed send has no field to
             move to, so it is announced. */}
         {error ? (
-          <p id={errorId} className={styles.error} role={error.field ? undefined : 'alert'}>
+          <FieldError id={errorId} alert={!error.field}>
             {error.message}
-          </p>
+          </FieldError>
         ) : null}
         <p id={privacyId} className={styles.privacy}>
           We use your email to contact you about your estimate. We never sell it. <Link href="/privacy">Privacy policy</Link>

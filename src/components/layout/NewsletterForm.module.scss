@@ -1,0 +1,37 @@
+@use '../../styles/variables' as *;
+
+// The newsletter's own parts (NewsletterForm.tsx); the pill row, input and
+// button keep the footer's styles (Footer.module.scss).
+
+// The visible label over the pill: the footer's text colour, 16px.
+.label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: $font-weight-medium;
+  line-height: 1.4;
+  color: rgba($color-fg, 0.86);
+}
+
+// Room for one line of error under the pill, kept when empty, so the error never moves anything.
+.message {
+  min-height: calc(1rem * 1.45);
+  margin-top: 8px;
+}
+
+// The confirmation is focused on arrival (it replaces the form); its ring shows for keyboard users only.
+.done {
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+
+  strong {
+    color: $color-fg;
+    font-weight: $font-weight-semibold;
+  }
+}

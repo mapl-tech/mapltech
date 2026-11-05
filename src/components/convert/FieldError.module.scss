@@ -1,0 +1,31 @@
+@use '../../styles/variables' as *;
+
+// The brief's error line for the dark forms (careers, talent list, regional
+// inquiry, estimate, newsletter): red-text #FF8397 on the #121214 card and the
+// #0a0a0a ground (8:1+), the disc in the same red with the ground's colour
+// inside it. On paper the brief keeps its own (ProjectBrief.module.scss).
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: $font-weight-medium;
+  line-height: 1.45;
+  color: $color-red-text;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: $color-red-text;
+  font-size: 0.75rem;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  color: $color-ground;
+}

@@ -295,10 +295,10 @@ export const CAREERS = {
   apply: {
     label: 'How hiring works',
     title: 'How to apply.',
-    lede: 'No cover letter and no file upload. A short note is enough, and a link to your work helps.',
+    lede: 'No cover letter needed. Attach your resume and add a short note; a link to your work helps.',
     steps: [
       { name: 'Pick a role', text: 'Or choose a general application if none fits yet.' },
-      { name: 'Tell us about you', text: 'Your name, your email and a few lines on why the role fits you.' },
+      { name: 'Tell us about you', text: 'Your name, your email, your resume and a few lines on why the role fits you.' },
       { name: 'Hear back by email', text: 'We read every application and reply by email.' },
     ],
     // Beside the form: who a candidate would work with, and what we make.

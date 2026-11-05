@@ -276,3 +276,23 @@
   color: $color-fg;
   margin-bottom: $space-8;
 }
+
+// Off screen for people, filled in by bots: the forms send nothing when it has a value.
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+// Sending: the button stays focusable (aria-disabled), and says so with the cursor and a quieter fill.
+.actions [aria-disabled='true'] {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+// A form's own title inside its card (the regional inquiry): no inherited heading margins.
+.formTitle {
+  margin: 0;
+}

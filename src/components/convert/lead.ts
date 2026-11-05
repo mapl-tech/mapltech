@@ -13,7 +13,9 @@ export type LeadForm =
   | 'talent_list'
   | 'estimate_email'
   | 'contact_form'
-  | 'newsletter';
+  | 'newsletter'
+  | 'regional_inquiry_nigeria'
+  | 'regional_inquiry_jamaica';
 
 export interface LeadDetail {
   form: LeadForm;

@@ -282,3 +282,45 @@
   color: $color-fg-muted;
   white-space: nowrap;
 }
+
+// ---------------------------------------------------------------- the inquiry (the page's close)
+// On paper after the dark FAQ: the form on the dark card leads (first on
+// phones, the wider column from 1024px), then what happens next and the
+// client quote. The section keeps the shell's rhythm and a bottom margin so
+// the footer does not butt against the rounded paper.
+.inquiry {
+  margin-bottom: clamp(12px, 2vw, 24px);
+}
+
+.inquiryGrid {
+  display: grid;
+  gap: clamp(40px, 5vw, 56px);
+
+  @include lg {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: 48px;
+    align-items: start;
+  }
+}
+
+.inquiryCard {
+  padding: clamp(22px, 3.6vw, 44px);
+  min-width: 0;
+}
+
+.inquiryRail {
+  display: grid;
+  gap: clamp(28px, 3.4vw, 40px);
+  align-content: start;
+  min-width: 0;
+
+  @include lg {
+    position: sticky;
+    top: calc(var(--header-height, 72px) + 32px);
+  }
+}
+
+.inquiryQuote {
+  padding-top: clamp(20px, 2.4vw, 28px);
+  border-top: 1px solid $color-ink-hairline;
+}

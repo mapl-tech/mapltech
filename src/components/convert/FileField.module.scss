@@ -1,0 +1,211 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The resume drop zone (FileField.tsx), on the dark careers cards. One height
+// whether empty or chosen: 80px where the buttons sit beside the name, 120px
+// where they wrap under it (the zone measures its own width), so choosing a
+// file never moves the form. Edges at 3:1+ against the card (WCAG 1.4.11).
+
+.zone {
+  position: relative;
+  container-type: inline-size;
+  min-width: 0;
+  padding: 12px 16px;
+  border: 1px dashed rgba($color-fg, 0.44);
+  border-radius: $radius-lg;
+  background: $color-surface-2;
+  color: $color-fg;
+  transition: border-color $transition-fast, background-color $transition-fast;
+
+  // The input under the drawing has focus: the ring goes on the zone.
+  &:has(.input:focus-visible) {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
+  }
+
+  &[data-state='empty'] {
+    @include pointer-fine {
+      &:hover {
+        border-color: rgba($color-fg, 0.7);
+        background: $color-surface-3;
+      }
+    }
+  }
+
+  &[data-drag] {
+    border-style: solid;
+    border-color: $color-red;
+    background: rgba($color-red, 0.08);
+  }
+
+  &[data-invalid] {
+    border-color: $color-red-text;
+  }
+}
+
+// Empty: the real input covers the zone, invisible, so a click, a tap or a drop anywhere reaches it.
+.input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 1rem;
+
+  &::file-selector-button {
+    cursor: pointer;
+  }
+
+  // Chosen: out of the way (Replace opens it), still in the page for the form and focus.
+  [data-state='chosen'] > & {
+    inset: auto;
+    width: 1px;
+    height: 1px;
+    clip-path: inset(50%);
+    pointer-events: none;
+  }
+}
+
+.prompt,
+.chosen {
+  min-height: 56px;
+
+  @container (max-width: 419px) {
+    min-height: 96px;
+  }
+}
+
+.prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: $color-fg-muted;
+
+  svg {
+    display: block;
+  }
+}
+
+.promptText {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.choose {
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red, 0.9);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+// Dropping is a mouse habit; on touch the zone simply says "Choose a file".
+.drop {
+  display: none;
+  color: $color-fg-muted;
+
+  @include pointer-fine {
+    display: inline;
+  }
+}
+
+.chosen {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+
+  @container (max-width: 419px) {
+    grid-template-columns: 24px minmax(0, 1fr);
+    grid-template-areas:
+      'icon meta'
+      'actions actions';
+    align-content: center;
+    row-gap: 8px;
+
+    .icon {
+      grid-area: icon;
+    }
+
+    .meta {
+      grid-area: meta;
+    }
+
+    .actions {
+      grid-area: actions;
+    }
+  }
+}
+
+.meta {
+  display: grid;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.size {
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+
+  @container (max-width: 419px) {
+    > * {
+      flex: 1 1 0;
+    }
+  }
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba($color-fg, 0.4);
+  border-radius: 999px;
+  background: transparent;
+  color: $color-fg;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: border-color $transition-fast, background-color $transition-fast;
+
+  @include pointer-fine {
+    &:hover {
+      border-color: $color-fg;
+      background: rgba($color-fg, 0.06);
+    }
+  }
+
+  @include focus-ring;
+}

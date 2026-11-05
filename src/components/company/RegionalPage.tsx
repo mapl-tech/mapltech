@@ -3,7 +3,9 @@ import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
 import Accordion from '@/components/ui/Accordion';
 import PageHeader from '@/components/ui/PageHeader';
-import CloseBand from '@/components/flagship/CloseBand';
+import QuoteLine from '@/components/flagship/QuoteLine';
+import RegionalInquiry from '@/components/convert/RegionalInquiry';
+import Steps from '@/components/services/Steps';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { siteConfig } from '@/config/site';
 import { faqPage, getServiceLine, itemList, pageGraph, serviceId } from '@/lib/schema';
@@ -20,6 +22,13 @@ import ed from './Company.module.scss';
 import place from './PlaceReadout.module.scss';
 import styles from './RegionalPage.module.scss';
 import Arrow from '@/components/ui/Arrow';
+
+/** What follows an inquiry, in published facts only (the site's close lede, step by step). */
+const INQUIRY_STEPS = [
+  { title: 'We reply within 24 hours', text: 'By email, to the address you give us.' },
+  { title: 'We talk for 20 minutes', text: 'To agree the scope with you.' },
+  { title: 'You get a fixed quote', text: 'One price for the scope we agreed.' },
+] as const;
 
 export interface RegionalPageProps {
   region: RegionConfig;
@@ -49,8 +58,17 @@ export interface RegionalPageProps {
  * 4. The price: the four services, each with its own starting price and its
  *    own ask that opens the brief with that service chosen (?svc=), on paper.
  * 5. The market's questions, with the branch's contact lines.
- * 6. The close: the site's lede (four questions, a 20-minute call, a fixed
- *    quote) and the approved client quote.
+ * 6. The close is the inquiry itself (Nov 5, 2026: "the Nigeria and Jamaica
+ *    pages should have forms at the end so people can inquire"): on paper,
+ *    the close's title over a short form on the dark card (convert/
+ *    RegionalInquiry, tagged with the page so the email says where it came
+ *    from), and beside it what happens next (a reply within 24 hours, the
+ *    20-minute call, the fixed quote) and the approved client quote. It takes
+ *    the crimson band's place rather than following it: a band that sends the
+ *    reader to another page, right after a form, would be two asks in a row.
+ *    It carries the band's markers: `data-page-close` (the footer drops its
+ *    own ask) and `data-header-quiet` (the header's ask is an outline while
+ *    the form is on screen, so the send button is the one fill).
  *
  * Taken out (they did not move a buyer to the ask): the facts band (it
  * repeated the price and the reply time; the hours are in the office card),
@@ -221,8 +239,30 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         </div>
       </section>
 
-      {/* The site's close lede, and the approved client quote under the last ask (the hero has the trust list, not the quote). */}
-      <CloseBand title={region.close.title} placement={`${prefix}_close`} />
+      {/* The last ask, answered here: the inquiry form first (Sentinel: the form leads its section), then
+          what happens next and the approved client quote beside the decision. */}
+      <section id="inquire" className={`${ed.paper} ${styles.inquiry}`} aria-labelledby="inquire-title" data-page-close="" data-header-quiet="">
+        <div className={ed.inner}>
+          <header className={ed.head}>
+            <p className={ed.label}>Inquire</p>
+            <h2 id="inquire-title" className={ed.title}>
+              {region.close.title}
+            </h2>
+            <p className={ed.lede}>
+              For agencies and businesses across {region.country}. Tell us what you need, and we reply within 24 hours.
+            </p>
+          </header>
+          <div className={styles.inquiryGrid}>
+            <div className={`${ed.card} ${styles.inquiryCard}`}>
+              <RegionalInquiry region={region.slug} country={region.country} contactEmail={siteConfig.email} />
+            </div>
+            <div className={styles.inquiryRail}>
+              <Steps steps={INQUIRY_STEPS} tone="paper" />
+              <QuoteLine tone="paper" className={styles.inquiryQuote} />
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

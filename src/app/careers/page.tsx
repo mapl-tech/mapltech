@@ -165,7 +165,7 @@ export default function CareersPage() {
                 >
                   {siteConfig.email}
                 </a>{' '}
-                with the role, a link to your work and a few lines about you.
+                with the role, your resume attached and a few lines about you.
               </p>
               {/* No listed role yet: the talent list, one click away (native <details>, the form is in the HTML). */}
               <details id="talent" className={styles.talent}>
