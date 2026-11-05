@@ -522,7 +522,10 @@ $index-line: '(min-width: #{$breakpoint-lg}) and (hover: hover) and (pointer: fi
   color: $color-fg-muted;
 }
 
+// Decoration only: clicks pass through to the row's link under it (Nov 5, 2026: on /blog the
+// arrow sat above the stretched title link, so a click on it went nowhere).
 .go {
+  pointer-events: none;
   grid-area: go;
   justify-self: end;
   display: inline-grid;

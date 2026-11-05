@@ -99,7 +99,8 @@ export const LAYERS: readonly Layer[] = [
     service: 'web',
     name: 'Web Development',
     linkLabel: 'How we build websites',
-    summary: 'Fast websites, built for Google search, that meet accessibility standards on launch day. Your client can update them without help.',
+    // Leshan, Nov 5, 2026: "For Website it should be fast websites built for AI search".
+    summary: 'Fast websites built for AI search. They meet accessibility standards on launch day, and your client can update them without help.',
     fromPrice: from(pricing.webDevelopment.tiers[0].price),
     href: '/services/web-development',
     image: {
