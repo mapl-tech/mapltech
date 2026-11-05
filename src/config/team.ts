@@ -77,31 +77,9 @@ export const teamMembers: TeamMember[] = [
     image: '/images/team/placeholder.jpg',
   },
 
-  // Nigeria
-  {
-    name: 'Adebayo Oluwaseun',
-    title: 'E-Commerce Systems Engineer',
-    country: 'Nigeria',
-    department: 'Engineering',
-    bio: 'Specializes in payment system integrations and scalable e-commerce storefronts built for high-volume African markets.',
-    image: '/images/team/placeholder.jpg',
-  },
-  {
-    name: 'Chioma Eze',
-    title: 'Backend Developer',
-    country: 'Nigeria',
-    department: 'Engineering',
-    bio: 'Designs robust API architectures and database systems that support enterprise-grade applications across West Africa.',
-    image: '/images/team/placeholder.jpg',
-  },
-  {
-    name: 'Emeka Nwosu',
-    title: 'Product Implementation Lead',
-    country: 'Nigeria',
-    department: 'Product',
-    bio: 'Drives regional enterprise solution delivery, coordinating between engineering teams and local business requirements.',
-    image: '/images/team/placeholder.jpg',
-  },
+  // Nigeria. Leshan (Nov 5, 2026): Obong Uko (linkedin.com/in/obong-uko) is our only team
+  // member in Nigeria, so the three names listed here before were removed. Add Obong with the
+  // title, city, photo and bio he approves; until then the directory and llms.txt skip Nigeria.
 
   // Jamaica
   {

@@ -165,7 +165,7 @@ export const ABOUT = {
     label: 'Where we work',
     title: 'Three cities. One team.',
     // Each team with its country in its own clause, so the two city-country pairs never run together.
-    lede: `Toronto is our headquarters. Our Nigeria team is in Lagos and our Jamaica team is in Kingston. ${OFFICE_HOURS}`,
+    lede: `Toronto is our headquarters, with offices in Lagos and Kingston. ${OFFICE_HOURS}`,
   },
   founders: {
     label: 'Who leads it',

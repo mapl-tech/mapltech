@@ -150,7 +150,8 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     },
     team: {
       heading: 'What MAPL TECH Nigeria builds.',
-      body: 'Our engineers and project managers live and work in Nigeria. Our Toronto headquarters and 25+ years of combined experience stand behind them.',
+      // Nov 5, 2026: one team member in Nigeria (Obong Uko), so no plural "engineers and project managers".
+      body: 'We work with your team in Nigerian business hours, with our Toronto headquarters and 25+ years of combined experience behind every project.',
       realitiesHeading: 'Built for local needs',
       realities: [
         'Phone-first sites that work on slow connections',
@@ -191,7 +192,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
           question: 'Do you work in Nigerian business hours?',
           // Lagos keeps UTC+1 all year; Toronto is UTC-5 in winter and UTC-4 in summer. Both offices work 9 am to 6 pm local time.
           answer:
-            'Yes. Our Nigeria team keeps Lagos office hours. Lagos is six hours ahead of Toronto in winter and five in summer, so both offices are open from 3 pm to 6 pm Lagos time in winter and from 2 pm to 6 pm in summer.',
+            'Yes. We keep Lagos office hours. Lagos is six hours ahead of Toronto in winter and five in summer, so both offices are open from 3 pm to 6 pm Lagos time in winter and from 2 pm to 6 pm in summer.',
         },
         {
           question: 'Can you integrate Paystack or Flutterwave?',

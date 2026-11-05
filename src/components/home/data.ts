@@ -104,7 +104,7 @@ export const FAQ_ITEMS: readonly FaqEntry[] = [
   {
     question: "Can you work in our client's timezone?",
     answer:
-      'Yes. Our teams work in Toronto (Eastern time), Kingston (within an hour of Eastern time all year) and Lagos (UTC+1, whose afternoon overlaps the Eastern morning). We join your Slack and your team check-ins.',
+      'Yes. Our offices are in Toronto (Eastern time), Kingston (within an hour of Eastern time all year) and Lagos (UTC+1, whose afternoon overlaps the Eastern morning). We join your Slack and your team check-ins.',
   },
   {
     question: 'What happens after launch?',
