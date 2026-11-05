@@ -28,6 +28,7 @@ export default function CloseBand({
   href = PRIMARY_CTA.href,
   proof = true,
   proofLine,
+  rating = false,
 }: {
   title?: string;
   lede?: string;
@@ -45,6 +46,8 @@ export default function CloseBand({
   proof?: boolean;
   /** A sourced proof line in place of the quote (the homepage, whose track record gives the testimonials in full). */
   proofLine?: string;
+  /** Add the Google rating to the checklist (a page whose first checklist this is: the case studies). */
+  rating?: boolean;
 }) {
   // Only proof that renders opens the second column (QuoteLine is empty without an approved quote).
   const proofNode = proofLine ? (
@@ -76,7 +79,7 @@ export default function CloseBand({
               </Link>
             ) : null}
           </div>
-          {trust?.length ? <TrustList items={trust} tone="band" className={styles.note} /> : null}
+          {trust?.length ? <TrustList items={trust} tone="band" rating={rating} className={styles.note} /> : null}
         </div>
         {proofNode}
       </div>

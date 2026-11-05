@@ -4,6 +4,7 @@ import type { WorkEntry } from '@/components/work/work-types';
 import { estimateLinkFor, scopingCallLinkFor } from '@/components/work/work-data';
 import CloseBand from '@/components/flagship/CloseBand';
 import { TRUST_ITEMS } from '@/components/flagship/content';
+import CaseShotFrame from './CaseShotFrame';
 import CaseStage from './CaseStage';
 import ChapterNav from './ChapterNav';
 import SiteScroll from './SiteScroll';
@@ -30,21 +31,19 @@ import Arrow from '@/components/ui/Arrow';
 export default function CaseStudy({
   entry,
   story,
-  next,
+  related = [],
 }: {
   entry: WorkEntry;
   story: CaseStory;
-  next?: { entry: WorkEntry; story: CaseStory | undefined };
+  /** Up to three more cases, the same service line first (the case page picks them). */
+  related?: readonly { entry: WorkEntry; story: CaseStory | undefined }[];
 }) {
   const service = story.estimate?.service ?? entry.service;
   const estimateHref = estimateLinkFor(story.estimate ?? { service });
   const full = FULL_PAGES[entry.slug];
   const live = story.facts.find((fact) => fact.href);
   // "Skip the live site" lands on the first thing after it: the ask, else the next project.
-  const afterLive = story.matters ? 'case-matters' : next ? 'case-next' : undefined;
-  const nextName = next ? (next.story?.client ?? next.entry.title) : '';
-  // A real capture only, never a mockup: a project without one gets a text-only row.
-  const nextShot = next?.story?.media?.desktop;
+  const afterLive = story.matters ? 'case-matters' : related.length ? 'case-next' : undefined;
   // The close's proof where the story's own quote keeps the band's quote line
   // off: the site's client line, less this case's own client, so it adds
   // names instead of repeating a result the page has already shown twice.
@@ -212,9 +211,22 @@ export default function CaseStudy({
                       <li key={stage.name} className={styles.buildStep}>
                         <h3 className={styles.buildName}>{stage.name}</h3>
                         <p className={styles.buildText}>{stage.text}</p>
+                        {stage.shot ? (
+                          <CaseShotFrame shot={stage.shot} sizes="(min-width: 1440px) 900px, (min-width: 1024px) 64vw, 92vw" />
+                        ) : null}
                       </li>
                     ))}
                   </ul>
+                  {story.built.shots?.length ? (
+                    <div className={styles.shots}>
+                      <h3 className={styles.buildName}>On the live site</h3>
+                      <div className={styles.shotsGrid}>
+                        {story.built.shots.map((shot) => (
+                          <CaseShotFrame key={shot.src} shot={shot} sizes="(min-width: 1440px) 440px, (min-width: 768px) 46vw, 92vw" />
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </section>
               ) : null}
 
@@ -288,50 +300,67 @@ export default function CaseStudy({
           secondary={{ label: 'Price a project like this', href: estimateHref }}
           placement={`case_${entry.slug}`}
           trust={TRUST_ITEMS}
+          rating
           proof={!story.quote}
           proofLine={closeProof}
           hero
         />
       ) : null}
 
-      {/* ---------------------------------------------------------- next: one row, after the ask */}
-      {next ? (
-        <div className={styles.nextBand}>
+      {/* ---------------------------------------------------------- more: three cases, after the ask */}
+      {related.length ? (
+        <section id="case-next" className={styles.nextBand} aria-labelledby="case-next-title">
           <div className={styles.shell}>
-            <Link
-              id="case-next"
-              href={next.entry.path}
-              className={styles.next}
-              data-has-media={nextShot ? '' : undefined}
-              aria-label={`Next project: ${nextName}`}
-              aria-describedby="case-next-line"
-              data-cta-placement={`case_${entry.slug}_next`}
-            >
-              {nextShot ? (
-                <span className={styles.nextMedia} aria-hidden="true">
-                  <Image
-                    src={nextShot}
-                    alt=""
-                    width={1800}
-                    height={1125}
-                    sizes="(min-width: 1024px) 264px, 26vw"
-                    className={styles.nextImg}
-                  />
+            <div className={styles.nextHead}>
+              <h2 id="case-next-title" className={styles.nextLabel}>
+                More case studies
+              </h2>
+              <Link href="/our-work" className={styles.nextAll} data-cta-placement={`case_${entry.slug}_all_work`}>
+                See all the work
+                <span aria-hidden="true" className={styles.nextAllArrow}>
+                  <Arrow />
                 </span>
-              ) : null}
-              <span className={styles.nextText}>
-                <span className={styles.nextLabel}>Next project</span>
-                <span className={styles.nextName}>{nextName}</span>
-                <span id="case-next-line" className={styles.nextLine}>
-                  {next.story?.headline ?? next.entry.description}
-                </span>
-              </span>
-              <span className={styles.nextGo} aria-hidden="true">
-                <Arrow />
-              </span>
-            </Link>
+              </Link>
+            </div>
+            <ul className={styles.related} role="list">
+              {related.map(({ entry: other, story: otherStory }) => {
+                const name = otherStory?.client ?? other.title;
+                // A real capture only, never a mockup: a project without one gets a text-only card.
+                const shot = otherStory?.media?.desktop;
+                const lineId = `case-next-${other.slug}`;
+                return (
+                  <li key={other.slug}>
+                    <Link
+                      href={other.path}
+                      className={styles.relatedCard}
+                      aria-label={`${name} case study`}
+                      aria-describedby={lineId}
+                      data-cta-placement={`case_${entry.slug}_related`}
+                    >
+                      {shot ? (
+                        <span className={styles.relatedMedia} aria-hidden="true">
+                          <Image
+                            src={shot}
+                            alt=""
+                            width={1800}
+                            height={1125}
+                            sizes="(min-width: 1440px) 420px, (min-width: 768px) 30vw, 92vw"
+                            className={styles.relatedImg}
+                          />
+                        </span>
+                      ) : null}
+                      <span className={styles.relatedKind}>{otherStory?.tags[0] ?? other.category}</span>
+                      <span className={styles.relatedName}>{name}</span>
+                      <span id={lineId} className={styles.relatedLine}>
+                        {otherStory?.headline ?? other.description}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-        </div>
+        </section>
       ) : null}
     </article>
   );

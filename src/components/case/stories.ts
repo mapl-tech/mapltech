@@ -44,9 +44,24 @@ export interface CaseResult {
   short?: string;
 }
 
+/**
+ * A close-up of the live site, captured from the page it shows (Nov 5, 2026,
+ * 1440x900 at the site's own scale), framed with that page's address so a
+ * reader sees it is the real site, not a mock-up.
+ */
+export interface CaseShot {
+  src: string;
+  /** What the screen shows, for screen readers. */
+  alt: string;
+  /** The page's address without the protocol, shown in the frame ("lrostaffing.com/job-listings"). */
+  path: string;
+}
+
 export interface CaseStage {
   name: string;
   text: string;
+  /** The live page this stage is, shown under its text (CaseStudy "What we built"). */
+  shot?: CaseShot;
 }
 
 export interface CaseStory {
@@ -75,7 +90,8 @@ export interface CaseStory {
   facts: readonly CaseFact[];
   results?: readonly CaseResult[];
   situation?: readonly string[];
-  built?: { intro?: string; stages: readonly CaseStage[] };
+  /** `shots`: close-ups of the live site that no single stage is, shown after the stages. */
+  built?: { intro?: string; stages: readonly CaseStage[]; shots?: readonly CaseShot[] };
   impact?: readonly { heading: string; items: readonly string[] }[];
   quote?: {
     text: string;
@@ -133,10 +149,22 @@ export const STORIES: readonly CaseStory[] = [
       intro: 'One website, organised around its two kinds of visitor: job seekers and employers are each one click from the main menu.',
       stages: [
         { name: 'Foundation', text: 'Every part made for the LRO Staffing brand, not a rented template.' },
-        { name: 'Find', text: 'Job search with keyword, industry, location and job type filters.' },
+        {
+          name: 'Find',
+          text: 'Job search with keyword, industry, location and job type filters.',
+          shot: { src: '/images/cases/shots/lro-staffing-find.jpg', alt: 'LRO Staffing’s job search: a keyword box with industry, location and job type filters, above the latest job postings.', path: 'lrostaffing.com/job-listings' },
+        },
         { name: 'Apply', text: 'Job alerts and resume submission, so a visit can end in an application.' },
-        { name: 'Expertise', text: 'Industry expertise pages, from technology and government to legal services and finance.' },
-        { name: 'Insight', text: 'A recruitment insights blog that LRO’s own team publishes to, and an interactive salary guide for the Ottawa and Toronto markets.' },
+        {
+          name: 'Expertise',
+          text: 'Industry expertise pages, from technology and government to legal services and finance.',
+          shot: { src: '/images/cases/shots/lro-staffing-expertise.jpg', alt: 'LRO Staffing’s recruitment specializations, as photo cards for Technology and for Finance, Accounting & Payroll.', path: 'lrostaffing.com/areas-of-expertise' },
+        },
+        {
+          name: 'Insight',
+          text: 'A recruitment insights blog that LRO’s own team publishes to, and an interactive salary guide for the Ottawa and Toronto markets.',
+          shot: { src: '/images/cases/shots/lro-staffing-insight.jpg', alt: 'LRO Staffing’s insights page: featured articles with topic filters such as Hiring, Job Market and Salary Guide, above the recent blog posts.', path: 'lrostaffing.com/insights' },
+        },
         { name: 'Access', text: 'Parts like the “How We Work With You” panels work with a keyboard and tell screen readers when they open and close.' },
       ],
     },
@@ -231,6 +259,10 @@ export const STORIES: readonly CaseStory[] = [
         { name: 'Money', text: 'Strict payment safeguards: prices are worked out on the server, a repeated payment request is charged only once, and test orders stay apart from real ones.' },
         { name: 'AI assistants', text: 'MCP and WebMCP tools let AI assistants look up real fares and give travellers a link that is ready to book.' },
       ],
+      shots: [
+        { src: '/images/cases/shots/mapl-tours-explore.jpg', alt: 'MAPL Tours’ explore page: Jamaica tours and day trips, with a search box, parish and category filters, and experience photos.', path: 'mapltours.com/explore' },
+        { src: '/images/cases/shots/mapl-tours-transfers.jpg', alt: 'MAPL Tours’ airport transfer page: “Sangster to your hotel. Avoid the hassle.”, with the price to each destination listed up front.', path: 'mapltours.com/transfers' },
+      ],
     },
     impact: [
       {
@@ -287,6 +319,7 @@ export const STORIES: readonly CaseStory[] = [
             {
               name: 'Journey',
               text: 'The site is organised as a five-stage journey: Noticing, Finding Out, Choosing, Living with it, Giving back. Each stage is a plain-language page that points to the next.',
+              shot: { src: '/images/cases/shots/chha-ncr-journey.jpg', alt: 'CHHA-NCR’s “Five first steps, one at a time” guide, linking the five stages: Noticing, Finding out, Choosing, Living with it and Giving back.', path: 'chhancr.ca/resources' },
             },
             {
               name: 'Accessibility',
@@ -295,6 +328,7 @@ export const STORIES: readonly CaseStory[] = [
             {
               name: 'Directory',
               text: 'A directory of local hearing clinics with addresses, tap-to-call numbers and map links, plus an Accessible Ottawa guide to venues with hearing loops.',
+              shot: { src: '/images/cases/shots/chha-ncr-directory.jpg', alt: 'CHHA-NCR’s “Find a hearing clinic near you” directory: a search box above cards for Ottawa clinics with their addresses.', path: 'chhancr.ca/resources' },
             },
             {
               name: 'Self-service',
@@ -351,7 +385,11 @@ export const STORIES: readonly CaseStory[] = [
     ],
     built: {
       stages: [
-        { name: 'Filter', text: 'Filters for role and market.' },
+        {
+          name: 'Filter',
+          text: 'Filters for role and market.',
+          shot: { src: '/images/cases/shots/lro-salary-guide-filter.jpg', alt: 'The salary benchmark calculator in LRO’s 2026 salary guide, with Job title, Industry and Location fields.', path: 'lrostaffing.com/lro-salary-guide' },
+        },
         { name: 'See', text: 'Charts that update as soon as you change a filter.' },
         { name: 'Compare', text: 'Salary comparisons by role, for recruiters and hiring managers.' },
       ],
@@ -382,9 +420,17 @@ export const STORIES: readonly CaseStory[] = [
     ],
     built: {
       stages: [
-        { name: 'Members', text: 'A member portal.' },
+        {
+          name: 'Members',
+          text: 'A member portal.',
+          shot: { src: '/images/cases/shots/focas-canada-members.jpg', alt: 'FOCAS Canada’s membership page: Renew membership and New membership buttons above the benefits of becoming a member.', path: 'focascanada.org/membership' },
+        },
         { name: 'Events', text: 'Online registration for events.' },
-        { name: 'Community', text: 'Tools for community engagement.' },
+        {
+          name: 'Community',
+          text: 'Tools for community engagement.',
+          shot: { src: '/images/cases/shots/focas-canada-community.jpg', alt: 'FOCAS Canada’s program search: a search box above cards for Youth Training & Employment, Women and Youth Employment and Employment Connection.', path: 'focascanada.org/programs-services' },
+        },
       ],
     },
     matters: {

@@ -640,6 +640,62 @@ $phone-peek: 46px;
   color: $color-text-body;
 }
 
+// A close-up of the live page under its stage, in the browser frame of "The live site"
+// (CaseShotFrame), and the row of close-ups no single stage is ("On the live site").
+.shot {
+  margin: 20px 0 0;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #0d0d0f;
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.shotBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+  padding: 0 14px;
+  background: #18181b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  color: $color-fg-muted;
+}
+
+.shotLights {
+  display: inline-flex;
+  gap: 6px;
+
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+  }
+}
+
+.shotImg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.shots {
+  display: grid;
+  gap: 4px;
+  padding-top: clamp(24px, 3vw, 36px);
+}
+
+.shotsGrid {
+  display: grid;
+  gap: 20px;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .impactGrid {
   display: grid;
   gap: 40px;
@@ -911,99 +967,28 @@ $phone-peek: 46px;
 }
 
 // ===================================================================
-// The next project: one row in the /our-work index style, after the ask
+// More case studies: three cards after the ask, the same service line first
+// (Nov 5, 2026, from the Scaling Process review: a reader who is still looking
+// gets three ways on, not one). One column on phones, three from 768px.
 // ===================================================================
 .nextBand {
   background: $color-ground;
-  padding: clamp(40px, 6vw, 88px) 0;
+  padding: clamp(56px, 7vw, 104px) 0;
+  border-top: 1px solid $color-hairline;
+  scroll-margin-top: 16px;
 }
 
-// Phones: label, name and line, with the arrow beside them (no capture).
-// From 768px the real capture leads the row.
-.next {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 44px;
-  grid-template-areas: 'text go';
-  align-items: center;
-  column-gap: 16px;
-  padding: 28px 0;
-  border-top: 1px solid $color-hairline-strong;
-  border-bottom: 1px solid $color-hairline;
-  color: $color-fg;
-  text-decoration: none;
-
-  @include md {
-    grid-template-columns: minmax(0, 1fr) 48px;
-    column-gap: clamp(24px, 3vw, 40px);
-
-    &[data-has-media] {
-      grid-template-columns: clamp(184px, 24vw, 264px) minmax(0, 1fr) 48px;
-      grid-template-areas: 'media text go';
-    }
-  }
-
-  // The crimson rule the index rows draw across the top in hover and focus.
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -1px;
-    height: 1px;
-    background: $color-red;
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 0.6s $ease-out-expo;
-    pointer-events: none;
-  }
-
-  &:focus-visible {
-    outline: $focus-ring;
-    outline-offset: 4px;
-  }
-
-  &:focus-visible::before {
-    transform: scaleX(1);
-  }
-
-  @include pointer-fine-motion {
-    &:hover::before {
-      transform: scaleX(1);
-    }
-  }
-}
-
-.nextMedia {
-  grid-area: media;
-  display: none;
-  overflow: hidden;
-  border-radius: 10px;
-  background: $color-surface-1;
-  box-shadow:
-    0 30px 60px -30px rgba(0, 0, 0, 0.85),
-    0 0 0 1px rgba(255, 255, 255, 0.08);
-  transition: transform 0.8s $ease-out-expo;
-
-  @include md {
-    display: block;
-  }
-}
-
-.nextImg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.nextText {
-  grid-area: text;
-  display: grid;
-  gap: 10px;
-  min-width: 0;
+.nextHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px 32px;
+  margin-bottom: clamp(28px, 4vw, 48px);
 }
 
 .nextLabel {
+  margin: 0;
   @include section-label($color-fg-muted);
 
   &::before {
@@ -1011,78 +996,96 @@ $phone-peek: 46px;
   }
 }
 
-.nextName {
-  justify-self: start;
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: clamp(1.75rem, 1rem + 2.3vw, 3rem); // 28px -> 48px, as on /our-work
-  line-height: 1;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-  transition:
-    transform 0.6s $ease-out-expo,
-    color 0.3s ease;
+.nextAll {
+  @include text-action($color-fg);
 }
 
-.nextLine {
-  max-width: 40em;
+.nextAllArrow {
+  display: inline-block;
+  margin-left: 10px;
+  transition: transform 0.35s $ease-out-expo;
+
+  .nextAll:hover & {
+    transform: translateX(4px);
+  }
+}
+
+.related {
+  display: grid;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include md {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(20px, 2.4vw, 32px);
+  }
+}
+
+// The whole card is the link (one target, 44px and more), its name in crimson on hover and focus.
+.relatedCard {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  border-radius: 16px;
+  color: inherit;
+  text-decoration: none;
+
+  @include focus-ring;
+}
+
+.relatedMedia {
+  display: block;
+  overflow: hidden;
+  margin-bottom: 8px;
+  aspect-ratio: 16 / 10;
+  border-radius: 14px;
+  background: #121214;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: transform 0.6s $ease-out-expo;
+}
+
+.relatedImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.relatedKind {
+  @include mono-label;
+}
+
+.relatedName {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem); // 22px -> 28px
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: $color-fg;
+  transition: color 0.2s ease;
+}
+
+.relatedLine {
   font-size: $font-size-base;
   line-height: 1.5;
   color: $color-text-body;
 }
 
-.nextGo {
-  grid-area: go;
-  justify-self: end;
-  display: inline-grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid $color-hairline-strong;
-  font-size: 1.1rem;
-  color: $color-fg;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease,
-    transform 0.6s $ease-out-expo;
-
-  @include md {
-    width: 48px;
-    height: 48px;
-  }
-}
-
-// Hover and keyboard focus: the name in crimson (large text), the arrow filled.
-.next:focus-visible {
-  .nextName {
-    color: $color-red-display;
-  }
-
-  .nextGo {
-    background: $color-fg;
-    border-color: $color-fg;
-    color: $color-ground;
-  }
+.relatedCard:focus-visible .relatedName {
+  color: $color-red-display;
 }
 
 @include pointer-fine-motion {
-  .next:hover {
-    .nextName {
+  .relatedCard:hover {
+    .relatedName {
       color: $color-red-display;
-      transform: translateX(12px);
     }
 
-    .nextMedia {
+    .relatedMedia {
       transform: translateY(-4px);
-    }
-
-    .nextGo {
-      background: $color-fg;
-      border-color: $color-fg;
-      color: $color-ground;
-      transform: rotate(-45deg);
     }
   }
 }
