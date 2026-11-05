@@ -26,9 +26,12 @@ export function Roles() {
         </header>
 
         <div className={styles.roles}>
-          {[roles.yours, roles.ours].map((side) => (
-            <section key={side.heading} className={styles.side} aria-labelledby={`roles-${side.heading}`}>
-              <h3 id={`roles-${side.heading}`} className={styles.sideHeading}>
+          {[
+            { id: 'roles-yours', ...roles.yours },
+            { id: 'roles-ours', ...roles.ours },
+          ].map((side) => (
+            <section key={side.id} className={styles.side} aria-labelledby={side.id}>
+              <h3 id={side.id} className={styles.sideHeading}>
                 {side.heading}
               </h3>
               <ul className={styles.sideList} role="list">
