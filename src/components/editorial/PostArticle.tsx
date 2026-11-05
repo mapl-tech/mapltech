@@ -6,7 +6,7 @@ import { SERVICE_META, estimateHref, formatMoney } from '@/lib/estimate';
 import { ESTIMATE_HREF, PROJECT_HREF } from '@/components/layout/chrome';
 import CloseBand from '@/components/flagship/CloseBand';
 import QuoteLine from '@/components/flagship/QuoteLine';
-import { CLOSE_BAND, HERO_REASSURE, LOWEST_PRICE, WHITE_LABEL_NOTE } from '@/components/flagship/content';
+import { CLOSE_BAND, LOWEST_PRICE, TRUST_ITEMS, WHITE_LABEL_ITEMS } from '@/components/flagship/content';
 import { layerView, proofCases } from '@/components/services/serviceContent';
 import { categoryService, firstSentence, preparePost, topicSlug } from '@/components/convert/blog-utils';
 import ArticleRow from './ArticleRow';
@@ -317,7 +317,7 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
             : `We offer ${SERVICE_LIST} for agencies, under your brand, and every price is public. ${BRIEF_LINE} to start.`
         }
         href={briefHref}
-        note={serviceName ? WHITE_LABEL_NOTE : HERO_REASSURE}
+        trust={serviceName ? WHITE_LABEL_ITEMS : TRUST_ITEMS}
         secondary={{ label: ESTIMATE_LABEL, href: askHref }}
         placement="blog_post_close"
         id="post-close-title"

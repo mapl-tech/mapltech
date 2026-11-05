@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Backbone from '@/components/backbone/Backbone';
-import { keepTogether } from '@/components/services/keepTogether';
-import { HERO, PRICE_REASSURE, PRIMARY_CTA, SECONDARY_CTA } from './content';
+import { HERO, PRICE_TRUST_ITEMS, PRIMARY_CTA, SECONDARY_CTA } from './content';
+import TrustList from './TrustList';
 import styles from './Hero.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -58,7 +58,7 @@ export default function Hero() {
           </div>
           {/* The ask and the trust line only: the testimonials are given in full
               in the track record below, where they are read, not skimmed. */}
-          <p className={styles.reassure}>{keepTogether(PRICE_REASSURE)}</p>
+          <TrustList items={PRICE_TRUST_ITEMS} className={styles.reassure} />
         </div>
 
         <div className={styles.foot}>

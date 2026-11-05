@@ -5,7 +5,7 @@ import JsonLd from '@/components/seo/JsonLd';
 import Accordion from '@/components/ui/Accordion';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE } from '@/components/flagship/content';
+import { TRUST_ITEMS } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from '@/components/layout/chrome';
 import { keepNumberWords } from '@/components/pricing/content';
 import { siteConfig } from '@/config/site';
@@ -117,7 +117,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
             secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: `${prefix}_hero_secondary` }}
           />
         }
-        note={HERO_REASSURE}
+        trust={TRUST_ITEMS}
         aside={
           <div className={styles.place}>
             <OfficeMap focus={region.officeCity} captionHidden axes={false} draw="load" className={styles.placeMap} />

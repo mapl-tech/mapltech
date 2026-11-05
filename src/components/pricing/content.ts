@@ -94,8 +94,6 @@ export interface ServiceFacts {
   name: string;
   from: number;
   fromLabel: string;
-  /** The entry tier in one line, grounded in that tier's feature list. */
-  entry: string;
   tierCount: number;
   monthlyFrom: number;
   /** Answer-first sentences for the price list (GEO): range of packages + monthly floor. */
@@ -105,15 +103,11 @@ export interface ServiceFacts {
 }
 
 // Services are always named by SERVICE_META[key].label (the canonical names).
-const SERVICE_COPY: Record<EstimateService, { id: string; entry: string }> = {
-  // Starter: "Custom-coded website that works on every screen (up to 7 pages)"
-  web: { id: 'web-development', entry: 'Starter: a custom-coded site, up to 7 pages' },
-  // Foundation Automation: "CRM setup for your team", "3 to 5 key automations"
-  automation: { id: 'automation', entry: 'Foundation: CRM setup and 3 to 5 key automations' },
-  // Internal Dashboards: "Custom charts and graphs", "Live reports"
-  tools: { id: 'internal-tools', entry: 'A custom dashboard with live reports' },
-  // Starter Cloud Setup: "Cloud setup on AWS, Google Cloud or Azure"
-  cloud: { id: 'cloud-engineering', entry: 'Starter setup on AWS, Google Cloud or Azure' },
+const SERVICE_COPY: Record<EstimateService, { id: string }> = {
+  web: { id: 'web-development' },
+  automation: { id: 'automation' },
+  tools: { id: 'internal-tools' },
+  cloud: { id: 'cloud-engineering' },
 };
 
 function factsFor(service: EstimateService): ServiceFacts {
@@ -129,7 +123,6 @@ function factsFor(service: EstimateService): ServiceFacts {
     name: meta.label,
     from,
     fromLabel: formatMoney(from),
-    entry: copy.entry,
     tierCount: tiers.length,
     monthlyFrom,
     answer: `${NUMBER_WORDS[tiers.length]} packages, from ${formatMoney(from)} to ${ceilingOf(service)}. ${monthly} from ${formatMoney(monthlyFrom)} a month.`,

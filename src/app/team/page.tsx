@@ -4,7 +4,7 @@ import { pageGraph, person } from '@/lib/schema';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE } from '@/components/flagship/content';
+import { TRUST_ITEMS } from '@/components/flagship/content';
 import FactsBand from '@/components/company/FactsBand';
 import { FounderProfiles } from '@/components/company/Founders';
 import HeroActions from '@/components/company/HeroActions';
@@ -74,7 +74,7 @@ export default function TeamPage() {
             secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: 'team_hero_secondary' }}
           />
         }
-        note={HERO_REASSURE}
+        trust={TRUST_ITEMS}
         asideAlign="body"
         aside={<FactsBand facts={TEAM.facts} label="The team at a glance" placement="aside" />}
       />

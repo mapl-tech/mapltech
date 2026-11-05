@@ -35,7 +35,7 @@ export interface CatalogItem {
   sector: string;
   /** The service line the filter chips match on. */
   line: EstimateService;
-  result?: { value: string; label: string };
+  result?: { value: string; label: string; short?: string };
   /** Real desktop capture (1800×1125), shown in a browser frame. */
   desktop?: string;
   /** Real phone capture (780×1688). */

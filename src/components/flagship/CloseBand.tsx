@@ -3,6 +3,7 @@ import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import { CLOSE_BAND, HERO_PROOF, PRIMARY_CTA } from './content';
 import CloseBandPrimary from './CloseBandPrimary';
 import QuoteLine from './QuoteLine';
+import TrustList from './TrustList';
 import styles from './CloseBand.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -22,7 +23,7 @@ export default function CloseBand({
   secondary = { label: PRICING_LABEL, href: PRICING_HREF },
   placement = 'home_close',
   id = 'close-title',
-  note,
+  trust,
   hero = false,
   href = PRIMARY_CTA.href,
   proof = true,
@@ -34,8 +35,8 @@ export default function CloseBand({
   /** Prefix for data-cta-placement ("<page>_close"). */
   placement?: string;
   id?: string;
-  /** One line under the buttons answering the risk (sourced copy only). */
-  note?: string;
+  /** The trust answers under the buttons, as a short list (content.ts TRUST_ITEMS). */
+  trust?: readonly string[];
   /** Mark the primary as the page's hero CTA (pages whose only ask is this band). */
   hero?: boolean;
   /** Where the primary goes: the brief, optionally with an answer filled in (`/contact-us?svc=web`). */
@@ -75,7 +76,7 @@ export default function CloseBand({
               </Link>
             ) : null}
           </div>
-          {note ? <p className={styles.note}>{note}</p> : null}
+          {trust?.length ? <TrustList items={trust} tone="band" className={styles.note} /> : null}
         </div>
         {proofNode}
       </div>

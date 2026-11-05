@@ -1,0 +1,44 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// One item a line at every width, the checks in one column: side by side, three
+// items split two and one beside the buttons.
+.list {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: $font-size-base; // 17px: the phone floor for sentence copy
+  line-height: 1.4;
+  color: $color-fg-muted;
+}
+
+.item {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+// Centred on the first line (line-height 1.4).
+.check {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: calc((1.4em - 16px) / 2);
+  fill: none;
+  stroke: $color-red-text;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+// The crimson close: small text on crimson is solid white only (7.56:1).
+.list[data-tone='band'] {
+  color: $color-white;
+
+  .check {
+    stroke: $color-white;
+  }
+}

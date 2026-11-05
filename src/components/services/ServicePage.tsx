@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import CloseBand from '@/components/flagship/CloseBand';
-import { WHITE_LABEL_NOTE } from '@/components/flagship/content';
+import { WHITE_LABEL_ITEMS } from '@/components/flagship/content';
 import JsonLd from '@/components/seo/JsonLd';
 import PageHeader from '@/components/ui/PageHeader';
 import type { ServiceSlug } from '@/config/services';
@@ -99,7 +99,7 @@ export default function ServicePage({ slug }: ServicePageProps) {
             page={view.slug}
             href={brief}
             secondary={{ label: ESTIMATE_LABEL, href: view.estimate }}
-            note={WHITE_LABEL_NOTE}
+            trust={WHITE_LABEL_ITEMS}
           />
         }
         aside={<HeroFacts view={view} />}

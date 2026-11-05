@@ -123,13 +123,10 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   @include lg {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      'name price'
-      'note note';
+    grid-template-areas: 'name price';
     align-items: baseline;
     column-gap: 20px;
-    row-gap: 4px;
-    padding: 12px 0 11px;
+    padding: 16px 0 15px;
 
     li:nth-child(2n) > & {
       padding-left: 0;
@@ -157,50 +154,45 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
+// Phones and tablets: the free space above the price, so the two prices in a row line up
+// when one name runs to two lines ("Custom Internal Tools").
 .cellPrice {
   grid-area: price;
   display: grid;
   gap: 6px;
-  margin: 18px 0 0;
+  margin: auto 0 0;
+  padding-top: 18px;
 
   @include lg {
     display: block;
     margin: 0;
+    padding-top: 0;
     white-space: nowrap;
   }
 }
 
 .from {
-  @include mono-label;
+  font-size: 0.9375rem;
+  color: $color-fg-muted;
+
+  @include lg {
+    margin-right: 4px;
+  }
 }
 
 .amount {
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(2.25rem, 1.2rem + 3.4vw, 4.75rem); // 36px -> 76px across a cell
+  font-size: clamp(1.75rem, 1rem + 2.6vw, 2.5rem); // 28px -> 40px across a cell
   line-height: 0.92;
   letter-spacing: -0.045em;
   color: $color-fg;
   @include tabular;
 
-  // Beside its name in the hero's column: 32px at 1024, 40px from 1440.
+  // Beside its name in the hero's column: one calm row each, 24px at 1024, 28px from 1440.
   @include lg {
-    font-size: clamp(2rem, 0.8rem + 1.9vw, 2.5rem);
-    letter-spacing: -0.035em;
-  }
-}
-
-.cellNote {
-  grid-area: note;
-  margin: 14px 0 0;
-  max-width: 24ch;
-  font-size: $font-size-base; // 17px: a sentence, never under the phone floor
-  line-height: 1.45;
-  color: $color-fg-muted;
-
-  @include lg {
-    margin: 0;
-    max-width: none;
+    font-size: clamp(1.5rem, 0.9rem + 0.9vw, 1.75rem);
+    letter-spacing: -0.03em;
   }
 }
 
@@ -210,7 +202,6 @@ $ease: cubic-bezier(0.23, 1, 0.32, 1);
 .cellMore {
   @include text-action($color-fg);
   align-self: flex-start;
-  margin-top: auto;
   padding-top: 10px;
   font-size: 1rem;
 

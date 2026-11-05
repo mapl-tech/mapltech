@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { Faq } from '@/components/flagship/Acts';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE, PRICE_REASSURE } from '@/components/flagship/content';
+import { PRICE_TRUST_ITEMS, TRUST_ITEMS } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import HeroActions from './HeroActions';
 import IndexRows from './IndexRows';
 import Steps from './Steps';
-import { keepNumberWords, keepTogether, withLastWord } from './keepTogether';
+import { keepTogether, withLastWord } from './keepTogether';
 import { INDEX_FAQ, INDEX_STEPS, LAYER_VIEWS, PARTNERSHIPS_HREF, PARTNERSHIP_FROM } from './serviceContent';
 import styles from './ServicesIndex.module.scss';
 import Arrow from '@/components/ui/Arrow';
@@ -81,7 +81,7 @@ export default function ServicesIndex() {
           </p>
         }
         actions={
-          <HeroActions page="services" secondary={{ label: PRICING_LABEL, href: PRICING_HREF }} note={PRICE_REASSURE} />
+          <HeroActions page="services" secondary={{ label: PRICING_LABEL, href: PRICING_HREF }} trust={PRICE_TRUST_ITEMS} />
         }
         asideAlign="body"
         aside={<ServicePrices />}
@@ -131,7 +131,7 @@ export default function ServicesIndex() {
         id="services-close-title"
         title="Not sure which service fits?"
         lede="Tell us about the project. We will help you choose the right service and agree the scope with you."
-        note={keepNumberWords(HERO_REASSURE)}
+        trust={TRUST_ITEMS}
         placement="services_close"
       />
     </>

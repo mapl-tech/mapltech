@@ -5,7 +5,7 @@ import { aboutPage, breadcrumb, graph, orgId, personRef } from '@/lib/schema';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE } from '@/components/flagship/content';
+import { TRUST_ITEMS } from '@/components/flagship/content';
 import FactsBand from '@/components/company/FactsBand';
 import { FoundersSpread } from '@/components/company/Founders';
 import HeroActions from '@/components/company/HeroActions';
@@ -76,7 +76,7 @@ export default function AboutPage() {
             secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: 'about_hero_secondary' }}
           />
         }
-        note={HERO_REASSURE}
+        trust={TRUST_ITEMS}
         asideAlign="body"
         aside={<FactsBand facts={ABOUT.facts} label="MAPL TECH at a glance" placement="aside" />}
       />

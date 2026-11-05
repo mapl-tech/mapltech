@@ -11,12 +11,10 @@ import ScopeEstimator from '@/components/pricing/ScopeEstimator';
 import PriceList from '@/components/pricing/PriceList';
 import { pricingFaq } from '@/components/pricing/pricingFaq';
 import {
-  BUNDLES_FROM,
   CLOSE,
   ESTIMATOR,
   FAQ_COPY,
   HERO,
-  HOURLY_FROM,
   PRICING_DESCRIPTION,
   PRICING_PATH,
   PRICING_TITLE,
@@ -93,12 +91,12 @@ function StartingPrices() {
       <ul className={styles.ledger} role="list">
         {SERVICES.map((facts) => (
           <li key={facts.service}>
-            {/* Named "Web Development, From $5,000, All 4 packages"; the first package is the description. */}
+            {/* Named "Web Development, From $5,000, All 4 packages". What each package buys is
+                in the price list it leads to, so the row is the name and its price only. */}
             <a
               href={`#${facts.id}`}
               className={styles.cell}
               aria-labelledby={`ledger-${facts.service}-name ledger-${facts.service}-price ledger-${facts.service}-more`}
-              aria-describedby={`ledger-${facts.service}-note`}
               data-cta-placement={`pricing_ledger_${facts.service}`}
             >
               <span id={`ledger-${facts.service}-name`} className={styles.cellName}>
@@ -109,9 +107,6 @@ function StartingPrices() {
                 <span className={styles.from}>From </span>
                 <span className={styles.amount}>{facts.fromLabel}</span>
                 <span className="visually-hidden">,</span>
-              </span>
-              <span id={`ledger-${facts.service}-note`} className={styles.cellNote}>
-                {facts.entry}
               </span>
               <span id={`ledger-${facts.service}-more`} className={styles.cellMore}>
                 {/* One flex item, so a label that wraps ("All 3" / "packages") keeps the arrow after its last word. */}
@@ -128,9 +123,9 @@ function StartingPrices() {
           </li>
         ))}
       </ul>
+      {/* Monthly partnerships and hourly rates have their own sections below. */}
       <p className={styles.asOf}>
-        Monthly partnerships cover several services, from {BUNDLES_FROM} a month. Hourly work from {HOURLY_FROM} an hour.
-        All prices are in US dollars. Last updated <time dateTime={LAST_REVIEWED}>{longDate(LAST_REVIEWED)}</time>.
+        All prices in US dollars, updated <time dateTime={LAST_REVIEWED}>{longDate(LAST_REVIEWED)}</time>.
       </p>
     </section>
   );

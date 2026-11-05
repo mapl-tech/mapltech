@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import QuoteLine from '@/components/flagship/QuoteLine';
+import TrustList from '@/components/flagship/TrustList';
 import styles from './PageHeader.module.scss';
 
 export interface Crumb {
@@ -27,6 +28,7 @@ export default function PageHeader({
   actions,
   aside,
   note,
+  trust,
   proof = false,
   id = 'page-title',
   size = 'xl',
@@ -39,8 +41,10 @@ export default function PageHeader({
   crumbs?: readonly Crumb[];
   actions?: ReactNode;
   aside?: ReactNode;
-  /** One line under the actions answering the risk (sourced copy only). */
+  /** One line under the actions (sourced copy only), e.g. the blog's services line. */
   note?: ReactNode;
+  /** The trust answers under the actions, as a short list (content.ts TRUST_ITEMS). */
+  trust?: readonly string[];
   /** The approved client quote under the actions. */
   proof?: boolean;
   id?: string;
@@ -87,11 +91,12 @@ export default function PageHeader({
               {title}
             </h1>
           </div>
-          {lede || actions || note || proof ? (
+          {lede || actions || note || trust?.length || proof ? (
             <div className={styles.body}>
               {lede ? <div className={styles.lede}>{lede}</div> : null}
               {actions ? <div className={styles.actions}>{actions}</div> : null}
               {note ? <p className={styles.note}>{note}</p> : null}
+              {trust?.length ? <TrustList items={trust} className={styles.trust} /> : null}
               {proof ? <QuoteLine className={styles.proof} /> : null}
             </div>
           ) : null}

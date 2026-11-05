@@ -206,6 +206,12 @@
   @include phone-floor;
 }
 
+// The trust answers under the ask (TrustList sets the type).
+.trust {
+  margin-top: 18px;
+  max-width: 44em;
+}
+
 // The quote under the ask, ruled off like the home hero's.
 .proof {
   margin-top: clamp(20px, 2.6vw, 28px);

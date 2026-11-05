@@ -7,7 +7,7 @@ import { absoluteUrl, toISODate } from '@/config/routes';
 import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE, LOWEST_PRICE, SERVICES_INTRO } from '@/components/flagship/content';
+import { LOWEST_PRICE, SERVICES_INTRO, TRUST_ITEMS } from '@/components/flagship/content';
 import BlogArchive, { type ArchiveRow, type ArchiveTopic } from '@/components/editorial/BlogArchive';
 import { categoryService, firstSentence, topicSlug } from '@/components/convert/blog-utils';
 import { SERVICE_LIST, serviceFrom, serviceLinks, topicLabel } from '@/components/editorial/services';
@@ -191,7 +191,7 @@ export default function BlogPage() {
       <CloseBand
         title="Have a client project in mind?"
         lede="Answer four short questions. Then we agree the scope with you."
-        note={HERO_REASSURE}
+        trust={TRUST_ITEMS}
         placement="blog_close"
         id="blog-close-title"
       />

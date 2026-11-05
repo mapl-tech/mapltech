@@ -226,28 +226,25 @@ export const WORK: readonly WorkCard[] = (
 export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') ?? null;
 
 /**
- * Beside the hero ask: the risk answer (all three facts are the FAQ's own
- * answers, src/components/home/data.ts). HERO_REASSURE is the site-wide trust line, under the hero ask and as
- * the `note` beside other asks; it is display copy only (never JSON-LD), so
- * "20‑minute" carries a non-breaking hyphen (U+2011) and never splits, even
- * where a note renders without keepTogether(). The NDA sentence stands alone
- * in the home "Why agencies work with us" list (beside "We never approach your
- * clients."); WHITE_LABEL_NOTE joins the two where the fixed quote is already
- * said beside it (the service pages' hero facts, the article close's lede).
+ * Beside an ask: the risk answers (all three are the FAQ's own answers,
+ * src/components/home/data.ts), as a short list (TrustList), a few words each.
+ * The two-sentence note they replaced read as one grey block under the buttons
+ * (Leshan, Nov 2026: "messy"). TRUST_ITEMS under asks and in closes;
+ * PRICE_TRUST_ITEMS on the first screens of / and /services, led by the
+ * published price floor; WHITE_LABEL_ITEMS where the fixed quote is already
+ * beside the ask (the service pages' hero facts, the article close's lede).
+ * Display only, never JSON-LD: "20‑minute" keeps its non-breaking hyphen. The
+ * NDA sentence stands alone in the home "Why agencies work with us" list.
  */
 export const NDA_LINE = 'We sign an NDA before you share anything.';
-// "An NDA" is held together (U+00A0), so a wrapped line never ends on "An".
+// The homepage work section's note, until it moves to the list too ("An NDA" held together).
 export const HERO_REASSURE = `A fixed quote after one 20\u2011minute call. An\u00a0NDA before you share anything, and we never approach your clients.`;
-/**
- * The trust line led by the published price floor (LOWEST_PRICE, from
- * site.ts): public prices are what set us apart, so the first screens of the
- * homepage and /services carry it. Everywhere else the page already shows its
- * prices (about, team, regional, blog), or a service's own "from" price is
- * beside the ask (cases, articles), so the note goes without the floor.
- */
-export const PRICE_REASSURE = `Projects from ${money(LOWEST_PRICE)}, with a fixed quote after one 20\u2011minute call. An\u00a0NDA before you share anything, and we never approach your clients.`;
-/** The trust line without the quote, where the fixed quote is already said beside it (service heroes, article closes). */
-export const WHITE_LABEL_NOTE = 'We sign an NDA before you share anything, and we never approach your clients.';
+const QUOTE_ITEM = 'Fixed quote after one 20\u2011minute call';
+const NDA_ITEM = 'NDA before you share anything';
+const CLIENTS_ITEM = 'We never approach your clients';
+export const TRUST_ITEMS = [QUOTE_ITEM, NDA_ITEM, CLIENTS_ITEM] as const;
+export const PRICE_TRUST_ITEMS = [`Projects from ${money(LOWEST_PRICE)}`, QUOTE_ITEM, NDA_ITEM] as const;
+export const WHITE_LABEL_ITEMS = [NDA_ITEM, CLIENTS_ITEM] as const;
 /**
  * The approved quote's first sentence as one line of proof beside an ask on
  * the other pages (QuoteLine). The homepage gives the testimonials in full in

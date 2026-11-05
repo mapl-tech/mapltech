@@ -4,12 +4,11 @@ import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE, WORK_SECTION } from '@/components/flagship/content';
+import { TRUST_ITEMS, WORK_SECTION } from '@/components/flagship/content';
 import { PrimaryCta, TextCta } from '@/components/work/Cta';
 import WorkIndex from '@/components/work/WorkIndex';
 import {
   WORK_PAGE,
-  capitalize,
   catalogFilters,
   catalogItems,
   catalogVoice,
@@ -88,10 +87,9 @@ export default function OurWorkPage() {
         label="Our work"
         title="Websites, tools and automation we built."
         lede={
-          // Every case says what we built; only some publish a result, so they are counted, not promised.
+          // Two sentences: the published results are beside it, so they are not counted here too.
           <p>
             Most of our work is published under our partners’ names. These {countWord(items.length)} projects carry ours.
-            Open any one to see what we built. {capitalize(countWord(withResults.length))} include published results.
           </p>
         }
         actions={
@@ -104,7 +102,7 @@ export default function OurWorkPage() {
             </TextCta>
           </>
         }
-        note={HERO_REASSURE}
+        trust={TRUST_ITEMS}
         asideAlign="body"
         aside={withResults.length ? <HeroResults items={withResults} /> : undefined}
       />
@@ -170,7 +168,7 @@ export default function OurWorkPage() {
         placement="work_close"
         title={WORK_SECTION.ask}
         lede="You and your client own the code. We check in with your team every week."
-        note={HERO_REASSURE}
+        trust={TRUST_ITEMS}
         proofLine={figuresLine()}
       />
     </>
@@ -294,7 +292,8 @@ function HeroResults({ items }: { items: readonly CatalogItem[] }) {
                   {item.result.value}
                   <span className="visually-hidden">,</span>
                 </span>
-                <span className={styles.heroResultMeaning}>{item.result.label}</span>
+                {/* The case's short label ("Lighthouse accessibility"); the case page has it in full. */}
+                <span className={styles.heroResultMeaning}>{item.result.short ?? item.result.label}</span>
               </Link>
             </li>
           ) : null,

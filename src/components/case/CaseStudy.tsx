@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { WorkEntry } from '@/components/work/work-types';
 import { estimateLinkFor, scopingCallLinkFor } from '@/components/work/work-data';
 import CloseBand from '@/components/flagship/CloseBand';
-import { HERO_REASSURE } from '@/components/flagship/content';
+import { TRUST_ITEMS } from '@/components/flagship/content';
 import CaseStage from './CaseStage';
 import ChapterNav from './ChapterNav';
 import SiteScroll from './SiteScroll';
@@ -285,7 +285,7 @@ export default function CaseStudy({
           href={scopingCallLinkFor(service)}
           secondary={{ label: 'Price a project like this', href: estimateHref }}
           placement={`case_${entry.slug}`}
-          note={HERO_REASSURE}
+          trust={TRUST_ITEMS}
           proof={!story.quote}
           proofLine={closeProof}
           hero
