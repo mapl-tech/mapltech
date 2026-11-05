@@ -316,7 +316,11 @@ $card-wide: 920px;
 .askAction {
   display: grid;
   justify-items: start;
-  gap: 16px;
+  gap: 24px; // the trust checklist's gap from the button above it, as every ask keeps
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    gap: 20px;
+  }
 }
 
 .askPrimary {
