@@ -294,44 +294,45 @@ $short-band: max(30svh, 192px);
   @include focus-ring;
 }
 
+// The foot row: the clients on the hairline (every width), the interaction hint
+// at its right end (landscape with a mouse), the motion toggle beyond it.
 .foot {
+  // The hint keeps to the room the marks leave: its second sentence goes first, then the hint.
+  container: foot / inline-size;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 16px 32px;
   padding-top: 18px;
   // Room on the right for the motion toggle, which sits in the scene layer.
   padding-right: 168px;
+  border-top: 1px solid $color-hairline;
 
-  // The rule only where the hint shows (the same query as .hint): a touch
-  // tablet in landscape, or reduced motion, would otherwise get a bare line.
-  @media (min-aspect-ratio: 21/20) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    border-top: 1px solid $color-hairline;
-  }
-
-  // Portrait: no foot row; the hero stays short.
+  // Portrait: the toggle sits up in the scene band, so the row runs the full width.
   @media #{$portrait} {
-    display: none;
+    padding-right: 0;
+    padding-top: 16px;
   }
 }
 
-// The interaction hint: landscape with a mouse only, and only while the scene can respond.
+// The interaction hint: landscape with a mouse only, and only while the scene can respond. It sits
+// over the rods beside the motion toggle, so it borrows the toggle's glass pill to stay legible.
 .hint {
   @include mono-label($color-fg-muted);
   display: none;
   align-items: center;
-  gap: 10px;
-  margin: 0 auto 0 0;
+  min-height: 44px;
+  flex: none;
+  margin: 0 0 0 auto;
+  padding: 0 16px;
+  border: 1px solid $color-hairline;
+  border-radius: $radius-full;
+  background: rgba($color-ground, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
   opacity: 0;
   transition: opacity 0.6s ease;
-
-  &::before {
-    content: '';
-    width: 28px;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.6;
-  }
 
   @media (min-aspect-ratio: 21/20) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
     display: inline-flex;
@@ -345,6 +346,23 @@ $short-band: max(30svh, 192px);
   .hero:has([data-touched]) & {
     opacity: 0;
     transition: opacity 0.6s ease;
+  }
+}
+
+// The hint is a flex box, so its sentences are flex items: keep the space that opens the second.
+.hintMore {
+  white-space: pre;
+}
+
+@container foot (max-width: 1100px) {
+  .hintMore {
+    display: none;
+  }
+}
+
+@container foot (max-width: 930px) {
+  .hint {
+    display: none; // after the media query that shows it, so it wins
   }
 }
 

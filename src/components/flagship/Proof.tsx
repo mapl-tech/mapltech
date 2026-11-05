@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import CountUp from '@/components/ui/CountUp';
-import ClientsMarquee from './ClientsMarquee';
 import { PROOF, PROOF_SECTION, VOICES } from './content';
 import styles from './Proof.module.scss';
 
@@ -8,7 +7,8 @@ import styles from './Proof.module.scss';
  * Why agencies choose us: the reasons first (the white-label guarantees the
  * FAQ makes, in its words), then the live homepage's published numbers, the
  * site's testimonials in full (the approved client quote and the CHHA-NCR
- * audit's verdict) and the logos of clients shown on the site.
+ * audit's verdict). The clients' logos are in the hero's foot row, in the
+ * first screen, so they are not repeated here.
  */
 export default function Proof() {
   return (
@@ -69,7 +69,6 @@ export default function Proof() {
           </section>
         ) : null}
 
-        <ClientsMarquee label={PROOF.clientsLabel} logos={PROOF.logos} />
       </div>
     </section>
   );

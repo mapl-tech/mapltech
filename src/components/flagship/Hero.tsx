@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Backbone from '@/components/backbone/Backbone';
-import { HERO, PRICE_TRUST_ITEMS, PRIMARY_CTA, SECONDARY_CTA } from './content';
+import { HERO, PRICE_TRUST_ITEMS, PRIMARY_CTA, PROOF, SECONDARY_CTA } from './content';
+import HeroClients from './HeroClients';
 import TrustList from './TrustList';
 import styles from './Hero.module.scss';
 import Arrow from '@/components/ui/Arrow';
@@ -15,7 +16,13 @@ import Arrow from '@/components/ui/Arrow';
  * Everything that carries meaning is server-rendered text in the first paint
  * (the H1 is the LCP element and never fades); the scene arrives after idle as
  * decoration, with the CSS light underneath as its fallback.
+ *
+ * The foot row carries the clients shown on the site (the live homepage's hero
+ * logo wall) as an endless parade, so proof is in the first screen at every
+ * width: on the hairline beside the interaction hint on desktop, under the
+ * checklist on phones (HeroClients).
  */
+
 export default function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="home-h1">
@@ -62,10 +69,11 @@ export default function Hero() {
         </div>
 
         <div className={styles.foot}>
+          <HeroClients label={PROOF.clientsLabel} logos={PROOF.logos} />
           {/* Shown once the scene is live, gone after the first touch (CSS :has on the stage's data
               attributes); mouse and landscape only, so it names the mouse. What to do, then what a click does. */}
           <p className={styles.hint} aria-hidden="true">
-            Move your mouse to push the rods. Click to scatter them.
+            Move your mouse to push the rods.<span className={styles.hintMore}> Click to scatter them.</span>
           </p>
         </div>
       </div>

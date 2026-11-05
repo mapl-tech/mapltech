@@ -1,0 +1,149 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Shared with Hero.module.scss: the hero's portrait query, its phone width and its ease.
+$portrait: '(max-aspect-ratio: 21/20)';
+$phone-max: 639px;
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+// Selected clients (HeroClients): the label, then the marks the site shows in
+// the page's off-white (mono/) as an endless parade, right to left. --mark is a
+// square logo's height; each scales from it. --loop-gap follows every mark,
+// seam included. Desktop: beside the label, kept clear of the spine (45vw).
+// Phones: the label on its own line, the parade edge to edge of the screen.
+.clients {
+  --mark: clamp(30px, 22px + 1vw, 40px);
+  --loop-gap: clamp(28px, 2.6vw, 40px);
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  min-width: 0;
+  max-width: min(640px, 45vw);
+
+  @media #{$portrait} {
+    max-width: none;
+  }
+
+  @include motion-ok {
+    animation: rise 0.9s $ease-out 0.42s both;
+  }
+}
+
+.clientsLabel {
+  @include mono-label($color-fg-muted);
+  flex: none;
+  margin: 0;
+
+  @media #{$portrait} and (max-width: $phone-max) {
+    flex-basis: 100%;
+  }
+}
+
+// An eased fade over each end ($edge of the row), so marks glide in and out.
+@function loop-fade($edge) {
+  @return linear-gradient(
+    90deg,
+    transparent,
+    rgba(#000, 0.3) $edge * 0.35,
+    rgba(#000, 0.75) $edge * 0.7,
+    #000 $edge,
+    #000 100% - $edge,
+    rgba(#000, 0.75) 100% - $edge * 0.7,
+    rgba(#000, 0.3) 100% - $edge * 0.35,
+    transparent
+  );
+}
+
+.clientLoop {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-mask-image: loop-fade(14%);
+  mask-image: loop-fade(14%);
+
+  // Phones: edge to edge of the screen (the hero's gutter).
+  @media #{$portrait} and (max-width: $phone-max) {
+    flex-basis: 100%;
+    margin-inline: calc(-1 * clamp(20px, 5vw, 72px));
+    -webkit-mask-image: loop-fade(18%);
+    mask-image: loop-fade(18%);
+  }
+}
+
+// Three identical lists side by side, each sliding left by its own width.
+.clientLogos {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--loop-gap);
+  margin: 0;
+  padding: 0 var(--loop-gap) 0 0;
+  list-style: none;
+  // About 24px a second (one list is ~390px on phones, ~500px on desktop).
+  animation: hero-logo-loop 17s linear infinite;
+
+  @include lg {
+    animation-duration: 21s;
+  }
+
+  // Paused by the visitor (the hero's "Pause motion"), or resting off screen.
+  .clientLoop:is([data-paused], [data-idle]) & {
+    animation-play-state: paused;
+  }
+
+  // Hover holds it still for a closer look (mouse and trackpad only).
+  @include pointer-fine {
+    .clientLoop:hover & {
+      animation-play-state: paused;
+    }
+  }
+}
+
+@keyframes hero-logo-loop {
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.clientLogo {
+  display: flex;
+  flex: none;
+  align-items: center;
+
+  img {
+    display: block;
+    width: auto;
+    height: calc(var(--mark) * var(--scale, 1));
+    opacity: 0.82;
+  }
+}
+
+// Reduced motion: one still row, no copies and no fade.
+@media (prefers-reduced-motion: reduce) {
+  .clientLoop {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .clientLogos {
+    flex-wrap: wrap;
+    row-gap: 12px;
+    padding: 0;
+    animation: none;
+
+    &[aria-hidden] {
+      display: none;
+    }
+  }
+}
+
+// The hero's own rise (Hero.module.scss), so the row arrives with the copy above it.
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+}

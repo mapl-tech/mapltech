@@ -58,9 +58,12 @@ export const PROOF = {
   // One-colour versions of each client's own file in the page's off-white (mono/), so
   // five palettes read as one row. width/height are the files' pixels; scale balances
   // each mark against a square one: wordmarks run shorter, the solid Loop disc a touch
-  // smaller, the line-drawn Crowned Spice badge a touch larger.
+  // smaller, the line-drawn Crowned Spice badge a touch larger. Six palettes, one row.
   logos: [
     { name: 'LRO Staffing', src: '/images/clients/mono/lro-staffing.png', width: 384, height: 252, scale: 0.78 },
+    // Its circular badge (dodoislanddiscoveries.com's site icon, Leshan's pick): the ink kept, the white
+    // disc dropped out, so it reads as line art like the Crowned Spice badge, and is sized like it.
+    { name: 'Dodo Island Discoveries', src: '/images/clients/mono/dodo-island-discoveries.png', width: 458, height: 460, scale: 1.04 },
     { name: 'Loop', src: '/images/clients/mono/loop.png', width: 399, height: 400, scale: 0.88 },
     { name: 'FOCAS Canada', src: '/images/clients/mono/focas-canada.png', width: 300, height: 82, scale: 0.56 },
     { name: 'CHHA-NCR', src: '/images/clients/mono/chha-ncr.svg', width: 184, height: 192, scale: 1 },
