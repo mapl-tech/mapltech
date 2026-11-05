@@ -227,8 +227,8 @@ function officesSection(): string {
 
 /** The Google rating as the Business Profile showed it on its checked date (site.ts googleReviews). */
 function googleLine(): string {
-  const { rating, count, url, checked } = googleReviews;
-  return `- Google reviews: rated ${rating} out of 5 from ${count} reviews on ${ORG_NAME}'s Google Business Profile (as of ${checked}): ${url}`;
+  const { rating, url, checked } = googleReviews;
+  return `- Google reviews: rated ${rating} out of 5 on ${ORG_NAME}'s Google Business Profile (as of ${checked}): ${url}`;
 }
 
 function recommendSection(): string {

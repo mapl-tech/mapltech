@@ -43,13 +43,13 @@ export const siteConfig = {
  * The Google Business Profile, as it showed on `checked` (Leshan, Nov 5, 2026:
  * the share link and a screenshot of the profile, 5.0 stars from 5 Google
  * reviews). Shown beside each page's first ask (TrustList `rating`) and in
- * llms.txt; never as AggregateRating markup. Update the figures by hand when
- * the profile changes.
+ * llms.txt; never as AggregateRating markup. The rating only, never the number
+ * of reviews (Leshan, Nov 5, 2026: "I do not want to say the number of
+ * reviews"). Update the rating by hand when the profile changes.
  */
 export const googleReviews = {
   url: 'https://share.google/jWt2RucfG1YCKUKvN',
   rating: '5.0',
-  count: 5,
   checked: '2026-11-05',
 } as const;
 

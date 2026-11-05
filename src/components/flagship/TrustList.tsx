@@ -59,7 +59,7 @@ export default function TrustList({
             rel="noopener noreferrer"
             data-cta-placement="google_reviews"
           >
-            Rated {googleReviews.rating} on Google from {googleReviews.count} reviews
+            Rated {googleReviews.rating} on Google
             <span className="visually-hidden"> (opens in a new tab)</span>
           </a>
         </li>
