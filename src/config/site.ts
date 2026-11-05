@@ -296,9 +296,10 @@ export const pricing = {
 
 export const testimonials = [
   {
-    // Her Google review, word for word (Leshan, Nov 5, 2026: "this is what Alita said").
+    // Her Google review (Leshan, Nov 5, 2026: "this is what Alita said"), with the brand set as
+    // "MAPL TECH" (Leshan: "In Alita's testimonial it should be MAPL TECH").
     quote:
-      'Working with MAPL Tech has been nothing short of incredible. They blew our expectations out of the water and delivered web development far beyond what we imagined. Their team is creative, responsive, and truly committed to bringing your vision to life. We are thrilled with the final product and would highly recommend MAPL Tech to anyone looking for top-tier web development and marketing support.',
+      'Working with MAPL TECH has been nothing short of incredible. They blew our expectations out of the water and delivered web development far beyond what we imagined. Their team is creative, responsive, and truly committed to bringing your vision to life. We are thrilled with the final product and would highly recommend MAPL TECH to anyone looking for top-tier web development and marketing support.',
     name: 'Alita Fabiano',
     company: 'LRO Staffing',
     role: 'Operations Director',
