@@ -100,12 +100,16 @@ export default function SiteScroll({
             {url ? <span className={styles.url}>{url}</span> : null}
           </div>
           <div className={styles.siteViewport} data-viewport="" {...viewportProps}>
+            {/* unoptimized: the full captures are up to 7,200px tall, and Netlify's image CDN refuses
+                any resize taller than about 16,000px (HTTP 422), so retina screens, which ask for the
+                3840px width, got a blank frame (live site, Nov 5, 2026). The JPEGs are already
+                compressed at their natural width, so they are served as they are. */}
             <Image
               src={desktop.src}
               alt=""
               width={desktop.width}
               height={desktop.height}
-              sizes="(min-width: 1440px) 1100px, 80vw"
+              unoptimized
               className={styles.siteShot}
             />
           </div>
@@ -113,7 +117,7 @@ export default function SiteScroll({
 
         <div className={styles.siteFramePhone} data-frame="">
           <div className={styles.siteViewport} data-viewport="" {...viewportProps}>
-            <Image src={mobile.src} alt="" width={mobile.width} height={mobile.height} sizes="300px" className={styles.siteShot} />
+            <Image src={mobile.src} alt="" width={mobile.width} height={mobile.height} unoptimized className={styles.siteShot} />
           </div>
         </div>
 
