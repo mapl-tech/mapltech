@@ -42,9 +42,9 @@ export const metadata: Metadata = {
  * mechanics; we had the promises scattered over the FAQ). The first screen
  * says what we are to the agency, under the ask and its checklist, with three
  * published figures beside it. Then: the four steps (the homepage's, so the
- * process reads the same everywhere) -> who does what (paper) -> when to bring
- * us in, an honest fit guide -> the approved client quote, in full -> the
- * white-label FAQ -> the crimson close. Every fact is already published
+ * process reads the same everywhere) -> the approved client quote, in full,
+ * while the first decision is near -> who does what (paper) -> when to bring
+ * us in, an honest fit guide -> the white-label FAQ -> the crimson close. Every fact is already published
  * (src/components/partnership/content.ts lists the sources).
  *
  * Structured data: WebPage + BreadcrumbList, a HowTo for the four steps and
@@ -103,11 +103,12 @@ export default function WhiteLabelPage() {
         </div>
       </section>
 
+      {/* Proof right after the process, near the first decision (Sentinel, Nov 5: it sat fifth of seven). */}
+      <Voice />
+
       <Roles />
 
       <Fit />
-
-      <Voice />
 
       <Faq items={FAQ_ITEMS} />
 

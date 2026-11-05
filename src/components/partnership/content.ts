@@ -31,7 +31,7 @@ export const WHITE_LABEL = {
     'How white-label work with MAPL TECH runs: an NDA first, we join your Slack and check-ins, your client only hears from you, and you own the code.',
   hero: {
     label: 'How we work',
-    lede: 'We work as your agency’s engineering team. We join your Slack and your weekly check-ins, build what your clients buy from you, and hand it back with clear notes.',
+    lede: 'We work as your agency’s engineering team. We build the websites, automation, software and cloud systems your clients buy from you, and hand them back with clear notes.',
   },
   facts: [
     { term: 'First reply', figure: '24 hours', detail: 'after your brief' },
