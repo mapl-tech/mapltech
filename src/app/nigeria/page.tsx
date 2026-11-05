@@ -1,23 +1,26 @@
 import type { Metadata } from 'next';
 import { OG_IMAGE } from '@/lib/og';
+import { LOWEST_PRICE } from '@/components/flagship/content';
 import RegionalPage from '@/components/company/RegionalPage';
 import { getRegion } from '@/components/company/regions';
+import { formatMoney } from '@/lib/estimate';
 
-const TITLE = 'MAPL TECH Nigeria | Web, Automation & Cloud for Agencies';
-const DESCRIPTION =
-  'MAPL TECH Nigeria builds websites, automation, AI workflows and internal tools for agencies in Lagos, Abuja and Port Harcourt, in West Africa Time.';
+const TITLE = 'MAPL TECH Nigeria | Web Development & Automation, Lagos';
+// The price floor from `pricing` (LOWEST_PRICE), so the snippet never disagrees with the tables.
+const DESCRIPTION = `Websites, automation, internal tools and cloud systems for agencies and businesses in Lagos, Abuja and across Nigeria. Light on mobile data, from ${formatMoney(LOWEST_PRICE)} USD.`;
 
 export const metadata: Metadata = {
   // The title already carries the brand, so it bypasses the root template's "| MAPL TECH" suffix.
   title: { absolute: TITLE },
   alternates: { canonical: 'https://mapltech.com/nigeria' },
   description: DESCRIPTION,
-  keywords: 'MAPL TECH Nigeria, web development Nigeria, automation Nigeria, AI workflows Lagos, agency infrastructure Abuja, custom tools Nigeria',
+  keywords:
+    'MAPL TECH Nigeria, web development Nigeria, web development Lagos, website developer Abuja, automation Nigeria, Paystack integration, NDPA, custom software Nigeria',
   openGraph: {
     images: [OG_IMAGE],
-    title: 'MAPL TECH Nigeria | Engineering Partner for Nigerian Agencies',
+    title: 'MAPL TECH Nigeria | Websites and software for Nigeria',
     description:
-      'An engineering team headquartered in Toronto, with an office in Lagos. We work with agencies in Lagos, Abuja and beyond on websites, automation, internal tools and cloud systems.',
+      'Websites, automation, internal tools and cloud systems for agencies and businesses in Lagos, Abuja and across Nigeria, from our Lagos office.',
     url: 'https://mapltech.com/nigeria',
     type: 'website',
     locale: 'en_NG',
@@ -25,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'MAPL TECH Nigeria',
-    description: 'Websites, automation, internal tools and cloud systems, built with Nigerian agencies.',
+    description: 'Websites and software built for Nigeria, for agencies and businesses in Lagos, Abuja and beyond.',
   },
 };
 

@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 const FACTS: LegalFact[] = [
   {
     label: 'What we collect',
-    text: 'What you give us through forms, email or phone (such as your name, email, phone number and company), plus usage data like your IP address, browser and the pages you view.',
+    text: 'What you give us through forms or email (such as your name, email, phone number and company), plus usage data like your IP address, browser and the pages you view.',
     section: 'information-we-collect',
   },
   {
@@ -251,8 +251,6 @@ const SECTIONS: LegalSection[] = [
           <strong>MAPL TECH</strong>
           <br />
           Email: <a href={legalMailto(QUESTION_SUBJECT)}>contact@mapltech.com</a>
-          <br />
-          Phone: <a href="tel:+16473756724">+1 (647) 375-6724</a>
         </p>
       </>
     ),

@@ -1,40 +1,42 @@
 /**
- * Per-country data for the regional template (`/nigeria`, `/jamaica`).
+ * Per-country data for the regional funnels (`/nigeria`, `/jamaica`), Nov 5
+ * 2026 (Leshan: "the nigeria and jamaica pages should act as funnels and
+ * speak to the markets").
  *
- * Every sentence is existing copy from the previous nigeria/jamaica pages,
- * `site.ts` or the pricing tables, rewritten in plain English (Nov 2026
- * simplify pass) without adding facts. Removed on purpose, and listed in the
- * build report:
+ * Each page runs one path to "Start a project", in the order a buyer from
+ * that market asks: is this for me (the hero: the market in the H1, the
+ * cities in the lede, the public price floor, the fixed quote and the reply
+ * time under the ask, the office's live clock beside it), why you (four local
+ * reasons), can I trust you (proof), what does it cost (the four services,
+ * each with its own price and its own ask), what about... (the questions),
+ * then the close. Hiring and the facts band were taken out: the first is for
+ * another reader (the footer links /careers), the second only repeated the
+ * hero's price and reply time; the office hours moved into the office card.
  *
- * - The two "local case studies" (Crowngate Business Enterprises, "Caribbean
- *   Digital Agency"). Crowngate is hidden from /our-work at the owner's
- *   request (site.ts, 2026-10-16) and neither study's numbers can be sourced.
- * - "80%+ of users browse on mobile": a market statistic with no source.
- *
- * Jamaica gets a real local project instead: MAPL Tours, the travel company
- * MAPL TECH built and runs in Jamaica (case study in case/stories.ts).
- *
- * Each fact is said once (Nov 2026 reviews), where a director looks for it:
- *
- * - The hero: the cities served (lede); the branch city, its live local time
- *   and when the office next opens, and the zone's name and UTC offset (the
- *   "you are here" card, their one home).
- * - The facts band under it: the office hours, the lowest public price and
- *   the reply time, added by the template (the same for every branch).
- * - What we build: who does the work (lede), each service's own starting
- *   price (rows), the local needs (list).
- * - The questions: the overlap with Toronto, worked out from the published
- *   hours and the real offsets (the hours question); payments; data rules;
- *   that prices are the same everywhere, in USD (no second price list).
- * - The close: the site's own lede (four questions, a 20-minute call, a
- *   fixed quote) and the client quote.
- *
- * So there is no separate hours section and no FAQ that repeats the team
- * sentence. The body's one link to the pricing page is in the cost answer,
- * where it names the page (the hero and the close have their own).
+ * Sources, so every sentence can be checked:
+ * - MAPL TECH facts: prices from `pricing` (startingFrom, LOWEST_PRICE); the
+ *   reply time from /contact-us; the fixed quote, the 20-minute call, Slack
+ *   and the weekly check-ins, and "your client only hears from your team"
+ *   from the homepage (flagship/content.ts APPROACH); office hours from
+ *   ui/officeTime; proof from flagship/content.ts (PROOF, WORK) and
+ *   case/stories.ts (MAPL Tours), read from those files, never retyped.
+ * - Earlier regional copy kept as it was: Paystack and Flutterwave, more
+ *   than one currency, Caribbean payment providers and local business tools,
+ *   island internet, local search, the hours overlap with Toronto.
+ * - Market statements, checked Nov 5, 2026 (the build report lists the
+ *   sources): most web traffic in Nigeria comes from phones (StatCounter,
+ *   Oct 2026: 77.5% mobile); data prices and signal vary (the NCC's January
+ *   2025 tariff review); the NDPA 2023 is Nigeria's data protection law and
+ *   the NDPC's GAID (in force since 19 September 2025) took the place of the
+ *   NDPR; all of Nigeria keeps West Africa Time and Jamaica keeps UTC-5, and
+ *   neither observes daylight saving.
+ * - Not said on purpose: that Jamaicans mostly browse on phones (StatCounter,
+ *   Oct 2026, shows desktop ahead in Jamaica, so the earlier line went), any
+ *   Nigerian client (none is published), the size of either local team, NDAs
+ *   and "we never approach your clients" (Leshan: common practice).
  */
 import { PRICING_HREF } from '@/components/layout/chrome';
-import { careers } from '@/config/site';
+import { LOWEST_PRICE } from '@/components/flagship/content';
 import type { Country } from '@/config/team';
 import type { ServiceSlug } from '@/lib/schema';
 import { formatMoney, parsePriceLabel, tiersFor, type EstimateService } from '@/lib/estimate';
@@ -56,9 +58,22 @@ export interface RegionServiceRow {
   description: string;
 }
 
+/** One local reason: a short title and one or two plain sentences. */
+export interface RegionReason {
+  title: string;
+  text: string;
+}
+
+/** A published case, by its slug in flagship/content.ts WORK, and which of its metrics to show. */
+export interface RegionCaseRef {
+  slug: string;
+  metric?: number;
+}
+
+/** A real local project, shown large; its results are read from case/stories.ts by `slug`. */
 export interface RegionWork {
+  slug: string;
   client: string;
-  label: string;
   text: string;
   href: string;
   /** The live site's address, shown in the browser frame. */
@@ -68,11 +83,23 @@ export interface RegionWork {
   mobile?: string;
 }
 
+export interface RegionProof {
+  label: string;
+  title: string;
+  lede: string;
+  /** A local project of our own, set large (Jamaica: MAPL Tours). */
+  feature?: RegionWork;
+  /** The homepage's published counts (flagship/content.ts PROOF). */
+  stats?: boolean;
+  /** Published cases as a short ledger of results, each linked to its study. */
+  cases?: { heading: string; items: readonly RegionCaseRef[] };
+}
+
 export interface RegionConfig {
   slug: RegionSlug;
   path: string;
   country: Country;
-  /** "MAPL TECH Nigeria": eyebrow, breadcrumb, close. */
+  /** "MAPL TECH Nigeria": breadcrumb, JSON-LD names, the team directory's link. */
   brandName: string;
   /** IANA zone of the branch office (read by ui/officeTime). */
   timeZone: string;
@@ -80,18 +107,20 @@ export interface RegionConfig {
   /** Plain-language zone name and its fixed UTC offset (neither country observes daylight saving). */
   zoneName: string;
   utcLabel: string;
-  /** The zone's standard abbreviation: the place readout's clock line before the clock hydrates ("WAT"). */
+  /** The zone's standard abbreviation: the office card's clock line before the clock hydrates ("WAT"). */
   zoneAbbr: string;
-  /** Office city coordinates, for the place readout (public geographic fact). */
-  coordinates: string;
-  serves: readonly string[];
-  hero: { titleLines: readonly [string, string]; lede: string };
-  team: { heading: string; body: string; realitiesHeading: string; realities: readonly string[] };
+  hero: {
+    /** The H1: a plain run, then the accent run that names the market. */
+    titleLines: readonly [string, string];
+    lede: string;
+    /** The quiet second action: a jump to this page's own proof or prices, so the visitor stays on the path. */
+    secondary: { label: string; href: `#${string}` };
+  };
+  reasons: { label: string; title: string; lede: string; items: readonly RegionReason[] };
+  proof: RegionProof;
   /** `heading` names the service list for assistive tech. */
-  services: { heading: string; rows: readonly RegionServiceRow[] };
-  /** A real local project; without one the section is left out and the close carries the client quote. */
-  work?: RegionWork;
-  faq: { heading: string; items: readonly RegionFaq[] };
+  services: { label: string; title: string; lede: string; heading: string; rows: readonly RegionServiceRow[] };
+  faq: { label: string; heading: string; items: readonly RegionFaq[] };
   /** The close's title; its lede is the site's (CloseBand's default). */
   close: { title: string };
 }
@@ -108,24 +137,42 @@ export function startingFrom(service: EstimateService): string {
   return formatMoney(Math.min(...lows));
 }
 
-/**
- * The cost question's answer: what is regional about the price (nothing: the
- * same public prices, in USD). Each service's starting price is in its row
- * and the lowest is in the hero's facts, so the answer does not list them
- * again; the pricing page it names is a link.
- */
-const COST_ANSWER = {
-  answer: 'The same public prices as everywhere else, in USD. Every price table is on the pricing page.',
-  link: { text: 'the pricing page', href: PRICING_HREF },
-} as const;
-
 /** Published on /contact-us ("We respond within 24 hours"). */
 export const REPLY_TIME = 'Within 24 hours';
 
-/** Open roles in one country, straight from `careers` in site.ts. */
-export function rolesIn(country: Country) {
-  return careers.filter((role) => role.country === country);
-}
+/**
+ * Under the hero's ask, in the order the doubts come: what it costs (the
+ * public floor, in US dollars, so "$" is never read as naira or Jamaican
+ * dollars), how the price is set, and how soon we answer. TrustList adds the
+ * Google rating as the last line. Display only ("20‑minute" keeps its
+ * non-breaking hyphen).
+ */
+export const HERO_TRUST = [
+  `Projects from ${formatMoney(LOWEST_PRICE)} USD`,
+  'Fixed quote after one 20‑minute call',
+  `A reply ${REPLY_TIME.toLowerCase()}`,
+] as const;
+
+/** The cost question: what is regional about the price (nothing: the same public prices, in US dollars). */
+const COST_ANSWER = {
+  answer:
+    'The same public prices as everywhere else, in US dollars. Each service’s starting price is on this page, and every price table is on the pricing page.',
+  link: { text: 'the pricing page', href: PRICING_HREF },
+} as const;
+
+/** The homepage's four steps (flagship/content.ts APPROACH), as the answer to "what now". */
+const NEXT_STEPS: RegionFaq = {
+  question: 'What happens after I click “Start a project”?',
+  answer:
+    'You answer four short questions. We reply within 24 hours, then we talk for 20 minutes. We agree the scope with you and send one fixed price.',
+};
+
+/** Who the page is for: agencies (under their brand) and the businesses that buy directly. */
+const WHO_WE_WORK_WITH: RegionFaq = {
+  question: 'Do you work with businesses, or only agencies?',
+  answer:
+    'Both. Agencies bring us in to build under their own brand, and their client only hears from them. Businesses can also work with us directly.',
+};
 
 /* ------------------------------------------------------------------ */
 /* Regions                                                              */
@@ -142,25 +189,55 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     zoneName: 'West Africa Time',
     utcLabel: 'UTC+1',
     zoneAbbr: 'WAT',
-    coordinates: '6.52° N, 3.38° E',
-    serves: ['Lagos', 'Abuja', 'Port Harcourt'],
     hero: {
-      titleLines: ['Engineering for', 'Nigerian agencies.'],
-      lede: 'We work alongside agencies in Lagos, Abuja and Port Harcourt to build websites, automation, internal tools and cloud systems.',
+      titleLines: ['Websites and software', 'built for Nigeria.'],
+      lede: 'We work with agencies and businesses in Lagos, Abuja and across Nigeria. We build websites, automation, internal tools and cloud systems that stay fast on mobile data.',
+      secondary: { label: 'See prices', href: '#prices' },
     },
-    team: {
-      heading: 'What MAPL TECH Nigeria builds.',
-      // Nov 5, 2026: one team member in Nigeria (Obong Uko), so no plural "engineers and project managers".
-      body: 'We work with your team in Nigerian business hours, in your Slack and your weekly check-ins. Our Toronto headquarters and 25+ years of combined experience stand behind every project.',
-      realitiesHeading: 'Built for local needs',
-      realities: [
-        'Phone-first sites that work on slow connections',
-        'Paystack and Flutterwave payments',
-        'More than one currency in portals and dashboards',
-        'Nigeria’s data protection rules (the NDPA and NDPR) planned into every project',
+    reasons: {
+      label: 'Built for Nigeria',
+      title: 'Four things we plan for in Nigeria.',
+      lede: 'What changes when you build for Nigeria, and what we do about it.',
+      items: [
+        {
+          title: 'Light pages for mobile data',
+          text: 'Most web visits in Nigeria come from phones, and data costs and signal strength vary. We keep pages light, so they open fast and use little data.',
+        },
+        {
+          title: 'Nigeria’s data law, planned in',
+          text: 'The Nigeria Data Protection Act (NDPA) covers the personal data your sites and tools collect. We plan for it from the start of every build.',
+        },
+        {
+          title: 'Paystack and Flutterwave',
+          text: 'Dashboards, client portals and reports can take local payments, including Paystack and Flutterwave, in more than one currency.',
+        },
+        {
+          title: 'An office on West Africa Time',
+          text: 'Our Lagos office is open 9 am to 6 pm, Monday to Friday, on the same clock as the rest of Nigeria. We join your Slack and your weekly check-ins.',
+        },
       ],
     },
+    // No Nigerian case study is published, so the proof is the site's own: the counts and the published results.
+    proof: {
+      label: 'Our track record',
+      title: 'Proof you can check.',
+      lede: 'Most of what we build carries our partners’ brands. Here is the work we can show, with its published results.',
+      stats: true,
+      cases: {
+        heading: 'Published results',
+        items: [
+          { slug: 'lro-staffing' },
+          // Its second metric: the currencies, the local need the reasons name.
+          { slug: 'dodo-island-discoveries', metric: 1 },
+          { slug: 'mapl-tours' },
+          { slug: 'chha-ncr' },
+        ],
+      },
+    },
     services: {
+      label: 'Public prices',
+      title: 'What a project costs.',
+      lede: 'Four services, each with a public starting price in US dollars. Start with one, and the brief opens with it already chosen.',
       heading: 'Our four services and their starting prices',
       rows: [
         {
@@ -186,8 +263,10 @@ export const regions: Record<RegionSlug, RegionConfig> = {
       ],
     },
     faq: {
-      heading: 'Questions Nigerian agencies ask first.',
+      label: 'Before you start',
+      heading: 'Questions we hear from Nigeria.',
       items: [
+        WHO_WE_WORK_WITH,
         {
           question: 'Do you work in Nigerian business hours?',
           // Lagos keeps UTC+1 all year; Toronto is UTC-5 in winter and UTC-4 in summer. Both offices work 9 am to 6 pm local time.
@@ -195,23 +274,17 @@ export const regions: Record<RegionSlug, RegionConfig> = {
             'Yes. We keep Lagos office hours. Lagos is six hours ahead of Toronto in winter and five in summer, so both offices are open from 3 pm to 6 pm Lagos time in winter and from 2 pm to 6 pm in summer.',
         },
         {
-          question: 'Can you integrate Paystack or Flutterwave?',
+          question: 'How do you handle the NDPA and the NDPR?',
+          // The GAID came into force on 19 September 2025 and took the place of the NDPR (Babalakin & Co., Mondaq, KPMG Nigeria).
           answer:
-            'Yes. Dashboards, client portals and reports can take local payments, including Paystack and Flutterwave, in more than one currency.',
+            'We plan for Nigeria’s data protection rules from the start of every Nigerian build. Today those rules are the Nigeria Data Protection Act 2023 (NDPA) and the 2025 directive the NDPC issued under it (the GAID), which took the place of the older NDPR.',
         },
-        {
-          question: 'How do you handle the NDPA and NDPR?',
-          answer:
-            'We plan for Nigeria’s data protection rules, the NDPA and the NDPR, from the start of every Nigerian build. We also use the same engineering standards as our Toronto headquarters.',
-        },
-        {
-          question: 'What does a project cost in Nigeria?',
-          ...COST_ANSWER,
-        },
+        { question: 'What does a project cost in Nigeria?', ...COST_ANSWER },
+        NEXT_STEPS,
       ],
     },
     close: {
-      title: 'Building something for a Nigerian client?',
+      title: 'Let’s build your next Nigerian project together.',
     },
   },
 
@@ -225,25 +298,63 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     zoneName: 'Eastern Standard Time',
     utcLabel: 'UTC−5',
     zoneAbbr: 'EST',
-    coordinates: '17.97° N, 76.79° W',
-    serves: ['Kingston', 'Montego Bay'],
     hero: {
-      titleLines: ['Engineering for', 'Jamaican agencies.'],
-      lede: 'We work alongside agencies in Kingston and Montego Bay to build websites, automation, internal tools and cloud systems.',
+      titleLines: ['Websites and booking systems', 'built for Jamaica.'],
+      // The case study's own figure ("~50% of customers now arrive through ChatGPT"), beside the first ask.
+      lede: 'We work with agencies and with tourism, hospitality and service businesses in Kingston, Montego Bay and across the island. We also run MAPL Tours, our own Jamaica travel company, where ~50% of customers now arrive through ChatGPT.',
+      secondary: { label: 'See MAPL Tours', href: '#work' },
     },
-    team: {
-      heading: 'What MAPL TECH Jamaica builds.',
-      // Nov 5, 2026: Nigeria's line, so nothing is said about the size or roots of the Jamaica team.
-      body: 'We work with your team in Jamaican business hours, in your Slack and your weekly check-ins. Our Toronto headquarters and 25+ years of combined experience stand behind every project.',
-      realitiesHeading: 'Built for local needs',
-      realities: [
-        'Audiences who mostly browse on phones',
-        'Caribbean payment providers',
-        'Showing up in Caribbean search results (SEO)',
-        'Sites that load fast on island internet connections',
+    reasons: {
+      label: 'Built for Jamaica',
+      title: 'Four things we plan for in Jamaica.',
+      lede: 'What changes when you build for Jamaica, and what we do about it.',
+      items: [
+        {
+          title: 'Found in search and AI answers',
+          // The MAPL Tours figure is in the hero lede and the proof card, so it is not said a third time here.
+          text: 'We build sites that show up in local search, and that AI assistants like ChatGPT can read and recommend to the people asking them.',
+        },
+        {
+          title: 'Bookings and payments',
+          text: 'Guests can book and pay on your site. Client portals, dashboards and reports connect to Caribbean payment providers and local business tools.',
+        },
+        {
+          title: 'Fast on island connections',
+          text: 'We build for phones first and keep every page light, so it loads fast on island internet connections.',
+        },
+        {
+          title: 'An office on Jamaica time',
+          text: 'Our Kingston office is open 9 am to 6 pm, Monday to Friday. We join your Slack and your weekly check-ins.',
+        },
       ],
     },
+    proof: {
+      label: 'Our own product, in Jamaica',
+      title: 'Work we run in Jamaica.',
+      lede: 'Most of what we build ships under our partners’ names. This one carries ours.',
+      feature: {
+        slug: 'mapl-tours',
+        client: 'MAPL Tours',
+        text: 'Private airport transfers and tours in Jamaica. We built it, we run it, and it takes real payments.',
+        href: '/our-work/mapl-tours',
+        url: 'mapltours.com',
+        image: {
+          src: '/images/cases/tours-desktop.jpg',
+          alt: 'The MAPL Tours homepage, built and run by MAPL TECH: "Discover Jamaica beyond the resort." over aerial footage of the Jamaican coast.',
+          width: 1800,
+          height: 1125,
+        },
+        mobile: '/images/cases/tours-mobile.jpg',
+      },
+      cases: {
+        heading: 'More travel work',
+        items: [{ slug: 'dodo-island-discoveries' }],
+      },
+    },
     services: {
+      label: 'Public prices',
+      title: 'What a project costs.',
+      lede: 'Four services, each with a public starting price in US dollars. Start with one, and the brief opens with it already chosen.',
       heading: 'Our four services and their starting prices',
       rows: [
         {
@@ -254,12 +365,12 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         {
           slug: 'automation-ai-workflow-setup',
           service: 'automation',
-          description: 'Automated CRM updates, AI help with new client enquiries, and workflows that connect the tools your team already uses.',
+          description: 'Automated CRM updates, AI help with new enquiries, and workflows that connect the tools your team already uses.',
         },
         {
           slug: 'custom-internal-tools',
           service: 'tools',
-          description: 'Client portals, project dashboards and reports that connect to local payment providers and business tools.',
+          description: 'Client portals, booking dashboards and reports that connect to local payment providers and business tools.',
         },
         {
           slug: 'cloud-engineering',
@@ -268,23 +379,11 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         },
       ],
     },
-    work: {
-      client: 'MAPL Tours',
-      label: 'Our own product, in Jamaica',
-      text: 'Private airport transfers and tours in Jamaica. We built it, we run it, and it takes real payments.',
-      href: '/our-work/mapl-tours',
-      url: 'mapltours.com',
-      image: {
-        src: '/images/cases/tours-desktop.jpg',
-        alt: 'The MAPL Tours homepage, built and run by MAPL TECH: "Discover Jamaica beyond the resort." over aerial footage of the Jamaican coast.',
-        width: 1800,
-        height: 1125,
-      },
-      mobile: '/images/cases/tours-mobile.jpg',
-    },
     faq: {
-      heading: 'Questions Jamaican agencies ask first.',
+      label: 'Before you start',
+      heading: 'Questions we hear from Jamaica.',
       items: [
+        WHO_WE_WORK_WITH,
         {
           question: 'Do you work in Jamaican business hours?',
           // Kingston keeps UTC-5 all year; Toronto is UTC-5 in winter and UTC-4 in summer. Both offices work 9 am to 6 pm local time.
@@ -292,23 +391,17 @@ export const regions: Record<RegionSlug, RegionConfig> = {
             'Yes. We keep Kingston office hours. Kingston is on the same time as Toronto in winter and one hour behind in summer, so both offices are open together all day in winter and from 9 am to 5 pm Kingston time in summer.',
         },
         {
-          question: 'Do you build for Caribbean payment providers and island internet?',
+          question: 'Can you build a booking site like MAPL Tours?',
+          // What the site does, in the case study's words (stories.ts situation).
           answer:
-            'Yes. We build for audiences who mostly browse on phones, for local search and for island internet connections. Client portals, dashboards and reports connect to Caribbean payment providers and local business tools.',
+            'Yes. We built MAPL Tours and we still run it. It handles video browsing, live quotes, payments, driver dispatch and customer emails, and it takes real payments. We build the parts your project needs.',
         },
-        {
-          question: 'What does a project cost in Jamaica?',
-          ...COST_ANSWER,
-        },
-        {
-          question: 'How do you keep our team informed?',
-          answer:
-            'We check in with your team every week and write decisions down as we go. At the end, your team gets clear notes and code that you and your client own.',
-        },
+        { question: 'What does a project cost in Jamaica?', ...COST_ANSWER },
+        NEXT_STEPS,
       ],
     },
     close: {
-      title: 'Building something for a Jamaican client?',
+      title: 'Let’s build your next Jamaican project together.',
     },
   },
 };

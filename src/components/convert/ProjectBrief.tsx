@@ -34,7 +34,7 @@ import {
   type ReplyMethod,
 } from './brief';
 import styles from './ProjectBrief.module.scss';
-import RecaptchaNotice from './RecaptchaNotice';
+import Recaptcha from './Recaptcha';
 import Arrow from '@/components/ui/Arrow';
 
 /**
@@ -68,8 +68,10 @@ import Arrow from '@/components/ui/Arrow';
  * - Errors sit under the field they belong to, in words that say how to fix
  *   them; the first invalid field takes focus. Inputs are 17px (no iOS zoom),
  *   targets at least 48px.
- * - Sending uses the shared useContactSubmit (reCAPTCHA v3 loads on first
- *   focus, /api/contact payload unchanged). If sending fails, the answers stay
+ * - Sending uses the shared useContactSubmit (/api/contact payload unchanged).
+ *   With a site key set, the "I'm not a robot" box (light, on the paper) sits
+ *   just before "Send the brief" on the last step; Google's script loads on
+ *   the first focus or press in the brief. If sending fails, the answers stay
  *   and the brief can go out by email instead, already written.
  */
 
@@ -123,7 +125,7 @@ export default function ProjectBrief({
 } = {}) {
   const search = useSearchString();
   const prefill = useMemo(() => readPrefill(search), [search]);
-  const { status, error, submit, warmUp } = useContactSubmit();
+  const { status, error, submit, captcha } = useContactSubmit('project_brief');
 
   const [kindChoice, setKindChoice] = useState<BriefKind | null>(null);
   const [sizeChoice, setSizeChoice] = useState<string | null>(null);
@@ -464,7 +466,6 @@ export default function ProjectBrief({
       ref={formRef}
       className={styles.brief}
       onSubmit={onSubmit}
-      onFocusCapture={warmUp}
       noValidate
       aria-labelledby="brief-title"
     >
@@ -705,6 +706,15 @@ export default function ProjectBrief({
         </div>
       ) : null}
 
+      {/* After the last field, before the button: shown on the last step only. */}
+      <Recaptcha
+        control={captcha}
+        theme="light"
+        hidden={step !== 4}
+        className={styles.captcha}
+        renderError={(id, message) => <FieldError id={id} message={message} alert />}
+      />
+
       <div className={styles.actions}>
         <button
           type="submit"
@@ -728,9 +738,6 @@ export default function ProjectBrief({
         )}
         {after ? <p className={styles.after}>{after}</p> : null}
       </div>
-
-      {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}
-      <RecaptchaNotice className={styles.recaptcha} />
     </form>
   );
 }

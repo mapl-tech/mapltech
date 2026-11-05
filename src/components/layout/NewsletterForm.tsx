@@ -2,11 +2,13 @@
 
 import { useActionState, useId } from 'react';
 import MagneticButton from '@/components/ui/MagneticButton';
+import { announceLead } from '@/components/convert/lead';
 import styles from './Footer.module.scss';
 
 /**
  * Footer newsletter island. Posts { email } to the existing /api/newsletter
- * route; success and error states render inline (role="status").
+ * route; success and error states render inline (role="status"). A
+ * subscription the route accepts fires one `lead` event ("newsletter").
  */
 
 type State = { status: 'idle' | 'success' | 'error'; message: string };
@@ -23,6 +25,7 @@ async function subscribe(_previous: State, formData: FormData): Promise<State> {
       body: JSON.stringify({ email }),
     });
     if (!res.ok) throw new Error(`newsletter ${res.status}`);
+    announceLead('newsletter');
     return { status: 'success', message: 'Thanks for subscribing.' };
   } catch {
     return { status: 'error', message: 'Could not subscribe right now. Please try again.' };

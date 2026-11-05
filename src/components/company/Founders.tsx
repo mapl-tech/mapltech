@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
-import { ABOUT, FOUNDERS, TEAM, type Founder } from './content';
+import { ABOUT, FOUNDERS, type Founder } from './content';
 import ed from './Company.module.scss';
 import styles from './Founders.module.scss';
 import Arrow from '@/components/ui/Arrow';
@@ -20,20 +20,16 @@ import Arrow from '@/components/ui/Arrow';
  *   screens set it under them), so the eye and the Tab key meet the people
  *   first and the ask last. From 1024px the words stay in view beside the
  *   portraits while they scroll (sticky, clear of the fixed header).
- * - `FounderProfiles` (/team): one entry each with the team.ts bios (less
- *   the opening sentence that restates the name and title set right above
- *   them) and the `/team#slug` anchors their Person JSON-LD points at. The
- *   head is the label and the title only (the bios say who leads what), set
- *   at the rows' left edge as the spread sets its words; after the two
- *   people comes the page body's route to the work.
+ * - /team sets its own founders section (company/team/TeamFounders) from
+ *   the same `Portrait` and `profileBio` exported here.
  *
- * On phones both set the name and role beside the photo and the words full
+ * On phones the spread sets the name and role beside the photo and the words full
  * width under them, so no column is a sliver.
  */
 
 // Both uses put the founder's name and role in visible text right after the
 // photo, so the photo is decorative (alt=""): no name read out twice.
-function Portrait({ founder, sizes, className }: { founder: Founder; sizes: string; className?: string }) {
+export function Portrait({ founder, sizes, className }: { founder: Founder; sizes: string; className?: string }) {
   return (
     <div className={[styles.photo, className].filter(Boolean).join(' ')}>
       <Image
@@ -58,7 +54,7 @@ const escapeRe = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  * left out here; a bio that opens any other way is shown whole. team.ts and
  * the Person JSON-LD keep the full text.
  */
-function profileBio({ name, title, bio }: Founder): string {
+export function profileBio({ name, title, bio }: Founder): string {
   const titleWords = title
     .split(/\s*(?:&|\band\b)\s*/)
     .map(escapeRe)
@@ -120,46 +116,6 @@ export function FoundersSpread() {
             Meet the team
           </Link>
         </div>
-      </div>
-    </section>
-  );
-}
-
-export function FounderProfiles() {
-  return (
-    <section id="founders" className={ed.dark} aria-labelledby="founders-title">
-      <div className={ed.inner}>
-        <header className={styles.profilesHead}>
-          <p className={ed.label}>{TEAM.founders.label}</p>
-          <h2 id="founders-title" className={ed.title}>
-            {TEAM.founders.title}
-          </h2>
-        </header>
-
-        <ol className={styles.profiles} role="list">
-          {FOUNDERS.map((founder) => (
-            <li key={founder.slug} id={founder.slug} className={styles.profile}>
-              <Portrait founder={founder} sizes="(min-width: 1024px) 320px, 40vw" className={styles.profilePhoto} />
-              <div className={styles.profileHead}>
-                <h3 className={styles.profileName}>{founder.displayName}</h3>
-                <p className={styles.profileRole}>{founder.title}</p>
-              </div>
-              <div className={styles.profileBody}>
-                <p className={styles.profileBio}>{profileBio(founder)}</p>
-                <LinkedIn founder={founder} placement="team_founders_linkedin" />
-              </div>
-            </li>
-          ))}
-        </ol>
-
-        <p className={styles.profilesFoot}>
-          <Link href={TEAM.founders.work.href} className={ed.action} data-cta-placement="team_founders_work">
-            {TEAM.founders.work.label}
-            <span aria-hidden="true" className={ed.arrow}>
-              <Arrow />
-            </span>
-          </Link>
-        </p>
       </div>
     </section>
   );

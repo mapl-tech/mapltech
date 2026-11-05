@@ -295,7 +295,10 @@ $ink-body: rgba(11, 11, 12, 0.86);
     @include ink-link;
   }
 
-  a[href^='tel:'] {
+  // The email address stands alone on its line since the phone line went (Nov 5, 2026): a 48px tap
+  // target that keeps the prose's line box (the 1.7 line height), and never breaks mid-address.
+  a[href^='mailto:'] {
+    @include tall-target(1.7em);
     white-space: nowrap;
   }
 }

@@ -3,7 +3,7 @@ import styles from './TrustList.module.scss';
 
 /**
  * The trust line beside an ask, as a short list: what a director checks
- * before booking a call (a fixed quote, an NDA, our hands off their clients),
+ * before booking a call (a fixed quote, support after launch, a fast reply),
  * a few words each behind a check mark. It replaced a two-sentence note that
  * read as one grey block under the buttons (Nov 2026). One item a line, the
  * checks in one column. `tone="band"` is for the crimson close (solid white).

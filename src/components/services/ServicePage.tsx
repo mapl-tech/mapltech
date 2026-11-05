@@ -51,7 +51,7 @@ export interface ServicePageProps {
  * which repeats the hero's) opens the brief with this service chosen, and
  * every way into the estimator with it selected says "Price your project"
  * (ESTIMATE_LABEL: the hero's, the first answer's, the close's); the
- * white-label note (the NDA, never approaching your clients; the fixed quote
+ * white-label note (support after launch, a fast reply; the fixed quote
  * is in the hero facts) sits under the hero's pair, and the approved client
  * quote beside the close's ask, so the hero keeps to the ask and its note
  * (the case proof has its own section). Server Component, all copy in

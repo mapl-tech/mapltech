@@ -93,7 +93,7 @@ export const FAQ_ITEMS: readonly FaqEntry[] = [
   {
     question: 'Will my client ever know MAPL TECH was involved?',
     answer:
-      'No. Before you share anything, we sign an NDA and agree never to approach your clients. Everything we make carries your brand. Your client talks to your team, not to us, and we never list your client as ours.',
+      'No. Everything we make carries your brand. Your client talks to your team, not to us, and we never list your client as ours.',
   },
   {
     question: 'Who owns the code when the project ends?',

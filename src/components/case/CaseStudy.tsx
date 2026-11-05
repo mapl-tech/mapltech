@@ -180,6 +180,25 @@ export default function CaseStudy({
       ) : null}
 
       {/* ---------------------------------------------------------- story */}
+      {/* ---------------------------------------------------------- what this case shows */}
+      {story.shows?.length ? (
+        <section className={styles.shows} aria-labelledby="case-shows">
+          <div className={styles.shell}>
+            <h2 id="case-shows" className={styles.sectionLabel}>
+              What this case shows
+            </h2>
+            <ul className={styles.showsList} data-count={story.shows.length} role="list">
+              {story.shows.map((item) => (
+                <li key={item.need} className={styles.showsItem}>
+                  <h3 className={styles.showsNeed}>{item.need}</h3>
+                  <p className={styles.showsProof}>{item.proof}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
+
       {chapters.length ? (
         <div className={styles.story}>
           <div className={styles.storyGrid}>

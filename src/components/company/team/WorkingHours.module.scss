@@ -1,0 +1,719 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+@use '../../../styles/editorial' as *;
+
+// "Our hours, in your day" (DayPlanner): a timetable card on the dark ground.
+// One lane (the visitor's 24 hours) runs down the middle of the card; each
+// office is a row with its name and open hours at the head, its bars in the
+// lane, and its local time at the line in the tail. Phones stack the head
+// over the bar and keep the local time beside the head, so the lane runs the
+// card's full width. Colour: the bars are the brand crimson (#F03350, 3.66:1
+// on the card: a graphic, never text); text is fg / fg-muted (AAA).
+
+$card-bg: #121214;
+$chip-band: 48px; // the line's time sits in this band over the rows
+$below: 64px; // the "your 9 to 6" bracket and the axis under the rows
+
+.card {
+  overflow: clip; // the line's time never pokes out of the card
+  padding: clamp(20px, 3.4vw, 48px);
+  @include rise-in;
+}
+
+.planner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(28px, 3.4vw, 44px);
+}
+
+// ---------------------------------------------------------------- summary + select
+.top {
+  display: grid;
+  gap: 24px;
+
+  @include md {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 40px;
+  }
+}
+
+.summary {
+  min-width: 0;
+}
+
+.day {
+  margin: 0;
+  @include mono-label;
+}
+
+.stat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 14px 0 0;
+}
+
+.figure {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(3.5rem, 2.3rem + 4.4vw, 6.5rem); // 56px -> 104px
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  color: $color-fg;
+  white-space: nowrap;
+  @include tabular;
+}
+
+.unit {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 2rem); // 22px -> 32px
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: $color-fg-muted;
+}
+
+.statNote {
+  margin: 14px 0 0;
+  max-width: 34em;
+  font-size: $font-size-lede;
+  line-height: 1.5;
+  color: $color-text-body;
+  text-wrap: pretty;
+  @include tabular;
+}
+
+.controls {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.controlLabel {
+  @include mono-label;
+}
+
+// Phones: the full width of the card (the longest option would push past a
+// 320px screen); tablet and up, as wide as its words.
+.selectWrap {
+  position: relative;
+  display: block;
+  width: 100%;
+
+  @include md {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+.select {
+  appearance: none;
+  width: 100%;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  min-height: 48px;
+  margin: 0;
+  padding: 0 46px 0 20px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-full;
+  background: #1a1a1d;
+  font-family: $font-body;
+  font-size: $font-size-base; // 17px: no zoom on iOS (16px minimum)
+  font-weight: $font-weight-medium;
+  color: $color-fg;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: rgba($color-fg, 0.4);
+  }
+
+  @include focus-ring;
+
+  option {
+    background: #1a1a1d;
+    color: $color-fg;
+  }
+}
+
+.chevron {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  fill: none;
+  stroke: $color-fg;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+// ---------------------------------------------------------------- the plot
+// --head and --tail are the rows' side columns; the lane is what is left.
+// Phones: no side columns (the head stacks over the bar).
+.plot {
+  --head: 0px;
+  --tail: 0px;
+  --gap: 0px;
+  position: relative;
+  padding-top: $chip-band;
+
+  @include md {
+    --head: 10.5rem;
+    --tail: 8.5rem;
+    --gap: 20px;
+  }
+
+  @include lg {
+    --head: 13rem;
+    --tail: 10rem;
+    --gap: 28px;
+  }
+}
+
+// Column captions in the chip band, over the side columns (tablet and up).
+.columns {
+  display: none;
+
+  @include md {
+    position: absolute;
+    inset: 0 0 auto;
+    height: $chip-band;
+    display: grid;
+    grid-template-columns: var(--head) minmax(0, 1fr) var(--tail);
+    column-gap: var(--gap);
+    align-items: center;
+    @include mono-label;
+  }
+}
+
+.columnsTail {
+  grid-column: 3;
+  text-align: right;
+}
+
+.rows {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid $color-hairline-strong;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'head at'
+    'track track';
+  gap: 12px 16px;
+  padding: 16px 0 18px;
+  border-bottom: 1px solid $color-hairline;
+
+  @include md {
+    grid-template-columns: var(--head) minmax(0, 1fr) var(--tail);
+    grid-template-areas: 'head track at';
+    column-gap: var(--gap);
+    align-items: center;
+    min-height: 92px;
+    padding: 18px 0;
+  }
+}
+
+.head {
+  grid-area: head;
+  min-width: 0;
+}
+
+.city {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.625rem); // 20px -> 26px
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: $color-fg;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 7px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: 6px;
+  font-family: $font-body;
+  font-size: 0.75rem;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.08em;
+  color: $color-fg-muted;
+}
+
+.hours {
+  margin: 6px 0 0;
+  font-size: $font-size-base;
+  line-height: 1.4;
+  color: $color-text-body;
+  @include tabular;
+}
+
+.track {
+  grid-area: track;
+  position: relative;
+  height: 20px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.04);
+
+  @include md {
+    height: 28px;
+  }
+}
+
+// Each open span: a full-width bar moved and scaled into place (transform only).
+.bar {
+  position: absolute;
+  inset: 0;
+  background: $color-red;
+  transform-origin: 0 50%;
+  transform: translate3d(calc(var(--s, 0) * 1%), 0, 0) scaleX(calc(var(--w, 0) / 100));
+
+  @include motion-ok {
+    transition: transform 0.7s $ease-out-expo;
+  }
+}
+
+// Phones: the visitor's 9 to 6 and the line, inside each track.
+.trackDay,
+.trackLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+
+  @include md {
+    display: none;
+  }
+}
+
+.trackDay {
+  left: 37.5%;
+  width: 37.5%;
+  background: rgba(255, 255, 255, 0.05);
+  border-inline: 1px dashed rgba($color-fg, 0.22);
+}
+
+// A lane-wide layer moved by transform (so it can glide), its left edge the line.
+.trackLine {
+  z-index: 1;
+  left: 0;
+  width: 100%;
+  transform: translate3d(calc(var(--v) * 100%), 0, 0);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    width: 2px;
+    background: $color-fg;
+  }
+}
+
+.at {
+  grid-area: at;
+  margin: 0;
+  text-align: right;
+  font-size: $font-size-base;
+  line-height: 1.35;
+  @include tabular;
+
+  > span {
+    display: inline-grid;
+    justify-items: end;
+    gap: 2px;
+  }
+}
+
+.atTime {
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+  white-space: nowrap;
+}
+
+.atDay {
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+  @include phone-floor;
+}
+
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: $font-size-sm;
+  color: $color-fg-muted;
+  @include phone-floor;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba($color-fg, 0.5);
+
+  .state[data-open='true'] & {
+    border-color: $color-signal;
+    background: $color-signal;
+  }
+}
+
+// "Your 9 to 6": a bracket under the lane, over the visitor's working day.
+.window,
+.axis {
+  position: relative;
+  margin-left: calc(var(--head) + var(--gap));
+  margin-right: calc(var(--tail) + var(--gap));
+}
+
+.window {
+  height: 38px;
+}
+
+.bracket {
+  position: absolute;
+  top: 0;
+  left: 37.5%;
+  width: 37.5%;
+  height: 9px;
+  border: 1px solid rgba($color-fg, 0.35);
+  border-top: 0;
+}
+
+// Under the bracket, centred on it, free to run past its ends.
+.windowLabel {
+  position: absolute;
+  top: 16px;
+  left: 56.25%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  @include mono-label($color-fg);
+  font-size: 0.75rem;
+}
+
+.axis {
+  height: 26px;
+}
+
+.tick {
+  position: absolute;
+  top: 0;
+  left: calc(var(--at) * 1%);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  @include mono-label;
+  font-size: 0.75rem;
+
+  // Phones: the lane meets the card's edges, so the end marks sit inside it.
+  // Tablet and up the side columns' gaps give them room to centre.
+  &:first-child {
+    transform: none;
+
+    @include md {
+      transform: translateX(-50%);
+    }
+  }
+
+  &:last-child {
+    transform: translateX(-100%);
+
+    @include md {
+      transform: translateX(-50%);
+    }
+  }
+
+  // Phones and tablets keep the 6-hour marks.
+  &:not([data-major]) {
+    display: none;
+
+    @include lg {
+      display: block;
+    }
+  }
+}
+
+// ---------------------------------------------------------------- lane (behind + in front)
+.laneBack,
+.lane {
+  position: absolute;
+  left: calc(var(--head) + var(--gap));
+  right: calc(var(--tail) + var(--gap));
+}
+
+.laneBack {
+  top: $chip-band;
+  bottom: $below;
+  z-index: 0;
+  display: none;
+  pointer-events: none;
+
+  @include md {
+    display: block;
+  }
+}
+
+.grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--at) * 1%);
+  width: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.yourDay {
+  position: absolute;
+  top: 0;
+  bottom: -9px; // down to the bracket
+  left: calc(var(--s) * 1%);
+  width: calc(var(--w) * 1%);
+  background: rgba(255, 255, 255, 0.045);
+  border-inline: 1px dashed rgba($color-fg, 0.22);
+}
+
+.lane {
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  touch-action: pan-y; // sideways drags move the line; vertical swipes scroll the page
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: ew-resize;
+
+  .planner:not([data-ready]) & {
+    cursor: default;
+  }
+}
+
+// The slider the line stands for: focusable and named for keyboards and
+// screen readers, invisible (the line and its time are what you see), and
+// out of the pointer's way (the lane handles pointers).
+.range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  appearance: none;
+}
+
+// Tablet and up, one line down through every row; phones keep a stem from
+// the time to the first row (each track draws its own line).
+.line {
+  position: absolute;
+  top: 8px;
+  height: calc(#{$chip-band} - 8px);
+  left: 0;
+  width: 100%;
+  transform: translate3d(calc(var(--v) * 100%), 0, 0);
+  pointer-events: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    width: 2px;
+    background: $color-fg;
+  }
+
+  @include md {
+    height: auto;
+    bottom: calc(#{$below} - 2px);
+  }
+}
+
+// The line, its time and each track's line glide between positions (transform only).
+.line,
+.chipRail,
+.chip,
+.trackLine {
+  @include motion-ok {
+    transition: transform 0.2s $ease-out-expo;
+  }
+}
+
+// The line's time in the chip band: centred on the line at midday, sliding to
+// its right at midnight and its left at the day's end, so it always touches
+// the line and never leaves the lane.
+.chipRail {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 100%;
+  transform: translate3d(calc(var(--v) * 100%), 0, 0);
+  pointer-events: none;
+}
+
+.chip {
+  transform: translate3d(calc(var(--v) * -100%), 0, 0);
+  display: inline-block;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: $radius-full;
+  background: $color-fg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  line-height: 32px;
+  white-space: nowrap;
+  color: $color-ink; // 17:1
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  @include tabular;
+
+  .range:focus-visible ~ .chipRail & {
+    outline: $focus-ring;
+    outline-offset: 3px;
+  }
+}
+
+.chipNow {
+  font-weight: $font-weight-medium;
+  color: rgba($color-ink, 0.74);
+}
+
+// Where now is, once the line has been moved away from it.
+.nowTick {
+  position: absolute;
+  top: 16px;
+  height: 16px;
+  left: calc(var(--v) * 100%);
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: $color-signal;
+  pointer-events: none;
+}
+
+// ---------------------------------------------------------------- foot
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  min-height: 44px;
+}
+
+.hint {
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-fg-muted;
+
+  .planner:not([data-ready]) & {
+    visibility: hidden;
+  }
+}
+
+// The hint in the words of the pointer in hand (one is display: none, so it is
+// never read out twice).
+.hintTouch {
+  display: none;
+}
+
+@include pointer-coarse {
+  .hintFine {
+    display: none;
+  }
+
+  .hintTouch {
+    display: inline;
+  }
+}
+
+.footActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 28px;
+}
+
+.next {
+  @include text-action($color-fg);
+  font-size: $font-size-base;
+}
+
+.nextArrow {
+  display: inline-block;
+  transition: transform 0.35s $ease-out-expo;
+
+  .next:hover & {
+    @include motion-ok {
+      transform: translateX(4px);
+    }
+  }
+}
+
+.reset {
+  @include text-action($color-fg-muted);
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: $font-body;
+  font-size: $font-size-base;
+  cursor: pointer;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// ---------------------------------------------------------------- forced colours
+// Windows high contrast drops background colours, which would erase the bars,
+// the line and the 9 to 6: draw them in system colours instead, and ring the
+// line's time when the slider has focus.
+@media (forced-colors: active) {
+  .bar {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+
+  .line::before,
+  .trackLine::before {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  .track,
+  .yourDay,
+  .trackDay {
+    border: 1px solid CanvasText;
+  }
+
+  .chip {
+    border: 1px solid CanvasText;
+  }
+
+  .chevron {
+    stroke: CanvasText;
+  }
+
+  .range:focus-visible ~ .chipRail .chip {
+    outline: 2px solid Highlight;
+  }
+}

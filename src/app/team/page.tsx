@@ -5,11 +5,11 @@ import { pageGraph, person } from '@/lib/schema';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import { TRUST_ITEMS } from '@/components/flagship/content';
 import FactsBand from '@/components/company/FactsBand';
-import { FounderProfiles } from '@/components/company/Founders';
 import HeroActions from '@/components/company/HeroActions';
 import TeamDirectory from '@/components/company/TeamDirectory';
+import TeamFounders from '@/components/company/team/TeamFounders';
+import WorkingHours from '@/components/company/team/WorkingHours';
 import { FOUNDERS, TEAM } from '@/components/company/content';
 
 const URL = 'https://mapltech.com/team';
@@ -29,24 +29,27 @@ export const metadata: Metadata = {
 };
 
 /*
- * /team, Nov 2026 award pass. An editorial directory, founders first: the
- * two founders as numbered entries with real photos, full bios from team.ts,
- * LinkedIn and the `/team#slug` anchors their Person nodes point at. Then the
- * wider team exactly as team.ts lists it, on paper: names and titles only,
- * with initials (those records are unconfirmed and carry placeholder photos,
- * so they get no photos, no bios and no Person nodes), under the office
- * hours, with the Nigeria and Jamaica groups linked to their branch pages.
- * The page talks to buyers: the hero's reassurance line under the ask, the
- * facts in the hero's aside as /about-us sets its figures (headquarters, the
- * published experience and the public price, none of them repeating the
- * lede; beside the lede and the ask from 1024px, so they are in the first
- * screen, and a ruled list under the copy on phones), the founders with the
- * page's route to the work, and the directory ending on "Start a project",
- * with one small line for job seekers under it. Then the close. The
- * breadcrumb names the page, so the hero has no eyebrow.
+ * /team, Nov 5, 2026 redesign. Written for an agency director deciding
+ * whether to trust us as the engineering team that works with theirs: who
+ * leads it, when we are working against their own day, and who is on the
+ * team, then the ask.
+ *
+ * 1. Hero (dark): "The team that works with yours.", the founders and the
+ *    three countries in the lede, "Start a project" with the quote line and
+ *    the Google rating under it, and the facts aside (headquarters, the
+ *    published experience, the public price).
+ * 2. Leadership (paper): the two founders side by side, numbered, with their
+ *    team.ts bios and LinkedIn; the `/team#slug` anchors the Person nodes
+ *    point at.
+ * 3. Office hours (dark): the page's one interaction. The three offices'
+ *    published 9 to 6 drawn on the visitor's own day, from the browser's
+ *    time zone, with a line to drag through it (team/DayPlanner).
+ * 4. The team (paper): everyone in team.ts by country, beside each office's
+ *    live clock, ending on "Start a project" and one line for job seekers.
+ * 5. The close (crimson).
  *
  * Structured data (unchanged): AboutPage + BreadcrumbList + one Person node
- * per founder, from the same records the page renders.
+ * per founder, from the same records the page renders. No other staff.
  */
 const teamGraph = pageGraph({
   path: '/team',
@@ -76,12 +79,14 @@ export default function TeamPage() {
             secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: 'team_hero_secondary' }}
           />
         }
-        trust={TRUST_ITEMS}
+        trust={hero.trust}
         asideAlign="body"
         aside={<FactsBand facts={TEAM.facts} label="The team at a glance" placement="aside" />}
       />
 
-      <FounderProfiles />
+      <TeamFounders />
+
+      <WorkingHours />
 
       <TeamDirectory />
 

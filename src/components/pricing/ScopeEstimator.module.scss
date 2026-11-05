@@ -984,21 +984,6 @@ $card: #121214;
   }
 }
 
-// Google's reCAPTCHA notice (the badge is hidden site-wide): one sentence, inline links.
-.recaptcha {
-  margin: 4px 0 0;
-  font-size: $font-size-base;
-  line-height: 1.5;
-  color: $label-muted;
-
-  a {
-    color: rgba(245, 242, 238, 0.86);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    @include focus-ring;
-  }
-}
-
 .sent {
   display: block;
   margin-top: 26px;

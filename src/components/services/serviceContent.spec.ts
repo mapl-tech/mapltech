@@ -263,9 +263,9 @@ describe('service pages', () => {
   it('lists price answers tier by tier, in the words the JSON-LD carries', () => {
     const automation = LAYER_VIEWS[1];
     const [cost, whiteLabel, support] = faqItems(automation);
-    // The white-label answer is the homepage's, word for word (the NDA, never approaching the client).
+    // The white-label answer is the homepage's, word for word (your brand, your team the only contact).
     expect(whiteLabel).toEqual({ question: FAQ_ITEMS[0].question, answer: FAQ_ITEMS[0].answer });
-    expect(whiteLabel.answer).toMatch(/\bNDA\b/);
+    expect(whiteLabel.answer).toMatch(/carries your brand/);
     expect(cost.list?.lead).toBe('From $3,500, across three packages.');
     expect(cost.list?.points).toEqual(pricing.automation.tiers.map((t) => `${t.name}: ${cleanCopy(t.price)}`));
     expect(cost.list?.close).toBe(QUOTE_LINE);

@@ -237,16 +237,18 @@ export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') 
  * PRICE_TRUST_ITEMS on the first screens of / and /services, led by the
  * published price floor; WHITE_LABEL_ITEMS where the fixed quote is already
  * beside the ask (the service pages' hero facts, the article close's lede).
- * Display only, never JSON-LD: "20‑minute" keeps its non-breaking hyphen. The
- * NDA sentence stands alone in the home "Why agencies work with us" list.
+ * Display only, never JSON-LD: "20‑minute" keeps its non-breaking hyphen.
  */
-export const NDA_LINE = 'We sign an NDA before you share anything.';
+// What an agency weighs before booking a call, in published facts only. Leshan, Nov 5, 2026: an NDA
+// and "we never approach your clients" are common practice, so they are not selling points; say
+// what agencies value instead (a fixed quote, support after launch, a fast reply).
+export const REPLY_LINE = 'We reply within 24 hours.';
 const QUOTE_ITEM = 'Fixed quote after one 20\u2011minute call';
-const NDA_ITEM = 'NDA before you share anything';
-const CLIENTS_ITEM = 'We never approach your clients';
-export const TRUST_ITEMS = [QUOTE_ITEM, NDA_ITEM, CLIENTS_ITEM] as const;
-export const PRICE_TRUST_ITEMS = [`Projects from ${money(LOWEST_PRICE)}`, QUOTE_ITEM, NDA_ITEM] as const;
-export const WHITE_LABEL_ITEMS = [NDA_ITEM, CLIENTS_ITEM] as const;
+const SUPPORT_ITEM = '30 to 90 days of support after launch';
+const REPLY_ITEM = 'A reply within 24 hours';
+export const TRUST_ITEMS = [QUOTE_ITEM, SUPPORT_ITEM, REPLY_ITEM] as const;
+export const PRICE_TRUST_ITEMS = [`Projects from ${money(LOWEST_PRICE)}`, QUOTE_ITEM, SUPPORT_ITEM] as const;
+export const WHITE_LABEL_ITEMS = [SUPPORT_ITEM, REPLY_ITEM] as const;
 /**
  * The approved quote's first sentence as one line of proof beside an ask on
  * the other pages (QuoteLine). The homepage gives the testimonials in full in
@@ -322,18 +324,20 @@ export const APPROACH = {
 } as const;
 
 /**
- * The reasons, before the counts: the white-label guarantees the FAQ already
- * makes (home/data.ts FAQ_ITEMS, "Will my client ever know MAPL TECH was
- * involved?" and "Who owns the code when the project ends?"), in its words.
+ * The reasons, before the counts: what an agency gains, in facts the site
+ * publishes elsewhere (prices on /pricing, the fixed quote, the web line
+ * "Fast websites built for AI search", the accessibility standards on launch
+ * day, the Slack and weekly check-ins of the steps). Not hygiene an agency
+ * expects of any partner (Leshan, Nov 5, 2026: no NDA lines).
  */
 export const PROOF_SECTION = {
   label: 'Our track record',
   title: 'Why agencies work with us.',
   promises: [
-    NDA_LINE,
-    'We never approach your clients.',
-    'Everything we make carries your brand.',
-    'You and your client own the code.',
+    'Public prices for every package, so you can plan your margin before you pitch.',
+    'One fixed quote after a 20-minute call, so the budget holds.',
+    'Websites built for AI search and accessibility standards from launch day.',
+    'We join your Slack and weekly check-ins. Your client only hears from your team.',
   ],
   // A client's words and an audit's verdict, so not "What clients say".
   voicesLabel: 'In their words',

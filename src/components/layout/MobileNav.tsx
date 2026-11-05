@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import BottomSheet, { type SnapPoint } from '@/components/ui/BottomSheet';
 import MagneticButton from '@/components/ui/MagneticButton';
-import { PROJECT_HREF, PROJECT_LABEL, telHref } from './chrome';
+import { PROJECT_HREF, PROJECT_LABEL } from './chrome';
 import { useEstimateBriefHref } from '@/components/ui/useEstimateBriefHref';
 import styles from './Header.module.scss';
 
@@ -139,11 +139,6 @@ export default function MobileNav({ id, open, onOpenChange, pathname, projectHre
         <li>
           <a href={`mailto:${siteConfig.email}`} onClick={close}>
             {siteConfig.email}
-          </a>
-        </li>
-        <li>
-          <a href={telHref(siteConfig.phone)} onClick={close}>
-            {siteConfig.phone}
           </a>
         </li>
       </ul>

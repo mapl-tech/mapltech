@@ -5,7 +5,7 @@ import { blurErrors, checkForm, summaryWords, typingErrors, type FieldRule } fro
 import { useAfterPress } from '@/components/company/useAfterPress';
 import css from '@/components/company/CareersForm.module.scss';
 import { field, useContactSubmit } from './useContactSubmit';
-import RecaptchaNotice from './RecaptchaNotice';
+import Recaptcha from './Recaptcha';
 import forms from './forms.module.scss';
 
 /**
@@ -15,7 +15,8 @@ import forms from './forms.module.scss';
  * the first problem (it counts the fields still flagged, announced once per
  * refused send), and the success message takes focus. And the same one-press
  * rule: errors clear while the visitor types, and a blur check waits until
- * the pointer lifts, so the press that leaves the last field sends.
+ * the pointer lifts, so the press that leaves the last field sends. With a
+ * site key set, the "I'm not a robot" box (dark) sits just before the button.
  */
 
 const RULES: Record<string, FieldRule> = {
@@ -27,7 +28,7 @@ const RULES: Record<string, FieldRule> = {
 const ORDER = ['name', 'email', 'about'] as const;
 
 export default function TalentListForm({ contactEmail }: { contactEmail?: string }) {
-  const { status, submit, warmUp } = useContactSubmit();
+  const { status, submit, captcha } = useContactSubmit('talent_list');
   const [errors, setErrors] = useState<Record<string, string>>({});
   // The last refused send (as in CareersApply): its number and the errors it found.
   const [refused, setRefused] = useState<{ count: number; errors: Record<string, string> } | null>(null);
@@ -106,7 +107,6 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
       onSubmit={onSubmit}
       onChange={onChange}
       onBlur={onBlur}
-      onFocusCapture={warmUp}
       noValidate
       aria-label="Join the talent list"
       aria-describedby="talent-form-note"
@@ -198,6 +198,17 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
         </p>
       ) : null}
 
+      {/* After the last field, before the button. */}
+      <Recaptcha
+        control={captcha}
+        theme="dark"
+        renderError={(errorId, message) => (
+          <p id={errorId} className={forms.error} role="alert">
+            {message}
+          </p>
+        )}
+      />
+
       <div className={`${forms.actions} ${css.actions}`}>
         <button
           type="submit"
@@ -208,8 +219,6 @@ export default function TalentListForm({ contactEmail }: { contactEmail?: string
           {status === 'sending' ? 'Sending…' : 'Join the talent list'}
         </button>
       </div>
-
-      <RecaptchaNotice className={forms.recaptcha} />
     </form>
   );
 }

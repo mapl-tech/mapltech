@@ -57,6 +57,17 @@ export interface CaseShot {
   path: string;
 }
 
+/**
+ * What the case proves, in the terms clients and agencies ask for now (Nov 5,
+ * 2026: "make sure the case studies demonstrate what people and agencies are
+ * currently looking for"): the need, and this project's published facts that
+ * meet it. Shown as "What this case shows" under the results, and in llms.txt.
+ */
+export interface CaseShow {
+  need: string;
+  proof: string;
+}
+
 export interface CaseStage {
   name: string;
   text: string;
@@ -87,6 +98,8 @@ export interface CaseStory {
   tagsInFacts?: readonly string[];
   /** The one-line outcome under the H1. */
   headline: string;
+  /** Two or three needs this case proves (CaseShow), from its own facts only. */
+  shows?: readonly CaseShow[];
   facts: readonly CaseFact[];
   results?: readonly CaseResult[];
   situation?: readonly string[];
@@ -122,6 +135,11 @@ export const STORIES: readonly CaseStory[] = [
     // The Client fact says the sector ("full-service search and staffing"), Where the place.
     tagsInFacts: ['Staffing and recruitment', 'Ottawa and Toronto'],
     headline: 'A staffing agency’s website, rebuilt for its two audiences: people looking for work and employers looking to hire.',
+    shows: [
+      { need: 'Two audiences on one site', proof: 'Job seekers get search, job alerts and resume upload. Employers get eight industry expertise pages, one click from the menu.' },
+      { need: 'Passes the checks clients run', proof: 'A Google Lighthouse score of 100 for accessibility and for SEO, on mobile and desktop.' },
+      { need: 'A site their own team runs', proof: 'LRO’s own team publishes to the insights blog.' },
+    ],
     facts: [
       { term: 'Client', detail: 'LRO Staffing, full-service search and staffing' },
       { term: 'Where', detail: 'Ottawa and Toronto' },
@@ -192,6 +210,11 @@ export const STORIES: readonly CaseStory[] = [
     // The Client fact says the business (small-group tours), Where the place.
     tagsInFacts: ['Travel and tours', 'Mauritius'],
     headline: 'A Mauritius tour company’s website, where visitors choose a small-group tour, pick a date and request a booking.',
+    shows: [
+      { need: 'Booking on the same page', proof: 'Each tour page has a date calendar, the places left and a booking request, with a form to ask a question first.' },
+      { need: 'Prices in the traveller’s currency', proof: 'Mauritian rupees, US dollars, euros or Canadian dollars, switched from the header.' },
+      { need: 'Found in search', proof: 'Structured data tells search engines the business is a travel agency.' },
+    ],
     // Every line is what the live site shows (dodoislanddiscoveries.com, Nov 4, 2026): the
     // footer ("Website by MAPL TECH"), its own WordPress theme, the tour pages (photos,
     // duration, group size, start time, "Things to know", "Cancellation policy", "Ask us a
@@ -234,6 +257,11 @@ export const STORIES: readonly CaseStory[] = [
     // Owner: MAPL TECH; What it does: "Private airport transfers and tours in Jamaica".
     tagsInFacts: ['Our own product', 'Travel', 'Jamaica'],
     headline: 'A travel company we built and run ourselves, to see how far software built with AI can go with real customers.',
+    shows: [
+      { need: 'Found by AI assistants', proof: 'About half of customers now arrive through ChatGPT. AI assistants can look up real fares and send travellers a link that is ready to book.' },
+      { need: 'AI automation with safeguards', proof: 'Nearly 2,000 automated tests run before any change goes live, and specialist AI agents check every change.' },
+      { need: 'Real payments, handled safely', proof: 'Prices are worked out on the server, and a repeated payment request is charged only once.' },
+    ],
     facts: [
       { term: 'Owner', detail: 'MAPL TECH' },
       { term: 'What it does', detail: 'Private airport transfers and tours in Jamaica' },
@@ -297,6 +325,11 @@ export const STORIES: readonly CaseStory[] = [
     // "National Capital Region", which not every reader knows as Ottawa.
     tagsInFacts: ['Website relaunch', 'Non-profit'],
     headline: 'A relaunched website for people with hearing loss, most of them 55 and over, that the charity’s own volunteers can run.',
+    shows: [
+      { need: 'Accessibility that passes an audit', proof: 'Every colour pair the August 2026 audit checked meets WCAG AA, with skip links and a panel for text size, motion and link underlining.' },
+      { need: 'Built for an older audience', proof: 'Most visitors are 55 and over, so the site is plain language in five stages, from Noticing to Giving back.' },
+      { need: 'A site their own team runs', proof: 'The charity’s volunteers edit the site themselves on WordPress.' },
+    ],
     facts: [
       { term: 'Client', detail: chha?.client ?? 'CHHA-NCR' },
       { term: 'Sector', detail: chha?.industry ?? 'Non-profit / accessibility' },
@@ -373,6 +406,10 @@ export const STORIES: readonly CaseStory[] = [
     // The Client fact ("LRO Staffing") says the sector, as on the LRO Staffing case.
     tagsInFacts: ['Staffing and recruitment'],
     headline: 'An interactive salary guide that turns market data into a tool for comparing pay, made for recruiters and hiring managers.',
+    shows: [
+      { need: 'Market data people can use', proof: 'Filters for role and market, charts that update as soon as a filter changes, and comparisons by role.' },
+      { need: 'Built for recruiters and hiring managers', proof: 'Salary comparisons by role, for the Ottawa and Toronto markets.' },
+    ],
     facts: [
       { term: 'Client', detail: 'LRO Staffing' },
       { term: 'Type', detail: 'Interactive tool' },
@@ -413,6 +450,10 @@ export const STORIES: readonly CaseStory[] = [
     client: 'FOCAS Canada',
     tags: ['Web platform', 'Membership and events'],
     headline: 'An events website with a member portal, event registration and community tools.',
+    shows: [
+      { need: 'Members and events in one place', proof: 'A member portal and online registration for events, on the same site.' },
+      { need: 'Tools for a community', proof: 'Tools for community engagement, including a search across the organisation’s programs.' },
+    ],
     facts: [
       { term: 'Client', detail: 'FOCAS Canada' },
       { term: 'Built with', detail: 'WordPress' },
@@ -452,6 +493,10 @@ export const STORIES: readonly CaseStory[] = [
     legalName: 'United Senior Citizen Voice for Change Coalition',
     tags: ['Custom Internal Tools', 'Non-profit', 'Canada'],
     headline: 'A private dashboard for a Canadian seniors’ advocacy coalition, with live numbers, access by role and automatic reports.',
+    shows: [
+      { need: 'Reports that build themselves', proof: 'Automatic reports replace the spreadsheets someone used to build by hand.' },
+      { need: 'Live numbers, by role', proof: 'Live numbers for the whole organisation, with access by role so each person sees what their job needs.' },
+    ],
     facts: [
       { term: 'Client', detail: 'United Senior Citizen Voice for Change Coalition' },
       { term: 'What we built', detail: 'Internal operations dashboard' },
@@ -487,6 +532,10 @@ export const STORIES: readonly CaseStory[] = [
     // Type: "E-commerce automation".
     tagsInFacts: ['E-commerce'],
     headline: 'Online store automation, from stock levels to shipping to the messages customers get after they buy.',
+    shows: [
+      { need: 'Hours back after every sale', proof: 'Stock that matches everywhere the store sells, shipping that starts when an order is ready, and messages to customers after they buy, all automatic.' },
+      { need: 'People only where they are needed', proof: 'The routine steps run on their own, so the client’s team handles only the orders that need a person.' },
+    ],
     facts: [
       { term: 'Client', detail: 'Crowned Spice' },
       { term: 'Type', detail: 'E-commerce automation' },

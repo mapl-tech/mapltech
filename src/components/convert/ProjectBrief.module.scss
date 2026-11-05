@@ -795,21 +795,14 @@ $short: '(max-height: 760px)';
   }
 }
 
-.recaptcha {
-  margin: 16px 0 0;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: $muted;
+// The "I'm not a robot" box (Recaptcha.tsx, light theme on the paper), last
+// step only, between the fields (or the failure box) and the actions rule.
+.captcha {
+  margin: 28px 0 0;
 
-  a {
-    color: $ink;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-
-    &:focus-visible {
-      outline: 2px solid $accent;
-      outline-offset: 2px;
-    }
+  // Its error sits right under the widget (the box's own gap), not 14px further.
+  .error {
+    margin-top: 0;
   }
 }
 

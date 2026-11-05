@@ -16,7 +16,7 @@ import { ESTIMATE_SERVICES, SERVICE_META } from '@/lib/estimate';
 import { mailtoLink, type ComposedBrief } from './brief';
 import { GENERIC_ERROR, field, isEmail, useContactSubmit } from './useContactSubmit';
 import styles from '@/components/pricing/ReferralForm.module.scss';
-import RecaptchaNotice from './RecaptchaNotice';
+import Recaptcha from './Recaptcha';
 
 /**
  * The referral form (the live page's fields, kept): the four required ones on
@@ -31,7 +31,9 @@ import RecaptchaNotice from './RecaptchaNotice';
  * line, with the link to the policy. On success the form is replaced by a
  * status panel that takes focus. Posts to /api/contact with the subject
  * "Referral: <name>"; if that fails, the same referral opens in the
- * visitor's mail app, already written.
+ * visitor's mail app, already written. With a site key set, the "I'm not a
+ * robot" box (dark, on the dark card) sits just before "Send referral", its
+ * error in this form's pattern.
  *
  * After a first attempt, errors follow the brief's rules: each one clears as
  * soon as its value is fixed (while typing), and a field is checked again on
@@ -120,7 +122,7 @@ function Field({ id, label, error, wide = false, children }: FieldProps) {
 
 export default function ReferralSignup() {
   const uid = useId();
-  const { status, error, submit, warmUp, reset } = useContactSubmit();
+  const { status, error, submit, reset, captcha } = useContactSubmit('referral');
   const [need, setNeed] = useState('');
   const [errors, setErrors] = useState<Errors>({});
   const [attempted, setAttempted] = useState(false);
@@ -274,7 +276,6 @@ export default function ReferralSignup() {
       className={styles.form}
       onSubmit={onSubmit}
       onChange={onChange}
-      onFocusCapture={warmUp}
       onBlurCapture={onBlur}
       noValidate
       aria-label="Refer an agency"
@@ -428,6 +429,20 @@ export default function ReferralSignup() {
         </div>
       ) : null}
 
+      {/* After the last field, before the button. */}
+      <Recaptcha
+        control={captcha}
+        theme="dark"
+        renderError={(errorId, message) => (
+          <p id={errorId} className={styles.fieldError} role="alert">
+            <span className={styles.errorIcon} aria-hidden="true">
+              !
+            </span>
+            {message}
+          </p>
+        )}
+      />
+
       <div className={styles.actions}>
         {/* aria-disabled while sending, as on the brief: a disabled button would drop keyboard focus. */}
         <button
@@ -445,9 +460,6 @@ export default function ReferralSignup() {
           <Link href="/privacy">Privacy policy</Link>
         </p>
       </div>
-
-      {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}
-      <RecaptchaNotice className={styles.recaptcha} />
     </form>
   );
 }

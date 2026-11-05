@@ -65,7 +65,6 @@ export const BLOG_ID = `${SITE_URL}/blog#blog`;
 export const ORG_NAME = siteConfig.name; // 'MAPL TECH' in prose
 export const ORG_LEGAL_NAME = 'MAPL TECH Inc.'; // legalName only
 export const ORG_ALTERNATE_NAMES = ['mapltech'];
-export const ORG_TELEPHONE = '+1-647-375-6724';
 export const LOGO_URL = `${SITE_URL}/images/mapl-tech-logo.svg`;
 
 /** ISO 3166-1 alpha-2 markets served, in the order used everywhere on the site. */
@@ -347,7 +346,6 @@ function countryNode(code: string): Country {
 export function contactPoint(): ContactPoint {
   return {
     '@type': 'ContactPoint',
-    telephone: ORG_TELEPHONE,
     email: siteConfig.email,
     contactType: 'sales',
     areaServed: [...AREA_SERVED_CODES],
@@ -369,7 +367,6 @@ export function organization(): Organization {
     description: siteConfig.description,
     slogan: siteConfig.tagline,
     email: siteConfig.email,
-    telephone: ORG_TELEPHONE,
     founder: executives.map(personRef),
     address: { '@type': 'PostalAddress', addressLocality: 'Toronto', addressRegion: 'ON', addressCountry: 'CA' },
     contactPoint: [contactPoint()],

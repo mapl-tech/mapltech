@@ -8,7 +8,7 @@ import { useUrlParams } from './useUrlState';
 import { field, useContactSubmit } from './useContactSubmit';
 import type { BoardRole } from './CareersBoard';
 import forms from './forms.module.scss';
-import RecaptchaNotice from './RecaptchaNotice';
+import Recaptcha from './Recaptcha';
 import Arrow from '@/components/ui/Arrow';
 
 /**
@@ -37,6 +37,9 @@ import Arrow from '@/components/ui/Arrow';
  * press that leaves the last field is the one that sends; an error line or
  * the summary removed mid-press would move "Send application" out from under
  * the pointer or finger and swallow it.
+ *
+ * With a site key set, the "I'm not a robot" box (dark, on the dark card)
+ * sits just before "Send application"; it is checked once the fields pass.
  */
 
 export interface CareersApplyProps {
@@ -76,7 +79,7 @@ const ORDER = ['name', 'email', 'link', 'note'] as const;
 
 export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply-role' }: CareersApplyProps) {
   const [params, setParams] = useUrlParams();
-  const { status, submit, warmUp } = useContactSubmit();
+  const { status, submit, captcha } = useContactSubmit('careers_application');
   const [errors, setErrors] = useState<Record<string, string>>({});
   // The last refused send: how many so far, and the errors it found (the
   // same object until a field changes, so the summary knows when to go quiet).
@@ -191,7 +194,6 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
       onSubmit={onSubmit}
       onChange={onChange}
       onBlur={onBlur}
-      onFocusCapture={warmUp}
       noValidate
       // "Applying for Cloud / DevOps Engineer, Canada"; with no role chosen, just "General application".
       aria-labelledby={selected ? 'apply-form-label apply-form-role' : 'apply-form-role'}
@@ -342,6 +344,17 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
         </p>
       ) : null}
 
+      {/* After the last field, before the button. */}
+      <Recaptcha
+        control={captcha}
+        theme="dark"
+        renderError={(errorId, message) => (
+          <p id={errorId} className={forms.error} role="alert">
+            {message}
+          </p>
+        )}
+      />
+
       <div className={`${forms.actions} ${css.actions}`}>
         <button type="submit" className={css.submit} disabled={status === 'sending'} data-cta-placement="careers_apply_submit">
           {status === 'sending' ? 'Sending…' : 'Send application'}
@@ -350,8 +363,6 @@ export default function CareersApply({ roles, contactEmail, roleFieldId = 'apply
           </span>
         </button>
       </div>
-
-      <RecaptchaNotice className={forms.recaptcha} />
     </form>
   );
 }

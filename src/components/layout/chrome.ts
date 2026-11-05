@@ -22,8 +22,6 @@ export const PRICING_LABEL = 'See pricing';
 /** The estimator on /pricing (blog posts link here when no service matches). */
 export const ESTIMATE_HREF = '/pricing#estimator';
 
-/** `tel:` href from a display number such as "+1 (647) 375-6724". */
-export const telHref = (phone: string): string => `tel:${phone.replace(/[^\d+]/g, '')}`;
 
 export interface ChromeLink {
   label: string;

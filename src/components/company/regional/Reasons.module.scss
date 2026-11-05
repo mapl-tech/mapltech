@@ -1,0 +1,66 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+@use '../../../styles/editorial' as *;
+
+// Four reasons on paper: one a row on phones, two by two from 768px, each
+// under its own ink hairline with a crimson-ink index (7.8:1 on paper).
+.list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(32px, 4vw, 64px);
+  }
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  grid-template-areas:
+    'index title'
+    '. text';
+  column-gap: 12px;
+  row-gap: 10px;
+  // Rows keep their own height when a neighbour in the grid is taller.
+  align-content: start;
+  align-items: baseline;
+  padding: clamp(24px, 3vw, 36px) 0 clamp(28px, 3.4vw, 44px);
+  border-top: 1px solid $color-ink-hairline;
+  @include rise-in(0s, 24px);
+
+  @include md {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+}
+
+.index {
+  grid-area: index;
+  @include mono-label($color-red-ink);
+  font-size: 0.875rem;
+}
+
+.title {
+  grid-area: title;
+  margin: 0;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: clamp(1.375rem, 1.05rem + 1.1vw, 2rem); // 22px -> 32px
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: $color-ink;
+  text-wrap: balance;
+}
+
+.text {
+  grid-area: text;
+  max-width: 31em;
+  margin: 0;
+  font-size: $font-size-md; // 18px; 17px phone floor holds
+  line-height: 1.55;
+  color: $color-ink-muted;
+  text-wrap: pretty;
+}

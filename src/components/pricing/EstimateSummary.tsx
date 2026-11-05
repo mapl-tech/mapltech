@@ -18,7 +18,7 @@ import {
   type EstimateLine,
   type EstimateResult,
 } from '@/lib/estimate';
-import { NDA_LINE } from '@/components/flagship/content';
+import { REPLY_LINE } from '@/components/flagship/content';
 import QuoteLine from '@/components/flagship/QuoteLine';
 import { PROJECT_LABEL } from '@/components/layout/chrome';
 import { keepTogether } from '@/components/services/keepTogether';
@@ -45,7 +45,7 @@ import Arrow from '@/components/ui/Arrow';
  * The number is on screen before any contact field exists (reciprocity); the
  * email ask comes after it and is optional. The primary action is "Start a
  * project", and it opens the brief already filled in from these answers; the
- * NDA line and the approved client quote sit under it, so the decision has
+ * reply line and the approved client quote sit under it, so the decision has
  * its risk answer and its proof beside it. How the price adds up and what is
  * included sit one tap away, each on a native <details>, so the card stays
  * short beside the questions.
@@ -265,7 +265,7 @@ export default function EstimateSummary({ input, result }: SummaryProps) {
                   <Arrow />
                 </span>
               </Link>
-              <p className={styles.nextNote}>Your answers are added to the project form for you. {NDA_LINE}</p>
+              <p className={styles.nextNote}>Your answers are added to the project form for you. {REPLY_LINE}</p>
               <QuoteLine className={styles.quote} />
             </div>
 

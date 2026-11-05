@@ -5,7 +5,7 @@ import MagneticButton from '@/components/ui/MagneticButton';
 import FooterLink from './FooterLink';
 import NewsletterForm from './NewsletterForm';
 import SocialLinks from './SocialLinks';
-import { FOOTER_COMPANY, FOOTER_SERVICES, OFFICE_LINKS, PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from './chrome';
+import { FOOTER_COMPANY, FOOTER_SERVICES, OFFICE_LINKS, PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from './chrome';
 import styles from './Footer.module.scss';
 
 /**
@@ -90,9 +90,6 @@ export default function Footer() {
                   {siteConfig.email.split('@')[0]}@<wbr />
                   {siteConfig.email.split('@')[1]}
                 </a>
-              </li>
-              <li>
-                <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a>
               </li>
               <li>
                 <FooterLink href="/contact-us">Contact form</FooterLink>

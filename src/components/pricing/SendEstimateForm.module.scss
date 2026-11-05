@@ -1,0 +1,20 @@
+@use '../../styles/mixins' as *;
+
+// "Get it in writing" with reCAPTCHA on (SendEstimateForm.tsx): the field, the
+// "I'm not a robot" box, then the button, stacked, so the box comes after the
+// field and before the button on screen and in the Tab order. Phones keep the
+// full-width button of the row it replaces; wider, the button takes its own width.
+.stack {
+  display: grid;
+  gap: 8px;
+
+  @include sm {
+    justify-items: start;
+  }
+}
+
+// The box always takes the full width: it measures it to choose the widget's size.
+.captcha {
+  justify-self: stretch;
+  margin: 4px 0;
+}

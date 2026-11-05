@@ -3,8 +3,8 @@
 @use '../../styles/editorial' as *;
 
 // ---------------------------------------------------------------- place (hero aside)
-// Wide screens: the to-scale map, the live clock card under it.
-// Phones and tablets: the clock card alone.
+// Wide screens: the to-scale map, the office card under it (city, live time,
+// open or closed, the hours, the zone). Phones and tablets: the card alone.
 .place {
   position: relative;
 }
@@ -15,6 +15,21 @@
   @include lg {
     display: block;
   }
+}
+
+// The card's foot: the office hours (the page's one statement of them), then
+// the zone's name and fixed offset, at the 17px body floor.
+.hours {
+  font-size: $font-size-base;
+  line-height: 1.4;
+  color: $color-fg;
+}
+
+.zoneName {
+  margin: 4px 0 0;
+  font-size: $font-size-base;
+  line-height: 1.4;
+  color: $color-text-body;
 }
 
 // ---------------------------------------------------------------- services (paper)
@@ -170,181 +185,6 @@
   }
 }
 
-.realities {
-  display: grid;
-  gap: 18px;
-  margin-top: clamp(40px, 5vw, 64px);
-
-  @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
-  }
-}
-
-.realitiesTitle {
-  margin: 0;
-  @include mono-label($color-ink-muted);
-
-  @include lg {
-    padding-top: 0.35em;
-  }
-}
-
-.realitiesList {
-  display: grid;
-  gap: 12px 48px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  @include md {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  li {
-    position: relative;
-    padding-left: 26px;
-    font-size: $font-size-md;
-    line-height: 1.45;
-    color: $color-ink;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.7em;
-      width: 14px;
-      height: 2px;
-      background: $color-red-ink;
-    }
-  }
-}
-
-// ---------------------------------------------------------------- local work
-.work {
-  display: grid;
-  gap: clamp(28px, 4vw, 56px);
-  overflow: hidden;
-  padding: clamp(24px, 4vw, 56px);
-  background:
-    radial-gradient(70% 90% at 85% 100%, rgba(217, 28, 63, 0.16) 0%, transparent 60%),
-    #121214;
-
-  @include lg {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    align-items: center;
-  }
-}
-
-.workCopy {
-  display: grid;
-  gap: 18px;
-  justify-items: start;
-  align-content: start;
-}
-
-.workClient {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2.5rem, 1.2rem + 4.2vw, 5rem); // 40px -> 80px
-  line-height: 0.95;
-  letter-spacing: -0.035em;
-  color: $color-fg;
-}
-
-.workText {
-  margin: 0;
-  max-width: 30em;
-  font-size: $font-size-lede;
-  line-height: 1.45;
-  color: $color-fg; // full white: on phones the browser frame's grey sits right under it
-}
-
-// The live site in a browser, its phone view overlapping the corner (homepage Work).
-.workMedia {
-  position: relative;
-  padding-right: 12%;
-  padding-bottom: 8%;
-}
-
-.browser {
-  margin: 0;
-  overflow: hidden;
-  border-radius: 14px;
-  background: #0d0d0f;
-  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  transition: transform 0.8s $ease-out-expo;
-
-  .work:hover & {
-    @include pointer-fine-motion {
-      transform: translateY(-6px);
-    }
-  }
-}
-
-.chrome {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  height: 34px;
-  padding: 0 14px;
-  background: #18181b;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.lights {
-  display: inline-flex;
-  gap: 6px;
-
-  i {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.16);
-  }
-}
-
-.url {
-  font-size: 0.75rem;
-  letter-spacing: 0.02em;
-  color: $color-fg-muted;
-}
-
-.shot {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.phone {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 26%;
-  overflow: hidden;
-  aspect-ratio: 9 / 19;
-  border-radius: clamp(14px, 1.6vw, 24px);
-  border: 4px solid #1b1b1e;
-  background: #0d0d0f;
-  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.1);
-  transition: transform 0.9s $ease-out-expo;
-
-  .work:hover & {
-    @include pointer-fine-motion {
-      transform: translateY(-14px);
-    }
-  }
-}
-
-.phoneShot {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-}
-
 // ---------------------------------------------------------------- faq
 .faqGrid {
   display: grid;
@@ -441,30 +281,4 @@
 .line {
   color: $color-fg-muted;
   white-space: nowrap;
-}
-
-// The one line for job seekers, under the questions.
-.hiring {
-  margin: clamp(24px, 3vw, 32px) 0 0;
-  font-size: $font-size-base;
-  line-height: 1.55;
-  color: $color-fg-muted;
-
-  // Inline, so the link wraps with the sentence and its full stop stays on
-  // its last line ("three open contract roles in Nigeria" fills a 320px line).
-  // Block padding on an inline box takes no room in the line, so it widens
-  // the target without moving anything.
-  a {
-    padding-block: 10px;
-    color: $color-fg;
-    text-decoration: underline;
-    text-decoration-color: rgba($color-red, 0.8);
-    text-underline-offset: 4px;
-
-    &:hover {
-      text-decoration-color: currentColor;
-    }
-
-    @include focus-ring;
-  }
 }

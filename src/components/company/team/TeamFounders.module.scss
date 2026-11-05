@@ -1,0 +1,167 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+@use '../../../styles/editorial' as *;
+
+// The founders on paper: two numbered entries, side by side from 1024px.
+// Each sets the portrait beside the number, name and title, and the bio full
+// width under them, so the bio keeps a reading measure at every width. The
+// photos are 400px squares cut to 4:5, so a frame stays at or under 280px
+// wide and renders at its own resolution. Ink 17.6:1, ink-muted 8.1:1,
+// crimson ink 7.8:1 on paper (AAA).
+
+.list {
+  display: grid;
+  gap: clamp(56px, 7vw, 80px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include lg {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(48px, 5vw, 80px);
+  }
+}
+
+.founder {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  grid-template-areas:
+    'photo head'
+    'body body';
+  gap: 24px 20px;
+  padding-top: 24px;
+  border-top: 1px solid $color-ink-hairline;
+  scroll-margin-top: 8px;
+  @include rise-in;
+
+  // Tablets, one founder a row: the bio beside the portrait, under the name.
+  @include md {
+    grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+    grid-template-areas:
+      'photo head'
+      'photo body';
+    grid-template-rows: auto 1fr;
+    column-gap: 40px;
+    row-gap: 24px;
+  }
+
+  // Two founders side by side: the phone arrangement again (the bio full
+  // width under the portrait and the name), the photo column in proportion
+  // until the columns are wide enough for the full 280px frame.
+  @include lg {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-areas:
+      'photo head'
+      'body body';
+    grid-template-rows: auto auto;
+    column-gap: 28px;
+    row-gap: 32px;
+  }
+
+  @include xl {
+    grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+    column-gap: 32px;
+  }
+
+  &:target {
+    border-top-color: $color-red-ink;
+  }
+}
+
+.photo {
+  grid-area: photo;
+  width: 100%;
+  max-width: 280px;
+  background: $color-paper-2;
+}
+
+// The number at the top, the name and title on the portrait's foot.
+.head {
+  grid-area: head;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+
+  @include md {
+    justify-content: flex-start;
+  }
+
+  @include lg {
+    justify-content: space-between;
+  }
+}
+
+.index {
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 3.5rem); // 28px -> 56px
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: $color-red-ink;
+  @include tabular;
+}
+
+.name {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 1.25rem + 1.7vw, 2.75rem); // 28px -> 44px
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: $color-ink;
+  text-wrap: balance;
+}
+
+.role {
+  margin: 12px 0 0;
+  @include mono-label($color-ink-muted);
+}
+
+.body {
+  grid-area: body;
+  min-width: 0;
+}
+
+.bio {
+  margin: 0;
+  max-width: 31em;
+  font-size: $font-size-lede;
+  line-height: 1.6;
+  color: $color-ink-muted;
+  text-wrap: pretty;
+}
+
+.linkedin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-top: 14px;
+  font-weight: $font-weight-semibold;
+  color: $color-red-ink;
+  text-decoration: underline;
+  text-decoration-color: rgba($color-red-ink, 0.45);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition: text-decoration-color 0.3s ease;
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 2px;
+  }
+}
+
+.external {
+  font-size: 0.875em;
+}
+
+// After the two people: the route to the work.
+.foot {
+  margin: clamp(40px, 5vw, 64px) 0 0;
+}

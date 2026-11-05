@@ -1,23 +1,26 @@
 import type { Metadata } from 'next';
 import { OG_IMAGE } from '@/lib/og';
+import { LOWEST_PRICE } from '@/components/flagship/content';
 import RegionalPage from '@/components/company/RegionalPage';
 import { getRegion } from '@/components/company/regions';
+import { formatMoney } from '@/lib/estimate';
 
-const TITLE = 'MAPL TECH Jamaica | Web, Automation & Cloud for Agencies';
-const DESCRIPTION =
-  'MAPL TECH Jamaica builds websites, automation, AI workflows and internal tools for agencies in Kingston and Montego Bay, within an hour of Toronto all year.';
+const TITLE = 'MAPL TECH Jamaica | Websites & Booking Systems, Kingston';
+// The price floor from `pricing` (LOWEST_PRICE), so the snippet never disagrees with the tables.
+const DESCRIPTION = `Websites, booking systems, automation and cloud for agencies, tourism and service businesses in Kingston, Montego Bay and across Jamaica. From ${formatMoney(LOWEST_PRICE)} USD.`;
 
 export const metadata: Metadata = {
   // The title already carries the brand, so it bypasses the root template's "| MAPL TECH" suffix.
   title: { absolute: TITLE },
   alternates: { canonical: 'https://mapltech.com/jamaica' },
   description: DESCRIPTION,
-  keywords: 'MAPL TECH Jamaica, web development Jamaica, automation Jamaica, AI workflows Kingston, agency infrastructure Caribbean, custom tools Jamaica',
+  keywords:
+    'MAPL TECH Jamaica, web development Jamaica, website design Kingston, booking website Jamaica, tourism website Montego Bay, automation Jamaica, custom software Jamaica',
   openGraph: {
     images: [OG_IMAGE],
-    title: 'MAPL TECH Jamaica | Engineering Partner for Jamaican Agencies',
+    title: 'MAPL TECH Jamaica | Websites and booking systems',
     description:
-      'An engineering team headquartered in Toronto, with an office in Kingston. We work with Caribbean agencies on websites, automation, internal tools and cloud systems.',
+      'Websites, booking systems, automation and cloud for agencies, tourism and service businesses in Kingston and Montego Bay, from the team that runs MAPL Tours.',
     url: 'https://mapltech.com/jamaica',
     type: 'website',
     locale: 'en_JM',
@@ -25,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'MAPL TECH Jamaica',
-    description: 'Websites, automation, internal tools and cloud systems, built with Jamaican agencies.',
+    description: 'Websites and booking systems built for Jamaica, from the team that runs MAPL Tours.',
   },
 };
 

@@ -276,15 +276,3 @@
   color: $color-fg;
   margin-bottom: $space-8;
 }
-
-.recaptcha {
-  font-size: $font-size-sm;
-  line-height: 1.5;
-  color: $color-fg-muted;
-  margin: 0;
-
-  a {
-    color: $color-fg-muted;
-    text-decoration: underline;
-  }
-}

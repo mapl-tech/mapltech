@@ -488,6 +488,57 @@ $phone-peek: 46px;
 // ===================================================================
 // The story, in chapters
 // ===================================================================
+// What this case shows: the needs clients and agencies ask for now, each with this project's
+// proof, between the results and the story (Nov 5, 2026). One column on phones; from 768px a row
+// of two or three, each under a crimson rule, so a scanning director reads the needs alone.
+.shows {
+  background: $color-ground;
+  padding: clamp(48px, 6vw, 88px) 0 0;
+}
+
+.showsList {
+  display: grid;
+  gap: 28px;
+  margin: clamp(20px, 3vw, 32px) 0 0;
+  padding: 0;
+  list-style: none;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(24px, 3vw, 40px);
+
+    &[data-count='3'] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
+.showsItem {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 2px solid $color-red;
+}
+
+.showsNeed {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.625rem); // 20px -> 26px
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: $color-fg;
+}
+
+.showsProof {
+  margin: 0;
+  max-width: 34em;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-text-body;
+}
+
 .story {
   background: $color-ground;
 }

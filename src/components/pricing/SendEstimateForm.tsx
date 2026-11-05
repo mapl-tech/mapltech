@@ -6,8 +6,11 @@ import { estimateHref, estimateSubjectText, estimateSummaryText, type EstimateRe
 import { PROJECT_LABEL } from '@/components/layout/chrome';
 import Arrow from '@/components/ui/Arrow';
 import { withLastWord } from '@/components/services/keepTogether';
+import Recaptcha, { useRecaptcha, type RecaptchaControl } from '@/components/convert/Recaptcha';
+import { RECAPTCHA_ENABLED } from '@/components/convert/recaptchaLoader';
+import { announceLead } from '@/components/convert/lead';
 import styles from './ScopeEstimator.module.scss';
-import RecaptchaNotice from '@/components/convert/RecaptchaNotice';
+import own from './SendEstimateForm.module.scss';
 
 /**
  * "Get it in writing": an optional step after the number (reciprocity), with
@@ -29,6 +32,13 @@ import RecaptchaNotice from '@/components/convert/RecaptchaNotice';
  * words, "about your estimate" for "about your brief", and its link), and a
  * failed check moves focus to the field with the error read beside it. The
  * field is controlled, so a failed send keeps what was typed.
+ *
+ * With a site key set, the "I'm not a robot" box (dark, on the card) comes
+ * between the field and the button, so the row stacks: field, box, button.
+ * The box is checked once the email passes, cleared after every send that
+ * reached the server, and Google's script loads on the first focus or press
+ * in the form (Recaptcha.tsx). A send the server accepts fires one `lead`
+ * event ("estimate_email").
  */
 
 type SendState =
@@ -36,48 +46,11 @@ type SendState =
   | { status: 'sent'; email: string }
   | { status: 'error'; message: string; field?: 'email' };
 
-const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 /** /api/contact requires a name; the visitor gives none here, so the request names what it is. */
 const SENDER_NAME = 'Estimate request';
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SEND_FAILED =
   'That didn’t send. Check the email address, or write to contact@mapltech.com and attach the estimate link.';
-
-declare global {
-  interface Window {
-    grecaptcha?: {
-      ready: (cb: () => void) => void;
-      execute: (siteKey: string, opts: { action: string }) => Promise<string>;
-    };
-  }
-}
-
-let recaptchaLoader: Promise<void> | null = null;
-
-// Same lazy loader as ContactForm: Google's script is fetched on first use only.
-function loadRecaptcha(): Promise<void> {
-  if (!RECAPTCHA_SITE_KEY) return Promise.resolve();
-  if (recaptchaLoader) return recaptchaLoader;
-  recaptchaLoader = new Promise((resolve) => {
-    const script = document.createElement('script');
-    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
-    script.async = true;
-    script.onload = () => window.grecaptcha?.ready(resolve);
-    script.onerror = () => resolve();
-    document.head.appendChild(script);
-  });
-  return recaptchaLoader;
-}
-
-async function getRecaptchaToken(): Promise<string | undefined> {
-  if (!RECAPTCHA_SITE_KEY) return undefined;
-  try {
-    await loadRecaptcha();
-    return await window.grecaptcha?.execute(RECAPTCHA_SITE_KEY, { action: 'contact' });
-  } catch {
-    return undefined;
-  }
-}
 
 interface SendEstimateFormProps {
   result: EstimateResult;
@@ -90,6 +63,7 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
   const emailRef = useRef<HTMLInputElement>(null);
   const sentRef = useRef<HTMLParagraphElement>(null);
   const [typed, setTyped] = useState('');
+  const captcha = useRecaptcha();
 
   const [state, formAction, pending] = useActionState<SendState, FormData>(
     async (_previous, formData) => {
@@ -100,8 +74,10 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
         return { status: 'error', message: 'Enter the email address in the format name@agency.com.', field: 'email' };
       }
       if (honeypot) return { status: 'sent', email };
+      // Not ticked: nothing is sent; the box says why (and any earlier failure line gives way to it).
+      const verdict = captcha.check();
+      if (!verdict.ok) return { status: 'idle' };
 
-      const recaptchaToken = await getRecaptchaToken();
       try {
         const response = await fetch('/api/contact', {
           method: 'POST',
@@ -112,13 +88,17 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
             subject: estimateSubjectText(result),
             message: estimateSummaryText(result, { shareUrl: window.location.href }),
             contactMethod: 'email',
-            recaptchaToken,
+            recaptchaToken: verdict.token,
           }),
         });
         if (!response.ok) return { status: 'error', message: SEND_FAILED };
+        announceLead('estimate_email');
         return { status: 'sent', email };
       } catch {
         return { status: 'error', message: SEND_FAILED };
+      } finally {
+        // A token works once: a retry needs a new tick.
+        captcha.reset();
       }
     },
     { status: 'idle' },
@@ -152,6 +132,7 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
           error={error}
           errorId={errorId}
           privacyId={privacyId}
+          captcha={captcha}
         />
       )}
       {/* The confirmation's box. Its status region is in the page from the first render, empty,
@@ -200,10 +181,23 @@ interface SendDisclosureProps {
   error: { message: string; field?: 'email' } | null;
   errorId: string;
   privacyId: string;
+  captcha: RecaptchaControl;
 }
 
-/** "Want it in writing?": the email field, its error and privacy line, and Google's notice. */
-function SendDisclosure({ id, formAction, pending, placement, emailRef, typed, onType, error, errorId, privacyId }: SendDisclosureProps) {
+/** "Want it in writing?": the email field, the "I'm not a robot" box when it is on, the button, the error and privacy line. */
+function SendDisclosure({
+  id,
+  formAction,
+  pending,
+  placement,
+  emailRef,
+  typed,
+  onType,
+  error,
+  errorId,
+  privacyId,
+  captcha,
+}: SendDisclosureProps) {
   return (
     <details className={styles.disclosure} data-send="">
       <summary id={`${id}-title`} className={styles.disclosureSummary}>
@@ -213,7 +207,8 @@ function SendDisclosure({ id, formAction, pending, placement, emailRef, typed, o
         <label htmlFor={`${id}-email`} className={styles.sendLabel}>
           Your email
         </label>
-        <div className={styles.sendRow}>
+        {/* Field and button share a row; with reCAPTCHA on they stack, the box between them. */}
+        <div className={RECAPTCHA_ENABLED ? own.stack : styles.sendRow}>
           <input
             ref={emailRef}
             id={`${id}-email`}
@@ -230,6 +225,16 @@ function SendDisclosure({ id, formAction, pending, placement, emailRef, typed, o
             required
             aria-describedby={error ? `${errorId} ${privacyId}` : privacyId}
             aria-invalid={error?.field === 'email' || undefined}
+          />
+          <Recaptcha
+            control={captcha}
+            theme="dark"
+            className={own.captcha}
+            renderError={(captchaErrorId, message) => (
+              <p id={captchaErrorId} className={styles.error} role="alert">
+                {message}
+              </p>
+            )}
           />
           <button type="submit" className={styles.secondary} disabled={pending} data-cta-placement={`pricing_${placement}_send`}>
             {pending ? 'Sending…' : 'Get it in writing'}
@@ -251,8 +256,6 @@ function SendDisclosure({ id, formAction, pending, placement, emailRef, typed, o
         <p id={privacyId} className={styles.privacy}>
           We use your email to contact you about your estimate. We never sell it. <Link href="/privacy">Privacy policy</Link>
         </p>
-        {/* The badge is hidden site-wide (globals.scss), so Google's notice is shown in its own words. */}
-        <RecaptchaNotice className={styles.recaptcha} />
       </form>
     </details>
   );

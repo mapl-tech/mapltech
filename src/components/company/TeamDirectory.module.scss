@@ -3,8 +3,15 @@
 @use '../../styles/editorial' as *;
 
 // The directory on paper, set like a credits roll: the country, its office
-// clock and its branch page in the label column, the names in the content
-// column.
+// clock and its branch page in the label column (3/12 from 1024px), the
+// people in the content column. Each person is one row: initials or photo,
+// the name, the role in a column of its own (so the roles line up down the
+// whole sheet: every row shares the same column widths), and LinkedIn at
+// the row's end. Phones set the role under the name.
+
+$mark: 44px;
+$mark-md: 56px;
+$name-col: 18rem;
 
 .groups {
   border-top: 1px solid $color-ink-hairline;
@@ -12,8 +19,8 @@
 
 .group {
   display: grid;
-  gap: 16px;
-  padding: clamp(28px, 3.6vw, 44px) 0;
+  gap: 20px;
+  padding: clamp(28px, 3.6vw, 48px) 0;
   border-bottom: 1px solid $color-ink-hairline;
   scroll-margin-top: 8px;
 
@@ -21,21 +28,24 @@
     grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
     column-gap: 48px;
   }
+
+  &:target {
+    border-bottom-color: $color-red-ink;
+  }
 }
 
 .groupHead {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 10px;
+}
+
+.countryLine {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px 16px;
-
-  @include lg {
-    display: grid;
-    align-content: start;
-    justify-content: start;
-    gap: 10px;
-  }
+  align-items: center;
+  gap: 8px 14px;
 }
 
 .country {
@@ -48,9 +58,20 @@
   color: $color-ink;
 }
 
-// The branch page link, on its own line under the country and its clock.
+// "Headquarters": a quiet ruled tag beside the country.
+.tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border: 1px solid rgba($color-ink, 0.28);
+  border-radius: $radius-full;
+  @include mono-label($color-ink);
+  font-size: 0.75rem;
+}
+
 .branch {
-  flex-basis: 100%;
+  margin-top: 2px;
 }
 
 .people {
@@ -61,29 +82,44 @@
 
 .member {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: $mark minmax(0, 1fr) $mark;
   grid-template-areas:
-    'initials name'
-    'initials role';
+    'mark name link'
+    'mark role link';
   align-items: center;
   column-gap: 16px;
   row-gap: 2px;
-  min-height: 76px;
+  min-height: 80px;
   padding: 14px 0;
   border-bottom: 1px solid $color-ink-hairline;
   scroll-margin-top: 8px;
-  @include rise-in;
+  @include rise-in($distance: 24px);
+
+  &:first-child {
+    padding-top: 0;
+    min-height: 66px;
+
+    @include lg {
+      padding-top: 14px;
+      min-height: 88px;
+    }
+  }
 
   &:last-child {
     border-bottom: 0;
+    padding-bottom: 0;
+
+    @include lg {
+      padding-bottom: 14px;
+    }
   }
 
-  // Tablet and up, the title follows the name on one line (columns below).
+  // Tablet and up, one line a person: the role in its own column.
   @include md {
-    grid-template-columns: 52px minmax(0, 1fr) minmax(0, 1.4fr);
-    grid-template-areas: 'initials name role';
+    grid-template-columns: $mark-md minmax(0, $name-col) minmax(0, 1fr) $mark;
+    grid-template-areas: 'mark name role link';
     column-gap: 24px;
-    min-height: 84px;
+    min-height: 88px;
   }
 
   &:target {
@@ -92,60 +128,46 @@
 }
 
 .initials {
-  grid-area: initials;
+  grid-area: mark;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: $mark;
+  height: $mark;
   border-radius: 50%;
-  border: 1px solid rgba(11, 11, 12, 0.22);
+  border: 1px solid rgba($color-ink, 0.22);
+  font-family: $font-display;
   font-size: 0.875rem;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-bold;
   letter-spacing: 0.04em;
   color: $color-ink;
+  @include tabular;
 
   @include md {
-    width: 52px;
-    height: 52px;
+    width: $mark-md;
+    height: $mark-md;
+    font-size: 1rem;
   }
 }
 
 // A real photo in the initials' place and size.
 .photo {
-  grid-area: initials;
-  width: 44px;
-  height: 44px;
+  grid-area: mark;
+  width: $mark;
+  height: $mark;
   border-radius: 50%;
   object-fit: cover;
+  filter: grayscale(1) contrast(1.06); // the founders' treatment
 
   @include md {
-    width: 52px;
-    height: 52px;
-  }
-}
-
-// In the title's place until a title is approved: a plain text link.
-.profile {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: $color-ink;
-  }
-
-  // On paper, as the careers link's ring.
-  &:focus-visible {
-    outline: $focus-ring-width solid $color-red-ink;
-    outline-offset: 2px;
+    width: $mark-md;
+    height: $mark-md;
   }
 }
 
 .name {
   grid-area: name;
   align-self: end;
+  min-width: 0;
   font-family: $font-display;
   font-weight: $font-weight-bold;
   font-size: clamp(1.25rem, 1rem + 0.9vw, 1.875rem); // 20px -> 30px
@@ -161,58 +183,48 @@
 .role {
   grid-area: role;
   align-self: start;
+  min-width: 0;
   font-size: $font-size-base;
   line-height: 1.4;
   color: $color-ink-muted;
 
   @include md {
     align-self: center;
+    font-size: $font-size-md;
   }
 }
 
-// Tablet and up, where subgrid is supported: the whole directory shares one
-// set of columns (nested subgrids), so every title starts right after the
-// longest name and lines up down all three countries; a title never sits
-// far from its name. Wide screens add the country's column first: 3/12 of
-// the width, 48px from the names (two 24px gaps round an empty track).
-// Without subgrid each row keeps the fixed shares above.
-@supports (grid-template-columns: subgrid) {
-  @include md {
-    .groups {
-      display: grid;
-      grid-template-columns: 52px fit-content(55%) minmax(0, 1fr);
-      column-gap: 24px;
-    }
+// LinkedIn: a ringed 44px mark at the row's end, named for screen readers.
+.profile {
+  grid-area: link;
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba($color-ink, 0.22);
+  color: $color-ink;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 
-    .group,
-    .people,
-    .member {
-      grid-column: 1 / -1;
-      grid-template-columns: subgrid;
-      column-gap: 24px;
-    }
-
-    .groupHead {
-      grid-column: 1 / -1;
-    }
-
-    .people {
-      display: grid;
-    }
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
   }
 
-  @include lg {
-    .groups {
-      grid-template-columns: calc((100% - 48px) / 4) 0 52px fit-content(40%) minmax(0, 1fr);
-    }
+  &:hover {
+    border-color: $color-ink;
+    background: $color-ink;
+    color: $color-paper;
+  }
 
-    .groupHead {
-      grid-column: 1;
-    }
-
-    .people {
-      grid-column: 3 / -1;
-    }
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 2px;
   }
 }
 

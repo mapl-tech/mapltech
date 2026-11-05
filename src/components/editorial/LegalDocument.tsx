@@ -152,8 +152,8 @@ export default function LegalDocument({
                 {action.label}
                 <MailHint />
               </a>
-              <Link href={TALK_HREF} className={styles.heroLink} data-cta-placement="legal_hero_call">
-                Or call us
+              <Link href={TALK_HREF} className={styles.heroLink} data-cta-placement="legal_hero_contact">
+                Or contact us
               </Link>
             </>
           ) : undefined
@@ -243,12 +243,12 @@ export default function LegalDocument({
                   <a href={`#${action.section}`}>
                     section&nbsp;{number(action.section)}, {titleOf(action.section)}
                   </a>
-                  : {action.rights}. Say which one, or <Link href={TALK_HREF}>call us</Link>. Our Toronto office
+                  : {action.rights}. Say which one, or <Link href={TALK_HREF}>contact us</Link>. Our Toronto office
                   is open 9&nbsp;am to 6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               ) : (
                 <p className={styles.questionsText}>
-                  Email us, or <Link href={TALK_HREF}>call us</Link>. Our Toronto office is open 9&nbsp;am to
+                  Email us, or <Link href={TALK_HREF}>contact us</Link>. Our Toronto office is open 9&nbsp;am to
                   6&nbsp;pm Eastern time, Monday to Friday.
                 </p>
               )}

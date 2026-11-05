@@ -8,7 +8,6 @@ export const siteConfig = {
     "MAPL TECH is the white-label engineering team that works with digital agencies to build what they sell to their clients, under the agency's brand.",
   url: 'https://mapltech.com',
   email: 'contact@mapltech.com',
-  phone: '+1 (647) 375-6724',
   social: {
     instagram: 'https://instagram.com/mapltech',
     x: 'https://x.com/mapltech',

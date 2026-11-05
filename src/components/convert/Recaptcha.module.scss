@@ -1,0 +1,62 @@
+@use '../../styles/variables' as *;
+
+// The "I'm not a robot" box (Recaptcha.tsx). Google draws the widget itself
+// (304 x 78, or 164 x 144 compact) in its light or dark theme; this file only
+// keeps room for it, scales a normal one down when the form is narrower, and
+// sets the loading line. Each form passes its own error line and spacing.
+
+// The UA `[hidden] { display: none }` loses to any author `display`, so both re-assert it.
+.box {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.frame {
+  position: relative;
+  min-width: 0;
+  height: calc(78px * var(--captcha-scale, 1));
+
+  &[data-size='compact'] {
+    height: calc(144px * var(--captcha-scale, 1));
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.slot {
+  width: max-content;
+  transform-origin: 0 0;
+  transform: scale(var(--captcha-scale, 1));
+  // The site is color-scheme: dark and Google's frame is not; with the two
+  // different, Chrome paints the frame's spare pixels (2px right and bottom,
+  // 6px in compact) opaque white. Matching them keeps the frame transparent.
+  color-scheme: light;
+}
+
+// Over the slot until Google's widget arrives; the form's own text colour, so it reads on paper and on dark.
+.loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: inherit;
+  pointer-events: none;
+}
+
+// Only for a form that passes no error line of its own.
+.error {
+  margin: 0;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  color: $color-red-text;
+}

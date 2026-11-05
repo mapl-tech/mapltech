@@ -5,7 +5,7 @@
  *
  * Every line is a fact the site already publishes, in the voice guide's peer
  * register (memory: redesign-artifacts/VOICE-GUIDE.md):
- * - NDA first, never approach your clients, your brand on everything, you own
+ * - your brand on everything, your client only hears from you, you own
  *   the code: the home track record and the white-label FAQ (home/data.ts).
  * - "Your client talks to your team, not to us, and we never list your client
  *   as ours": the white-label FAQ.
@@ -28,7 +28,7 @@ export const WHITE_LABEL_PATH = '/white-label';
 export const WHITE_LABEL = {
   title: 'White-Label Development Partner for Agencies',
   description:
-    'How white-label work with MAPL TECH runs: an NDA first, we join your Slack and check-ins, your client only hears from you, and you own the code.',
+    'How white-label work with MAPL TECH runs: public prices, one fixed quote, we join your Slack and check-ins, and your client only hears from you.',
   hero: {
     label: 'How we work',
     lede: 'We work with your team on client projects. We build the websites, automation, software and cloud systems your clients buy from you, and hand over the code with clear notes.',

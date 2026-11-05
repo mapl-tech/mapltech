@@ -16,6 +16,8 @@ $signal-on-paper: #0b7a67;
   line-height: 1.4;
   color: $color-ink-muted;
   @include tabular;
+  // Phones: the status reads as a sentence ("Closed · opens tomorrow at 9 am"), so the body floor.
+  @include phone-floor;
 }
 
 .sep {

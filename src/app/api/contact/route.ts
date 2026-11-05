@@ -1,27 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// Verify a reCAPTCHA v3 token with Google. Enforced only when the secret is
-// configured; without it the form works unprotected (dev/preview safe).
-async function verifyRecaptcha(token: string | undefined): Promise<boolean> {
-  const secret = process.env.RECAPTCHA_SECRET_KEY;
-  if (!secret) return true;
-  if (!token) return false;
-
-  try {
-    const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ secret, response: token }),
-    });
-    const data = await res.json();
-    // v3 returns a 0-1 score; 0.5 is Google's recommended default threshold
-    return data.success === true && data.action === 'contact' && (data.score ?? 0) >= 0.5;
-  } catch (err) {
-    // Google unreachable: fail open so a transient outage never blocks real leads
-    console.error('reCAPTCHA verification unavailable:', err);
-    return true;
-  }
-}
+import { RECAPTCHA_ERRORS, verifyRecaptcha } from './verifyRecaptcha';
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,11 +13,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!(await verifyRecaptcha(recaptchaToken))) {
-      return NextResponse.json(
-        { error: 'We could not confirm this was sent by a person. Refresh the page and try again.' },
-        { status: 400 }
-      );
+    // reCAPTCHA v2 ("I'm not a robot"), enforced only when RECAPTCHA_SECRET_KEY is set.
+    const verdict = await verifyRecaptcha(recaptchaToken);
+    if (verdict !== 'ok') {
+      return NextResponse.json({ error: RECAPTCHA_ERRORS[verdict] }, { status: 400 });
     }
 
     const subjectLine = subject

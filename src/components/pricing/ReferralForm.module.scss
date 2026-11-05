@@ -312,22 +312,6 @@ $paired: 420px;
   }
 }
 
-// Google's notice as one sentence: its links are inline text (2.5.8 inline exception).
-.recaptcha {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: $muted;
-
-  a {
-    color: rgba(245, 242, 238, 0.86);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-
-    @include focus-ring;
-  }
-}
-
 .honeypot {
   position: absolute;
   left: -9999px;

@@ -6,7 +6,6 @@ import JsonLd from '@/components/seo/JsonLd';
 import { breadcrumb, contactPage, contactPoint, graph } from '@/lib/schema';
 import { absoluteUrl } from '@/config/routes';
 import { siteConfig, testimonials } from '@/config/site';
-import { telHref } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import QuoteLine from '@/components/flagship/QuoteLine';
 import ProjectBrief from '@/components/convert/ProjectBrief';
@@ -20,7 +19,7 @@ import styles from '@/components/convert/ContactLayout.module.scss';
  * answers are on the first screen), four questions, one at a time
  * (ProjectBrief; fields, validation, submission and analytics unchanged).
  * Beside it (under it on phones), three things only: what happens after you
- * send it, the email and phone number, and one client in her own words (the
+ * send it, the email address, and one client in her own words (the
  * approved LRO Staffing quote), last, so it sits level with "Send the brief"
  * at the brief's last step. Below 1024px, where all of that follows the
  * whole form, the quote moves up as one line under the brief's button. No
@@ -32,7 +31,7 @@ import styles from '@/components/convert/ContactLayout.module.scss';
 
 const PATH = '/contact-us';
 const DESCRIPTION =
-  'Send MAPL TECH a short project brief, call +1 (647) 375-6724 or email contact@mapltech.com. White-label engineering that works with your team, at public prices.';
+  'Send MAPL TECH a short project brief or email contact@mapltech.com. We reply within 24 hours. White-label engineering that works with your team, at public prices.';
 
 export const metadata: Metadata = {
   title: { absolute: 'Contact MAPL TECH: send a project brief' },
@@ -76,8 +75,8 @@ const AFTER_LINE = 'After you send it: a 20‑minute call to agree the scope wit
 /** The one approved client quote (site.ts `testimonials`), beside the decision. */
 const PROOF = testimonials.find((entry) => entry.company === 'LRO Staffing') ?? null;
 
-/** The hero's NDA promise, said again beside "Send the brief" (confidential detail comes after it). */
-const NDA_LINE = 'We sign an NDA before you share anything confidential.';
+/** Beside "Send the brief": when the reply comes (published: "We respond within 24 hours"). */
+const REPLY_LINE = 'We reply within 24 hours.';
 
 export default function ContactPage() {
   return (
@@ -98,7 +97,7 @@ export default function ContactPage() {
         size="l"
         lede={
           <p>
-            {`Answer four short questions. We talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote. ${NDA_LINE}`}
+            {'Answer four short questions and we reply within 24 hours. Then we talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote.'}
           </p>
         }
       />
@@ -109,11 +108,10 @@ export default function ContactPage() {
           <div className={styles.formCol}>
             <noscript>
               <p className={styles.noscript}>
-                This form needs JavaScript. Email <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a> or call{' '}
-                <a href={telHref(siteConfig.phone)}>{siteConfig.phone}</a> instead.
+                This form needs JavaScript. Email <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a> instead.
               </p>
             </noscript>
-            <ProjectBrief reassure={NDA_LINE} after={AFTER_LINE} />
+            <ProjectBrief reassure={REPLY_LINE} after={AFTER_LINE} />
             {/* Below 1024px the aside (and its quote) follows the whole form: the quote moves up to the brief's button. */}
             <QuoteLine tone="paper" className={styles.formProof} />
           </div>
@@ -136,12 +134,6 @@ export default function ContactPage() {
                   <a href={`mailto:${siteConfig.email}`} className={styles.channel} data-cta-placement="contact_email">
                     <span className="visually-hidden">Email </span>
                     {siteConfig.email}
-                  </a>
-                </li>
-                <li>
-                  <a href={telHref(siteConfig.phone)} className={styles.channel} data-cta-placement="contact_phone">
-                    <span className="visually-hidden">Phone </span>
-                    {siteConfig.phone}
                   </a>
                 </li>
               </ul>

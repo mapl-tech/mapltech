@@ -190,28 +190,40 @@ export const TEAM = {
   title: 'Leadership & Global Team',
   description:
     `Meet the MAPL TECH team that works alongside yours: co-founders ${FOUNDER_NAMES}, and our team in Canada, Nigeria and Jamaica.`,
-  // No eyebrow: the breadcrumb (About / Team) already names the page.
+  // No eyebrow: the breadcrumb (About / Team) already names the page. The H1 and the close
+  // title bookend the page on the same idea: a team that works with the agency's own.
   hero: {
-    title: [{ text: 'The people ' }, { text: 'behind the work.', accent: true }] as readonly TitleRun[],
-    lede: `MAPL TECH is led by its co-founders, ${FOUNDER_NAMES}. Our team in Canada, Nigeria and Jamaica works alongside yours, under your brand.`,
+    title: [{ text: 'The team that works ' }, { text: 'with yours.', accent: true }] as readonly TitleRun[],
+    lede: `${FOUNDER_NAMES} lead the company. Our team in Canada, Nigeria and Jamaica works alongside yours, under your brand.`,
+    // Under the ask, with the Google rating PageHeader adds: the published quote line only (the
+    // owner, Nov 5, 2026: the NDA and "we never approach your clients" are common practice, so
+    // this page does not lead with them).
+    trust: ['Fixed quote after one 20\u2011minute call'],
   },
   // What a buyer checks first, each said once on the page, set in the hero's
   // aside as /about-us sets its figures: the lede names the founders and the
-  // three countries and the directory gives each office's city, so the aside
+  // three countries and the planner gives each office's city, so the aside
   // says which one is headquarters, the published experience and the public
   // price. The open roles are one small line at the foot of the directory.
   facts: [{ term: 'Headquarters', figure: 'Toronto', detail: 'Canada' }, EXPERIENCE_FIGURE, PRICE_FIGURE],
   founders: {
     label: 'Leadership',
-    // No lede: the two bios right under the title say who leads what.
-    title: 'The founders.',
+    title: 'Who answers for the work.',
+    // The ABOUT founders lede's facts (directors, on LinkedIn by name), said as accountability.
+    lede: 'Both founders are directors of the company, named here and on LinkedIn, so you know who is accountable for what we build with your team.',
     // The page body's route to the work, after the two people: the people, then what they have built.
     work: { label: 'See the work', href: '/our-work' },
   },
+  // The planner (team/DayPlanner): the published office hours, set against the visitor's own clock.
+  hours: {
+    label: 'Office hours',
+    title: 'Our hours, in your day.',
+    lede: `${OFFICE_HOURS} Here is how those hours fall on your own clock, worked out from your device’s time zone.`,
+  },
   directory: {
     label: 'The team',
-    title: 'Our team, by country.',
-    lede: OFFICE_HOURS,
+    title: 'Our team, office by office.',
+    lede: 'Names and roles by country, beside each office’s local time. Toronto is our headquarters, with offices in Lagos and Kingston.',
     careers: { before: 'Looking for a job with us? ', label: 'See open roles', href: '/careers' },
   },
   close: {

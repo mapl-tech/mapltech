@@ -9,6 +9,7 @@ import Footer from '@/components/layout/Footer';
 import SmoothScroll from '@/components/ui/SmoothScroll';
 import MobileActionBar from '@/components/ui/MobileActionBar';
 import JsonLd from '@/components/seo/JsonLd';
+import Analytics from '@/components/analytics/Analytics';
 import { siteGraph } from '@/lib/schema';
 import '@/styles/globals.scss';
 
@@ -158,10 +159,14 @@ export default function RootLayout({
           src="https://www.googletagmanager.com/gtag/js?id=G-F2XZRRNH7S"
           strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="lazyOnload">
+        {/* The bootstrap runs once the page is interactive (no network), so window.gtag exists for
+            the Analytics events (src/components/analytics) from the first click; gtag.js still loads
+            lazily and reads the queued commands when it arrives. */}
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
             gtag('js', new Date());
             gtag('config', 'G-F2XZRRNH7S');
           `}
@@ -184,6 +189,7 @@ export default function RootLayout({
         <JsonLd data={siteGraph()} />
       </head>
       <body>
+        <Analytics />
         <a href="#main" className="skip-to-content">
           Skip to main content
         </a>

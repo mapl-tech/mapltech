@@ -1,22 +1,21 @@
 import type { ReactNode } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
 import Accordion from '@/components/ui/Accordion';
 import PageHeader from '@/components/ui/PageHeader';
 import CloseBand from '@/components/flagship/CloseBand';
-import { TRUST_ITEMS } from '@/components/flagship/content';
-import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL, telHref } from '@/components/layout/chrome';
-import { keepNumberWords } from '@/components/pricing/content';
+import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { siteConfig } from '@/config/site';
 import { faqPage, getServiceLine, itemList, pageGraph, serviceId } from '@/lib/schema';
 import { SERVICE_META } from '@/lib/estimate';
-import FactsBand from './FactsBand';
 import HeroActions from './HeroActions';
 import LocalTime from './LocalTime';
 import OfficeMap from './OfficeMap';
-import { OFFICE_HOURS_FACT, PRICE_FACT, countWord, keepBrand } from './content';
-import { REPLY_TIME, rolesIn, startingFrom, type RegionConfig, type RegionFaq } from './regions';
+import { OFFICE_HOURS_FACT } from './content';
+import { HERO_TRUST, startingFrom, type RegionConfig, type RegionFaq } from './regions';
+import Reasons from './regional/Reasons';
+import { display } from './regional/display';
+import RegionalProof from './regional/RegionalProof';
 import ed from './Company.module.scss';
 import place from './PlaceReadout.module.scss';
 import styles from './RegionalPage.module.scss';
@@ -31,20 +30,31 @@ export interface RegionalPageProps {
 }
 
 /**
- * The regional template for /nigeria and /jamaica (Nov 2026 simplify pass,
- * review fixes).
+ * The regional funnel for /nigeria and /jamaica (Nov 5, 2026: "the nigeria
+ * and jamaica pages should act as funnels and speak to the markets").
  *
- * A sense of place without stock photography: the branch city's live local
- * time (and when the office next opens) under a to-scale drawing of the
- * three offices, under the site's reassurance line; the card is the page's
- * one home for the zone. Then three facts a director needs first and that
- * the page says nowhere else (the office hours, the lowest public price, the
- * reply time), what the local team builds with each service's own "from"
- * price and a direct way to start each one (paper), a real local project
- * where one exists (no stand-in section where none does), the market
- * questions (the Toronto overlap is worked out there) with the branch's
- * contact lines, and the close: the site's own lede and the approved client
- * quote. regions.ts lists where each fact lives.
+ * One path, one ask ("Start a project"), in the order a buyer from that
+ * market decides:
+ *
+ * 1. The hero: the market in the H1, the cities and who we work with in the
+ *    lede, the ask, then the price floor (in US dollars), the fixed quote,
+ *    the reply time and the Google rating under it. Beside it the branch
+ *    office's live clock and hours (the page's one home for both), under the
+ *    to-scale map on wide screens. The quiet second action stays on the page
+ *    (Nigeria: the prices; Jamaica: MAPL Tours).
+ * 2. Four local reasons, on paper (regional/Reasons).
+ * 3. Proof (regional/RegionalProof): a real local project where one exists
+ *    (Jamaica: MAPL Tours and its published results), else the site's own
+ *    counts and published results, with no claim of local clients.
+ * 4. The price: the four services, each with its own starting price and its
+ *    own ask that opens the brief with that service chosen (?svc=), on paper.
+ * 5. The market's questions, with the branch's contact lines.
+ * 6. The close: the site's lede (four questions, a 20-minute call, a fixed
+ *    quote) and the approved client quote.
+ *
+ * Taken out (they did not move a buyer to the ask): the facts band (it
+ * repeated the price and the reply time; the hours are in the office card),
+ * the coordinates, and the careers line (the footer links /careers).
  *
  * Schema (unchanged): WebPage + BreadcrumbList + ItemList of the four
  * services + FAQPage, all built from the same arrays the page renders. No
@@ -52,9 +62,7 @@ export interface RegionalPageProps {
  */
 export default function RegionalPage({ region, title, description }: RegionalPageProps) {
   const prefix = region.slug;
-  const roles = rolesIn(region.country);
   const services = region.services.rows.map((row) => ({ row, line: getServiceLine(row.slug), from: startingFrom(row.service) }));
-  const typeSet = Array.from(new Set(roles.map((role) => role.type.toLowerCase())));
 
   const graph = pageGraph({
     path: region.path,
@@ -79,8 +87,6 @@ export default function RegionalPage({ region, title, description }: RegionalPag
   });
 
   const [lineOne, lineTwo] = region.hero.titleLines;
-  /** Display only: "3 pm" keeps its number on the line, as "20‑minute" does (the JSON-LD keeps plain text). */
-  const display = (text: string) => keepNumberWords(text).replace(/(\d) (am|pm)\b/g, '$1\u00a0$2');
   /** An answer on screen: `display`, with the words its `link` names set as that link (the JSON-LD keeps them plain). */
   const answer = ({ answer: text, link }: RegionFaq): ReactNode => {
     const at = link ? text.indexOf(link.text) : -1;
@@ -102,7 +108,6 @@ export default function RegionalPage({ region, title, description }: RegionalPag
 
       <PageHeader
         size="l"
-        fill
         crumbs={[{ label: 'About', href: '/about-us' }, { label: region.brandName }]}
         label={region.brandName}
         title={
@@ -114,42 +119,43 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         actions={
           <HeroActions
             primary={{ label: PROJECT_LABEL, href: PROJECT_HREF, placement: `${prefix}_hero_primary` }}
-            secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: `${prefix}_hero_secondary` }}
+            secondary={{ ...region.hero.secondary, placement: `${prefix}_hero_secondary` }}
           />
         }
-        trust={TRUST_ITEMS}
+        trust={HERO_TRUST}
         aside={
           <div className={styles.place}>
             <OfficeMap focus={region.officeCity} captionHidden axes={false} draw="load" className={styles.placeMap} />
             <div className={place.readout}>
               <p className={place.city}>
-                {region.officeCity}, {region.country}
+                {region.officeCity} office, {region.country}
               </p>
               <LocalTime timeZone={region.timeZone} zoneAbbr={region.zoneAbbr} />
-              <p className={place.zone}>
+              <p className={`${place.zone} ${styles.hours}`}>{display(OFFICE_HOURS_FACT.detail)}</p>
+              <p className={styles.zoneName}>
                 {region.zoneName} · {region.utcLabel}
               </p>
-              <p className={place.coords}>{region.coordinates}</p>
             </div>
           </div>
         }
       />
 
-      <FactsBand facts={[OFFICE_HOURS_FACT, PRICE_FACT, { term: 'Reply time', detail: REPLY_TIME }]} label={`${region.brandName} at a glance`} />
+      <Reasons id="reasons" {...region.reasons} />
 
-      {/* What the local team builds, on paper: the four services with real prices, then the local realities. */}
-      <section id="services" className={ed.paper} aria-labelledby="services-title">
+      <RegionalProof proof={region.proof} prefix={prefix} />
+
+      {/* The price, on paper: each service row links its page, then its price and a brief that opens with that service chosen. */}
+      <section id="prices" className={ed.paper} aria-labelledby="prices-title">
         <div className={ed.inner}>
           <header className={ed.head}>
-            <p className={ed.label}>What we build</p>
-            <h2 id="services-title" className={ed.title}>
-              {keepBrand(region.team.heading)}
+            <p className={ed.label}>{region.services.label}</p>
+            <h2 id="prices-title" className={ed.title}>
+              {region.services.title}
             </h2>
-            <p className={ed.lede}>{region.team.body}</p>
+            <p className={ed.lede}>{region.services.lede}</p>
           </header>
 
-          {/* Each row: the service page (its link covers the name, words and arrow), then the price and a brief that opens with that service chosen.
-              Every row has its own "Start a project", so the phone bar steps aside over the list (data-bar-stand-down). */}
+          {/* Every row has its own "Start a project", so the phone bar steps aside over the list (data-bar-stand-down). */}
           <ul className={styles.rows} role="list" aria-label={region.services.heading} data-bar-stand-down="">
             {services.map(({ row, line, from }) => {
               const name = SERVICE_META[row.service].label;
@@ -165,7 +171,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
                     </span>
                   </div>
                   <div className={styles.rowFoot}>
-                    <p className={styles.rowMeta}>From {from}</p>
+                    <p className={styles.rowMeta}>From {from} USD</p>
                     <Link
                       href={`${PROJECT_HREF}?svc=${row.service}`}
                       className={ed.action}
@@ -182,79 +188,15 @@ export default function RegionalPage({ region, title, description }: RegionalPag
               );
             })}
           </ul>
-
-          <div className={styles.realities}>
-            <h3 className={styles.realitiesTitle}>{region.team.realitiesHeading}</h3>
-            <ul className={styles.realitiesList} role="list">
-              {region.team.realities.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
         </div>
       </section>
 
-      {/* A real local project where one exists; none is shown in its place where none does (the close carries the quote). */}
-      {region.work ? (
-        <section id="work" className={`${ed.dark} ${ed.ruled}`} aria-labelledby="work-title">
-          <div className={ed.inner}>
-            <header className={ed.head}>
-              <p className={ed.label}>{region.work.label}</p>
-              <h2 id="work-title" className={ed.title}>
-                Work we run in {region.country}.
-              </h2>
-              <p className={ed.lede}>Most of what we build ships under our partners’ names. This one carries ours.</p>
-            </header>
-
-            <article className={`${ed.card} ${styles.work}`} aria-labelledby="region-work-client">
-              <div className={styles.workCopy}>
-                <h3 id="region-work-client" className={styles.workClient}>
-                  {region.work.client}
-                </h3>
-                <p className={styles.workText}>{region.work.text}</p>
-                <Link href={region.work.href} className={ed.action} data-cta-placement={`${prefix}_work`}>
-                  Read the case study<span className="visually-hidden">: {region.work.client}</span>
-                  <span aria-hidden="true" className={ed.arrow}>
-                    <Arrow />
-                  </span>
-                </Link>
-              </div>
-              <div className={styles.workMedia}>
-                <figure className={styles.browser}>
-                  <div className={styles.chrome} aria-hidden="true">
-                    <span className={styles.lights}>
-                      <i />
-                      <i />
-                      <i />
-                    </span>
-                    <span className={styles.url}>{region.work.url}</span>
-                  </div>
-                  <Image
-                    src={region.work.image.src}
-                    alt={region.work.image.alt}
-                    width={region.work.image.width}
-                    height={region.work.image.height}
-                    sizes="(min-width: 1024px) 46vw, 92vw"
-                    className={styles.shot}
-                  />
-                </figure>
-                {region.work.mobile ? (
-                  <div className={styles.phone} aria-hidden="true">
-                    <Image src={region.work.mobile} alt="" width={780} height={1688} sizes="(min-width: 1024px) 12vw, 26vw" className={styles.phoneShot} />
-                  </div>
-                ) : null}
-              </div>
-            </article>
-          </div>
-        </section>
-      ) : null}
-
-      {/* Market questions: native <details>, every answer in the HTML; FAQPage JSON-LD from the same items. Ruled only after the dark work section.
+      {/* Market questions: native <details>, every answer in the HTML; FAQPage JSON-LD from the same items.
           Display only: number words and times keep their parts on one line (`display`); the JSON-LD keeps the plain text. */}
-      <section id="faq" className={region.work ? `${ed.dark} ${ed.ruled}` : ed.dark} aria-labelledby="faq-title">
+      <section id="faq" className={ed.dark} aria-labelledby="faq-title">
         <div className={`${ed.inner} ${styles.faqGrid}`}>
           <div className={styles.faqHead}>
-            <p className={ed.label}>Before you sign</p>
+            <p className={ed.label}>{region.faq.label}</p>
             <h2 id="faq-title" className={ed.title}>
               {region.faq.heading}
             </h2>
@@ -267,15 +209,6 @@ export default function RegionalPage({ region, title, description }: RegionalPag
                   </a>
                 </dd>
               </div>
-              <div>
-                <dt>Phone</dt>
-                <dd>
-                  <a href={telHref(siteConfig.phone)} data-cta-placement={`${prefix}_branch_phone`}>
-                    {siteConfig.phone}
-                  </a>{' '}
-                  <span className={styles.line}>Toronto line</span>
-                </dd>
-              </div>
             </dl>
           </div>
           <div className={styles.faqList}>
@@ -284,22 +217,11 @@ export default function RegionalPage({ region, title, description }: RegionalPag
               defaultOpen={0}
               items={region.faq.items.map((item, i) => ({ id: `${prefix}-faq-${i + 1}`, question: item.question, answer: answer(item) }))}
             />
-            {/* For job seekers: one small line, away from the buyer's contact lines. */}
-            {roles.length ? (
-              <p className={styles.hiring}>
-                Looking for work? See our{' '}
-                <Link href={`/careers?loc=${region.country.toLowerCase()}#roles`} data-cta-placement={`${prefix}_careers_all`}>
-                  {countWord(roles.length).toLowerCase()} open {typeSet.length === 1 ? `${typeSet[0]} ` : ''}
-                  role{roles.length === 1 ? '' : 's'} in {region.country}
-                </Link>
-                .
-              </p>
-            ) : null}
           </div>
         </div>
       </section>
 
-      {/* The site's close lede, and the approved client quote under the last ask (the hero has the reassurance line, not the quote). */}
+      {/* The site's close lede, and the approved client quote under the last ask (the hero has the trust list, not the quote). */}
       <CloseBand title={region.close.title} placement={`${prefix}_close`} />
     </>
   );

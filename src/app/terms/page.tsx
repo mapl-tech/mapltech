@@ -240,8 +240,6 @@ const SECTIONS: LegalSection[] = [
           <strong>MAPL TECH</strong>
           <br />
           Email: <a href={legalMailto(QUESTION_SUBJECT)}>contact@mapltech.com</a>
-          <br />
-          Phone: <a href="tel:+16473756724">+1 (647) 375-6724</a>
         </p>
       </>
     ),
