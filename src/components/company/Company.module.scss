@@ -39,34 +39,42 @@ $measure-read: 31em;
 }
 
 // ---------------------------------------------------------------- section voice
-// Label in a 3fr column, title and lede in 9fr (the homepage Statement and Proof grid).
+// The homepage's section head: from 1024px the label over the title at the
+// shell's left edge, the lede beside the title, on its last line. The label's
+// row takes any height the lede needs, so the label stays 20px over the title.
 .head {
   display: grid;
   gap: 24px;
   margin-bottom: clamp(48px, 7vw, 96px);
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-rows: 1fr auto;
     column-gap: 48px;
+    row-gap: 20px;
 
     > .label {
-      grid-row: span 2;
+      grid-area: 1 / 1;
+      align-self: end;
+      padding-top: 0;
     }
 
-    // Everything after the label stays in the content column, however many lines.
-    > :not(.label) {
-      grid-column: 2;
+    > .title {
+      grid-area: 2 / 1;
+      align-self: last baseline;
+    }
+
+    > .lede {
+      grid-area: 1 / 2 / span 2;
+      align-self: end;
+      align-self: last baseline;
     }
   }
 }
 
-// Content that sits in the 9fr column under a section head.
+// The section's content under its head, from the same left edge.
 .offset {
   min-width: 0;
-
-  @include lg {
-    margin-left: calc((100% - 48px) * 3 / 12 + 48px);
-  }
 }
 
 .label {

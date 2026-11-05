@@ -2,13 +2,18 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
+// The label (ed.label) over the reason at the shell's left edge, 20px apart
+// on wide screens, as every section head sets them.
 .grid {
   display: grid;
   gap: clamp(28px, 4vw, 48px);
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
+    row-gap: 20px;
+
+    > :first-child {
+      padding-top: 0;
+    }
   }
 }
 

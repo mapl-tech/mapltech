@@ -22,12 +22,16 @@
 }
 
 // ---------------------------------------------------------------- head
+// Wide screens: the label over the title at the shell's left edge, the lede
+// beside the title, on its last line. The label's row takes any height the
+// lede needs, so the label stays 20px over the title.
 .head {
   display: grid;
   gap: 20px;
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-rows: 1fr auto;
     column-gap: 48px;
   }
 }
@@ -41,8 +45,8 @@
   }
 
   @include lg {
-    grid-row: span 2;
-    padding-top: 0.9em;
+    grid-area: 1 / 1;
+    align-self: end;
   }
 }
 
@@ -50,6 +54,11 @@
   @include section-title;
   max-width: 14em;
   color: $color-ink;
+
+  @include lg {
+    grid-area: 2 / 1;
+    align-self: last baseline;
+  }
 }
 
 .lede {
@@ -59,7 +68,9 @@
   color: $color-ink-muted;
 
   @include lg {
-    grid-column: 2;
+    grid-area: 1 / 2 / span 2;
+    align-self: end;
+    align-self: last baseline;
   }
 }
 

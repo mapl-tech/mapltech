@@ -5,13 +5,13 @@
 // /services rhythm: dark statement → dark index → paper "how it works" → crimson close.
 
 // ---------------------------------------------------------------- shared section voice
+// The label over the title at the shell's left edge (20px apart on wide screens).
 .head {
   display: grid;
   gap: 24px;
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
+    row-gap: 20px;
   }
 }
 
@@ -21,11 +21,6 @@
 
   &::before {
     @include section-label-rule;
-  }
-
-  @include lg {
-    grid-row: span 2;
-    padding-top: 0.9em;
   }
 }
 
@@ -117,17 +112,20 @@
   white-space: nowrap;
 }
 
+// Sentence case beside the figure, as the /pricing hero's list sets it.
 .priceFrom {
-  @include mono-label;
+  margin-right: 4px;
+  font-size: 0.9375rem;
+  color: $color-fg-muted;
 }
 
-// 32px at 1024, 40px from 1440: the /pricing hero's figures at the same width.
+// One calm row each, 24px at 1024 and 28px from 1440: the /pricing hero's figures at this width.
 .priceAmount {
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(2rem, 0.8rem + 1.9vw, 2.5rem);
+  font-size: clamp(1.5rem, 0.9rem + 0.9vw, 1.75rem);
   line-height: 0.92;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.03em;
   color: $color-fg;
   @include tabular;
 }

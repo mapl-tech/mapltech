@@ -76,13 +76,19 @@
 }
 
 // ---------------------------------------------------------------- shared section voice
+// Wide screens: the label over the title at the shell's left edge, the lede
+// beside the title, on its last line (a head without one gives the title the
+// whole row). The label's row takes any height the lede needs, so the label
+// stays 20px over the title.
 .head {
   display: grid;
   gap: 24px;
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-rows: 1fr auto;
     column-gap: 48px;
+    row-gap: 20px;
   }
 }
 
@@ -95,8 +101,8 @@
   }
 
   @include lg {
-    grid-row: span 2;
-    padding-top: 0.9em;
+    grid-area: 1 / 1;
+    align-self: end;
   }
 }
 
@@ -104,6 +110,15 @@
   @include section-title;
   max-width: 15em;
   color: $color-fg;
+
+  @include lg {
+    grid-area: 2 / 1;
+    align-self: last baseline;
+
+    &:last-child {
+      grid-column: 1 / -1;
+    }
+  }
 }
 
 .lede {
@@ -111,7 +126,9 @@
   margin: 0;
 
   @include lg {
-    grid-column: 2;
+    grid-area: 1 / 2 / span 2;
+    align-self: end;
+    align-self: last baseline;
   }
 }
 
@@ -145,8 +162,8 @@
   gap: clamp(48px, 7vw, 88px);
 }
 
-// Four short points: one column on phones, two from tablets. On wide screens the two columns sit
-// under the heading's column (the head's 9 of 12, after its 48px gap), as the stack row below does.
+// Four short points: one column on phones, two from tablets, from the shell's left edge as the
+// heading above them.
 .caps {
   list-style: none;
   margin: 0;
@@ -156,11 +173,6 @@
 
   @include md {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @include lg {
-    width: calc((100% - 48px) * 0.75);
-    margin-left: auto;
   }
 }
 
@@ -202,8 +214,9 @@
   display: grid;
   gap: 14px;
 
+  // The points above run two across from md, so the pills start under the second one.
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 48px;
     align-items: center;
   }

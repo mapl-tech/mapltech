@@ -2,11 +2,11 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/editorial' as *;
 
-// Blog post (Nov 2026 award pass). One grid for the hero and the body: the
-// label column (3fr) holds the trail and the contents rail, the content column
-// (9fr) holds the title, the facts and the text, so every left edge lines up
-// with the homepage's section titles. Measure: 34em of 18-20px DM Sans, about
-// 70 characters a line. Rhythm: dark hero → dark reading → paper "Keep
+// Blog post (Nov 2026 award pass). The hero starts at the shell's left edge,
+// as the homepage's section titles do: the trail over the title, the summary
+// and the facts under it. The body's label column (3fr) holds the contents
+// rail, its content column (9fr) the text. Measure: 34em of 18-20px DM Sans,
+// about 70 characters a line. Rhythm: dark hero → dark reading → paper "Keep
 // reading" → crimson close.
 
 $measure: 34em;
@@ -52,20 +52,11 @@ $measure: 34em;
   gap: 12px;
   padding-top: calc(var(--header-height, 72px) + clamp(32px, 6vw, 96px));
   padding-bottom: clamp(32px, 6vw, 88px);
-
-  @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
-  }
 }
 
 .crumbs {
   align-self: start;
   min-width: 0;
-
-  @include lg {
-    padding-top: 0.35em;
-  }
 
   ol {
     display: flex;
@@ -111,7 +102,7 @@ $measure: 34em;
 }
 
 // The current post closes the trail for assistive tech (it matches the
-// BreadcrumbList); on screen the H1 beside it already names the page.
+// BreadcrumbList); on screen the H1 under it already names the page.
 .crumbs li.crumbCurrent {
   @include sr-only;
   min-height: 0;
@@ -799,14 +790,14 @@ $measure: 34em;
   @include section-pad;
 }
 
+// The label over the title at the shell's left edge (20px apart on wide screens).
 .moreHead {
   display: grid;
   gap: 24px;
   margin-bottom: clamp(32px, 5vw, 64px);
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
+    row-gap: 20px;
   }
 }
 
@@ -816,10 +807,6 @@ $measure: 34em;
 
   &::before {
     @include section-label-rule($color-red-ink);
-  }
-
-  @include lg {
-    padding-top: 0.9em;
   }
 }
 

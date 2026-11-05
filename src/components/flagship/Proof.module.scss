@@ -17,13 +17,14 @@
   padding-bottom: clamp(48px, 5vw, 72px);
 }
 
+// The label over the title at the shell's left edge (20px apart on wide
+// screens), the guarantees under the title.
 .head {
   display: grid;
   gap: 24px;
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    column-gap: 48px;
+    row-gap: 20px;
   }
 }
 
@@ -34,10 +35,6 @@
   &::before {
     @include section-label-rule;
   }
-
-  @include lg {
-    padding-top: 0.9em;
-  }
 }
 
 .title {
@@ -46,8 +43,8 @@
   max-width: 13em;
 }
 
-// The guarantees, under the title in its column: two across from tablets, a
-// short crimson rule before each.
+// The guarantees, under the title: two across from tablets, a short crimson
+// rule before each.
 .promises {
   display: grid;
   gap: 12px 40px;
@@ -60,8 +57,7 @@
   }
 
   @include lg {
-    grid-column: 2;
-    margin-top: 0;
+    margin-top: 4px;
   }
 }
 

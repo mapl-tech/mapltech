@@ -1,8 +1,8 @@
 import { ViewTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { keepTogether } from '@/components/services/keepTogether';
-import { HERO_REASSURE, PRIMARY_CTA, WORK, WORK_SECTION } from './content';
+import { PRIMARY_CTA, TRUST_ITEMS, WORK, WORK_SECTION } from './content';
+import TrustList from './TrustList';
 import styles from './Work.module.scss';
 import Arrow from '@/components/ui/Arrow';
 
@@ -118,7 +118,7 @@ export default function Work() {
               <Arrow />
             </span>
           </Link>
-          <p className={styles.askNote}>{keepTogether(HERO_REASSURE)}</p>
+          <TrustList items={TRUST_ITEMS} className={styles.askNote} />
         </div>
       </div>
     </section>

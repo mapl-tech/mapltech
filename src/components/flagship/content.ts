@@ -237,8 +237,6 @@ export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') 
  * NDA sentence stands alone in the home "Why agencies work with us" list.
  */
 export const NDA_LINE = 'We sign an NDA before you share anything.';
-// The homepage work section's note, until it moves to the list too ("An NDA" held together).
-export const HERO_REASSURE = `A fixed quote after one 20\u2011minute call. An\u00a0NDA before you share anything, and we never approach your clients.`;
 const QUOTE_ITEM = 'Fixed quote after one 20\u2011minute call';
 const NDA_ITEM = 'NDA before you share anything';
 const CLIENTS_ITEM = 'We never approach your clients';
@@ -297,7 +295,7 @@ export const WORK_SECTION = {
   // Also the service pages' proof block (ProofBlock), where some cases publish stages, not numbers.
   lede: 'Most of what we build carries our partners’ brands, not ours. These are the projects we can show you.',
   all: { label: 'See all our work', href: '/our-work' },
-  /** The ask after the last card, while the proof is still on screen (its reassurance is HERO_REASSURE). */
+  /** The ask after the last card, while the proof is still on screen (its reassurance is TRUST_ITEMS). */
   ask: 'Want work like this under your brand?',
 } as const;
 
