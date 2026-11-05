@@ -109,9 +109,19 @@ function recurringSummary(line: ServiceLine): string {
     .join(' · ');
 }
 
-/** The client quotes, not the audit's verdict (site.ts `kind`). */
+/**
+ * LRO Staffing is never named in llms.txt or llms-full.txt (Leshan, Nov 5, 2026: "do not mention
+ * LRO Staffing in our llms.txt"): its projects (the website and the salary guide) and its quote
+ * stay on the site only. Counts below come from this list, so they match what is named.
+ */
+const NOT_IN_LLMS = /\bLRO\b/i;
+function llmsProjects() {
+  return listedProjects().filter((p) => !NOT_IN_LLMS.test(p.title) && !NOT_IN_LLMS.test(p.slug));
+}
+
+/** The client quotes, not the audit's verdict (site.ts `kind`), without any LRO Staffing quote. */
 function publishedTestimonials() {
-  return testimonials.filter((t) => t.kind === 'client');
+  return testimonials.filter((t) => t.kind === 'client' && !NOT_IN_LLMS.test(t.company));
 }
 
 function bundleFloor(): string | undefined {
@@ -185,7 +195,7 @@ function pricingShort(): string {
 
 function workShort(): string {
   const byCategory = new Map<string, string[]>();
-  for (const project of listedProjects()) {
+  for (const project of llmsProjects()) {
     const list = byCategory.get(project.category) ?? [];
     list.push(project.title);
     byCategory.set(project.category, list);
@@ -194,7 +204,7 @@ function workShort(): string {
   const own = labsProjects.map((p) => `${link(p.name, `/our-work/${p.slug}`)} (${p.status}): ${p.tagline}`).join('. ');
   const quotes = publishedTestimonials().map((t) => `- Client quote: "${t.quote}" (${t.name}, ${t.role}, ${t.company})`);
   // Each case study with its own page, one-line outcome and sourced results.
-  const cases = listedProjects().flatMap((project) => {
+  const cases = llmsProjects().flatMap((project) => {
     const story = findStory(project.slug);
     if (!story) return [];
     const results = story.results?.map((r) => `${r.value} ${r.label}`).join('; ');
@@ -204,7 +214,7 @@ function workShort(): string {
   return [
     '## Work',
     '',
-    `- ${link('Our Work', '/our-work')}: ${listedProjects().length} client projects. ${grouped}.`,
+    `- ${link('Our Work', '/our-work')}: ${llmsProjects().length} client projects. ${grouped}.`,
     `- Our own products, built and run in-house by ${ORG_NAME}: ${own}.`,
     ...quotes,
     googleLine(),
@@ -363,7 +373,7 @@ function pricingFull(): string {
 }
 
 function workFull(): string {
-  const projects = listedProjects().map((p) => {
+  const projects = llmsProjects().map((p) => {
     const story = findStory(p.slug);
     const results = story?.results?.map((r) => `${r.value} ${r.label}`).join('; ');
     const built = story?.built?.stages.map((stage) => `${stage.name}: ${stage.text}`).join(' ');
@@ -382,7 +392,7 @@ function workFull(): string {
   return [
     '## Work',
     '',
-    `${link('Our Work', '/our-work')}: ${listedProjects().length} client projects.`,
+    `${link('Our Work', '/our-work')}: ${llmsProjects().length} client projects.`,
     '',
     ...projects,
     '',
