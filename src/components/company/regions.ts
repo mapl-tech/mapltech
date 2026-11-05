@@ -151,13 +151,13 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     team: {
       heading: 'What MAPL TECH Nigeria builds.',
       // Nov 5, 2026: one team member in Nigeria (Obong Uko), so no plural "engineers and project managers".
-      body: 'We work with your team in Nigerian business hours, with our Toronto headquarters and 25+ years of combined experience behind every project.',
+      body: 'We work with your team in Nigerian business hours, in your Slack and your weekly check-ins. Our Toronto headquarters and 25+ years of combined experience stand behind every project.',
       realitiesHeading: 'Built for local needs',
       realities: [
         'Phone-first sites that work on slow connections',
         'Paystack and Flutterwave payments',
         'More than one currency in portals and dashboards',
-        'Nigeria’s data protection rules (NDPR) planned into every project',
+        'Nigeria’s data protection rules (the NDPA and NDPR) planned into every project',
       ],
     },
     services: {
@@ -200,9 +200,9 @@ export const regions: Record<RegionSlug, RegionConfig> = {
             'Yes. Dashboards, client portals and reports can take local payments, including Paystack and Flutterwave, in more than one currency.',
         },
         {
-          question: 'How do you handle NDPR?',
+          question: 'How do you handle the NDPA and NDPR?',
           answer:
-            'We plan for NDPR, Nigeria’s data protection rules, from the start of every Nigerian build. We also use the same engineering standards as our Toronto headquarters.',
+            'We plan for Nigeria’s data protection rules, the NDPA and the NDPR, from the start of every Nigerian build. We also use the same engineering standards as our Toronto headquarters.',
         },
         {
           question: 'What does a project cost in Nigeria?',
@@ -233,13 +233,14 @@ export const regions: Record<RegionSlug, RegionConfig> = {
     },
     team: {
       heading: 'What MAPL TECH Jamaica builds.',
-      body: 'Our engineers and project managers have Caribbean roots. Our Toronto headquarters and 25+ years of combined experience stand behind them.',
+      // Nov 5, 2026: Nigeria's line, so nothing is said about the size or roots of the Jamaica team.
+      body: 'We work with your team in Jamaican business hours, in your Slack and your weekly check-ins. Our Toronto headquarters and 25+ years of combined experience stand behind every project.',
       realitiesHeading: 'Built for local needs',
       realities: [
         'Audiences who mostly browse on phones',
         'Caribbean payment providers',
         'Showing up in Caribbean search results (SEO)',
-        'Fast on island internet connections',
+        'Sites that load fast on island internet connections',
       ],
     },
     services: {
@@ -288,12 +289,12 @@ export const regions: Record<RegionSlug, RegionConfig> = {
           question: 'Do you work in Jamaican business hours?',
           // Kingston keeps UTC-5 all year; Toronto is UTC-5 in winter and UTC-4 in summer. Both offices work 9 am to 6 pm local time.
           answer:
-            'Yes. Our Jamaica team keeps Kingston office hours. Kingston is on the same time as Toronto in winter and one hour behind in summer, so both offices are open together all day in winter and from 9 am to 5 pm Kingston time in summer.',
+            'Yes. We keep Kingston office hours. Kingston is on the same time as Toronto in winter and one hour behind in summer, so both offices are open together all day in winter and from 9 am to 5 pm Kingston time in summer.',
         },
         {
           question: 'Do you build for Caribbean payment providers and island internet?',
           answer:
-            'Yes. We build for audiences who mostly browse on phones, for Caribbean payment providers, for local search and for island internet connections. Client portals, dashboards and reports connect to local payment providers and business tools.',
+            'Yes. We build for audiences who mostly browse on phones, for local search and for island internet connections. Client portals, dashboards and reports connect to Caribbean payment providers and local business tools.',
         },
         {
           question: 'What does a project cost in Jamaica?',
@@ -302,7 +303,7 @@ export const regions: Record<RegionSlug, RegionConfig> = {
         {
           question: 'How do you keep our team informed?',
           answer:
-            'Weekly project updates, documented decisions and clean handoffs, so your team always knows where things stand.',
+            'We check in with your team every week and write decisions down as we go. At the end, your team gets clear notes and code that you and your client own.',
         },
       ],
     },

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/og';
 import Image from 'next/image';
 import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
@@ -31,13 +32,14 @@ import styles from '@/components/convert/ContactLayout.module.scss';
 
 const PATH = '/contact-us';
 const DESCRIPTION =
-  'Send MAPL TECH a short project brief, or call +1 (647) 375-6724 or email contact@mapltech.com. White-label engineering for agencies, with public prices.';
+  'Send MAPL TECH a short project brief, call +1 (647) 375-6724 or email contact@mapltech.com. White-label engineering that works with your team, at public prices.';
 
 export const metadata: Metadata = {
   title: { absolute: 'Contact MAPL TECH: send a project brief' },
   description: DESCRIPTION,
   alternates: { canonical: absoluteUrl(PATH) },
   openGraph: {
+    images: [OG_IMAGE],
     type: 'website',
     title: 'Contact MAPL TECH: send a project brief',
     description: DESCRIPTION,
@@ -60,7 +62,7 @@ const NEXT_STEPS = [
   },
   {
     name: 'A fixed quote',
-    text: 'You get a written proposal with a fixed price, so you know the cost before work starts.',
+    text: 'You get a written proposal with a fixed price, so you know the cost before we start work with your team.',
   },
 ] as const;
 
@@ -69,7 +71,7 @@ const NEXT_STEPS = [
  * brief's button says it first, in the steps' own words (the reply step's
  * timing awaits the owner, so the line starts at the call).
  */
-const AFTER_LINE = 'After you send it: a 20‑minute call, then a fixed quote.';
+const AFTER_LINE = 'After you send it: a 20‑minute call to agree the scope with you, then a fixed quote.';
 
 /** The one approved client quote (site.ts `testimonials`), beside the decision. */
 const PROOF = testimonials.find((entry) => entry.company === 'LRO Staffing') ?? null;

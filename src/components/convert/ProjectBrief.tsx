@@ -99,7 +99,7 @@ const MESSAGES: Record<FieldName, string> = {
   kind: 'Choose what you are building, or pick “Not sure yet”.',
   size: 'Choose the closest size, or “Not sure yet”. You can explain in the next step.',
   name: 'Enter your name so we know who to reply to.',
-  email: 'Enter an email address, like name@agency.com.',
+  email: 'Enter an email address like name@agency.com.',
   phone: 'Enter a phone number, or choose to hear back by email.',
 };
 
@@ -404,8 +404,9 @@ export default function ProjectBrief({
             Brief sent.
           </h2>
           <p className={styles.doneText}>
-            It is in our inbox at {siteConfig.email}. We will reply{' '}
-            {sent.reply === 'phone' ? 'with a call to the number below' : 'to the email address below'}.
+            It is in our inbox at {siteConfig.email}. We will{' '}
+            {sent.reply === 'phone' ? 'call you at the number below' : 'reply to the email address below'}. Next, we talk for
+            20&nbsp;minutes, agree the scope with you, and send a fixed quote.
           </p>
           {/* What was sent, read back: the service (and size), then the visitor's own
               address on every path, and the number when they chose a call, so a typo shows. */}

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/og';
 import JsonLd from '@/components/seo/JsonLd';
 import { pageGraph, person } from '@/lib/schema';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
   description: TEAM.description,
   alternates: { canonical: URL },
   openGraph: {
+    images: [OG_IMAGE],
     type: 'website',
     url: URL,
     title: 'Leadership & Global Team | MAPL TECH',

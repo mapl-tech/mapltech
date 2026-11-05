@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/og';
 import JsonLd from '@/components/seo/JsonLd';
 import { absoluteUrl } from '@/config/routes';
 import { aboutPage, breadcrumb, graph, orgId, personRef } from '@/lib/schema';
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
   description: ABOUT.description,
   alternates: { canonical: URL },
   openGraph: {
+    images: [OG_IMAGE],
     type: 'website',
     url: URL,
     title: 'About MAPL TECH',

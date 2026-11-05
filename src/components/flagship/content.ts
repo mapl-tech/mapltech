@@ -71,7 +71,7 @@ export const PROOF = {
   ],
   stats: [
     { value: 200, suffix: '+', label: 'projects supported' },
-    { value: 25, suffix: '+', label: 'years of combined engineering experience' },
+    { value: 25, suffix: '+', label: 'years of combined experience' },
     { value: 3, suffix: '', label: 'offices: Toronto, Lagos, Kingston' },
   ],
 } as const;
@@ -99,7 +99,7 @@ export const LAYERS: readonly Layer[] = [
     service: 'web',
     name: 'Web Development',
     linkLabel: 'How we build websites',
-    summary: 'Fast websites that rank on Google, meet accessibility standards on launch day, and that your client can update without help.',
+    summary: 'Fast websites, built for Google search, that meet accessibility standards on launch day. Your client can update them without help.',
     fromPrice: from(pricing.webDevelopment.tiers[0].price),
     href: '/services/web-development',
     image: {
@@ -214,7 +214,7 @@ export const WORK: readonly WorkCard[] = (
       slug: 'chha-ncr',
       client: 'CHHA-NCR',
       kind: 'Non-profit website · Ottawa',
-      outcome: 'A new website for people with hearing loss, most of them over 55. Volunteers can update it themselves.',
+      outcome: 'A new website for people with hearing loss, most of them 55 and over. Volunteers can update it themselves.',
       metrics: [
         { value: 'AA', label: 'accessibility rating for colour contrast, on every pair checked' },
         { value: '5', label: 'stages in the site’s guide, from noticing hearing loss to giving back' },
@@ -296,7 +296,7 @@ export const WORK_SECTION = {
   label: 'Selected work',
   title: 'Work we can show.',
   // Also the service pages' proof block (ProofBlock), where some cases publish stages, not numbers.
-  lede: 'Most of what we build carries our partners’ brands, not ours. These are the projects we can show you.',
+  lede: 'Most of what we build carries our partners’ brands, so we keep it private.',
   all: { label: 'See all our work', href: '/our-work' },
   /** The ask after the last card, while the proof is still on screen (its reassurance is TRUST_ITEMS). */
   ask: 'Want work like this under your brand?',
@@ -304,10 +304,10 @@ export const WORK_SECTION = {
 
 export const APPROACH = {
   label: 'Process',
-  title: 'How it works.',
+  title: 'How we work with your team.',
   lede: 'From your first message to launch day, you know what happens next.',
   /** The white-label page: who does what, when to bring us in, the FAQ. */
-  more: { label: 'How we work with agencies', href: '/white-label' },
+  more: { label: 'Who does what on a project', href: '/white-label' },
   steps: [
     // The first step can be taken from here: it links to the brief.
     // How the white-label work runs, in published facts only (competitor gap, Nov 5, 2026): the reply

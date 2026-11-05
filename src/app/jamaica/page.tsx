@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/og';
 import RegionalPage from '@/components/company/RegionalPage';
 import { getRegion } from '@/components/company/regions';
 
-const TITLE = 'MAPL TECH Jamaica | Systems, Automation & Web Development for Jamaican Agencies';
+const TITLE = 'MAPL TECH Jamaica | Web, Automation & Cloud for Agencies';
 const DESCRIPTION =
   'MAPL TECH Jamaica builds websites, automation, AI workflows and internal tools for agencies in Kingston and Montego Bay, within an hour of Toronto all year.';
 
@@ -13,9 +14,10 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   keywords: 'MAPL TECH Jamaica, web development Jamaica, automation Jamaica, AI workflows Kingston, agency infrastructure Caribbean, custom tools Jamaica',
   openGraph: {
+    images: [OG_IMAGE],
     title: 'MAPL TECH Jamaica | Engineering Partner for Jamaican Agencies',
     description:
-      'Canadian-headquartered engineering partner with a Jamaica branch. Systems, automation, and infrastructure for Caribbean agencies.',
+      'An engineering team headquartered in Toronto, with an office in Kingston. We work with Caribbean agencies on websites, automation, internal tools and cloud systems.',
     url: 'https://mapltech.com/jamaica',
     type: 'website',
     locale: 'en_JM',
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'MAPL TECH Jamaica',
-    description: 'Systems, automation, and infrastructure for Jamaican agencies.',
+    description: 'Websites, automation, internal tools and cloud systems, built with Jamaican agencies.',
   },
 };
 

@@ -12,7 +12,8 @@ export function Faq({ items }: { items: readonly FaqEntry[] }) {
           <h2 id="faq-title" className={styles.title}>
             Questions agencies ask.
           </h2>
-          <p className={styles.lede}>What agency owners ask us before they sign, with short answers.</p>
+          {/* The label and title already say who asks and when; the lede gives the next step. Display only (U+2011). */}
+          <p className={styles.lede}>Short answers to common questions. Bring any others to the 20{'‑'}minute call.</p>
         </div>
         <HomeFaq items={items} />
       </div>

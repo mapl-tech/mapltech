@@ -30,14 +30,14 @@ export async function POST(req: NextRequest) {
 
     if (!name || !email || !message) {
       return NextResponse.json(
-        { error: 'Name, email, and message are required.' },
+        { error: 'Name, email and message are required.' },
         { status: 400 }
       );
     }
 
     if (!(await verifyRecaptcha(recaptchaToken))) {
       return NextResponse.json(
-        { error: 'Verification failed. Please refresh the page and try again.' },
+        { error: 'We could not confirm this was sent by a person. Refresh the page and try again.' },
         { status: 400 }
       );
     }

@@ -14,6 +14,10 @@
  *   because agencies shouldn't need to hire a full engineering department...",
  *   "We don't compete with you") and flagship/content.ts WORK_INTRO ("Most of
  *   what we build carries our partners' brands"), which leads to the work.
+ *   How we work with the agency's team (Nov 5, 2026, "make it collaboration
+ *   focused"): the home process ("We join your Slack and your weekly
+ *   check-ins. Your client only hears from your team.") and /white-label
+ *   ("hand them back with clear notes"); nothing else is added.
  * - Offices: the published 9 am to 6 pm local office hours (ui/officeTime)
  *   and the published offsets (Lagos 5-6 hours ahead of Toronto; Kingston
  *   keeps no daylight saving time).
@@ -127,7 +131,7 @@ export const OFFICE_HOURS_FACT = { term: 'Office hours', detail: '9 am to 6 pm
 const EXPERIENCE_FIGURE = { term: 'Experience', figure: '25+', detail: 'years combined' } as const;
 
 /** Every office's hours (ui/officeTime), in the words /about-us uses. */
-const OFFICE_HOURS = 'Every team works 9 am to 6 pm local time, Monday to Friday.';
+const OFFICE_HOURS = 'Each office is open 9 am to 6 pm local time, Monday to Friday.';
 
 /* ------------------------------------------------------------------ */
 /* /about-us                                                            */
@@ -136,12 +140,12 @@ const OFFICE_HOURS = 'Every team works 9 am to 6 pm local time, Monday to Frid
 export const ABOUT = {
   title: 'About Us',
   description:
-    'MAPL TECH builds websites, automation, internal tools and cloud systems for agencies, under the agency’s brand. Two founders, teams in Toronto, Lagos and Kingston, and public prices.',
+    'MAPL TECH works with agency teams on websites, automation, internal tools and cloud, under the agency’s brand. We have offices in Toronto, Lagos and Kingston.',
   hero: {
     label: 'About MAPL TECH',
     // What the company does, said literally (no metaphor), in seven words.
     title: [{ text: 'We build the technology that ' }, { text: 'agencies sell.', accent: true }] as readonly TitleRun[],
-    lede: 'That means websites, automation, internal tools and cloud systems for your clients. Your brand goes on the work. Our engineers stay behind it.',
+    lede: 'We work with your team on the websites, automation, internal tools and cloud systems your clients need. Your brand goes on the work, and your client only hears from you.',
   },
   // The three published figures, set large. Who founded it and where the
   // teams are get their own sections below, so the band does not repeat them.
@@ -154,7 +158,7 @@ export const ABOUT = {
       { text: 'That is why MAPL TECH exists.', accent: true },
     ] as readonly TitleRun[],
     paragraphs: [
-      `${FOUNDER_NAMES} started MAPL TECH to be the team behind the agency. Our engineers build what you sell, under your name. Then we hand it over, ready for your own developers to look after.`,
+      `${FOUNDER_NAMES} started MAPL TECH to work alongside agency teams. We build what you sell, under your brand, in your Slack and your weekly check-ins. Then we hand over the work with clear notes, so your own developers can carry on.`,
       'We don’t compete with you, and we never list your client as ours. Most of what we build carries our partners’ names.',
     ],
     // The page body's route to the work, after the line about whose names the work carries.
@@ -170,7 +174,7 @@ export const ABOUT = {
   founders: {
     label: 'Who leads it',
     title: 'The founders.',
-    lede: 'Both are directors of the company. Both are on LinkedIn under their own names, so you can see who you will work with.',
+    lede: 'Both are directors of the company. Each is on LinkedIn under their own name, so you can see who leads the company.',
   },
   close: {
     // The story's point (a complex project without hiring an engineering department), as the next step.
@@ -185,11 +189,11 @@ export const ABOUT = {
 export const TEAM = {
   title: 'Leadership & Global Team',
   description:
-    `Meet the people behind MAPL TECH: co-founders ${FOUNDER_NAMES}, and our team in Canada, Nigeria and Jamaica.`,
+    `Meet the MAPL TECH team that works alongside yours: co-founders ${FOUNDER_NAMES}, and our team in Canada, Nigeria and Jamaica.`,
   // No eyebrow: the breadcrumb (About / Team) already names the page.
   hero: {
     title: [{ text: 'The people ' }, { text: 'behind the work.', accent: true }] as readonly TitleRun[],
-    lede: `MAPL TECH is led by its co-founders, ${FOUNDER_NAMES}, with a team across Canada, Nigeria and Jamaica.`,
+    lede: `MAPL TECH is led by its co-founders, ${FOUNDER_NAMES}. Our team in Canada, Nigeria and Jamaica works alongside yours, under your brand.`,
   },
   // What a buyer checks first, each said once on the page, set in the hero's
   // aside as /about-us sets its figures: the lede names the founders and the
@@ -211,7 +215,7 @@ export const TEAM = {
     careers: { before: 'Looking for a job with us? ', label: 'See open roles', href: '/careers' },
   },
   close: {
-    title: 'Need a team behind your next client project?',
+    title: 'Need an engineering team to work with yours on the next client project?',
   },
 } as const;
 
@@ -260,7 +264,7 @@ export const CAREERS = {
     // the work happens is the facts band's (the remote count in numerals, the on-site cities), so
     // each count is said once. How to apply (one short form, no upload) is said once, in the apply
     // section's lede over the form.
-    lede: `${countWord(careers.length)} ${typeWord}roles in ${listWords(roleCountries)}.`,
+    lede: `${countWord(careers.length)} ${typeWord}roles in ${listWords(roleCountries)}. You work with our team and alongside the teams at our partner agencies.`,
   },
   // Where the roles are done; the lede has already said how many there are and that they are contracts.
   facts: [
@@ -288,14 +292,14 @@ export const CAREERS = {
     // Beside the form: who a candidate would work with, and what we make.
     evidence: {
       before: 'Before you apply, ',
-      team: { label: 'meet the team', href: '/team' },
+      team: { label: 'meet the team you would join', href: '/team' },
       between: ' and ',
       work: { label: 'see our work', href: '/our-work' },
       after: '.',
     },
   },
   talent: {
-    summary: 'Don’t see your fit? Join the talent list.',
+    summary: 'Don’t see a role that fits? Join the talent list.',
     lede: 'Tell us what you do best, and we’ll write when a matching role opens.',
   },
   close: {

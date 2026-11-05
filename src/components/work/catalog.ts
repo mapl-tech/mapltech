@@ -61,10 +61,9 @@ const BUILT: Partial<Record<string, string>> = {
   'lro-salary-guide': 'An interactive salary guide for recruiters and hiring managers',
   // site.ts: "Our own product: a travel and tourism company fully managed by AI".
   'mapl-tours': 'Our own product, a travel company run by AI',
-  // site.ts: "Event-driven web platform with member portal, registration workflows".
+  // site.ts: "An events website with a member portal, online registration for events…".
   'focas-canada': 'An event platform with a member portal',
-  // site.ts: "End-to-end e-commerce automation: inventory syncing, shipping triggers,
-  // and post-purchase communication flows".
+  // site.ts: "Online store automation from start to finish: stock levels kept in sync…".
   'crowned-spice': 'Online store automation: stock, shipping and follow-up messages',
   // stories.ts facts: "What we built: Internal operations dashboard".
   unsvcc: 'An internal operations dashboard',
@@ -189,5 +188,5 @@ export const WORK_PAGE = {
   title: 'Client work and case studies',
   name: 'Client work and case studies',
   // What every row has (what we built), and how many publish a result: both counted from the case data.
-  description: `${capitalize(countWord(catalogItems().length))} projects by MAPL TECH, white-label engineers for agencies: websites, tools and AI automation. Each shows what we built, and ${countWord(resultItems().length)} publish their results.`,
+  description: `${capitalize(countWord(catalogItems().length))} projects by MAPL TECH, the white-label engineering team for agencies: websites, internal tools and AI automation, ${countWord(resultItems().length)} with published results.`,
 } as const;

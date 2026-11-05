@@ -55,7 +55,7 @@ export default function ContactForm({
   showPhone = true,
   showContactMethod = true,
   showSubject = true,
-  submitLabel = 'Send Message',
+  submitLabel = 'Send message',
   compact = false,
 }: ContactFormProps) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
@@ -114,7 +114,7 @@ export default function ContactForm({
   if (status === 'success') {
     return (
       <div className={`${styles.message} ${styles.success}`} role="alert">
-        Thank you! Your message has been sent. We&apos;ll get back to you within 24 hours.
+        Thank you. Your message has been sent. We will reply within 24 hours.
       </div>
     );
   }
@@ -179,7 +179,7 @@ export default function ContactForm({
           )}
           {showContactMethod && (
             <div className={styles.field}>
-              <span className={styles.label}>Preferred Contact Method</span>
+              <span className={styles.label}>Preferred contact method</span>
               <div className={styles.radioGroup} role="radiogroup" aria-label="Contact method">
                 <label className={styles.radioLabel}>
                   <input type="radio" name="contactMethod" value="email" defaultChecked />
@@ -221,20 +221,20 @@ export default function ContactForm({
           id="message"
           name="message"
           className={styles.textarea}
-          placeholder={compact ? 'Tell us about your project...' : 'Tell us about your project, timeline, and any specific requirements...'}
+          placeholder={compact ? 'Tell us about your project…' : 'Tell us about your project, your timeline and anything we should know…'}
           required
           rows={compact ? 4 : 6}
         />
       </div>
 
       <button type="submit" className={styles.submit} disabled={status === 'sending'}>
-        {status === 'sending' ? 'Sending...' : submitLabel}
+        {status === 'sending' ? 'Sending…' : submitLabel}
       </button>
 
       {RECAPTCHA_SITE_KEY && (
         // Required by Google's terms when the floating badge is hidden
         <p className={styles.recaptchaNotice}>
-          Protected by reCAPTCHA -{' '}
+          Protected by reCAPTCHA:{' '}
           <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
             Privacy
           </a>{' '}

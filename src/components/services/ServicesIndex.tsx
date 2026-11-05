@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Faq } from '@/components/flagship/Acts';
 import CloseBand from '@/components/flagship/CloseBand';
-import { PRICE_TRUST_ITEMS, TRUST_ITEMS } from '@/components/flagship/content';
+import { APPROACH, PRICE_TRUST_ITEMS, TRUST_ITEMS } from '@/components/flagship/content';
 import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import PageHeader from '@/components/ui/PageHeader';
 import HeroActions from './HeroActions';
@@ -115,10 +115,11 @@ export default function ServicesIndex() {
 
       <section className={styles.how} aria-labelledby="how-title">
         <div className={styles.howInner}>
+          {/* The homepage's label and heading for the same four steps (APPROACH), so both pages name them alike. */}
           <header className={styles.head}>
-            <p className={styles.label}>How it works</p>
+            <p className={styles.label}>{APPROACH.label}</p>
             <h2 id="how-title" className={styles.title}>
-              Four steps, from first message to launch.
+              {APPROACH.title}
             </h2>
           </header>
           <Steps steps={INDEX_STEPS} tone="paper" placement="services_how" />

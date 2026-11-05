@@ -222,7 +222,7 @@ const DERIVED_EXTRAS: Partial<Record<string, CaseStudyDetail>> = {
     industry: 'Travel & tourism',
   },
   'crowned-spice': {
-    // Description: "End-to-end e-commerce automation"
+    // Description: "Online store automation from start to finish"
     industry: 'E-commerce',
   },
 };

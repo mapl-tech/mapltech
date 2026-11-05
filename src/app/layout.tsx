@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { OG_IMAGE } from '@/lib/og';
 import Script from 'next/script';
 import { DM_Sans, Overpass } from 'next/font/google';
 import { siteConfig } from '@/config/site';
@@ -100,14 +101,7 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     title: `${siteConfig.name} | White-Label Engineering for Agencies`,
     description: HOME_PAGE_DESCRIPTION,
-    images: [
-      {
-        url: '/images/og-flagship.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'MAPL TECH: The engineering backbone behind your agency. A spine of crimson, graphite and chrome rods beside the headline.',
-      },
-    ],
+    images: [OG_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',

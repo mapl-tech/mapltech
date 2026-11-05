@@ -5,7 +5,7 @@ import { pricing } from '@/config/site';
 import { formatMoney } from '@/lib/estimate';
 import { keepTogether, nameHyphens, withLastWord } from './keepTogether';
 import {
-  QUOTE_LINE,
+  SCOPE_LINE,
   TIER_HIGHLIGHTS,
   cleanCopy,
   costTitle,
@@ -59,7 +59,7 @@ export default function TierSchedule({ view }: { view: LayerView }) {
   // In a sentence, so the range reads "to"; the plan list below keeps the price label's en dash.
   const hourly = pricePhrase(pricing.hourlyRates.standard);
   const afterIntro = [
-    support ? `Every package includes ${support} of support after launch.` : 'Once it is live, we can keep looking after it.',
+    support ? `Every package includes ${support} of support after launch.` : 'Once it is live, we can keep working on it with your team.',
     monthly ? (support ? `After that, plans cost from ${monthly}.` : `Plans cost from ${monthly}.`) : null,
     `Hourly work is ${hourly}.`,
   ]
@@ -74,7 +74,7 @@ export default function TierSchedule({ view }: { view: LayerView }) {
           <h2 id="tiers-title" className={styles.title}>
             {costTitle(view)}
           </h2>
-          <p className={styles.lede}>{keepTogether(`Every price is public. Pick the package closest to your project. ${QUOTE_LINE}`)}</p>
+          <p className={styles.lede}>{keepTogether(`Every price is public. Pick the package closest to your project. ${SCOPE_LINE}`)}</p>
         </header>
 
         {/* Every package carries its own two actions ("Choose…", "Price this package"), so the phone

@@ -55,6 +55,11 @@
 // The rating is the one line that links (to the Google profile, in a new tab): underlined,
 // in the list's own colour, brighter on hover.
 .ratingLink {
+  // A 44px tap target without moving the line: padding grows the hit area, the negative margin
+  // gives the space back (phone audit, Nov 5, 2026: the bare line was 26px tall).
+  display: inline-block;
+  padding-block: 9px;
+  margin-block: -9px;
   color: inherit;
   text-decoration: underline;
   text-decoration-thickness: 1px;

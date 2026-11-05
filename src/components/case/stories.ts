@@ -77,7 +77,14 @@ export interface CaseStory {
   situation?: readonly string[];
   built?: { intro?: string; stages: readonly CaseStage[] };
   impact?: readonly { heading: string; items: readonly string[] }[];
-  quote?: { text: string; name: string; role: string; image?: string };
+  quote?: {
+    text: string;
+    name: string;
+    role: string;
+    image?: string;
+    /** The chapter's name, when the words are not a person's (an audit's verdict). Default: "What they said". */
+    label?: string;
+  };
   matters?: { heading: string; text: string };
   /** Footnote naming where the numbers come from. */
   sources?: string;
@@ -116,7 +123,7 @@ export const STORIES: readonly CaseStory[] = [
     ],
     situation: [
       'LRO Staffing places people across Ottawa and Toronto. Its website has two very different visitors: someone looking for their next role, and an employer trying to fill one.',
-      'Both needed to find their way from the first screen. The agency’s industry expertise, recruitment advice and salary data also had to be one click away, not buried at the bottom of the page.',
+      'Both needed to find their way from the first screen. LRO Staffing’s industry expertise, recruitment advice and salary data also had to be one click away, not buried at the bottom of the page.',
     ],
     // Each part is said once. "What changed" only repeated these stages (and the
     // results' count of expertise pages), so it is folded in: its one outcome
@@ -129,7 +136,7 @@ export const STORIES: readonly CaseStory[] = [
         { name: 'Find', text: 'Job search with keyword, industry, location and job type filters.' },
         { name: 'Apply', text: 'Job alerts and resume submission, so a visit can end in an application.' },
         { name: 'Expertise', text: 'Industry expertise pages, from technology and government to legal services and finance.' },
-        { name: 'Insight', text: 'A recruitment insights blog the team publishes to, and an interactive salary guide for the Ottawa and Toronto markets.' },
+        { name: 'Insight', text: 'A recruitment insights blog that LRO’s own team publishes to, and an interactive salary guide for the Ottawa and Toronto markets.' },
         { name: 'Access', text: 'Parts like the “How We Work With You” panels work with a keyboard and tell screen readers when they open and close.' },
       ],
     },
@@ -139,7 +146,7 @@ export const STORIES: readonly CaseStory[] = [
       // 28 words (was 45, seven lines at 390): the same three points, plainly.
       text: 'Sites with two audiences often bury one. We plan the structure with you before design starts, then build it to pass the checks your client runs after launch.',
     },
-    sources: 'Lighthouse results for lrostaffing.com as published on leshanpatterson.com (November 2026). Client quote approved for publication.',
+    sources: 'Lighthouse results for lrostaffing.com as published on leshanpatterson.com (November 2026). Client quote from Alita Fabiano’s Google review.',
     media: {
       desktop: '/images/cases/lro-desktop.jpg',
       mobile: '/images/cases/lro-mobile.jpg',
@@ -229,8 +236,8 @@ export const STORIES: readonly CaseStory[] = [
       {
         heading: 'What it proves',
         items: [
-          'Software built with AI can handle real money when the safeguards are built in, not hoped for',
-          'Software that AI assistants can look up directly gets recommended by them',
+          'Software built with AI can handle real money when the safeguards are built in, not hoped for.',
+          'When AI assistants can look up a service directly, they can send people straight to booking it.',
         ],
       },
     ],
@@ -257,7 +264,7 @@ export const STORIES: readonly CaseStory[] = [
     // The Relaunched and Sector facts. "Ottawa" stays: the Client fact says
     // "National Capital Region", which not every reader knows as Ottawa.
     tagsInFacts: ['Website relaunch', 'Non-profit'],
-    headline: 'A relaunched website for people with hearing loss, most of them over 55, that the charity’s own volunteers can run.',
+    headline: 'A relaunched website for people with hearing loss, most of them 55 and over, that the charity’s own volunteers can run.',
     facts: [
       { term: 'Client', detail: chha?.client ?? 'CHHA-NCR' },
       { term: 'Sector', detail: chha?.industry ?? 'Non-profit / accessibility' },
@@ -291,7 +298,7 @@ export const STORIES: readonly CaseStory[] = [
             },
             {
               name: 'Self-service',
-              text: 'Volunteers edit the site themselves on WordPress. Caching keeps it fast and structured data helps search engines read it, so the branch does not depend on an agency.',
+              text: 'Volunteers edit the site themselves on WordPress, so the branch does not depend on an agency. Caching keeps it fast, and structured data helps search engines read it.',
             },
           ],
         }
@@ -301,24 +308,23 @@ export const STORIES: readonly CaseStory[] = [
           {
             heading: 'What the independent audit found',
             items: [
-              'Every colour pair the audit checked meets WCAG AA. The August 2026 audit rated the accessibility work above what most agencies ship.',
               'Openness about how the charity is run, which the audit called rare at this size: full board bios and published annual meeting (AGM) reports.',
-              'The five-stage journey was noted as ahead of the US national counterpart’s site.',
+              'The audit noted the five-stage journey as ahead of the US national counterpart’s site.',
             ],
           },
         ]
       : undefined,
-    quote: chhaAudit ? { text: chhaAudit.quote, name: chhaAudit.name, role: chhaAudit.role } : undefined,
+    quote: chhaAudit ? { text: chhaAudit.quote, name: chhaAudit.name, role: chhaAudit.role, label: 'What the audit said' } : undefined,
     matters: {
       heading: 'Why this matters if you build for government and non-profit clients',
       // 28 words (was 36).
-      text: 'For these clients, accessibility is required and an audit follows. We build to WCAG AA from the start, and their team can update the site without an agency.',
+      text: 'For these clients, accessibility is often required, and an audit may follow. We build to WCAG AA from the start, on a site their own team can update.',
     },
     sources: chha?.sourceNote,
     media: {
       desktop: '/images/cases/chha-desktop.jpg',
       mobile: '/images/cases/chha-mobile.jpg',
-      alt: 'The CHHA-NCR homepage after the July 2026 relaunch.',
+      alt: 'The CHHA-NCR homepage: “We’ve said it too. And we know what helps”, with a text-size control in the top bar.',
     },
     // Growth ("8–12 pages"): the homepage, five journey-stage pages, the clinic
     // directory and the Accessible Ottawa guide pass Starter's seven, before the
@@ -352,7 +358,7 @@ export const STORIES: readonly CaseStory[] = [
     },
     matters: {
       heading: 'Why this matters if your client publishes data',
-      text: 'A PDF report gets downloaded once. A tool gets bookmarked. We turn the data your client already has into something their audience comes back to.',
+      text: 'If your client publishes data in a report, we can work with your team to turn it into a tool people can filter and compare.',
     },
     media: {
       desktop: '/images/cases/salary-desktop.jpg',
@@ -388,7 +394,7 @@ export const STORIES: readonly CaseStory[] = [
     media: {
       desktop: '/images/cases/focas-desktop.jpg',
       mobile: '/images/cases/focas-mobile.jpg',
-      alt: 'The FOCAS Canada homepage.',
+      alt: 'The FOCAS Canada homepage: the “Family Oriented Community Advancement Support” logo under a menu with Membership, Volunteer and Donate.',
     },
     // CMS: built with WordPress (a content editor is not in Starter). No page
     // count is published, and nothing says how members sign in: no size chosen.
@@ -414,7 +420,7 @@ export const STORIES: readonly CaseStory[] = [
     },
     matters: {
       heading: 'Why this matters if your client runs on spreadsheets',
-      text: 'Every organisation has a weekly report someone builds by hand. We replace it with a dashboard that is already up to date when the meeting starts.',
+      text: 'Most organisations have a weekly report someone builds by hand. We work with their team to replace it with a dashboard that is already up to date when the meeting starts.',
     },
     media: {
       desktop: '/images/cases/unsvcc-desktop.jpg',
@@ -441,14 +447,14 @@ export const STORIES: readonly CaseStory[] = [
     ],
     built: {
       stages: [
-        { name: 'Stock', text: 'Stock levels that stay the same across every place the store sells.' },
+        { name: 'Stock', text: 'Stock levels that match in every place the store sells.' },
         { name: 'Shipping', text: 'Shipping starts automatically when an order is ready.' },
         { name: 'After the sale', text: 'Automatic messages to customers after they buy.' },
       ],
     },
     matters: {
       heading: 'Why this matters if your client sells online',
-      text: 'The online store is the easy part. The hours go into everything after someone clicks buy. We automate each step of an order, so the client’s team only handles the unusual ones.',
+      text: 'The online store is the easy part. The hours go into everything after someone clicks buy. We automate the routine steps, so the client’s team only handles the orders that need a person.',
     },
     // Three automations fit "3–5 core automations", but stock kept in step across
     // every sales channel could also be a multi-system pipeline: no size chosen.

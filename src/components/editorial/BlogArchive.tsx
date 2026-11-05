@@ -428,15 +428,15 @@ export default function BlogArchive({ rows, topics, services = [], featured, pag
 
       {current?.service ? (
         <p className={styles.service}>
-          Our{' '}
+          We work with your team on{' '}
           <Link href={current.service.href} className={styles.serviceLink} data-cta-placement="blog_topic_service">
             {current.label}
-          </Link>{' '}
-          service is delivered under your brand, from&nbsp;{current.service.from}.
+          </Link>
+          , under your brand, from&nbsp;{current.service.from}.
         </p>
       ) : services.length ? (
         // All and Industry: the four services, each one tap away, with its public price
-        // (the hero's note has already said they are delivered under your brand).
+        // (the hero's note has already said we work with your team, under your brand).
         <p className={styles.service}>
           Each service has a public price:{' '}
           {services.map((entry, i) => (

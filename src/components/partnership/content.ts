@@ -17,7 +17,7 @@
  * The fit guide gives advice, not claims about anyone else: no numbers, no
  * names, nothing a reader could check against a competitor.
  */
-import { LOWEST_PRICE } from '@/components/flagship/content';
+import { CLOSE_BAND, LOWEST_PRICE } from '@/components/flagship/content';
 
 function money(n: number): string {
   return `$${n.toLocaleString('en-US')}`;
@@ -31,12 +31,14 @@ export const WHITE_LABEL = {
     'How white-label work with MAPL TECH runs: an NDA first, we join your Slack and check-ins, your client only hears from you, and you own the code.',
   hero: {
     label: 'How we work',
-    lede: 'We work as your agency’s engineering team. We build the websites, automation, software and cloud systems your clients buy from you, and hand them back with clear notes.',
+    lede: 'We work with your team on client projects. We build the websites, automation, software and cloud systems your clients buy from you, and hand over the code with clear notes.',
   },
   facts: [
-    { term: 'First reply', figure: '24 hours', detail: 'after your brief' },
+    // "Within", as /contact-us publishes it (and the office pages' "Within 24 hours").
+    { term: 'We reply within', figure: '24 hours', detail: 'of your brief' },
     { term: 'Support after launch', figure: '30–90', detail: 'days, in every package' },
-    { term: 'Public prices', figure: money(LOWEST_PRICE), detail: 'and up, USD' },
+    // Worded as /about-us sets the same figure (company/content.ts PRICE_FIGURE).
+    { term: 'Public prices from', figure: money(LOWEST_PRICE), detail: 'USD' },
   ],
   process: {
     label: 'From brief to launch',
@@ -46,7 +48,7 @@ export const WHITE_LABEL = {
   roles: {
     label: 'Who does what',
     title: 'You keep the client. We do the engineering.',
-    lede: 'The split is the same on every project. Your client deals with your agency, and we work behind your team.',
+    lede: 'The split is the same on every project. Your client deals with your agency, and we work with your team.',
     yours: {
       heading: 'Your agency keeps',
       items: [
@@ -60,7 +62,7 @@ export const WHITE_LABEL = {
       heading: 'MAPL TECH handles',
       items: [
         { lead: 'The build.', text: 'Websites, automation and AI, internal tools and cloud.' },
-        { lead: 'Your team’s rhythm.', text: 'We join your Slack and your weekly check-ins.' },
+        { lead: 'Working with your team.', text: 'We join your Slack and your weekly check-ins.' },
         { lead: 'The handover.', text: 'Clear notes, so your team can carry on where we left off.' },
         { lead: 'Support after launch.', text: '30 to 90 days, then a monthly plan if you want one.' },
       ],
@@ -69,11 +71,11 @@ export const WHITE_LABEL = {
   fit: {
     label: 'Choosing a partner',
     title: 'When to bring us in.',
-    lede: 'An honest guide. Sometimes the right answer is not us.',
+    lede: 'Sometimes the right answer is not us. Here is how we would decide.',
     options: [
       {
         heading: 'Hire in-house',
-        text: 'When there is steady engineering work every week, and you want that skill inside your agency for good.',
+        text: 'When there is steady engineering work every week, and you want that skill inside your agency for the long term.',
       },
       {
         heading: 'Use a freelancer',
@@ -81,16 +83,16 @@ export const WHITE_LABEL = {
       },
       {
         heading: 'Bring in MAPL TECH',
-        text: 'When a client project needs a team, or more than one of web, automation, software and cloud, on one fixed quote and under your brand.',
+        text: 'When a client project needs more people or skills than your team has. We work with your team, on one fixed quote and under your brand.',
         ours: true,
       },
     ],
   },
   voice: {
-    label: 'In their words',
+    // One client's quote on this page (the homepage's "In their words" sets two voices).
+    label: 'In a client’s words',
   },
-  close: {
-    title: 'Have a client project that needs a team?',
-    lede: 'Answer four short questions. We talk for 20 minutes, agree the scope with you, and send a fixed quote.',
-  },
+  // The site's close line (voice guide), with its no-break space in "20 minutes": the page is
+  // "part of your team", so the ask says "together", not "a project that needs a team".
+  close: CLOSE_BAND,
 } as const;

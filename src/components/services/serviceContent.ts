@@ -52,7 +52,7 @@ import {
 } from '@/lib/estimate';
 import { findStory } from '@/components/case/stories';
 import { APPROACH, LAYERS, WORK } from '@/components/flagship/content';
-import { CUSTOM_NOTE, CUSTOM_PRICE } from '@/components/pricing/content';
+import { CUSTOM_NOTE, CUSTOM_PRICE, HERO as PRICING_HERO } from '@/components/pricing/content';
 import { FAQ_ITEMS, type FaqEntry } from '@/components/home/data';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import type { Step } from './Steps';
@@ -136,6 +136,19 @@ function lowOf(label: string): number | null {
 export const QUOTE_LINE = 'You get a fixed quote after a 20-minute call.';
 
 /**
+ * How a package becomes a quote, done with the agency: the /pricing hero's words (pricing/content.ts
+ * HERO.trust), so both pages describe the step the same way. Collaboration pass, Nov 5, 2026.
+ */
+export const SCOPE_LINE: string = PRICING_HERO.trust;
+
+/**
+ * Under "How we build it with you" on every service page: how the work runs alongside the agency's team, in the
+ * homepage's published words (flagship/content.ts APPROACH, "We build it with you"; the Slack and the
+ * check-ins are the timezone FAQ's, home/data.ts). Collaboration pass, Nov 5, 2026.
+ */
+export const PROCESS_LEDE = 'We join your Slack and your weekly check-ins. Your client only hears from your team.';
+
+/**
  * Every link into the estimator says this, whatever the page ("See pricing" is the /pricing page
  * itself): one label for one destination.
  */
@@ -207,7 +220,7 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     // FAQ "we build them exactly from Figma, Sketch or XD files" · the live lede "Built from your designs, shipped
     // under your brand." (speed, accessibility and the brand are the H1's promise).
     lede: 'We build each site exactly from your team’s designs. Your client gets a site that is easy to use and easy to update.',
-    // Starter features: "Custom-coded website that works on every screen (up to 7 pages)", "Designed for phones first"
+    // Starter features: "Custom-coded website that works on every screen (up to 7 pages)", "Built for phones first"
     entryIncludes: 'Up to 7 custom-coded pages, built for phones first',
     // Out: "Phones first" (says "we design", but agencies bring the designs) and "Solid behind the scenes" (weakest).
     buildPoints: ['Built for the people who run it', 'Fast pages', 'Works on every device', 'Accessible to everyone'],
@@ -235,7 +248,8 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     role: 'Less manual work',
     // services.ts oneLiner ("From simple automations to custom AI agents") · content.ts LAYERS deliverable
     // "Lead routing, follow-ups and reporting on autopilot" (taking repetitive work away is the H1's promise).
-    lede: 'We connect the tools your team already uses, then automate follow-ups, sorting new leads and reports. From simple automations to custom AI agents.',
+    // Collaboration pass (Nov 5, 2026): the work is done with the agency's team, not handed over.
+    lede: 'We work with your team to connect the tools you already use, then automate follow-ups, lead sorting and reports. From simple automations to custom AI agents.',
     // Foundation Automation features: "CRM setup for your team", "New leads sent to the right person
     // automatically", "3 to 5 key automations"
     entryIncludes: 'CRM setup, new leads sent to the right person, and 3 to 5 key automations',
@@ -300,8 +314,9 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     name: SERVICE_META.cloud.label,
     role: 'Hosting that stays online',
     // services.ts capabilities: AWS, Google Cloud or Azure · oneLiner "so your agency stops worrying about downtime,
-    // traffic spikes or broken releases" (the points below answer each worry).
-    lede: 'We set up and run your hosting on AWS, Google Cloud or Azure. Your agency stops worrying about downtime, traffic spikes and broken updates.',
+    // traffic spikes or broken releases" (the points below answer each worry) · the plan made with you: process
+    // "You approve before we set anything up", ctaBand "We will plan a setup with you", heading "set up and look after".
+    lede: 'We plan the setup with you, then build and look after it on AWS, Google Cloud or Azure. Your agency stops worrying about downtime, traffic spikes and broken updates.',
     // Starter Cloud Setup features: "Cloud setup on AWS, Google Cloud or Azure", "Basic automatic testing and
     // deployment", "Alerts if the site goes down"
     entryIncludes: 'Cloud setup on AWS, Google Cloud or Azure, automatic deployment and downtime alerts',
@@ -323,7 +338,7 @@ const COPY: Record<ServiceSlug, ServiceCopy> = {
     meta: {
       title: 'Cloud Engineering for Agencies',
       description:
-        'Cloud Engineering for agencies from $5,000: AWS, GCP or Azure as code, CI/CD pipelines and monitoring. Public tiers and a fixed quote after one call.',
+        'Cloud Engineering for agencies from $5,000: AWS, GCP or Azure as code, CI/CD pipelines and monitoring. Public packages and a fixed quote after one call.',
     },
     og: SHARE_IMAGE,
   },
@@ -823,7 +838,7 @@ export const PRICE_SUMMARY = fromList();
 export const INDEX_META = {
   title: 'Services for Agencies',
   name: 'MAPL TECH services for agencies',
-  description: `${PRICE_SUMMARY}. Public prices, fixed quotes, for agencies.`,
+  description: `${PRICE_SUMMARY}. Built with your team, under your brand.`,
 } as const;
 
 export function indexMetadata(): Metadata {

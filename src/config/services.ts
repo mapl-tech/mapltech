@@ -177,7 +177,7 @@ function supportAnswer(key: ServicePricingKey): string {
 const PAYMENT_PLANS_FAQ: ServiceFaq = {
   question: 'Do you offer payment plans?',
   answer:
-    'Yes. We usually split a project into three payments: a deposit to start, one in the middle and one at launch. We can shape the plan around your cash flow.',
+    'Yes. We usually split a project into three payments: a deposit to start, one in the middle and one at launch. We can agree a schedule with you that fits your cash flow.',
 };
 
 /* ------------------------------------------------------------------ */
@@ -400,7 +400,7 @@ export const services: readonly ServiceRecord[] = [
     ],
     ctaBand: {
       heading: 'Have a client still copying data between tools?',
-      body: 'Tell us what your team does by hand. We will build the automation that does it for you.',
+      body: 'Tell us what your team does by hand. We will plan the automation with you, then build it.',
       submitLabel: "Let's Automate",
     },
     portfolioCategory: 'Automation and AI Workflows',
@@ -452,7 +452,7 @@ export const services: readonly ServiceRecord[] = [
       },
       {
         title: 'Operations and reporting',
-        description: 'One system to run daily operations, with automatic reports your leadership team will actually use.',
+        description: 'One system to run daily operations, with automatic reports for your leadership team.',
       },
       {
         title: 'Secure from the start',

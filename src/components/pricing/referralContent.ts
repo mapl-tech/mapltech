@@ -47,8 +47,9 @@ export const REFERRAL_FORM = {
 
 /**
  * Questions, as FAQ: every answer is composed from copy already published on
- * the site. The white-label line is the homepage's ("Most of what we build
- * ships under our partners' names").
+ * the site. The white-label line is the homepage's ("Everything we make
+ * carries your brand"); working with their team is the home process's
+ * ("We build it with you").
  */
 export const REFERRAL_TERMS: FaqItem[] = [
   {
@@ -61,11 +62,11 @@ export const REFERRAL_TERMS: FaqItem[] = [
   },
   {
     question: 'Who can I refer?',
-    answer: `Agencies and partners that need help with ${web.name}, ${automation.name}, ${tools.name} or ${cloud.name}.`,
+    answer: `Agencies and partners that want a team to work alongside theirs on ${web.name}, ${automation.name}, ${tools.name} or ${cloud.name}.`,
   },
   {
     question: 'What does the agency I refer get?',
-    answer: `Public prices, a 20-minute call and a fixed quote after it. ${web.name} costs from ${web.fromLabel}, ${automation.name} from ${automation.fromLabel}, ${tools.name} from ${tools.fromLabel} and ${cloud.name} from ${cloud.fromLabel}. The work can go out under their own brand.`,
+    answer: `Public prices, a 20-minute call and a fixed quote after it. ${web.name} costs from ${web.fromLabel}, ${automation.name} from ${automation.fromLabel}, ${tools.name} from ${tools.fromLabel} and ${cloud.name} from ${cloud.fromLabel}. We work with their team, and everything we make carries their brand.`,
   },
   {
     question: 'Where does MAPL TECH work?',

@@ -167,7 +167,7 @@ describe('toggles bump tiers, never downgrade', () => {
   it('design supplied only annotates web and never changes the tier', () => {
     const supplied = resolveTier('web', 'starter', { designSupplied: true });
     expect(supplied.tier.name).toBe('Starter');
-    expect(supplied.drivers.at(-1)).toMatch(/pixel-perfect from your Figma, Sketch or XD/);
+    expect(supplied.drivers.at(-1)).toMatch(/match your Figma, Sketch or XD files exactly/);
     const notSupplied = resolveTier('web', 'starter', { designSupplied: false });
     expect(notSupplied.drivers.at(-1)).toMatch(/design partner/);
     expect(resolveTier('tools', 'dashboard', { designSupplied: true }).drivers).toHaveLength(1);
@@ -298,7 +298,7 @@ describe('partner bundles surface with two or more services', () => {
 describe('notes and drivers', () => {
   it('always carries the fixed-quote line', () => {
     expect(estimate(one('web', 'starter')).notes[0]).toBe(FIXED_QUOTE_NOTE);
-    expect(FIXED_QUOTE_NOTE).toBe('Fixed quote after a 20-min scoping call');
+    expect(FIXED_QUOTE_NOTE).toBe('Fixed quote after one 20-minute call');
   });
 
   it('rush adds the emergency hourly rate from site.ts; standard does not', () => {

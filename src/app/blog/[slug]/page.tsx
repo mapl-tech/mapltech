@@ -43,8 +43,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const published = toISODate(post.date);
 
   return {
-    // The root template appends " | MAPL TECH".
-    title: post.title,
+    // The root template appends " | MAPL TECH" while that fits in a search result (~60 characters);
+    // a longer headline is shown alone, so searchers see more of it (the site name shows separately).
+    title: post.title.length + ' | MAPL TECH'.length <= 60 ? post.title : { absolute: post.title },
     description,
     alternates: { canonical: url },
     authors: [{ name: post.author.name }],

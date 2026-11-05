@@ -167,7 +167,7 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                     </p>
                     <p className={styles.inlineText}>
                       {serviceName && from
-                        ? `We deliver ${serviceName} under your brand, from ${from}. The estimator shows your price before we ask for anything.`
+                        ? `We work with your team on ${serviceName}, under your brand, from ${from}. The estimator shows your price before we ask for anything.`
                         : 'Our prices are public. The estimator shows your price before we ask for anything.'}
                     </p>
                     <div className={styles.inlineActions}>
@@ -232,7 +232,7 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
                 </p>
                 <p className={styles.authorBio}>
                   {isOrgAuthor
-                    ? `Engineers who build for digital agencies, under the agency’s brand: ${SERVICE_LIST}. Offices in Toronto, Lagos and Kingston.`
+                    ? `Engineers who work with digital agencies on ${SERVICE_LIST}, under the agency’s brand. Offices in Toronto, Lagos and Kingston.`
                     : post.author.role}
                 </p>
                 <p className={styles.authorLinks}>
@@ -313,8 +313,8 @@ export default function PostArticle({ post, related, newer, older }: PostArticle
         title={serviceName ? 'Want us to build this with your team?' : CLOSE_BAND.title}
         lede={
           serviceName
-            ? `We deliver ${serviceName} for agencies, under your brand. ${BRIEF_LINE}. We talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote.`
-            : `We offer ${SERVICE_LIST} for agencies, under your brand, and every price is public. ${BRIEF_LINE} to start.`
+            ? `We build it under your brand. ${BRIEF_LINE}. We talk for 20\u00a0minutes, agree the scope with you, and send a fixed quote.`
+            : `We work with your team on ${SERVICE_LIST}, under your brand. Every price is public. ${BRIEF_LINE} to start.`
         }
         href={briefHref}
         trust={serviceName ? WHITE_LABEL_ITEMS : TRUST_ITEMS}

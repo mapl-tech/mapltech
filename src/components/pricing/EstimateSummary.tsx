@@ -133,8 +133,9 @@ function rangeBasis(result: EstimateResult): string | null {
     : from
       ? `${name} starts at ${from}.`
       : `${name} has a starting price.`;
-  // Web packages are starting prices, as the live site lists them ("$5,000+"): the fixed quote sets the rest.
-  return `${starts} This is its listed starting price; the fixed quote sets the final figure.`;
+  // Web packages are starting prices, as the live site lists them ("$5,000+"): the fixed quote, for the
+  // scope agreed with the visitor (HERO.trust), sets the rest.
+  return `${starts} This is its listed starting price. We agree the scope with you, then the fixed quote sets the final price.`;
 }
 
 /**

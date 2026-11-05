@@ -233,7 +233,7 @@ export const SIZE_OPTIONS: Record<EstimateService, readonly SizeOption[]> = {
   ],
   automation: [
     { key: 'foundation', label: '3–5 core automations', tierIndex: 0 },
-    { key: 'advanced', label: 'Multi-system pipeline', tierIndex: 1 },
+    { key: 'advanced', label: 'Several tools connected', tierIndex: 1 },
     { key: 'enterprise', label: 'Custom AI agents', tierIndex: 2 },
   ],
   tools: [
@@ -266,7 +266,7 @@ export const SUPPORT_LEVELS: readonly SupportOption[] = [
 
 export const TIMELINES: readonly EstimateTimeline[] = ['standard', 'rush'];
 
-export const FIXED_QUOTE_NOTE = 'Fixed quote after a 20-min scoping call';
+export const FIXED_QUOTE_NOTE = 'Fixed quote after one 20-minute call';
 
 export const DEFAULT_ESTIMATE_INPUT: EstimateInput = {
   services: ['web'],
@@ -506,7 +506,7 @@ export function resolveTier(service: EstimateService, size: SizeKey | undefined,
   if (service === 'web' && typeof toggles.designSupplied === 'boolean') {
     drivers.push(
       toggles.designSupplied
-        ? 'Design supplied → we build pixel-perfect from your Figma, Sketch or XD files'
+        ? 'Design supplied → we build it to match your Figma, Sketch or XD files exactly'
         : 'Design not supplied → we can collaborate with your team or connect you with a design partner',
     );
   }

@@ -1,9 +1,11 @@
 export const siteConfig = {
   name: 'MAPL TECH',
   logo: 'MA|PL TECH',
-  tagline: 'The Engineering Backbone Behind Leading Agencies',
+  // The hero's brand line (flagship/content.ts), as the Organization slogan and the llms.txt tagline.
+  tagline: 'The engineering backbone behind your agency',
+  // Organization and WebSite JSON-LD, and the first line of llms.txt (which names the services next).
   description:
-    'MAPL TECH is the engineering partner agencies call when projects demand real systems, intelligent automation, and scalable infrastructure.',
+    "MAPL TECH is the white-label engineering team that works with digital agencies to build what they sell to their clients, under the agency's brand.",
   url: 'https://mapltech.com',
   email: 'contact@mapltech.com',
   phone: '+1 (647) 375-6724',
@@ -83,7 +85,7 @@ export const pricing = {
       },
       {
         name: 'Enterprise AI Workflows',
-        description: 'Full AI-powered operations for agencies handling complex, high-volume work',
+        description: 'For agencies handling complex, high-volume work, with AI across their operations',
         price: '$10,000-$18,000',
         features: [
           'Custom AI agents built for your work',
@@ -197,11 +199,11 @@ export const pricing = {
     tiers: [
       {
         name: 'Starter',
-        description: 'For agencies that need a sharp, fast site without a heavy template',
+        description: 'For clients who need a sharp, fast site without a heavy template',
         price: '$5,000',
         features: [
           'Custom-coded website that works on every screen (up to 7 pages)',
-          'Designed for phones first, matching your design exactly',
+          'Built for phones first, matching your design exactly',
           'Basic SEO setup (page titles and descriptions)',
           'Contact form that sends to your email',
           'Speed tuning (Google Lighthouse score of 90 or more)',
@@ -268,7 +270,7 @@ export const pricing = {
   bundles: [
     {
       name: 'Agency Automation Partner',
-      description: 'Like a senior automation engineer on your team, without the cost of hiring one',
+      description: 'Like an automation engineer on your team, without the cost of hiring one',
       price: '$4,000-$7,500/month',
       features: [
         'Automation & AI workflows',
@@ -279,7 +281,7 @@ export const pricing = {
     },
     {
       name: 'Full Systems Partner',
-      description: 'Your own engineering team: Automation & AI, Custom Internal Tools, Web Development and cloud, all handled',
+      description: 'An engineering team that works with yours on Automation & AI, Custom Internal Tools, Web Development and Cloud Engineering',
       price: '$7,500-$12,000/month',
       features: [
         'Automation & AI workflows',
@@ -335,7 +337,7 @@ export const portfolioProjects = [
     slug: 'lro-staffing',
     order: 1, // listed first on /our-work (lower = earlier; unset = source order)
     category: 'Web Development',
-    description: 'Complete website for an Ottawa and Toronto staffing agency - a custom WordPress theme built around job seekers and employers, with job search and alerts, resume submission, eight industry expertise hubs and recruitment insights.',
+    description: 'Complete website for an Ottawa and Toronto staffing agency: a custom WordPress theme built around job seekers and employers, with job search and alerts, resume submission, eight industry expertise hubs and recruitment insights.',
     tags: ['WordPress', 'Custom Theme', 'Job Search'],
     image: '/images/case-lro-website.jpg',
     url: 'https://www.lrostaffing.com/',
@@ -347,7 +349,7 @@ export const portfolioProjects = [
     category: 'Web Development',
     // From the live site (footer: "Website by MAPL TECH"): its own WordPress theme, a page and a
     // booking calendar per tour (dates, places left, "Request Booking"), prices in MUR, USD, EUR or CAD.
-    description: 'Complete website for a Mauritius tour company - a custom WordPress theme with a page for each small-group tour, a booking calendar that shows the places left, and prices in four currencies.',
+    description: 'Complete website for a Mauritius tour company: a custom WordPress theme with a page for each small-group tour, a booking calendar that shows the places left, and prices in four currencies.',
     tags: ['WordPress', 'Custom Theme', 'Tour Booking'],
     image: '/images/case-dodo-island-discoveries.jpg',
     url: 'https://dodoislanddiscoveries.com/',
@@ -356,7 +358,7 @@ export const portfolioProjects = [
     title: 'LRO Interactive Salary Guide',
     slug: 'lro-salary-guide',
     category: 'Custom Internal Tools',
-    description: 'Interactive salary guide tool with dynamic filtering, real-time data visualization, and role-based salary benchmarking for recruiters and hiring managers.',
+    description: 'Interactive salary guide for recruiters and hiring managers: salary comparisons by role, with filters and charts that update as soon as a filter changes.',
     tags: ['Interactive Tool', 'Data Visualization', 'Custom Development'],
     image: '/images/case-lro.jpg',
     url: 'https://www.lrostaffing.com/lro-salary-guide/2026-interactive-salary-guide/',
@@ -366,7 +368,7 @@ export const portfolioProjects = [
     slug: 'mapl-tours',
     order: 4, // fourth on /our-work: the third project with published results
     category: 'Automation and AI Workflows',
-    description: 'Our own product: a travel and tourism company fully managed by AI - from trip planning and booking to customer communication and itinerary generation. Built and run in-house by MAPL TECH.',
+    description: 'Our own product: a travel and tourism company fully managed by AI, from trip planning and booking to customer communication and itinerary generation. Built and run in-house by MAPL TECH.',
     tags: ['Own product', 'AI', 'Automation'],
     image: '/images/case-mapl-tours.jpg',
     url: 'https://mapltours.com/',
@@ -385,7 +387,7 @@ export const portfolioProjects = [
     title: 'FOCAS Canada',
     slug: 'focas-canada',
     category: 'Web Development',
-    description: 'Event-driven web platform with member portal, registration workflows, and community engagement tools.',
+    description: 'An events website with a member portal, online registration for events and tools for community engagement.',
     tags: ['WordPress', 'Member Portal', 'Events'],
     image: '/images/case-focas-canada.jpg',
     url: 'https://focascanada.org/',
@@ -394,7 +396,7 @@ export const portfolioProjects = [
     title: 'Crowned Spice',
     slug: 'crowned-spice',
     category: 'Automation and AI Workflows',
-    description: 'End-to-end e-commerce automation - inventory syncing, shipping triggers, and post-purchase communication flows.',
+    description: 'Online store automation from start to finish: stock levels kept in sync, shipping that starts automatically and messages to customers after they buy.',
     tags: ['E-commerce', 'Automation', 'Inventory'],
     image: '/images/mockup-ecommerce.svg',
   },
@@ -433,7 +435,7 @@ export const portfolioProjects = [
     slug: 'chha-ncr',
     order: 3, // third on /our-work, after LRO Staffing and Dodo Island Discoveries
     category: 'Web Development',
-    description: 'Full relaunch for the Canadian Hard of Hearing Association\'s National Capital Region branch - a journey-based information architecture, a searchable hearing-clinic directory, and WCAG accessibility built into every page, all on a CMS volunteers can maintain themselves.',
+    description: 'Full relaunch for the Canadian Hard of Hearing Association\'s National Capital Region branch: a guide in five stages, a searchable hearing-clinic directory and WCAG accessibility on every page, on a site volunteers can update themselves.',
     tags: ['Non-Profit', 'Accessibility', 'Web Development'],
     image: '/images/case-chha-ncr.jpg',
     url: 'https://www.chhancr.ca/',
@@ -511,7 +513,7 @@ export const careers = [
     type: 'Contract',
     location: 'Lagos / Abuja',
     country: 'Nigeria',
-    description: 'Manage project timelines, client communication and deliverables for our Nigeria branch.',
+    description: 'Keep projects on schedule for our Nigeria branch, and keep our partner agencies up to date.',
   },
   // Jamaica
   {
@@ -526,7 +528,7 @@ export const careers = [
     type: 'Contract',
     location: 'Kingston / Montego Bay',
     country: 'Jamaica',
-    description: 'Own client relationships for our Jamaica branch across the Caribbean: onboarding, ongoing support and keeping projects on track.',
+    description: 'Look after our partner agencies across the Caribbean for our Jamaica branch: onboarding, ongoing support and keeping projects on track.',
   },
 ];
 
@@ -556,7 +558,7 @@ export const caseStudies: CaseStudy[] = [
     stack: ['WordPress', 'Elementor (Hello theme)', 'Rank Math SEO', 'LiteSpeed Cache', 'CanadaHelps donations'],
     delivered: 'Relaunched July 2026',
     challenge:
-      'A volunteer-run charity serving people with hearing loss, most of them 55 and over, needed a site that non-technical volunteers could maintain and that visitors could actually read and navigate, without hiding information behind clicks or motion.',
+      'A volunteer-run charity serving people with hearing loss, most of them 55 and over, needed a site its non-technical volunteers could maintain. Its visitors had to be able to read and navigate it, with no information hidden behind clicks or motion.',
     solution: [
       'A five-stage visitor journey as the information architecture: Noticing, Finding Out, Choosing, Living with it, Giving back, each stage a plain-language page with a forward path.',
       'Accessibility engineered in, not bolted on: skip links, real landmarks, complete alt text, visible focus states, reduced-motion support, and an in-house accessibility panel for text size, motion and link underlining.',

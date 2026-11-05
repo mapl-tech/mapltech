@@ -15,6 +15,7 @@ import TierSchedule from './TierSchedule';
 import {
   ESTIMATE_LABEL,
   LAYER_VIEWS,
+  PROCESS_LEDE,
   SERVICES_REVISED,
   briefHref,
   capabilityViews,
@@ -205,8 +206,10 @@ function WhatWeBuild({ view }: { view: LayerView }) {
 
 /**
  * The four delivery steps, as published for this service (services.ts
- * processSteps). Labelled "How we deliver": the homepage's "How it works" is
- * the engagement (brief, quote, build, launch), and the two must not share a name.
+ * processSteps). Labelled "How we build it with you": the homepage's "How we
+ * work with your team" is the engagement (brief, quote, build, launch), and the
+ * two must not share a name. The lede says how the steps run with the agency's
+ * team (PROCESS_LEDE).
  */
 function Process({ view }: { view: LayerView }) {
   const steps = stageViews(view).map((stage) => ({ title: stage.name, text: stage.text }));
@@ -214,10 +217,11 @@ function Process({ view }: { view: LayerView }) {
     <section id="process" className={styles.process} aria-labelledby="process-title">
       <div className={styles.processInner}>
         <header className={styles.head}>
-          <p className={styles.label}>How we deliver</p>
+          <p className={styles.label}>How we build it with you</p>
           <h2 id="process-title" className={styles.title}>
             {view.processTitle}
           </h2>
+          <p className={styles.lede}>{PROCESS_LEDE}</p>
         </header>
         <Steps steps={steps} />
       </div>

@@ -49,12 +49,14 @@ export default function CaseStudy({
   // off: the site's client line, less this case's own client, so it adds
   // names instead of repeating a result the page has already shown twice.
   const closeProof = story.quote ? otherClientsLine(story) : undefined;
+  // An audit's verdict is not a person speaking: its chapter says whose words they are.
+  const quoteLabel = story.quote?.label ?? 'What they said';
 
   const chapters = [
     story.situation?.length ? { id: 'situation', label: 'The situation' } : null,
     story.built ? { id: 'built', label: 'What we built' } : null,
     story.impact?.length ? { id: 'impact', label: 'What changed' } : null,
-    story.quote ? { id: 'words', label: 'What they said' } : null,
+    story.quote ? { id: 'words', label: quoteLabel } : null,
   ].filter((c): c is { id: string; label: string } => c !== null);
 
   const [lead, ...rest] = story.situation ?? [];
@@ -239,7 +241,7 @@ export default function CaseStudy({
               {story.quote ? (
                 <section id="words" className={styles.chapter} aria-labelledby="case-quote">
                   <h2 id="case-quote" className={styles.chapterTitle}>
-                    What they said
+                    {quoteLabel}
                   </h2>
                   <figure className={styles.quote}>
                     <blockquote>

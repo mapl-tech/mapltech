@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/og';
 import Image from 'next/image';
 import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
@@ -45,6 +46,7 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   alternates: { canonical: absoluteUrl('/blog') },
   openGraph: {
+    images: [OG_IMAGE],
     type: 'website',
     title: 'MAPL TECH Blog: practical engineering for agencies',
     description: DESCRIPTION,
@@ -113,10 +115,10 @@ export default function BlogPage() {
             Search all articles
           </a>
         }
-        // The services line, shortened to its lowest public price: a service and a price in the first screen.
+        // How we work and the lowest public price (the published "Projects from" line): a price in the first screen.
         note={
           <>
-            Our services, delivered under your brand, from&nbsp;{formatMoney(LOWEST_PRICE)}.{' '}
+            We work with your team, under your brand. Projects from&nbsp;{formatMoney(LOWEST_PRICE)}.{' '}
             <Link
               href={SERVICES_INTRO.estimate.href}
               className={styles.heroNoteLink}

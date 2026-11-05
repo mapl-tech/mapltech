@@ -121,7 +121,7 @@ export const SERVICE_LINES: readonly ServiceLine[] = [
     name: 'Custom Web Development for Agencies',
     serviceType: 'Web Development',
     description:
-      'Custom-coded websites engineered for speed, accessibility, and long-term maintainability. From headless CMS builds to full-stack React applications.',
+      'Fast, accessible websites built with your team, under your agency’s brand: custom-coded or on WordPress or a headless CMS, meeting accessibility standards (WCAG AA) at launch, and easy for your client to update.',
     pricingKey: 'webDevelopment',
   },
   {
@@ -131,7 +131,7 @@ export const SERVICE_LINES: readonly ServiceLine[] = [
     name: 'Automation & AI Workflow Setup for Agencies',
     serviceType: 'Automation & AI',
     description:
-      'Intelligent automation and AI workflows that connect your CRM, project tools, invoicing, and client intake into seamless pipelines.',
+      'Automation and AI workflows planned with your team: we connect the tools your agency already uses, such as your CRM, project tools, invoicing and client intake, and automate follow-ups, lead sorting and reports.',
     pricingKey: 'automation',
   },
   {
@@ -141,7 +141,7 @@ export const SERVICE_LINES: readonly ServiceLine[] = [
     name: 'Custom Internal Tools for Agencies',
     serviceType: 'Custom Internal Tools',
     description:
-      'Custom dashboards, client portals, and operations platforms designed around how your agency actually works.',
+      'Dashboards, client portals and operations and reporting systems, built with your team around how your agency and its clients work.',
     pricingKey: 'internalTools',
   },
   {
@@ -151,7 +151,7 @@ export const SERVICE_LINES: readonly ServiceLine[] = [
     name: 'Cloud Engineering for Agencies',
     serviceType: 'Cloud Engineering',
     description:
-      'Scalable cloud infrastructure designed, deployed, and managed for agencies. CI/CD pipelines, IaC, monitoring, and security.',
+      'Cloud setups on AWS, Google Cloud or Azure, planned with your team: moves with zero downtime, every update tested before it goes live, monitoring, and security ready for SOC 2 or HIPAA audits.',
     pricingKey: 'cloudEngineering',
   },
 ];
@@ -371,7 +371,7 @@ export function organization(): Organization {
     email: siteConfig.email,
     telephone: ORG_TELEPHONE,
     founder: executives.map(personRef),
-    address: { '@type': 'PostalAddress', addressCountry: 'CA' },
+    address: { '@type': 'PostalAddress', addressLocality: 'Toronto', addressRegion: 'ON', addressCountry: 'CA' },
     contactPoint: [contactPoint()],
     // The social profiles and the Google Business Profile (no AggregateRating: Google ignores self-served reviews).
     sameAs: [...Object.values(siteConfig.social), googleReviews.url],

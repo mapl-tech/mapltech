@@ -89,7 +89,7 @@ export default function OurWorkPage() {
         lede={
           // Two sentences: the published results are beside it, so they are not counted here too.
           <p>
-            Most of our work is published under our partners’ names. These {countWord(items.length)} projects carry ours.
+            Most of what we build with agencies is published under their names. These {countWord(items.length)} projects carry ours.
           </p>
         }
         actions={
@@ -160,16 +160,17 @@ export default function OurWorkPage() {
       ) : null}
 
       {/* The homepage's ask after its work, with the hero's risk answer under it.
-          The title already says "under your brand", so the lede carries two
-          published promises neither it nor the note makes (you own the code;
-          the weekly check-in, the homepage's "How it works"). The proof beside
-          the ask is the published figures: the client voice sits right above,
-          and the rows already name every client. */}
+          The title already says "under your brand", so the lede says how the
+          work runs together, in published promises neither it nor the note
+          makes (we agree the scope with you; the weekly check-in, the
+          homepage's "How it works"; you own the code). The proof beside the
+          ask is the published figures: the client voice sits right above, and
+          the rows already name every client. */}
       <CloseBand
         id="work-close-title"
         placement="work_close"
         title={WORK_SECTION.ask}
-        lede="You and your client own the code. We check in with your team every week."
+        lede="We agree the scope with you and check in with your team every week. You and your client own the code."
         trust={TRUST_ITEMS}
         proofLine={figuresLine()}
       />

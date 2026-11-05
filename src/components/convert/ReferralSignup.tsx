@@ -54,7 +54,7 @@ function validate(data: FormData): Errors {
   const email = field(data, 'email');
   if (!email) errors.email = 'Enter your email address.';
   else if (!isEmail(email)) errors.email = 'Enter an email address like name@agency.com.';
-  if (!field(data, 'refName')) errors.refName = 'Enter their name, so we know who to ask for.';
+  if (!field(data, 'refName')) errors.refName = 'Enter their name so we know who to ask for.';
   const refEmail = field(data, 'refEmail');
   if (!refEmail) errors.refEmail = 'Enter their email address so we can reach them.';
   else if (!isEmail(refEmail)) errors.refEmail = 'Enter an email address like name@agency.com.';
@@ -304,7 +304,7 @@ export default function ReferralSignup() {
                 type="email"
                 inputMode="email"
                 autoComplete="email"
-                placeholder="you@company.com"
+                placeholder="you@agency.com"
                 className={styles.input}
                 required
                 aria-invalid={errors.email ? true : undefined}
@@ -394,7 +394,7 @@ export default function ReferralSignup() {
               <textarea id={id('refNotes')} name="refNotes" rows={4} className={styles.textarea} aria-describedby={describedBy} />
             )}
           </Field>
-          <Field id={id('yourCompany')} label="Your company" wide>
+          <Field id={id('yourCompany')} label="Your agency or company" wide>
             {(describedBy) => (
               <input
                 id={id('yourCompany')}

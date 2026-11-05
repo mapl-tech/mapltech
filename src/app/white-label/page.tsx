@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/og';
 import JsonLd from '@/components/seo/JsonLd';
 import { faqPage, howTo, pageGraph } from '@/lib/schema';
 import { PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
@@ -28,6 +29,7 @@ export const metadata: Metadata = {
     'agency engineering partner',
   ],
   openGraph: {
+    images: [OG_IMAGE],
     type: 'website',
     url: URL,
     title: `${WHITE_LABEL.title} | MAPL TECH`,

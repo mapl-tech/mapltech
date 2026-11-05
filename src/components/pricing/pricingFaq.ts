@@ -1,7 +1,7 @@
 import type { FaqItem } from '@/lib/schema';
 import { pricing } from '@/config/site';
 import { formatMoney } from '@/lib/estimate';
-import { BUNDLES_ANSWER, factsOf, inWords, priceText } from './content';
+import { BUNDLES_ANSWER, HERO, factsOf, inWords, priceText } from './content';
 
 /**
  * The pricing FAQ. Rendered by the native <details> accordion and emitted
@@ -21,8 +21,9 @@ const web = factsOf('web');
 export const pricingFaq: FaqItem[] = [
   {
     question: 'How accurate is the estimator?',
-    // Web packages are starting prices on the live site ("$5,000+"), so a web estimate is too.
-    answer: `It uses the same prices as this page. Each answer matches a published package, and an add-on moves you to the package that includes it. ${web.name} packages list a starting price, so a ${web.name} estimate shows your package’s starting price, such as ${formatMoney(web.from)}+. You get a fixed quote after a 20-minute call.`,
+    // Web packages are starting prices on the live site ("$5,000+"), so a web estimate is too. It closes on
+    // the quote step as the hero says it (HERO.trust): the scope agreed with you, then one fixed price.
+    answer: `It uses the same prices as this page. Each answer matches a published package, and an add-on moves you to the package that includes it. ${web.name} packages list a starting price, so a ${web.name} estimate shows your package’s starting price, such as ${formatMoney(web.from)}+. ${HERO.trust}`,
   },
   {
     question: `How long does a typical ${web.name} project take?`,
@@ -31,8 +32,9 @@ export const pricingFaq: FaqItem[] = [
   },
   {
     question: 'Do you offer payment plans?',
+    // The service pages' answer (services.ts PAYMENT_PLANS_FAQ) in its plainer words, with the schedule agreed with you.
     answer:
-      'Yes. We usually split a project into milestone payments: a deposit to start, a payment mid-project and a final payment at launch. We can agree a schedule that fits your cash flow.',
+      'Yes. We usually split a project into three payments: a deposit to start, one in the middle and one at launch. We can agree a schedule with you that fits your cash flow.',
   },
   {
     question: 'Can we pay monthly instead of per project?',

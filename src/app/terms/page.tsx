@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/og';
 import JsonLd from '@/components/seo/JsonLd';
 import { pageGraph } from '@/lib/schema';
 import { absoluteUrl } from '@/config/routes';
@@ -22,6 +23,7 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   alternates: { canonical: absoluteUrl(PATH) },
   openGraph: {
+    images: [OG_IMAGE],
     type: 'website',
     title: 'Terms of use | MAPL TECH',
     description: DESCRIPTION,

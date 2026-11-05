@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/og';
 import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
 import { REDESIGN_DATE } from '@/config/routes';
@@ -27,6 +28,7 @@ export const metadata: Metadata = {
   description: CAREERS.description,
   alternates: { canonical: URL },
   openGraph: {
+    images: [OG_IMAGE],
     type: 'website',
     url: URL,
     title: 'Careers | MAPL TECH',

@@ -35,8 +35,8 @@ const highOf = (label: string): string => {
 /* ------------------------------------------------------------------ */
 
 // The live site's title and purpose, kept: systems, automation and infrastructure for agencies.
-export const HOME_PAGE_NAME = `${siteConfig.name} | Systems, Automation & Infrastructure for Agencies`;
-export const HOME_PAGE_DESCRIPTION = `The engineering backbone behind digital agencies: websites, AI automation, internal tools and cloud, built by our engineers in Toronto, Lagos and Kingston.`;
+export const HOME_PAGE_NAME = `${siteConfig.name} | White-Label Web, Automation & Cloud for Agencies`;
+export const HOME_PAGE_DESCRIPTION = `The engineering backbone behind digital agencies: we work with your team on websites, AI automation, internal tools and cloud, from Toronto, Lagos and Kingston.`;
 
 /* ------------------------------------------------------------------ */
 /* FAQ (also the FAQPage JSON-LD source)                               */
@@ -65,7 +65,7 @@ const bundleHigh = highOf(pricing.bundles[pricing.bundles.length - 1].price);
  */
 function pricingFaq(): FaqEntry {
   const list = {
-    lead: 'White-label means we do the work and your agency delivers it under its own name. Our prices are public:',
+    lead: 'White-label means your agency sells and delivers the work under its own name, and we build it with your team. Our prices are public:',
     points: [
       `${SERVICE_META.web.label} from ${fromOf(web[0].price)}`,
       `${SERVICE_META.automation.label} from ${fromOf(automation[0].price)}`,
@@ -109,6 +109,6 @@ export const FAQ_ITEMS: readonly FaqEntry[] = [
   {
     question: 'What happens after launch?',
     answer:
-      'Every package includes support after launch, for 30 to 90 days depending on the package. After that, a monthly plan keeps everything updated, fixed and improving.',
+      'Every package includes 30 to 90 days of support after launch, depending on the package. After that, you can choose a monthly plan for updates, fixes and improvements.',
   },
 ];
