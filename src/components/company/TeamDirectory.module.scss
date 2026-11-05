@@ -110,6 +110,39 @@
   }
 }
 
+// A real photo in the initials' place and size.
+.photo {
+  grid-area: initials;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  @include md {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+// In the title's place until a title is approved: a plain text link.
+.profile {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $color-ink;
+  }
+
+  // On paper, as the careers link's ring.
+  &:focus-visible {
+    outline: $focus-ring-width solid $color-red-ink;
+    outline-offset: 2px;
+  }
+}
+
 .name {
   grid-area: name;
   align-self: end;

@@ -90,7 +90,7 @@
 }
 
 .note {
-  margin: 0;
+  --trust-gap: 0px; // the .ask grid gap (24px to 36px) spaces it from the buttons
   // PageHeader's note measure, so the trust line never runs past the lede and the rule under it.
   max-width: 38em;
   font-size: $font-size-base;

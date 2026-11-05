@@ -1,18 +1,30 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-// One item a line at every width, the checks in one column: side by side, three
-// items split two and one beside the buttons.
-.list {
+// One item a line at every width, the checks in one column.
+//
+// The list owns its gap from the buttons above it: 28px, 24px on phones (Leshan, Nov 5, 2026,
+// twice: "too close to the button"). Pages never set its margin, so the order the stylesheets
+// load in cannot close the gap. An ask whose layout already spaces its children (a grid or flex
+// gap) sets --trust-gap on the list's class instead: 0px, or the remainder of its own gap.
+// The type defaults sit in :where(), so a page's class always wins over them.
+:where(.list) {
   display: grid;
   justify-items: start;
   gap: 6px;
-  margin: 0;
   padding: 0;
   list-style: none;
   font-size: $font-size-base; // 17px: the phone floor for sentence copy
   line-height: 1.4;
   color: $color-fg-muted;
+}
+
+.list {
+  margin: var(--trust-gap, 28px) 0 0;
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    margin-top: var(--trust-gap, 24px);
+  }
 }
 
 .item {
@@ -34,11 +46,43 @@
   stroke-linejoin: round;
 }
 
+// The Google rating's star sits in the checks' column; filled, so it reads as a rating.
+.star {
+  fill: $color-red-text;
+  stroke: none;
+}
+
+// The rating is the one line that links (to the Google profile, in a new tab): underlined,
+// in the list's own colour, brighter on hover.
+.ratingLink {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: rgba($color-fg, 0.4);
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+
+  &:hover {
+    color: $color-fg;
+    text-decoration-color: currentColor;
+  }
+
+  @include focus-ring;
+}
+
 // The crimson close: small text on crimson is solid white only (7.56:1).
 .list[data-tone='band'] {
   color: $color-white;
 
   .check {
     stroke: $color-white;
+  }
+
+  .star {
+    fill: $color-white;
+  }
+
+  .ratingLink {
+    text-decoration-color: rgba($color-white, 0.6);
   }
 }

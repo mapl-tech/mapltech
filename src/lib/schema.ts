@@ -42,7 +42,7 @@ import type {
   WebPage,
   WebSite,
 } from 'schema-dts';
-import { siteConfig, pricing, portfolioProjects, labsProjects, careers } from '@/config/site';
+import { siteConfig, pricing, portfolioProjects, labsProjects, careers, googleReviews } from '@/config/site';
 import { executives, teamMembers, type Executive, type TeamMember } from '@/config/team';
 import type { BlogPost } from '@/data/blog-posts';
 import { SITE_URL, absoluteUrl, routeLastModified, toISODate } from '@/config/routes';
@@ -373,7 +373,8 @@ export function organization(): Organization {
     founder: executives.map(personRef),
     address: { '@type': 'PostalAddress', addressCountry: 'CA' },
     contactPoint: [contactPoint()],
-    sameAs: Object.values(siteConfig.social),
+    // The social profiles and the Google Business Profile (no AggregateRating: Google ignores self-served reviews).
+    sameAs: [...Object.values(siteConfig.social), googleReviews.url],
     knowsAbout: SERVICE_LINES.map((line) => line.shortName),
     areaServed: SERVICE_CITIES.map(cityNode),
   };

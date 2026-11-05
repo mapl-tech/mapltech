@@ -96,7 +96,7 @@ export default function PageHeader({
               {lede ? <div className={styles.lede}>{lede}</div> : null}
               {actions ? <div className={styles.actions}>{actions}</div> : null}
               {note ? <p className={styles.note}>{note}</p> : null}
-              {trust?.length ? <TrustList items={trust} className={styles.trust} /> : null}
+              {trust?.length ? <TrustList items={trust} rating className={styles.trust} /> : null}
               {proof ? <QuoteLine className={styles.proof} /> : null}
             </div>
           ) : null}

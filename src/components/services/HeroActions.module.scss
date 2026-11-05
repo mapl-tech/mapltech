@@ -28,14 +28,14 @@
 }
 
 // The homepage hero's reassurance (flagship/Hero.module.scss .reassure): a full line of PageHeader's
-// wrapping actions row, 24px under the buttons (its 12px row gap plus 12px; 20px on phones), the
-// gap every trust checklist keeps from the button above it.
+// wrapping actions row, 28px under the buttons (its 12px row gap plus 16px; 24px on phones), the
+// gap every trust checklist keeps from the button above it (TrustList.module.scss).
 .note {
   flex-basis: 100%;
-  margin: 12px 0 0;
+  --trust-gap: 16px;
 
   @media (max-width: #{$breakpoint-sm - 1px}) {
-    margin-top: 8px;
+    --trust-gap: 12px;
   }
 
   // The lede measure (~65 characters a line; 38em ran 77): the trust line wraps into even lines.

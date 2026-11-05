@@ -3,11 +3,13 @@ export type Department = 'Engineering' | 'Product' | 'Design' | 'Operations' | '
 
 export interface TeamMember {
   name: string;
-  title: string;
+  /** Left out until the person approves one; the directory then shows the LinkedIn link alone. */
+  title?: string;
   country: Country;
-  department: Department;
-  bio: string;
+  department?: Department;
+  bio?: string;
   linkedin?: string;
+  /** A real photo in public/images/team; placeholder.jpg means none (initials are shown). */
   image?: string;
 }
 
@@ -51,13 +53,24 @@ export function displayName(member: { name: string; honorific?: string }): strin
 }
 
 export const teamMembers: TeamMember[] = [
-  // Canada. Leshan (Nov 5, 2026): Sahil Banati (linkedin.com/in/sahil-banati-a4172029b) is our
-  // only team member in Canada (the founders are in executives), so the three names listed here
-  // before were removed. Add Sahil with the title, photo and bio he approves.
+  // Canada. Leshan (Nov 5, 2026): "this is our only team member in Canada" (the founders are in
+  // executives), so the three placeholder names listed here before were removed. Name and
+  // LinkedIn as Leshan gave them; add a title, photo and bio once they are approved.
+  {
+    name: 'Sahil Banati',
+    country: 'Canada',
+    linkedin: 'https://www.linkedin.com/in/sahil-banati-a4172029b/',
+  },
 
-  // Nigeria. Leshan (Nov 5, 2026): Obong Uko (linkedin.com/in/obong-uko) is our only team
-  // member in Nigeria, so the three names listed here before were removed. Add Obong with the
-  // title, city, photo and bio he approves; until then the directory and llms.txt skip Nigeria.
+  // Nigeria. Leshan (Nov 5, 2026): "This is our only team member in Nigeria", so the three
+  // placeholder names listed here before were removed; then "Use Obong's image": set `image`
+  // to '/images/team/obong-uko.jpg' once that file is in public/images/team. Add a title and
+  // bio once they are approved.
+  {
+    name: 'Obong Uko',
+    country: 'Nigeria',
+    linkedin: 'https://www.linkedin.com/in/obong-uko/',
+  },
 
   // Jamaica
   {

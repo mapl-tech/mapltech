@@ -223,17 +223,12 @@ $short-band: max(30svh, 192px);
 }
 
 .reassure {
-  // 24px under the buttons (20px on phones): every trust checklist's gap from the button above it.
-  margin: 24px 0 0;
+  // Its gap from the buttons is the list's own (TrustList.module.scss: 28px, 24px on phones).
   font-size: $font-size-base; // 17px at every width, as the trust line beside every other ask
   line-height: 1.5;
   color: $color-fg-muted;
   // Three promises in two sentences: even lines, never "approach your clients." left alone on the last one.
   text-wrap: balance;
-
-  @media #{$portrait} and (max-width: $phone-max) {
-    margin-top: 20px;
-  }
 
   @include motion-ok {
     animation: rise 0.9s $ease-out 0.34s both;

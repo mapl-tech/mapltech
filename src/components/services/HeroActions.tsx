@@ -37,7 +37,7 @@ export default function HeroActions({
       <Link href={secondary.href} className={styles.secondary} data-cta-placement={`${page}_hero_secondary`}>
         {secondary.label}
       </Link>
-      {trust?.length ? <TrustList items={trust} className={styles.note} /> : null}
+      {trust?.length ? <TrustList items={trust} rating className={styles.note} /> : null}
     </>
   );
 }

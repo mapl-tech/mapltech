@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 import { countries, teamMembers } from '@/config/team';
@@ -28,13 +29,17 @@ function initialsOf(name: string): string {
     .toUpperCase();
 }
 
+/** A real photo, not the placeholder the unconfirmed records carry. */
+const photoOf = (image?: string) => (image && !image.includes('placeholder') ? image : null);
+
 /**
  * The rest of the team as listed in config/team.ts, set like a credits roll
  * on paper: grouped by country beside each office's live local time and the
- * office hours, name and title only, initials instead of photos. These
- * records carry placeholder photos and are not yet confirmed by the owner,
- * so nothing is added to them here (no bios, no Person JSON-LD, no claims)
- * and none of them is featured anywhere else on the site. The Nigeria and
+ * office hours, name and title only, initials unless the record has a real
+ * photo. Nothing is added to the records here (no bios, no Person JSON-LD,
+ * no claims) and none of them is featured anywhere else on the site. A
+ * member listed before their title is approved (Sahil Banati, Obong Uko,
+ * Nov 5, 2026) shows their LinkedIn profile in the title's place. The Nigeria and
  * Jamaica groups link to their branch pages. The sheet ends on the buyer's
  * ask, with one small line in plain ink under it for job seekers. The
  * `/team#canada`-style and `/team#name` anchors keep older deep links
@@ -78,16 +83,37 @@ export default function TeamDirectory() {
                   ) : null}
                 </div>
                 <ul className={styles.people} role="list">
-                  {group.members.map((member) => (
-                    <li key={member.name} id={slugify(member.name)} className={styles.member}>
-                      <span className={styles.initials} aria-hidden="true">
-                        {initialsOf(member.name)}
-                      </span>
-                      <span className={styles.name}>{member.name}</span>
-                      <span className="visually-hidden">, </span>
-                      <span className={styles.role}>{member.title}</span>
-                    </li>
-                  ))}
+                  {group.members.map((member) => {
+                    const photo = photoOf(member.image);
+                    return (
+                      <li key={member.name} id={slugify(member.name)} className={styles.member}>
+                        {photo ? (
+                          <Image src={photo} alt="" width={52} height={52} className={styles.photo} />
+                        ) : (
+                          <span className={styles.initials} aria-hidden="true">
+                            {initialsOf(member.name)}
+                          </span>
+                        )}
+                        <span className={styles.name}>{member.name}</span>
+                        {member.title || member.linkedin ? (
+                          <span className={styles.role}>
+                            <span className="visually-hidden">, </span>
+                            {member.title ?? (
+                              <a
+                                href={member.linkedin}
+                                className={styles.profile}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                data-cta-placement="team_directory_linkedin"
+                              >
+                                LinkedIn<span className="visually-hidden"> profile (opens in a new tab)</span>
+                              </a>
+                            )}
+                          </span>
+                        ) : null}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             );

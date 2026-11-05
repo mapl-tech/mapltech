@@ -208,7 +208,7 @@
 
 // The trust answers under the ask (TrustList sets the type).
 .trust {
-  margin-top: 24px; // every trust checklist's gap from the button above it
+  // Its gap from the buttons is the list's own (TrustList.module.scss: 28px, 24px on phones).
   max-width: 44em;
 }
 

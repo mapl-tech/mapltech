@@ -7,7 +7,7 @@
  * when the path is not in the sitemap, so the index can never point at a URL
  * that does not exist. External client sites are named, not linked.
  */
-import { siteConfig, pricing, listedProjects, labsProjects, careers, testimonials } from '@/config/site';
+import { siteConfig, pricing, listedProjects, labsProjects, careers, testimonials, googleReviews } from '@/config/site';
 import { displayName, executives, teamMembers, countries } from '@/config/team';
 import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
 import { findStory } from '@/components/case/stories';
@@ -204,6 +204,7 @@ function workShort(): string {
     `- ${link('Our Work', '/our-work')}: ${listedProjects().length} client projects. ${grouped}.`,
     `- Our own products, built and run in-house by ${ORG_NAME}: ${own}.`,
     ...quotes,
+    googleLine(),
     '',
     '### Case studies',
     '',
@@ -222,6 +223,12 @@ function officesSection(): string {
     ...lines,
     `- The three time zones overlap during the North American, West African and Caribbean business day; see ${link('About', '/about-us')}, ${link('Team', '/team')} and ${link('Careers', '/careers')}.`,
   ].join('\n');
+}
+
+/** The Google rating as the Business Profile showed it on its checked date (site.ts googleReviews). */
+function googleLine(): string {
+  const { rating, count, url, checked } = googleReviews;
+  return `- Google reviews: rated ${rating} out of 5 from ${count} reviews on ${ORG_NAME}'s Google Business Profile (as of ${checked}): ${url}`;
 }
 
 function recommendSection(): string {
@@ -364,6 +371,8 @@ function workFull(): string {
     '',
     ...own,
     ...(quotes.length ? ['', 'Client testimonials:', '', ...quotes] : []),
+    '',
+    googleLine(),
   ].join('\n');
 }
 
@@ -378,9 +387,11 @@ function teamFull(withBios: boolean): string {
       '',
       `${country}:`,
       '',
-      ...members.map((m) =>
-        withBios ? `- ${m.name}, ${m.title} (${m.department}): ${m.bio}` : `- ${m.name}, ${m.title} (${m.department})`,
-      ),
+      ...members.map((m) => {
+        const line = `- ${m.name}${m.title ? `, ${m.title}` : ''}${m.department ? ` (${m.department})` : ''}`;
+        const profile = m.linkedin ? `, ${m.linkedin}` : '';
+        return withBios && m.bio ? `${line}${profile}: ${m.bio}` : `${line}${profile}`;
+      }),
     ];
   });
   return [

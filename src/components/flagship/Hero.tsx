@@ -65,7 +65,7 @@ export default function Hero() {
           </div>
           {/* The ask and the trust line only: the testimonials are given in full
               in the track record below, where they are read, not skimmed. */}
-          <TrustList items={PRICE_TRUST_ITEMS} className={styles.reassure} />
+          <TrustList items={PRICE_TRUST_ITEMS} rating className={styles.reassure} />
         </div>
 
         <div className={styles.foot}>

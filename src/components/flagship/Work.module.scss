@@ -316,10 +316,10 @@ $card-wide: 920px;
 .askAction {
   display: grid;
   justify-items: start;
-  gap: 24px; // the trust checklist's gap from the button above it, as every ask keeps
+  gap: 28px; // the trust checklist's gap from the button above it, as every ask keeps
 
   @media (max-width: #{$breakpoint-sm - 1px}) {
-    gap: 20px;
+    gap: 24px;
   }
 }
 
@@ -343,5 +343,5 @@ $card-wide: 920px;
 }
 
 .askNote {
-  margin: 0;
+  --trust-gap: 0px; // the grid gap above spaces it
 }
