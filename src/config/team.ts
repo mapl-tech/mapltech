@@ -86,12 +86,13 @@ export const teamMembers: TeamMember[] = [
   },
 
   // Jamaica
+  // Leshan (Nov 5, 2026): "Make Andre williams a Full-stack Developer" (the old tourism bio no
+  // longer fits, so it went).
   {
     name: 'Andre Williams',
-    title: 'Tourism Platform Specialist',
+    title: 'Full-stack Developer',
     country: 'Jamaica',
     department: 'Engineering',
-    bio: 'Builds booking systems and hospitality technology platforms optimized for Caribbean tourism and travel industries.',
     image: '/images/team/placeholder.jpg',
   },
   // Leshan (Nov 5, 2026): "Make Keisha Brown a Project Manager" (the old frontend bio no longer
