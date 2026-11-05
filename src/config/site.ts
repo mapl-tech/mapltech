@@ -300,7 +300,11 @@ export const testimonials = [
     name: 'Alita Fabiano',
     company: 'LRO Staffing',
     role: 'Operations Director',
-    image: '/images/headshot-alita.jpg',
+    kind: 'client',
+    // Leshan, Nov 5, 2026: "Use Alita's real image and testimonial from Google". The photo shown
+    // here before (headshot-alita.jpg) was removed; none is shown until her real one is supplied.
+    // Then swap the quote for her Google review, word for word.
+    image: '',
   },
   // Not a client quote: this is the verdict of the August 2026 post-launch
   // accessibility audit of chhancr.ca (see caseStudies on the redesign branch).
@@ -311,6 +315,7 @@ export const testimonials = [
     name: 'Post-launch accessibility audit',
     company: 'CHHA-NCR relaunch',
     role: 'August 2026',
+    kind: 'audit',
     image: '',
   },
 ];

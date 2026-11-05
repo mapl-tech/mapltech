@@ -124,7 +124,8 @@ export interface CatalogVoice {
   name: string;
   /** "Operations Director, LRO Staffing". */
   role: string;
-  image: string;
+  /** The client's photo, when one is supplied. */
+  image?: string;
   /** The case study of the project the quote is about. */
   path: string;
   client: string;
@@ -138,7 +139,7 @@ export interface CatalogVoice {
 export function catalogVoice(): CatalogVoice | undefined {
   for (const entry of workEntries()) {
     const t = approvedTestimonialFor(entry);
-    if (t) return { quote: t.quote, name: t.name, role: `${t.role}, ${t.company}`, image: t.image, path: entry.path, client: entry.title };
+    if (t) return { quote: t.quote, name: t.name, role: `${t.role}, ${t.company}`, image: t.image || undefined, path: entry.path, client: entry.title };
   }
   return undefined;
 }

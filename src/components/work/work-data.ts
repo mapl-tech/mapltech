@@ -273,11 +273,7 @@ export function caseMedia(entry: WorkEntry): CaseMedia[] {
   }));
 }
 
-/**
- * A testimonial for this client, only when it carries a headshot (the
- * approved ones do; the drafted Kenneth Coghiel quote has an empty image and
- * is excluded until it is signed off).
- */
+/** The approved client quote for this client (site.ts `kind: 'client'`; the audit's verdict is not one). */
 export function approvedTestimonialFor(entry: WorkEntry): Testimonial | undefined {
-  return testimonials.find((t) => t.image && t.company === entry.title);
+  return testimonials.find((t) => t.kind === 'client' && t.company === entry.title);
 }

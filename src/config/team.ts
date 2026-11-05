@@ -53,22 +53,35 @@ export function displayName(member: { name: string; honorific?: string }): strin
 }
 
 export const teamMembers: TeamMember[] = [
-  // Canada. Leshan (Nov 5, 2026): "this is our only team member in Canada" (the founders are in
-  // executives), so the three placeholder names listed here before were removed. Name and
-  // LinkedIn as Leshan gave them; add a title, photo and bio once they are approved.
+  // Canada (the founders are in executives). The three placeholder names listed here before
+  // were removed (Nov 5, 2026). Names, titles and LinkedIn as Leshan gave them; add photos and
+  // bios once they are approved.
+  // Leshan (Nov 5, 2026): "Sahil is a Cloud Engineer".
   {
     name: 'Sahil Banati',
+    title: 'Cloud Engineer',
     country: 'Canada',
+    department: 'Engineering',
     linkedin: 'https://www.linkedin.com/in/sahil-banati-a4172029b/',
+  },
+  // Leshan (Nov 5, 2026): "Add Cristina Marin as a project manager on Canada".
+  {
+    name: 'Cristina Marin',
+    title: 'Project Manager',
+    country: 'Canada',
+    department: 'Operations',
   },
 
   // Nigeria. Leshan (Nov 5, 2026): "This is our only team member in Nigeria", so the three
   // placeholder names listed here before were removed; then "Use Obong's image": set `image`
-  // to '/images/team/obong-uko.jpg' once that file is in public/images/team. Add a title and
-  // bio once they are approved.
+  // to '/images/team/obong-uko.jpg' once that file is in public/images/team. Add a bio once
+  // one is approved.
+  // Leshan (Nov 5, 2026): "Obong is a WordPress developer".
   {
     name: 'Obong Uko',
+    title: 'WordPress Developer',
     country: 'Nigeria',
+    department: 'Engineering',
     linkedin: 'https://www.linkedin.com/in/obong-uko/',
   },
 

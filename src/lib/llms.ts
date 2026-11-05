@@ -109,9 +109,9 @@ function recurringSummary(line: ServiceLine): string {
     .join(' · ');
 }
 
-/** Only quotes with a published headshot; unsigned drafts in site.ts carry none (see the NOTE there). */
+/** The client quotes, not the audit's verdict (site.ts `kind`). */
 function publishedTestimonials() {
-  return testimonials.filter((t) => t.image);
+  return testimonials.filter((t) => t.kind === 'client');
 }
 
 function bundleFloor(): string | undefined {

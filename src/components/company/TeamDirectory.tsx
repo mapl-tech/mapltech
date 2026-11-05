@@ -38,8 +38,8 @@ const photoOf = (image?: string) => (image && !image.includes('placeholder') ? i
  * office hours, name and title only, initials unless the record has a real
  * photo. Nothing is added to the records here (no bios, no Person JSON-LD,
  * no claims) and none of them is featured anywhere else on the site. A
- * member listed before their title is approved (Sahil Banati, Obong Uko,
- * Nov 5, 2026) shows their LinkedIn profile in the title's place. The Nigeria and
+ * member with a LinkedIn profile (Sahil Banati, Obong Uko, Nov 5, 2026)
+ * has it linked after the title. The Nigeria and
  * Jamaica groups link to their branch pages. The sheet ends on the buyer's
  * ask, with one small line in plain ink under it for job seekers. The
  * `/team#canada`-style and `/team#name` anchors keep older deep links
@@ -98,7 +98,9 @@ export default function TeamDirectory() {
                         {member.title || member.linkedin ? (
                           <span className={styles.role}>
                             <span className="visually-hidden">, </span>
-                            {member.title ?? (
+                            {member.title}
+                            {member.title && member.linkedin ? <span aria-hidden="true"> · </span> : null}
+                            {member.linkedin ? (
                               <a
                                 href={member.linkedin}
                                 className={styles.profile}
@@ -108,7 +110,7 @@ export default function TeamDirectory() {
                               >
                                 LinkedIn<span className="visually-hidden"> profile (opens in a new tab)</span>
                               </a>
-                            )}
+                            ) : null}
                           </span>
                         ) : null}
                       </li>

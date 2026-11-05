@@ -141,7 +141,9 @@ export default function OurWorkPage() {
                 <p>“{voice.quote}”</p>
               </blockquote>
               <figcaption className={styles.quoteBy}>
-                <Image src={voice.image} alt="" width={56} height={56} className={styles.avatar} />
+                {voice.image ? (
+                  <Image src={voice.image} alt="" width={56} height={56} className={styles.avatar} />
+                ) : null}
                 <span>
                   <span className={styles.quoteName}>{voice.name}</span>
                   <span className={styles.quoteRole}>{voice.role}</span>

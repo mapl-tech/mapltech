@@ -341,7 +341,7 @@ export const PROOF_SECTION = {
 /**
  * The testimonials the live site publishes (site.ts `testimonials`), in full:
  * the approved client quote, then the CHHA-NCR post-launch audit's verdict,
- * which is attributed to the audit, not to a person (it has no photo, the
+ * which is attributed to the audit, not to a person (site.ts `kind`, the
  * test llms.ts uses too). A person reads "role, company"; the audit reads
  * "relaunch, month".
  */
@@ -349,7 +349,7 @@ export const VOICES = testimonials.map((t) => ({
   quote: t.quote,
   name: t.name,
   // The company's name held on one line (U+00A0), so "LRO Staffing" never splits.
-  detail: t.image ? `${t.role}, ${t.company.replace(/ /g, '\u00a0')}` : `${t.company}, ${t.role}`,
+  detail: t.kind === 'client' ? `${t.role}, ${t.company.replace(/ /g, '\u00a0')}` : `${t.company}, ${t.role}`,
   image: t.image || null,
 }));
 
