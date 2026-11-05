@@ -51,31 +51,9 @@ export function displayName(member: { name: string; honorific?: string }): strin
 }
 
 export const teamMembers: TeamMember[] = [
-  // Canada
-  {
-    name: 'Daniel Okafor',
-    title: 'Senior Full-Stack Engineer',
-    country: 'Canada',
-    department: 'Engineering',
-    bio: 'Leads AI integration and SaaS platform development, building scalable systems that power complex agency operations.',
-    image: '/images/team/placeholder.jpg',
-  },
-  {
-    name: 'Sarah Chen',
-    title: 'UX & Conversion Strategist',
-    country: 'Canada',
-    department: 'Design',
-    bio: 'Architects performance-driven design systems that translate business objectives into measurable conversion outcomes.',
-    image: '/images/team/placeholder.jpg',
-  },
-  {
-    name: 'Dwight Patterson',
-    title: 'AI Engineer',
-    country: 'Canada',
-    department: 'Engineering',
-    bio: 'Designs and implements AI-powered systems, intelligent automation workflows, and machine learning solutions that drive operational efficiency for agency clients.',
-    image: '/images/team/placeholder.jpg',
-  },
+  // Canada. Leshan (Nov 5, 2026): Sahil Banati (linkedin.com/in/sahil-banati-a4172029b) is our
+  // only team member in Canada (the founders are in executives), so the three names listed here
+  // before were removed. Add Sahil with the title, photo and bio he approves.
 
   // Nigeria. Leshan (Nov 5, 2026): Obong Uko (linkedin.com/in/obong-uko) is our only team
   // member in Nigeria, so the three names listed here before were removed. Add Obong with the
