@@ -1,14 +1,14 @@
 /**
  * Renders /llms.txt (concise) and /llms-full.txt (complete, capped at 80KB)
  * from the same data the pages use: siteConfig, pricing, portfolioProjects,
- * labsProjects, executives/teamMembers, careers and blogPosts.
+ * labsProjects, executives (staff are never named), careers and blogPosts.
  *
  * Every mapltech.com link goes through `link()`, which throws at build time
  * when the path is not in the sitemap, so the index can never point at a URL
  * that does not exist. External client sites are named, not linked.
  */
 import { siteConfig, pricing, listedProjects, labsProjects, careers, testimonials, googleReviews } from '@/config/site';
-import { displayName, executives, teamMembers, countries } from '@/config/team';
+import { displayName, executives, countries } from '@/config/team';
 import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
 import { findStory } from '@/components/case/stories';
 import { absoluteUrl, isSitemapPath, toISODate } from '@/config/routes';
@@ -394,31 +394,20 @@ function workFull(): string {
   ].join('\n');
 }
 
+/**
+ * The founders only: staff are never named in llms.txt or llms-full.txt (Leshan, Nov 5, 2026:
+ * "do not show my staff on the llms.txt page"). The /team page still lists them.
+ */
 function teamFull(withBios: boolean): string {
   const leaders = executives.map((exec) =>
     withBios ? `- **${displayName(exec)}**, ${exec.title}: ${exec.bio}` : `- **${displayName(exec)}**, ${exec.title}`,
   );
-  const byCountry = countries.flatMap((country) => {
-    const members = teamMembers.filter((m) => m.country === country);
-    if (members.length === 0) return [];
-    return [
-      '',
-      `${country}:`,
-      '',
-      ...members.map((m) => {
-        const line = `- ${m.name}${m.title ? `, ${m.title}` : ''}${m.department ? ` (${m.department})` : ''}`;
-        const profile = m.linkedin ? `, ${m.linkedin}` : '';
-        return withBios && m.bio ? `${line}${profile}: ${m.bio}` : `${line}${profile}`;
-      }),
-    ];
-  });
   return [
-    '## Leadership and team',
+    '## Leadership',
     '',
     `${link('Team', '/team')} · ${link('About', '/about-us')}`,
     '',
     ...leaders,
-    ...byCountry,
   ].join('\n');
 }
 
