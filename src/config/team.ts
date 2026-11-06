@@ -76,10 +76,11 @@ export const teamMembers: TeamMember[] = [
   // placeholder names listed here before were removed; then "Use Obong's image": set `image`
   // to '/images/team/obong-uko.jpg' once that file is in public/images/team. Add a bio once
   // one is approved.
-  // Leshan (Nov 5, 2026): "Obong is a WordPress developer".
+  // Leshan (Nov 5, 2026): "Obong is a WordPress developer"; then (Nov 6, 2026): "change Obong
+  // to Web Developer".
   {
     name: 'Obong Uko',
-    title: 'WordPress Developer',
+    title: 'Web Developer',
     country: 'Nigeria',
     department: 'Engineering',
     linkedin: 'https://www.linkedin.com/in/obong-uko/',
