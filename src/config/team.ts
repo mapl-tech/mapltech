@@ -73,9 +73,9 @@ export const teamMembers: TeamMember[] = [
   },
 
   // Nigeria. Leshan (Nov 5, 2026): "This is our only team member in Nigeria", so the three
-  // placeholder names listed here before were removed; then "Use Obong's image": set `image`
-  // to '/images/team/obong-uko.jpg' once that file is in public/images/team. Add a bio once
-  // one is approved.
+  // placeholder names listed here before were removed; then "Use Obong's image": his photo
+  // (from Leshan, Nov 7, 2026: an 800px studio portrait, cropped at its own pixels to a 340px
+  // square on his face for the 44-56px circle). Add a bio once one is approved.
   // Leshan (Nov 5, 2026): "Obong is a WordPress developer"; then (Nov 6, 2026): "change Obong
   // to Web Developer".
   {
@@ -83,6 +83,7 @@ export const teamMembers: TeamMember[] = [
     title: 'Web Developer',
     country: 'Nigeria',
     department: 'Engineering',
+    image: '/images/team/obong-uko.jpg',
     linkedin: 'https://www.linkedin.com/in/obong-uko/',
   },
 

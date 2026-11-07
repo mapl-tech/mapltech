@@ -81,6 +81,11 @@ function LenisSingleton() {
       if (!target || !lenis) return;
 
       event.preventDefault();
+      // Glide from where the page really is. Lenis aims at an element from its own record of the
+      // scroll, which a native scroll updates only when that scroll's event fires: a click in the
+      // same frame as one (a browser's or a tool's scroll-into-view before it clicks) aimed from the
+      // old position and parked the page far from the target (Nov 7, 2026, /nigeria's price rows).
+      if (Math.abs(lenis.animatedScroll - window.scrollY) > 1) lenis.scrollTo(window.scrollY, { immediate: true, force: true });
       lenis.scrollTo(target, {
         offset: -anchorOffset(target),
         onComplete: () => {

@@ -6,7 +6,7 @@ import PageHeader from '@/components/ui/PageHeader';
 import QuoteLine from '@/components/flagship/QuoteLine';
 import RegionalInquiry from '@/components/convert/RegionalInquiry';
 import Steps from '@/components/services/Steps';
-import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
+import { PROJECT_LABEL } from '@/components/layout/chrome';
 import { siteConfig } from '@/config/site';
 import { faqPage, getServiceLine, itemList, pageGraph, serviceId } from '@/lib/schema';
 import { SERVICE_META } from '@/lib/estimate';
@@ -14,7 +14,7 @@ import HeroActions from './HeroActions';
 import LocalTime from './LocalTime';
 import OfficeMap from './OfficeMap';
 import { OFFICE_HOURS_FACT } from './content';
-import { HERO_TRUST, startingFrom, type RegionConfig, type RegionFaq } from './regions';
+import { HERO_TRUST, INQUIRE_HREF, startingFrom, type RegionConfig, type RegionFaq } from './regions';
 import Reasons from './regional/Reasons';
 import { display } from './regional/display';
 import RegionalProof from './regional/RegionalProof';
@@ -43,7 +43,10 @@ export interface RegionalPageProps {
  * and jamaica pages should act as funnels and speak to the markets").
  *
  * One path, one ask ("Start a project"), in the order a buyer from that
- * market decides:
+ * market decides. Every ask on the page leads to the page's own form at its
+ * close (INQUIRE_HREF; Nov 7, 2026), so the reader stays in the market's
+ * funnel and the inquiry keeps its region; the header's button is the site's
+ * way to the full brief.
  *
  * 1. The hero: the market in the H1, the cities and who we work with in the
  *    lede, the ask, then the price floor (in US dollars), the fixed quote,
@@ -56,7 +59,7 @@ export interface RegionalPageProps {
  *    (Jamaica: MAPL Tours and its published results), else the site's own
  *    counts and published results, with no claim of local clients.
  * 4. The price: the four services, each with its own starting price and its
- *    own ask that opens the brief with that service chosen (?svc=), on paper.
+ *    own ask, which goes to the form with that service chosen, on paper.
  * 5. The market's questions, with the branch's contact lines.
  * 6. The close is the inquiry itself (Nov 5, 2026: "the Nigeria and Jamaica
  *    pages should have forms at the end so people can inquire"): on paper,
@@ -136,7 +139,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
         lede={<p>{region.hero.lede}</p>}
         actions={
           <HeroActions
-            primary={{ label: PROJECT_LABEL, href: PROJECT_HREF, placement: `${prefix}_hero_primary` }}
+            primary={{ label: PROJECT_LABEL, href: INQUIRE_HREF, placement: `${prefix}_hero_primary` }}
             secondary={{ ...region.hero.secondary, placement: `${prefix}_hero_secondary` }}
           />
         }
@@ -190,17 +193,19 @@ export default function RegionalPage({ region, title, description }: RegionalPag
                   </div>
                   <div className={styles.rowFoot}>
                     <p className={styles.rowMeta}>From {from} USD</p>
-                    <Link
-                      href={`${PROJECT_HREF}?svc=${row.service}`}
+                    {/* To the page's own form, with this service chosen in it (RegionalInquiry reads data-inquire-service). */}
+                    <a
+                      href={INQUIRE_HREF}
                       className={ed.action}
                       data-cta-placement={`${prefix}_services_${row.service}_project`}
+                      data-inquire-service={row.service}
                     >
                       {PROJECT_LABEL}
                       <span className="visually-hidden">: {name}</span>
                       <span aria-hidden="true" className={ed.arrow}>
                         <Arrow />
                       </span>
-                    </Link>
+                    </a>
                   </div>
                 </li>
               );
@@ -241,7 +246,7 @@ export default function RegionalPage({ region, title, description }: RegionalPag
 
       {/* The last ask, answered here: the inquiry form first (Sentinel: the form leads its section), then
           what happens next and the approved client quote beside the decision. */}
-      <section id="inquire" className={`${ed.paper} ${styles.inquiry}`} aria-labelledby="inquire-title" data-page-close="" data-header-quiet="">
+      <section id={INQUIRE_HREF.slice(1)} className={`${ed.paper} ${styles.inquiry}`} aria-labelledby="inquire-title" data-page-close="" data-header-quiet="">
         <div className={ed.inner}>
           <header className={ed.head}>
             <p className={ed.label}>Inquire</p>

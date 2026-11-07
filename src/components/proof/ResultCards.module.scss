@@ -1,0 +1,219 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// The editorial card's surface (company/Company.module.scss .card, the
+// homepage's work cards).
+$card-surface: #121214;
+
+// Published results as cards (ResultCards.tsx). The list lays its cards out by
+// its own room (a container query), never the viewport's, and sizes every
+// figure to the card it sits in.
+
+// ---------------------------------------------------------------- the list
+// One card a row on phones; two across from 34rem of room (tablets, and the
+// two-up columns at 1024px); three or four across from 68rem (1280px and up),
+// so four results read as one row. A lone card always takes the row, and from
+// 44rem lays itself out as one line (below).
+//
+// --cols, --gap and --pad describe the layout to the figures inside, which
+// size themselves to one card's content width: the list's width (100cqi)
+// shared by the columns, less the gaps and the card's padding.
+.wrap {
+  container: result-list / inline-size;
+}
+
+.list {
+  --cols: 1;
+  --gap: 16px;
+  --pad: 20px;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: var(--gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include rise-in($distance: 24px);
+}
+
+@container result-list (min-width: 34rem) {
+  .list {
+    --cols: 2;
+    --gap: 20px;
+    --pad: 24px;
+  }
+
+  .list[data-count='1'] {
+    --cols: 1;
+  }
+}
+
+@container result-list (min-width: 68rem) {
+  .list[data-count='3'] {
+    --cols: 3;
+  }
+
+  .list[data-count='4'] {
+    --cols: 4;
+  }
+}
+
+// ---------------------------------------------------------------- one card
+// The editorial card (#121214, a 1px ring). Its three parts sit on three rows
+// shared with the cards beside it (subgrid), so across a row every result,
+// every rule and every link starts on the same line, whatever wraps. Its link
+// covers it, so the whole card is one target; neighbouring cards are 16-20px
+// apart.
+.card {
+  --card-radius: clamp(18px, 2vw, 24px);
+  position: relative;
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  row-gap: 20px;
+  min-width: 0;
+  padding: var(--pad);
+  border-radius: var(--card-radius);
+  background: $card-surface;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07);
+  transition: box-shadow 0.3s ease;
+
+  &:hover,
+  &:focus-within {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22);
+  }
+}
+
+// The figure and its own words, one paragraph: read aloud as "100 Google
+// Lighthouse score for…", seen as the figure with its meaning right under it
+// (10px apart, against 20px to the next part and 16px to the next card).
+.result {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  margin: 0;
+}
+
+// Sized to one card's content width (--card), not to the viewport: 22% of it,
+// 40px to 56px, so the widest published figure ("~2,000", about 3.2em) keeps
+// to 70% of its card and no figure can reach past it at any width.
+.value {
+  --card: calc((100cqi - (var(--cols) - 1) * var(--gap)) / var(--cols) - 2 * var(--pad));
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(2.5rem, calc(var(--card) * 0.22), 3.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: $color-fg;
+  @include tabular;
+
+  // A secondary list (size="m", e.g. under a featured project whose own
+  // figures are smaller): 32px to 40px, so it never out-shouts the feature.
+  .list[data-size='m'] & {
+    font-size: clamp(2rem, calc(var(--card) * 0.12), 2.5rem);
+  }
+}
+
+.meaning {
+  font-size: $font-size-base;
+  line-height: 1.45;
+  color: $color-fg;
+  text-wrap: pretty;
+}
+
+// Whose result, and what was built, under a rule.
+.whose {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  margin: 0;
+  padding-top: 18px;
+  border-top: 1px solid $color-hairline-strong;
+}
+
+// A step under the result: the eye goes figure, its words, then whose.
+.client {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  line-height: 1.3;
+  color: $color-fg;
+}
+
+.built {
+  font-size: $font-size-base;
+  line-height: 1.4;
+  color: $color-fg-muted;
+}
+
+// The one way in, in words, on the card's last row. Its box stretches over
+// the card (position static, so the overlay is the card's, not the link's),
+// and the focus ring is drawn round the card.
+.read {
+  @include text-action($color-fg);
+  position: static;
+  align-self: end;
+  justify-self: start;
+  margin-top: -8px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--card-radius);
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      outline: $focus-ring;
+      outline-offset: 4px;
+    }
+  }
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.35s $ease-out-expo;
+
+  .read:hover & {
+    @include motion-ok {
+      transform: translateX(4px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- a lone card with room
+// One card across 44rem or more (a project under a feature): one line, the
+// figure beside its words on their first line, whose result after a rule,
+// the link at the line's end.
+@container result-list (min-width: 44rem) {
+  .list[data-count='1'] {
+    .card {
+      grid-row: auto;
+      grid-template-rows: none;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr) auto;
+      align-items: center;
+      column-gap: clamp(24px, 3vw, 48px);
+    }
+
+    .result {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: baseline;
+      column-gap: 20px;
+    }
+
+    .whose {
+      padding: 4px 0 4px clamp(20px, 2.5vw, 36px);
+      border-top: 0;
+      border-left: 1px solid $color-hairline-strong;
+    }
+
+    .read {
+      align-self: center;
+      margin-top: 0;
+    }
+  }
+}

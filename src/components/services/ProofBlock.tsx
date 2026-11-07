@@ -1,4 +1,4 @@
-import { ViewTransition, type CSSProperties } from 'react';
+import { ViewTransition, type CSSProperties, type ReactNode } from 'react';
 import Link from 'next/link';
 import { WORK_SECTION } from '@/components/flagship/content';
 import { BrowserFrame, DesktopShot, PhoneFrame } from './Frames';
@@ -17,11 +17,20 @@ import Arrow from '@/components/ui/Arrow';
  * Every fact is from stories.ts; a case with no published numbers shows what
  * was built instead. The approved client quote is in the page's hero (every
  * service page), so it is not repeated beside the lead case.
+ *
+ * Nov 7, 2026 (the proof pass after /nigeria's results ledger): every way
+ * into a case is a visible "Read the case study". The lead card's sits after
+ * its results, so the link follows the evidence it opens (on phones it sat a
+ * capture and ~700px above them); each further case is a row whose words
+ * say so too, the whole row its target, not an arrow circle alone. The
+ * section ends on one quiet next step, "See all our work"; the packages that
+ * follow carry the asks, so it adds no filled button.
  */
 export default function ProofBlock({ view }: { view: LayerView }) {
   const cases = proofCases(view);
   if (!cases.length) return null;
   const [lead, ...more] = cases;
+  const moreTitleId = `more-${view.slug}-title`;
 
   return (
     <section id="work" className={styles.work} aria-labelledby="work-title">
@@ -38,27 +47,19 @@ export default function ProofBlock({ view }: { view: LayerView }) {
 
         {more.length ? (
           <div className={styles.more}>
-            <h3 className={styles.moreLabel}>More {view.name} work</h3>
-            <ul className={styles.moreList} role="list">
+            <h3 id={moreTitleId} className={styles.moreLabel}>
+              More {view.name} work
+            </h3>
+            <ul className={styles.moreList} role="list" aria-labelledby={moreTitleId}>
               {more.map((item) => (
-                <li key={item.slug}>
-                  {/* Named "CHHA-NCR case study"; the one-line outcome is the description. */}
-                  <Link
-                    href={item.href}
-                    className={styles.moreLink}
-                    aria-labelledby={`more-${item.slug}`}
-                    aria-describedby={`more-${item.slug}-line`}
-                    data-cta-placement={`${view.slug}_case_${item.slug}`}
-                  >
-                    <span className={styles.moreKind}>{item.kind}</span>
-                    <span id={`more-${item.slug}`} className={styles.moreName}>
-                      {item.client}
-                      <span className="visually-hidden"> case study</span>
-                    </span>
-                    <span id={`more-${item.slug}-line`} className={styles.moreLine}>
-                      {item.headline}
-                    </span>
-                    <span className={styles.moreGo} aria-hidden="true">
+                <li key={item.slug} className={styles.moreItem}>
+                  <span className={styles.moreKind}>{item.kind}</span>
+                  <h4 className={styles.moreName}>{item.client}</h4>
+                  <p className={styles.moreLine}>{item.headline}</p>
+                  {/* The row's one link, in words; its box stretches over the row. */}
+                  <Link href={item.href} className={styles.moreRead} data-cta-placement={`${view.slug}_case_${item.slug}`}>
+                    Read the case study<span className="visually-hidden">: {item.client}</span>
+                    <span aria-hidden="true" className={styles.moreArrow}>
                       <Arrow />
                     </span>
                   </Link>
@@ -67,6 +68,15 @@ export default function ProofBlock({ view }: { view: LayerView }) {
             </ul>
           </div>
         ) : null}
+
+        <p className={styles.next}>
+          <Link href={WORK_SECTION.all.href} className={styles.all} data-cta-placement={`${view.slug}_work_all`}>
+            {WORK_SECTION.all.label}
+            <span aria-hidden="true" className={styles.allArrow}>
+              <Arrow />
+            </span>
+          </Link>
+        </p>
       </div>
     </section>
   );
@@ -74,10 +84,20 @@ export default function ProofBlock({ view }: { view: LayerView }) {
 
 function LeadCase({ item, view }: { item: ProofCase; view: LayerView }) {
   const diagram = view.exhibit === null;
+  const hasResults = item.results.length > 0;
   // What was built shows only when there are no published numbers to show.
-  const showStages = item.stages.length > 0 && item.results.length === 0;
+  const showStages = item.stages.length > 0 && !hasResults;
   // A stage text that opens with its own name would read the name twice; then the list goes without names.
   const named = !item.stages.some((stage) => stage.text.toLowerCase().startsWith(stage.name.toLowerCase()));
+
+  const read: ReactNode = (
+    <Link href={item.href} className={styles.read} data-cta-placement={`${view.slug}_case_${item.slug}`}>
+      Read the case study<span className="visually-hidden">: {item.client}</span>
+      <span aria-hidden="true" className={styles.readArrow}>
+        <Arrow />
+      </span>
+    </Link>
+  );
 
   return (
     <article className={styles.card} aria-labelledby={`case-${item.slug}`}>
@@ -97,12 +117,8 @@ function LeadCase({ item, view }: { item: ProofCase; view: LayerView }) {
             ))}
           </ul>
         ) : null}
-        <Link href={item.href} className={styles.read} data-cta-placement={`${view.slug}_case_${item.slug}`}>
-          Read the case study<span className="visually-hidden">: {item.client}</span>
-          <span aria-hidden="true" className={styles.readArrow}>
-            <Arrow />
-          </span>
-        </Link>
+        {/* No published numbers: the link follows what was built. */}
+        {hasResults ? null : read}
       </div>
 
       {diagram ? (
@@ -123,16 +139,20 @@ function LeadCase({ item, view }: { item: ProofCase; view: LayerView }) {
         </div>
       ) : null}
 
-      {item.results.length ? (
-        <dl className={styles.metrics} style={{ '--cols': item.results.length } as CSSProperties}>
-          {item.results.map((result) => (
-            // The term is what is counted, the value its number; CSS sets the number first.
-            <div key={result.label} className={styles.metric}>
-              <dt className={styles.metricLabel}>{result.label}</dt>
-              <dd className={styles.value}>{result.value}</dd>
-            </div>
-          ))}
-        </dl>
+      {hasResults ? (
+        // The results across the card's foot, then the link to the study they come from.
+        <div className={styles.foot}>
+          <dl className={styles.metrics} style={{ '--cols': item.results.length } as CSSProperties}>
+            {item.results.map((result) => (
+              // The term is what is counted, the value its number; CSS sets the number first.
+              <div key={result.label} className={styles.metric}>
+                <dt className={styles.metricLabel}>{result.label}</dt>
+                <dd className={styles.value}>{result.value}</dd>
+              </div>
+            ))}
+          </dl>
+          {read}
+        </div>
       ) : null}
     </article>
   );

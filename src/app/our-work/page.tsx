@@ -274,29 +274,34 @@ function Row({ item }: { item: CatalogItem }) {
  * first screen holds sourced proof, not an empty half. Text only: below 1024px
  * the rows follow the hero directly, so it is left out and the phone's first
  * screen stays text-led.
+ *
+ * Nov 7, 2026: each row reads as one unit, the figure with its own words on
+ * the same line ("100 Lighthouse accessibility"), then whose case it is, in
+ * words that say where the link goes ("LRO Staffing case study"). The rows set
+ * the client beside the figure and its meaning under the client, and the
+ * figures were sized by the viewport in a 90px column, so at 1288px "~50%" ran
+ * 6px past it into "MAPL Tours". The figures now share one column as wide as
+ * the widest of them (subgrid, max-content), so no figure can reach its words.
  */
 function HeroResults({ items }: { items: readonly CatalogItem[] }) {
   return (
     <section className={styles.heroResults} aria-labelledby="work-results-title">
       <h2 id="work-results-title" className={styles.heroResultsLabel}>
-        Published results
+        Results from {countWord(items.length)} case {items.length === 1 ? 'study' : 'studies'}
       </h2>
       <ul className={styles.heroResultRows} role="list">
         {items.map((item) =>
           item.result ? (
-            <li key={item.slug}>
-              {/* Read as "LRO Staffing: 100, Google Lighthouse accessibility score…"; set with the figure first. */}
-              <Link href={item.path} className={styles.heroResult} data-cta-placement={`work_hero_result_${item.slug}`}>
-                <span className={styles.heroResultClient}>
-                  {item.client}
-                  <span className="visually-hidden">:</span>
+            <li key={item.slug} className={styles.heroResult}>
+              <span className={styles.heroResultValue}>{item.result.value}</span>{' '}
+              {/* The case's short label ("Lighthouse accessibility"); the case page has it in full. */}
+              <span className={styles.heroResultMeaning}>{item.result.short ?? item.result.label}</span>
+              {/* The row's one link; its box stretches over the row. */}
+              <Link href={item.path} className={styles.heroResultLink} data-cta-placement={`work_hero_result_${item.slug}`}>
+                {item.client} case study
+                <span aria-hidden="true" className={styles.heroResultArrow}>
+                  <Arrow />
                 </span>
-                <span className={styles.heroResultValue}>
-                  {item.result.value}
-                  <span className="visually-hidden">,</span>
-                </span>
-                {/* The case's short label ("Lighthouse accessibility"); the case page has it in full. */}
-                <span className={styles.heroResultMeaning}>{item.result.short ?? item.result.label}</span>
               </Link>
             </li>
           ) : null,

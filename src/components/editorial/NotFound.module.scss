@@ -405,6 +405,8 @@
 }
 
 .placeArrow {
+  // Decoration only: clicks pass through to the row's link under it (Nov 7, 2026: clicking the arrow did nothing).
+  pointer-events: none;
   align-self: center;
   display: inline-grid;
   place-items: center;

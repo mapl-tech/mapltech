@@ -59,12 +59,26 @@ export default function RegionalInquiry({
   const [attempted, setAttempted] = useState(false);
   const [sent, setSent] = useState<{ email: string; need: string } | null>(null);
   const successRef = useRef<HTMLDivElement>(null);
+  const needRef = useRef<HTMLSelectElement>(null);
   const afterPress = useAfterPress();
   const done = Boolean(sent) && (status === 'success' || status === 'idle');
 
   useEffect(() => {
     if (done) successRef.current?.focus();
   }, [done]);
+
+  // A price row's "Start a project" jumps here (href="#inquire") carrying its service in
+  // data-inquire-service: choose it in "What do you need?", so the reader does not pick it twice.
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      const link = event.target instanceof Element ? event.target.closest('a[data-inquire-service]') : null;
+      const service = link?.getAttribute('data-inquire-service');
+      const select = needRef.current;
+      if (select && service && Array.from(select.options).some((option) => option.value === service)) select.value = service;
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, []);
 
   const onChange = (event: ChangeEvent<HTMLFormElement>) => {
     const target = event.target;
@@ -209,7 +223,7 @@ export default function RegionalInquiry({
           <label className={forms.label} htmlFor={id('need')}>
             What do you need?
           </label>
-          <select id={id('need')} name="need" className={forms.select} defaultValue="">
+          <select ref={needRef} id={id('need')} name="need" className={forms.select} defaultValue="">
             <option value="">{UNSURE}</option>
             {ESTIMATE_SERVICES.map((service) => (
               <option key={service} value={service}>

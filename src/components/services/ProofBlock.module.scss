@@ -68,7 +68,7 @@
 .body {
   @include shell;
   display: grid;
-  gap: clamp(56px, 8vw, 112px);
+  gap: clamp(32px, 4vw, 48px);
 }
 
 // ---------------------------------------------------------------- the lead case
@@ -163,7 +163,8 @@
   }
 }
 
-// The client's own words (QuoteLine), ruled off from the outcome above.
+// "Read the case study": after the results when the case publishes them
+// (the card's foot), else after what was built (the copy column).
 .read {
   @include text-action($color-fg);
   justify-self: start;
@@ -213,18 +214,31 @@
   min-width: 0;
 }
 
-// Published results across the foot of the card, as large as it allows.
-.metrics {
+// The card's foot: the published results across it, then the link to the
+// study they come from.
+.foot {
   display: grid;
+  justify-items: start;
+  gap: 24px;
+  min-width: 0;
+
+  @include lg {
+    grid-column: 1 / -1;
+  }
+}
+
+// Published results across the foot of the card, as large as each column
+// allows. The list is a container: its figures are sized to the list's width
+// over the number of columns, so every figure in the row is the same size.
+.metrics {
+  container-type: inline-size;
+  display: grid;
+  width: 100%;
   margin: 0;
   border-top: 1px solid $color-hairline-strong;
 
   @include md {
     grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
-  }
-
-  @include lg {
-    grid-column: 1 / -1;
   }
 }
 
@@ -260,8 +274,17 @@
   font-size: clamp(2.75rem, 1.7rem + 3.2vw, 4.75rem); // 44px -> 76px
   line-height: 0.9;
   letter-spacing: -0.045em;
+  white-space: nowrap;
   color: $color-fg;
   @include tabular;
+
+  // Side by side, the figures are sized to their columns (the list's width
+  // over --cols, less a column's 28px paddings), not to the viewport: the
+  // widest published one ("~2,000", ~3.2em) fits the narrowest middle column
+  // at 768px (139px of 154px).
+  @include md {
+    font-size: clamp(2.75rem, calc(21cqi / var(--cols, 3) - 12px), 4.75rem);
+  }
 }
 
 .metricLabel {
@@ -276,6 +299,7 @@
 .more {
   display: grid;
   gap: clamp(20px, 2.4vw, 28px);
+  margin-top: clamp(24px, 4vw, 64px);
 }
 
 .moreLabel {
@@ -291,38 +315,41 @@
   margin: 0;
   padding: 0;
   border-top: 1px solid $color-hairline-strong;
-
-  // 4px of each row sits outside its link: neighbouring hit areas 8px apart.
-  li {
-    padding: 4px 0;
-    border-bottom: 1px solid $color-hairline-strong;
-  }
 }
 
-.moreLink {
+// Phones and tablets: the sector, the name, the line, then "Read the case
+// study". From 1024px the sector over name · line · the link; from 1280px one
+// line: sector · name · line · the link (at 1024 four columns left the line
+// five lines deep beside the link's words). The link's box stretches over the
+// row, inset 4px top and bottom, so neighbouring rows' targets stay 8px apart
+// across the hairline.
+.moreItem {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
-    'kind go'
-    'name go'
-    'line go';
-  align-items: center;
-  gap: 8px 20px;
-  padding: 22px 0;
-  color: inherit;
-  text-decoration: none;
+    'kind'
+    'name'
+    'line'
+    'read';
+  gap: 8px;
+  padding: 26px 0 22px;
+  border-bottom: 1px solid $color-hairline-strong;
 
   @include lg {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 4fr) auto;
-    grid-template-areas: 'kind name line go';
-    column-gap: 40px;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) auto;
+    grid-template-areas:
+      'kind kind kind'
+      'name line read';
+    align-items: center;
+    gap: 12px 40px;
     padding: 28px 0;
   }
 
-  &:focus-visible {
-    outline: $focus-ring-width solid $color-red;
-    outline-offset: 4px;
-    border-radius: 6px;
+  @include xl {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 4fr) auto;
+    grid-template-areas: 'kind name line read';
+    padding: 32px 0;
   }
 }
 
@@ -333,6 +360,7 @@
 
 .moreName {
   grid-area: name;
+  margin: 0;
   font-family: $font-display;
   font-weight: 700;
   font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem);
@@ -346,44 +374,81 @@
 
 .moreLine {
   grid-area: line;
+  margin: 0;
   font-size: $font-size-base;
   line-height: 1.5;
   color: $color-text-body;
 }
 
-.moreGo {
-  grid-area: go;
-  display: inline-grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid $color-hairline-strong;
-  font-size: 1.15rem;
-  color: $color-fg;
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    transform 0.6s $ease-out-expo;
-}
+.moreRead {
+  @include text-action($color-fg);
+  position: static;
+  grid-area: read;
+  justify-self: start;
+  margin-top: 4px;
 
-.moreLink:hover,
-.moreLink:focus-visible {
-  .moreName {
-    color: $color-red-display;
-
-    @include motion-ok {
-      transform: translateX(10px);
-    }
+  @include lg {
+    margin-top: 0;
+    white-space: nowrap;
   }
 
-  .moreGo {
-    background: $color-red-fill;
-    border-color: $color-red-fill;
-    color: $color-white;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 4px 0;
+    border-radius: 6px;
+  }
 
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      outline: $focus-ring;
+      outline-offset: 4px;
+    }
+  }
+}
+
+.moreArrow {
+  display: inline-block;
+  transition: transform 0.4s $ease-out-expo;
+}
+
+// Hover and keyboard focus: the name steps right in crimson (large text, red-display 6.4:1).
+.moreItem:focus-within .moreName {
+  color: $color-red-display;
+}
+
+@include pointer-fine-motion {
+  .moreItem:hover {
+    .moreName {
+      color: $color-red-display;
+      transform: translateX(10px);
+    }
+
+    .moreArrow {
+      transform: translateX(4px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- the next step
+// One quiet way on for a reader who wants more proof; the packages below carry the asks.
+.next {
+  margin: 0;
+}
+
+.all {
+  @include text-action($color-fg);
+}
+
+.allArrow {
+  display: inline-block;
+  transition: transform 0.4s $ease-out-expo;
+
+  .all:hover & {
     @include motion-ok {
-      transform: rotate(-45deg);
+      transform: translateX(4px);
     }
   }
 }

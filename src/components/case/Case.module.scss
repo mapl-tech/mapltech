@@ -198,6 +198,7 @@ $phone-peek: 46px;
 }
 
 .glanceGrid {
+  container-type: inline-size; // sizes .glanceValue, as .resultGrid sizes .resultValue
   display: grid;
   grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
   gap: 16px;
@@ -223,7 +224,7 @@ $phone-peek: 46px;
 .glanceValue {
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(1.75rem, 8vw, 2.25rem);
+  font-size: min(clamp(1.75rem, 8vw, 2.25rem), calc(25cqi / var(--cols, 3))); // sized to the row, as .resultValue
   line-height: 1;
   letter-spacing: -0.04em;
   white-space: nowrap;
@@ -421,6 +422,10 @@ $phone-peek: 46px;
 }
 
 .resultGrid {
+  // The figures are sized to this row (a quarter of an average column, .resultValue), so a long
+  // one ("~2,000") never runs into the next and every figure in the row is the same size (Nov 7,
+  // 2026: "~2,000" overlapped "Live" at 1288px).
+  container-type: inline-size;
   display: grid;
   margin: clamp(28px, 4vw, 48px) 0 0;
   border-top: 1px solid $color-ink-hairline;
@@ -459,7 +464,8 @@ $phone-peek: 46px;
 .resultValue {
   font-family: $font-display;
   font-weight: 800;
-  font-size: clamp(4.25rem, 2rem + 7.4vw, 10rem); // 68px -> 160px
+  font-size: min(clamp(4.25rem, 2rem + 7.4vw, 10rem), calc(25cqi / var(--cols, 3))); // 68px -> 160px, at most a quarter of a column
+  white-space: nowrap;
   line-height: 0.88;
   letter-spacing: -0.05em;
   color: $color-ink;

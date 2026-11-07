@@ -141,6 +141,16 @@ export function startingFrom(service: EstimateService): string {
 export const REPLY_TIME = 'Within 24 hours';
 
 /**
+ * The page's own inquiry form (its close). Every "Start a project" on a
+ * regional page leads here, not to /contact-us (Nov 7, 2026): the page is the
+ * market's funnel (Leshan, Nov 5: "the Nigeria and Jamaica pages need their
+ * own forms that exist on the pages"), so the reader stays on it and every
+ * inquiry keeps its region (`source: '/nigeria'`). A price row's ask also
+ * chooses its service in the form (data-inquire-service).
+ */
+export const INQUIRE_HREF = '#inquire';
+
+/**
  * Under the hero's ask, in the order the doubts come: what it costs (the
  * public floor, in US dollars, so "$" is never read as naira or Jamaican
  * dollars), how the price is set, and how soon we answer. TrustList adds the
