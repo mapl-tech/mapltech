@@ -292,7 +292,7 @@ function contactSection(): string {
     `- Email: ${siteConfig.email}`,
     `- ${link('Contact page', '/contact-us')}. ${RESPONSE_TIME}`,
     `- ${link('Referral Program', '/referral')}: for people who want to introduce agencies to ${ORG_NAME}.`,
-    `- Social handle on Instagram, X, Facebook, LinkedIn and TikTok: mapltech.`,
+    `- Social handle on Instagram, X, LinkedIn and TikTok: mapltech. Facebook: ${siteConfig.social.facebook}`,
   ].join('\n');
 }
 

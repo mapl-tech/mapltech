@@ -11,7 +11,7 @@ export const siteConfig = {
   social: {
     instagram: 'https://instagram.com/mapltech',
     x: 'https://x.com/mapltech',
-    facebook: 'https://facebook.com/mapltech',
+    facebook: 'https://www.facebook.com/crownedspice',
     linkedin: 'https://linkedin.com/company/mapltech',
     tiktok: 'https://tiktok.com/@mapltech',
   },
