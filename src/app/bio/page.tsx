@@ -10,16 +10,18 @@ import VslPlayer from '@/components/bio/VslPlayer';
 import CallForm from '@/components/bio/CallForm';
 import BookButton from '@/components/bio/BookButton';
 import StickyBar from '@/components/bio/StickyBar';
-import { BIO_ORIGIN, CASES, CLOSE, FAQ, HERO, LEGAL, QUOTE, RATING, STEPS, VSL } from '@/components/bio/content';
+import ClientParade from '@/components/bio/ClientParade';
+import { BIO_ORIGIN, CASES, CLIENTS, CLOSE, FAQ, HERO, LEGAL, QUOTE, RATING, STEPS, VSL } from '@/components/bio/content';
 import styles from '@/components/bio/Bio.module.scss';
 
 /**
  * bio.mapltech.com (next.config.ts serves this page at the subdomain's root):
  * the video sales page for MAPL TECH's social bios, after
  * scalingprocess.com/vsl. One ask throughout ("Book my call", the call
- * request in CallForm), no site navigation, the founder's video first, then
- * how it works, the work, a client's words, the questions people ask and the
- * close. Not indexed: it is a funnel page, and mapltech.com is the site.
+ * request in CallForm), no site navigation, the founder's video first and
+ * the client logos under it, then how it works, the work, a client's words,
+ * the questions people ask and the close. Not indexed: it is a funnel page,
+ * and mapltech.com is the site.
  * Layout, copy and psychology: Sentinel's brief (scratchpad SPEC.md, Nov 19, 2026).
  */
 
@@ -120,6 +122,9 @@ export default function BioPage() {
               <QuoteLine className={styles.heroQuote} />
             </div>
           </div>
+
+          {/* The clients the homepage shows, straight after the first ask. */}
+          <ClientParade label={CLIENTS.label} logos={CLIENTS.logos} />
         </section>
 
         {/* ---- 2. How it works. */}

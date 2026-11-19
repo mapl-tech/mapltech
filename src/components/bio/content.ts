@@ -9,6 +9,7 @@
  */
 import { googleReviews, siteConfig, testimonials } from '@/config/site';
 import { findStory } from '@/components/case/stories';
+import { PROOF } from '@/components/flagship/content';
 import { BUDGET_FLOOR } from './questions';
 
 /** Where the page lives. src/app/bio is served at the subdomain's root (next.config.ts). */
@@ -129,9 +130,12 @@ export const CLOSE = {
   lede: 'Tell us what you’re building and your deadline. After a 20-minute call, you get one fixed price and an agreed launch date.',
 } as const;
 
+/** The client logos on mapltech.com's homepage (flagship PROOF.logos, the files in /images/clients/mono). */
+export const CLIENTS = { label: PROOF.clientsLabel, logos: PROOF.logos } as const;
+
 export const LEGAL = {
   company: 'MAPL TECH Inc.',
-  offices: 'Toronto · Lagos · Kingston',
+  offices: 'Canada · Nigeria · Jamaica',
   email: siteConfig.email,
   privacy: `${siteConfig.url}/privacy`,
   terms: `${siteConfig.url}/terms`,

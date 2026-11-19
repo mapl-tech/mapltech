@@ -114,7 +114,7 @@ export default function Footer() {
 
         <div className={styles.legal}>
           <p>
-            © {year} MAPL TECH Inc. <span className={styles.nowrap}>Toronto · Lagos · Kingston</span>
+            © {year} MAPL TECH Inc. <span className={styles.nowrap}>Canada · Nigeria · Jamaica</span>
           </p>
           <ul role="list">
             <li>

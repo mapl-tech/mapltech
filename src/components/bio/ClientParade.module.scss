@@ -1,0 +1,175 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// The client parade at the foot of the VSL page's hero (ClientParade): the
+// label and the Pause button on one line, then the marks in the page's
+// off-white (/images/clients/mono) sliding right to left. --mark is a square
+// logo's height; each scales from it. --loop-gap follows every mark, seam
+// included. Inside the page's 1280px shell; edge to edge on phones and tablets.
+// The smallest mark and gap, and the largest mark, come from parade.ts (set on
+// .clients by the component), where parade.spec.ts checks the seam with them.
+
+// Bio.module.scss's gutter and shell (parade.ts ROW_MAX is the shell less 2 x 40px).
+$gutter: clamp(16px, 4vw, 40px);
+$shell: 1280px;
+
+.clients {
+  --mark: clamp(var(--mark-min, 40px), 32px + 1vw, var(--mark-max, 48px));
+  --loop-gap: clamp(var(--gap-min, 36px), 3.5vw, 56px);
+  width: 100%;
+  max-width: $shell;
+  margin: clamp(56px, 7vw, 80px) auto 0;
+  padding: 0 $gutter;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.label {
+  @include mono-label($color-fg-muted);
+  margin: 0;
+}
+
+.toggle {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid $color-hairline-strong;
+  border-radius: $radius-full;
+  background: transparent;
+  color: $color-fg;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color $transition-fast, border-color $transition-fast;
+
+  &:hover {
+    background: rgba($color-fg, 0.08);
+    border-color: rgba($color-fg, 0.3);
+  }
+
+  @include focus-ring;
+}
+
+.toggleIcon {
+  flex: none;
+  fill: currentColor;
+}
+
+// An eased fade over each end ($edge of the row), so marks glide in and out.
+@function loop-fade($edge) {
+  @return linear-gradient(
+    90deg,
+    transparent,
+    rgba(#000, 0.3) $edge * 0.35,
+    rgba(#000, 0.75) $edge * 0.7,
+    #000 $edge,
+    #000 100% - $edge,
+    rgba(#000, 0.75) 100% - $edge * 0.7,
+    rgba(#000, 0.3) 100% - $edge * 0.35,
+    transparent
+  );
+}
+
+.loop {
+  display: flex;
+  margin-top: 16px;
+  padding-block: 4px;
+  overflow: hidden;
+  -webkit-mask-image: loop-fade(10%);
+  mask-image: loop-fade(10%);
+
+  // Phones and tablets: edge to edge of the screen.
+  @media (max-width: #{$breakpoint-lg - 1px}) {
+    margin-inline: calc(-1 * #{$gutter});
+    -webkit-mask-image: loop-fade(16%);
+    mask-image: loop-fade(16%);
+  }
+}
+
+// Four identical lists side by side, each sliding left by its own width.
+.list {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--loop-gap);
+  margin: 0;
+  padding: 0 var(--loop-gap) 0 0;
+  list-style: none;
+  // About 25-32px a second (one list is ~500px on phones, ~520-680px on desktop).
+  animation: bio-logo-loop 17s linear infinite;
+
+  @include md {
+    animation-duration: 18s;
+  }
+
+  @include lg {
+    animation-duration: 21s;
+  }
+
+  // Paused by the visitor, or resting off screen.
+  .loop:is([data-paused], [data-idle]) & {
+    animation-play-state: paused;
+  }
+
+  // Hover holds it still for a closer look (mouse and trackpad only).
+  @include pointer-fine {
+    .loop:hover & {
+      animation-play-state: paused;
+    }
+  }
+}
+
+@keyframes bio-logo-loop {
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.logo {
+  display: flex;
+  flex: none;
+  align-items: center;
+
+  img {
+    display: block;
+    width: auto;
+    height: calc(var(--mark) * var(--scale, 1));
+    opacity: 0.82;
+  }
+}
+
+// Reduced motion: one still row under its label (wrapping on phones), with no
+// copies, no fade and nothing to pause.
+@media (prefers-reduced-motion: reduce) {
+  .toggle {
+    display: none;
+  }
+
+  .loop {
+    margin-inline: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .list {
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    row-gap: 20px;
+    padding: 0;
+    animation: none;
+
+    &[aria-hidden] {
+      display: none;
+    }
+  }
+}
