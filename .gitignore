@@ -45,3 +45,7 @@ sentinel-ultra/
 
 # Raw logo drop folder (optimized copies live in public/images/clients/)
 client-logo/
+
+# The VSL master (4K HEVC, 30 MB, plays in Safari only). The site serves the H.264
+# encodes beside it (mapl-tech-vsl-v1-*.mp4), made from this file.
+public/images/VSL/MAPL-TECH-VSL.mp4

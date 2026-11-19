@@ -3,7 +3,7 @@ import { ViewTransition } from 'react';
 import type { ReactNode } from 'react';
 
 /**
- * Root template = the page-transition boundary (Next 16.3 App Router, React
+ * Site template (the (site) route group) = the page-transition boundary (Next 16.3 App Router, React
  * <ViewTransition>; no config flag exists or is needed in this version).
  *
  * The App Router keys this template by the top-level route segment, so a

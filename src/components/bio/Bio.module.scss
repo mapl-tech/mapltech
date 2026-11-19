@@ -1,0 +1,800 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// bio.mapltech.com: the site's tokens (warm near-black, Overpass over DM Sans,
+// crimson fills), on one quiet page with no navigation. Spacing on the 8px
+// scale: gutters 16px phone / 24px tablet / 40px desktop; sections 64px on
+// phones, 112px at most. Every text pair is the site's AAA set.
+
+$gutter: clamp(16px, 4vw, 40px);
+$section-y: clamp(64px, 9vw, 112px);
+$shell: 1280px;
+
+.shell {
+  width: 100%;
+  max-width: $shell;
+  margin: 0 auto;
+  padding-left: $gutter;
+  padding-right: $gutter;
+}
+
+// ---- Top bar: the wordmark only, centred.
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  border-bottom: 1px solid $color-hairline;
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    height: 56px;
+  }
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 8px;
+  border-radius: $radius-md;
+
+  img {
+    width: 132px;
+    height: auto;
+
+    @media (max-width: #{$breakpoint-md - 1px}) {
+      width: 116px;
+    }
+  }
+
+  @include focus-ring;
+}
+
+.main {
+  outline: none;
+}
+
+// ---- Hero.
+.hero {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(20px, 4vw, 56px) 0 $section-y;
+  overflow: hidden;
+
+  // The page light: one soft crimson bloom behind the video, nothing busy behind the text.
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -10%;
+    left: 50%;
+    width: min(1100px, 140vw);
+    aspect-ratio: 1.6;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba($color-red-deep, 0.22), transparent);
+    pointer-events: none;
+
+    @include lg {
+      left: 72%;
+    }
+  }
+}
+
+.heroGrid {
+  width: 100%;
+  max-width: $shell;
+  margin: 0 auto;
+  padding-left: $gutter;
+  padding-right: $gutter;
+  display: grid;
+  grid-template-areas:
+    'copy'
+    'media'
+    'ask';
+  row-gap: clamp(20px, 3vw, 28px);
+  justify-items: center;
+  text-align: center;
+
+  @include lg {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    // The video and its transcript link sit centred against the whole left column.
+    grid-template-areas:
+      'copy media'
+      'ask media';
+    column-gap: clamp(40px, 4.5vw, 72px);
+    row-gap: 32px;
+    justify-items: start;
+    text-align: left;
+  }
+}
+
+.heroCopy {
+  grid-area: copy;
+  display: grid;
+  justify-items: inherit;
+  gap: 16px;
+  max-width: 640px;
+
+  @include lg {
+    align-self: end;
+    gap: 20px;
+  }
+}
+
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: $radius-full;
+  border: 1px solid $color-hairline-strong;
+  background: rgba($color-fg, 0.05);
+  color: $color-fg;
+  font-size: 1rem;
+  font-weight: $font-weight-semibold;
+  transition: background-color $transition-fast, border-color $transition-fast;
+
+  &:hover {
+    background: rgba($color-fg, 0.1);
+    border-color: rgba($color-fg, 0.3);
+  }
+
+  @include focus-ring;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+
+  svg {
+    fill: $color-red-text;
+  }
+}
+
+.title {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(2.125rem, 1.45rem + 2.9vw, 3.75rem); // 34px -> 60px
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: $color-fg;
+}
+
+// Each sentence starts a line; the longer one balances over two on narrow screens.
+.titleLine {
+  display: block;
+  text-wrap: balance;
+}
+
+.lede {
+  margin: 0;
+  max-width: 34em;
+  font-size: $font-size-lede;
+  line-height: 1.5;
+  color: $color-text-body;
+  text-wrap: pretty;
+}
+
+.heroMedia {
+  grid-area: media;
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  max-width: 760px;
+
+  @include lg {
+    max-width: none;
+    align-self: center;
+  }
+}
+
+.heroAsk {
+  grid-area: ask;
+  display: grid;
+  justify-items: inherit;
+  width: 100%;
+  max-width: 460px;
+
+  @include lg {
+    max-width: none;
+    align-self: start;
+  }
+}
+
+.primary {
+  @include button-primary;
+  min-height: 56px;
+  padding: 0 32px;
+  font-size: $font-size-md;
+  box-shadow: 0 10px 30px -10px rgba($color-red-fill, 0.8);
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    width: 100%;
+  }
+
+  @include focus-ring;
+}
+
+.arrow {
+  display: inline-flex;
+
+  @include motion-ok {
+    transition: transform $transition-fast;
+
+    button:hover > & {
+      transform: translateX(3px);
+    }
+  }
+}
+
+.effort {
+  margin: 14px 0 0;
+  max-width: 30em;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-fg-muted;
+}
+
+.trust {
+  --trust-gap: 18px;
+  text-align: left;
+}
+
+.heroQuote {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid $color-hairline-strong;
+  width: 100%;
+  max-width: 460px;
+  text-align: left;
+}
+
+.transcript {
+  width: 100%;
+  text-align: left;
+
+  summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: $font-weight-semibold;
+    color: $color-fg;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-decoration-color: rgba($color-fg, 0.4);
+    list-style: none;
+    border-radius: 4px;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      @include arrow-glyph(down);
+      transition: transform $transition-fast;
+    }
+
+    &:hover {
+      text-decoration-color: currentColor;
+    }
+
+    @include focus-ring;
+  }
+
+  &[open] summary::before {
+    transform: rotate(180deg);
+  }
+
+  @media (max-width: #{$breakpoint-lg - 1px}) {
+    // Centred under the video (wrapping on the narrowest phones); the text left-aligned once open.
+    summary {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      column-gap: 8px;
+      width: 100%;
+    }
+  }
+}
+
+.transcriptMeta {
+  font-weight: $font-weight-regular;
+  color: $color-fg-muted;
+}
+
+.transcriptBody {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 16px 18px;
+  border-radius: $radius-lg;
+  background: $color-surface-1;
+  border: 1px solid $color-hairline;
+  font-size: $font-size-base;
+  line-height: 1.55;
+  color: $color-text-body;
+
+  p {
+    margin: 0;
+  }
+}
+
+// ---- Sections.
+.section {
+  padding: $section-y 0;
+  border-top: 1px solid $color-hairline;
+}
+
+.h2 {
+  margin: 0;
+  max-width: 18em;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem); // 32px -> 52px
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: $color-fg;
+  text-wrap: balance;
+}
+
+.sectionLede {
+  margin: 16px 0 0;
+  max-width: 34em;
+  font-size: $font-size-lede;
+  line-height: 1.5;
+  color: $color-text-body;
+}
+
+.steps {
+  margin-top: clamp(32px, 4vw, 48px);
+}
+
+// ---- Work.
+.workSection {
+  background: $color-surface-1;
+}
+
+.cases {
+  display: grid;
+  gap: 16px;
+  margin: clamp(32px, 4vw, 48px) 0 0;
+  padding: 0;
+  list-style: none;
+
+  @include md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+.case {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  border-radius: $radius-xl;
+  border: 1px solid $color-hairline-strong;
+  background: $color-ground;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-fg, 0.3);
+  }
+}
+
+.caseMedia {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-bottom: 1px solid $color-hairline;
+  background: $color-surface-2;
+}
+
+.caseImage {
+  object-fit: cover;
+  object-position: top center;
+
+  @include pointer-fine-motion {
+    transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+
+    .case:hover & {
+      transform: scale(1.025);
+    }
+  }
+}
+
+.caseBody {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: clamp(20px, 2.4vw, 28px);
+}
+
+.caseKind {
+  @include mono-label($color-fg-muted);
+  margin: 0;
+}
+
+.caseTitle {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-bold;
+  font-size: clamp(1.5rem, 1.25rem + 0.8vw, 1.875rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.caseLink {
+  color: $color-fg;
+
+  // The title's link covers the card, and its focus ring goes round the card.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: $radius-xl;
+  }
+
+  &:focus-visible {
+    outline: none;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+
+    // Inside the edge: the card clips anything outside its rounded corners.
+    &::after {
+      outline: 3px solid $color-red;
+      outline-offset: -3px;
+    }
+  }
+}
+
+.caseSummary {
+  margin: 0;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-text-body;
+}
+
+.caseResult {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 6px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid $color-hairline;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: $color-fg-muted;
+}
+
+.caseValue {
+  flex: none;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: 1.75rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: $color-red-display;
+  @include tabular;
+}
+
+.caseMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+
+  @include motion-ok {
+    svg {
+      transition: transform $transition-fast;
+    }
+
+    .case:hover & svg {
+      transform: translateX(3px);
+    }
+  }
+}
+
+.midAsk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  margin-top: clamp(32px, 4vw, 48px);
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+}
+
+.midNote {
+  margin: 0;
+  max-width: 30em;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-fg-muted;
+}
+
+// ---- The client's words.
+.quoteSection {
+  padding: $section-y $gutter;
+  border-top: 1px solid $color-hairline;
+}
+
+.quote {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.quoteMark {
+  fill: $color-red-text;
+}
+
+.quoteText {
+  margin: 0;
+
+  // A person speaking, not a second headline: the body face at a reading weight.
+  p {
+    margin: 0 auto;
+    max-width: 36em;
+    font-family: $font-body;
+    font-weight: $font-weight-medium;
+    font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem); // 20px -> 26px
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    color: $color-fg;
+    text-wrap: pretty;
+  }
+}
+
+.quoteBy {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+}
+
+.quotePhoto {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid $color-hairline-strong;
+}
+
+.quoteName {
+  display: block;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.quoteRole {
+  display: block;
+  font-size: 1rem;
+  color: $color-fg-muted;
+}
+
+// ---- Questions: the section's left edge, the answers at a reading width.
+.faq {
+  max-width: 860px;
+  margin-top: clamp(24px, 3vw, 40px);
+}
+
+// ---- The close: the site's crimson band (white on #A51832 is 7.56:1).
+.close {
+  background: $color-red-fill;
+  color: $color-white;
+}
+
+.closeInner {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: clamp(64px, 9vw, 112px) $gutter;
+  text-align: center;
+}
+
+.closeTitle {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-weight-extrabold;
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: $color-white;
+  text-wrap: balance;
+}
+
+.closeLede {
+  margin: 0;
+  max-width: 32em;
+  font-size: $font-size-lede;
+  line-height: 1.5;
+  color: $color-white;
+}
+
+.closeButton {
+  @include button-base;
+  min-height: 56px;
+  padding: 0 32px;
+  margin-top: 8px;
+  background: $color-white;
+  color: $color-ground;
+  font-size: $font-size-md;
+  box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.5);
+
+  &:hover {
+    background: $color-fg;
+  }
+
+  @include motion-ok {
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-white;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    width: 100%;
+  }
+}
+
+.closeTrust {
+  --trust-gap: 4px;
+  justify-items: center;
+
+  // The rating link's own focus ring is crimson by default: white on the crimson band.
+  a:focus-visible {
+    outline-color: $color-white;
+  }
+}
+
+// ---- Footer.
+.footer {
+  border-top: 1px solid $color-hairline;
+  padding: 32px 0 calc(32px + #{$safe-bottom});
+}
+
+.footerInner {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  max-width: $shell;
+  margin: 0 auto;
+  padding: 0 $gutter;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $color-fg-muted;
+
+  @include md {
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    justify-items: start;
+    text-align: left;
+  }
+}
+
+.footerCompany {
+  margin: 0;
+  color: $color-fg;
+}
+
+.footerOffices {
+  margin-left: 8px;
+  color: $color-fg-muted;
+}
+
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    color: $color-fg;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: rgba($color-fg, 0.4);
+
+    &:hover {
+      text-decoration-color: currentColor;
+    }
+
+    @include focus-ring;
+  }
+
+  @include md {
+    justify-self: center;
+  }
+}
+
+.copyright {
+  margin: 0;
+}
+
+// ---- The phone's sticky bar.
+.stickyBar {
+  position: fixed;
+  z-index: $z-action-bar;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 16px calc(10px + #{$safe-bottom});
+  background: rgba($color-ground, 0.94);
+  border-top: 1px solid $color-hairline-strong;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transform: translateY(110%);
+  visibility: hidden;
+  transition: transform 220ms ease-out, visibility 0s linear 220ms;
+
+  &[data-visible] {
+    transform: none;
+    visibility: visible;
+    transition: transform 220ms ease-out, visibility 0s;
+  }
+
+  @include reduced-motion {
+    transition: none;
+
+    &[data-visible] {
+      transition: none;
+    }
+  }
+
+  @include md {
+    display: none;
+  }
+
+  :global(html:has(dialog[data-call-form][open])) & {
+    display: none;
+  }
+}
+
+.stickyButton {
+  @include button-primary;
+  width: 100%;
+  min-height: 52px;
+  font-size: $font-size-md;
+
+  @include focus-ring;
+}
+
+// While the bar shows, keyboard focus and jumps stop above it (WCAG 2.4.11).
+@media (max-width: #{$breakpoint-md - 1px}) {
+  :global(html):has(.stickyBar[data-visible]) {
+    scroll-padding-bottom: 88px;
+  }
+}

@@ -15,7 +15,9 @@ export type LeadForm =
   | 'contact_form'
   | 'newsletter'
   | 'regional_inquiry_nigeria'
-  | 'regional_inquiry_jamaica';
+  | 'regional_inquiry_jamaica'
+  // The call request on bio.mapltech.com (src/components/bio/CallForm.tsx).
+  | 'bio_call_request';
 
 export interface LeadDetail {
   form: LeadForm;

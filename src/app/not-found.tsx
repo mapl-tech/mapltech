@@ -8,6 +8,7 @@ import { SERVICE_KEYS, SERVICE_NAMES } from '@/components/editorial/services';
 import NotFoundHint, { BrokenLinkReport, type HintPage } from '@/components/editorial/NotFoundHint';
 import styles from '@/components/editorial/NotFound.module.scss';
 import Arrow from '@/components/ui/Arrow';
+import SiteChrome from '@/components/layout/SiteChrome';
 
 /**
  * The site-wide 404 (any unmatched URL and every notFound() call), kept light:
@@ -46,7 +47,17 @@ const PLACES = [
 const SERVICE_PAGES: HintPage[] = SERVICE_KEYS.map((key) => ({ slug: SERVICE_META[key].slug, name: SERVICE_META[key].label }));
 const CASE_PAGES: HintPage[] = listedProjects().map((project) => ({ slug: project.slug, name: project.title }));
 
+// The root 404 renders inside the root layout only (the (site) group's layout is not above it),
+// so it brings the site's header and footer itself.
 export default function NotFound() {
+  return (
+    <SiteChrome>
+      <NotFoundPage />
+    </SiteChrome>
+  );
+}
+
+function NotFoundPage() {
   return (
     <section className={styles.page} aria-labelledby="nf-title">
       <div className={styles.light} aria-hidden="true" />

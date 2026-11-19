@@ -4,10 +4,6 @@ import Script from 'next/script';
 import { DM_Sans, Overpass } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import { HOME_PAGE_DESCRIPTION, HOME_PAGE_NAME } from '@/components/home/data';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import SmoothScroll from '@/components/ui/SmoothScroll';
-import MobileActionBar from '@/components/ui/MobileActionBar';
 import JsonLd from '@/components/seo/JsonLd';
 import Analytics from '@/components/analytics/Analytics';
 import { siteGraph } from '@/lib/schema';
@@ -190,18 +186,9 @@ export default function RootLayout({
       </head>
       <body>
         <Analytics />
-        <a href="#main" className="skip-to-content">
-          Skip to main content
-        </a>
-        {/* Lenis substrate: desktop, fine pointer, motion allowed. Renders no HTML. */}
-        <SmoothScroll />
-        <Header />
-        <main id="main" tabIndex={-1}>
-          {children}
-        </main>
-        <Footer />
-        {/* Mobile sticky action bar (md:hidden): estimate + call, shown once the hero CTA scrolls out. */}
-        <MobileActionBar />
+        {/* The page's frame comes from its route group: (site)/layout.tsx wraps mapltech.com's
+            pages in the header and footer (SiteChrome); bio/ (bio.mapltech.com) brings its own. */}
+        {children}
       </body>
     </html>
   );

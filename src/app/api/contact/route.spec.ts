@@ -40,6 +40,18 @@ describe('POST /api/contact email', () => {
     expect(body.text_body).toContain('Source: mapltech.com/nigeria');
   });
 
+  it('names a call request from bio.mapltech.com in its subject and its Source row', async () => {
+    const fetch = stub();
+    const res = await post({ ...lead, phone: '+234 803 123 4567', subject: 'A booking system · In 1 to 3 months', source: '/bio' });
+    expect(res.status).toBe(200);
+    const body = sentBody(fetch);
+    expect(body.subject).toBe('Call request from bio.mapltech.com: Chidi Okafor');
+    expect(body.text_body).toContain('Source: bio.mapltech.com');
+    expect(body.text_body).toContain('Phone: +234 803 123 4567');
+    expect(body.text_body).toContain('Subject: A booking system · In 1 to 3 months');
+    expect(body.custom_headers).toEqual([{ header: 'Reply-To', value: 'chidi@example.com' }]);
+  });
+
   it('keeps the other forms’ subjects, and ignores a source it does not know', async () => {
     const fetch = stub();
     await post({ ...lead, subject: 'Referral: Ada', source: '/elsewhere' });

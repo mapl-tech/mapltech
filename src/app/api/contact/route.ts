@@ -5,6 +5,9 @@ import { RECAPTCHA_ERRORS, verifyRecaptcha } from './verifyRecaptcha';
 const FAILED = 'Failed to send message. Please try again.';
 /** The pages whose inquiries are tagged by where they came from. */
 const REGIONAL_SOURCES = ['/nigeria', '/jamaica'] as const;
+/** The call request on bio.mapltech.com (src/app/bio): its own subject, so the inbox can filter it. */
+const BIO_SOURCE = '/bio';
+const BIO_HOST = 'bio.mapltech.com';
 
 /** A trimmed string field, '' for anything else, cut to `max` characters. */
 function text(value: unknown, max = 5000): string {
@@ -13,9 +16,11 @@ function text(value: unknown, max = 5000): string {
 
 /**
  * The JSON forms (the brief, the referral, the estimate email, the regional
- * inquiries). A regional inquiry says where it came from (`source`:
- * "/nigeria" or "/jamaica"), and its subject leads with that so the inbox
- * can filter on it: "Inquiry from /nigeria: <name>". Checks, in order,
+ * inquiries, the call request on bio.mapltech.com). A regional inquiry says
+ * where it came from (`source`: "/nigeria" or "/jamaica"), and its subject
+ * leads with that so the inbox can filter on it: "Inquiry from /nigeria:
+ * <name>"; the bio page sends `source: "/bio"` and arrives as "Call request
+ * from bio.mapltech.com: <name>". Checks, in order,
  * before anything is emailed: the honeypot
  * (a bot that fills the hidden "website" field gets a success and nothing is
  * sent), the required fields, then reCAPTCHA. Every visitor value is escaped
@@ -33,6 +38,7 @@ export async function POST(req: NextRequest) {
     const subject = text(body.subject, 200);
     const message = text(body.message);
     const source = REGIONAL_SOURCES.find((path) => path === text(body.source, 40));
+    const fromBio = text(body.source, 40) === BIO_SOURCE;
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: 'Name, email and message are required.' }, { status: 400 });
@@ -46,6 +52,7 @@ export async function POST(req: NextRequest) {
 
     const rows = [
       ...(source ? [{ label: 'Source', value: `mapltech.com${source}` }] : []),
+      ...(fromBio ? [{ label: 'Source', value: BIO_HOST }] : []),
       { label: 'Name', value: name },
       { label: 'Email', value: email, href: `mailto:${email}` },
       ...(phone ? [{ label: 'Phone', value: phone }] : []),
@@ -57,7 +64,9 @@ export async function POST(req: NextRequest) {
     const sent = await sendEmail({
       subject: source
         ? `Inquiry from ${source}: ${name}`
-        : subject
+        : fromBio
+          ? `Call request from ${BIO_HOST}: ${name}`
+          : subject
           ? `New Contact: ${subject} - from ${name}`
           : `New Contact Form Submission from ${name}`,
       html: `<h2>${escapeHtml('New Contact Form Submission')}</h2>${answersTable(rows)}`,
