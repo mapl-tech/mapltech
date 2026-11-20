@@ -10,15 +10,20 @@
 $panel: #050505;
 $line: rgba(245, 242, 238, 0.3);
 
-// The page behind does not scroll while the form is open.
-:global(html):has(.dialog[open]) {
+// The page behind does not scroll while the form is open, except while
+// Google's image check is up (CallForm sets data-captcha-open): it can be
+// taller than a phone held sideways, and its Verify button must be reachable.
+:global(html):not([data-captcha-open]):has(.dialog[open]) {
   overflow: hidden;
 }
 
 .dialog {
   // The dialog is the whole viewport (a click on it, outside the panel, closes);
-  // the panel is the visible box.
+  // the panel is the visible box. Opened with show() (CallForm.tsx says why),
+  // so it is not in the top layer: it stacks at the site's modal level, over
+  // the page and its sticky bar, and under Google's image check (2,000,000,000).
   position: fixed;
+  z-index: $z-modal;
   inset: 0;
   width: 100%;
   max-width: none;
@@ -36,7 +41,12 @@ $line: rgba(245, 242, 238, 0.3);
     place-items: center;
   }
 
-  &::backdrop {
+  // The dimmed, blurred page (a non-modal dialog has no ::backdrop): a layer
+  // under the panel, part of the dialog, so a click on it still closes.
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
     background: rgba(0, 0, 0, 0.74);
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
@@ -47,7 +57,7 @@ $line: rgba(245, 242, 238, 0.3);
       animation: panel-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
-    &[open]::backdrop {
+    &[open]::before {
       animation: fade-in 240ms ease both;
     }
   }
@@ -703,5 +713,38 @@ $line: rgba(245, 242, 238, 0.3);
   &:first-of-type {
     border-right: 0;
     border-radius: $radius-md;
+  }
+}
+
+// Short phones (an iPhone 13 in Safari is 390 x 664): a question with five
+// choices ran 25-55px past its box, so its OK sat under the bottom bar. The
+// step's vertical rhythm tightens here (choices 46px, still over the 44px
+// target; 8px between them; 16px around the list and OK), about 74px in all,
+// so every step fits at that height. Smaller screens (an iPhone SE, 375 x 547)
+// still scroll the step, as any page does there.
+@media (max-width: #{$breakpoint-md - 1px}) and (max-height: 720px) {
+  .body {
+    padding-top: 12px;
+  }
+
+  .number {
+    margin-bottom: 8px;
+  }
+
+  .hint {
+    margin-top: 8px;
+  }
+
+  .choices {
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .choice {
+    min-height: 46px;
+  }
+
+  .actions {
+    margin-top: 16px;
   }
 }

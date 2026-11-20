@@ -437,7 +437,7 @@ export default function VslPlayer() {
               type="button"
               className={styles.endPrimary}
               aria-haspopup="dialog"
-              onClick={() => openCallForm('vsl_end')}
+              onClick={(event) => openCallForm('vsl_end', event.currentTarget)}
             >
               {CTA_LABEL}
               <span aria-hidden="true" className={styles.endArrow}>

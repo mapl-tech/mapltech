@@ -18,6 +18,7 @@ import {
   type Question,
 } from './questions';
 import { OPEN_EVENT, readAttribution, readDraft, readWatch, track, writeAttribution, writeDraft, type OpenDetail } from './events';
+import { imageCheckUp, inertOutside } from './pageInert';
 import { BOOKING_URL, CTA_LABEL } from './vsl';
 import styles from './CallForm.module.scss';
 
@@ -30,8 +31,15 @@ import styles from './CallForm.module.scss';
  * sends through the site's own /api/contact (SMTP2GO, the honeypot and
  * reCAPTCHA when its keys are set), tagged "bio.mapltech.com".
  *
- * - A native <dialog> (showModal): the page behind is inert, Escape closes,
- *   and focus returns to the button that opened it.
+ * - A native <dialog>, opened with show(), not showModal(): a modal dialog sits
+ *   in the browser's top layer and makes everything outside it inert, and
+ *   Google draws its reCAPTCHA image check outside it (a child of <body>), so a
+ *   visitor Google challenged could neither see nor answer it and never send.
+ *   What the modal gave is kept by hand: the page behind is inert (every other
+ *   child of <body>, never Google's check), the dialog is aria-modal, Escape
+ *   and the Android back gesture (CloseWatcher) close it, the page does not
+ *   scroll, and focus returns to the button that opened it. Its z-index sits
+ *   under Google's (2,000,000,000), so the image check opens over the form.
  * - Choices answer with one tap (or the letter key, as on Typeform) and move
  *   on; arrow keys only select, so a keyboard user confirms with Enter.
  * - Answers are kept for the tab (sessionStorage), so closing it, or
@@ -48,6 +56,11 @@ interface Draft {
   step: number;
 }
 
+/** Chrome's close-request API (Escape, Android's back gesture), where the browser has it. */
+type CloseWatcherLike = { onclose: (() => void) | null; destroy: () => void };
+const closeWatcher = (): (new () => CloseWatcherLike) | undefined =>
+  (window as unknown as { CloseWatcher?: new () => CloseWatcherLike }).CloseWatcher;
+
 type Direction = 'forward' | 'back';
 
 export default function CallForm() {
@@ -56,6 +69,8 @@ export default function CallForm() {
   const bodyRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
   const advanceTimer = useRef<number | undefined>(undefined);
+  /** Gives the page back: undoes exactly what opening the form made inert (pageInert.ts). */
+  const restorePageRef = useRef<(() => void) | null>(null);
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState<Direction>('forward');
@@ -96,11 +111,24 @@ export default function CallForm() {
     setAnswers(next);
   }, []);
 
+  /**
+   * The page behind the open form, out of reach (what showModal did): every
+   * other child of <body> goes inert, except Google's reCAPTCHA layers, so its
+   * image check stays answerable (pageInert.ts has the rules and their tests).
+   */
+  const setPageInert = useCallback((on: boolean) => {
+    restorePageRef.current?.();
+    restorePageRef.current = null;
+    const dialog = dialogRef.current;
+    if (on && dialog) restorePageRef.current = inertOutside(dialog, Array.from(document.body.children));
+  }, []);
+
   const show = useCallback(
-    (placement: string) => {
+    (placement: string, opener?: HTMLElement) => {
       const dialog = dialogRef.current;
       if (!dialog || dialog.open) return;
-      openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      // The button that opened it, else whatever had focus (a #book link has neither).
+      openerRef.current = opener ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
       let resumed = false;
       if (status !== 'success') {
         const draft = readDraft<Draft>();
@@ -120,16 +148,20 @@ export default function CallForm() {
       setError('');
       setEditing(false);
       setDirection('forward');
-      dialog.showModal();
+      setPageInert(true);
+      dialog.show();
       setOpen(true);
       track('call_form_open', { placement, resumed });
     },
-    [reset, setAll, status],
+    [reset, setAll, setPageInert, status],
   );
 
   // Every "Book my call" button on the page, and a link to bio.mapltech.com/#book.
   useEffect(() => {
-    const onOpen = (event: Event) => show((event as CustomEvent<OpenDetail>).detail?.placement ?? 'unknown');
+    const onOpen = (event: Event) => {
+      const detail = (event as CustomEvent<OpenDetail>).detail;
+      show(detail?.placement ?? 'unknown', detail?.opener);
+    };
     window.addEventListener(OPEN_EVENT, onOpen);
     // A link to bio.mapltech.com/#book opens the form once the page is ready.
     const frame = window.location.hash === '#book' ? window.requestAnimationFrame(() => show('link')) : undefined;
@@ -164,17 +196,67 @@ export default function CallForm() {
     return () => window.cancelAnimationFrame(frame);
   }, [open, step, done]);
 
-  useEffect(() => () => window.clearTimeout(advanceTimer.current), []);
+  // Leaving the page with the form open (a link inside it) gives the page back.
+  useEffect(
+    () => () => {
+      window.clearTimeout(advanceTimer.current);
+      setPageInert(false);
+    },
+    [setPageInert],
+  );
 
   const close = useCallback(() => {
     window.clearTimeout(advanceTimer.current);
     dialogRef.current?.close();
   }, []);
 
+  // Android's back gesture closes the form, as it closes a modal dialog (Chrome's CloseWatcher).
+  useEffect(() => {
+    const Watcher = open ? closeWatcher() : undefined;
+    if (!Watcher) return;
+    const watcher = new Watcher();
+    watcher.onclose = close;
+    return () => watcher.destroy();
+  }, [open, close]);
+
+  // Google's image check can be taller than a phone held sideways: while it is up,
+  // the page scrolls, as it would anywhere else, so its Verify button can be reached.
+  // Google shows and hides it through the inline style of its layer, a child of
+  // <body>: so only <body>'s children, and only their style, are watched.
+  useEffect(() => {
+    if (!open) return;
+    const root = document.documentElement;
+    const children = () => Array.from(document.body.children) as HTMLElement[];
+    const sync = () => root.toggleAttribute('data-captcha-open', imageCheckUp(children()));
+    const styleWatch = new MutationObserver(sync);
+    const watch = () => {
+      for (const el of children()) styleWatch.observe(el, { attributes: true, attributeFilter: ['style'] });
+      sync();
+    };
+    const childWatch = new MutationObserver(watch);
+    childWatch.observe(document.body, { childList: true });
+    watch();
+    return () => {
+      childWatch.disconnect();
+      styleWatch.disconnect();
+      root.removeAttribute('data-captcha-open');
+    };
+  }, [open]);
+
   const onDialogClose = () => {
     setOpen(false);
     track('call_form_close', { step: done ? 'sent' : question?.id ?? 'review' });
+    // The page first, so the button that opened the form can take focus again.
+    setPageInert(false);
     openerRef.current?.focus({ preventScroll: true });
+  };
+
+  // Escape closes, as it closes a modal dialog (never mid-composition, for IME input).
+  const onDialogKeyDown = (event: KeyboardEvent<HTMLDialogElement>) => {
+    if (event.key === 'Escape' && !event.nativeEvent.isComposing) {
+      event.preventDefault();
+      close();
+    }
   };
 
   const goTo = useCallback((next: number, dir: Direction) => {
@@ -284,8 +366,10 @@ export default function CallForm() {
       ref={dialogRef}
       className={styles.dialog}
       aria-labelledby={titleId}
+      aria-modal="true"
       onClose={onDialogClose}
       onClick={onBackdrop}
+      onKeyDown={onDialogKeyDown}
       data-call-form=""
     >
       <div className={styles.panel} onKeyDown={onKeyDown}>

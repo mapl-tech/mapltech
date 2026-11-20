@@ -9,7 +9,9 @@ import styles from './Bio.module.scss';
  * once the hero's button has scrolled away, gone again when the closing ask
  * comes into view (it is the page's own last ask, and the bar would sit on
  * the footer after it). While the form is open the bar is hidden too (CSS).
- * Hidden means `inert`: never a stray tab stop.
+ * Hidden means `inert`: never a stray tab stop. The bar owns that attribute
+ * (data-own-inert), so the open form, which makes the rest of the page inert,
+ * leaves it alone and never gives a hidden bar its tab stop back.
  */
 export default function StickyBar() {
   const [heroPassed, setHeroPassed] = useState(false);
@@ -40,7 +42,7 @@ export default function StickyBar() {
   const visible = heroPassed && !closeReached;
 
   return (
-    <div className={styles.stickyBar} data-visible={visible ? '' : undefined} inert={!visible}>
+    <div className={styles.stickyBar} data-visible={visible ? '' : undefined} inert={!visible} data-own-inert="">
       <BookButton placement="bio_sticky_bar" className={styles.stickyButton} arrowClassName={styles.arrow} />
     </div>
   );

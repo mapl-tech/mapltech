@@ -16,10 +16,15 @@ export const OPEN_EVENT = 'bio:open-call-form';
 export interface OpenDetail {
   /** Which button opened it (analytics). */
   placement: string;
+  /**
+   * The button itself, where focus goes back when the form closes. Safari does
+   * not focus a button on click or tap, so the focused element cannot say.
+   */
+  opener?: HTMLElement;
 }
 
-export function openCallForm(placement: string): void {
-  window.dispatchEvent(new CustomEvent<OpenDetail>(OPEN_EVENT, { detail: { placement } }));
+export function openCallForm(placement: string, opener?: HTMLElement): void {
+  window.dispatchEvent(new CustomEvent<OpenDetail>(OPEN_EVENT, { detail: { placement, opener } }));
 }
 
 type Gtag = (command: 'event', name: string, params?: Record<string, unknown>) => void;

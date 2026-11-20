@@ -24,7 +24,7 @@ export default function BookButton({
       className={className}
       aria-haspopup="dialog"
       data-cta-placement={placement}
-      onClick={() => openCallForm(placement)}
+      onClick={(event) => openCallForm(placement, event.currentTarget)}
     >
       {CTA_LABEL}
       <span aria-hidden="true" className={arrowClassName}>
