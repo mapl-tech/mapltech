@@ -71,8 +71,9 @@ const SECTIONS: LegalSection[] = [
     title: 'Acceptance of terms',
     content: (
       <p>
-        By accessing and using the MAPL TECH website (mapltech.com) and our services, you agree to be bound by these
-        Terms of Use. If you do not agree to these terms, please do not use our website or services.
+        By accessing and using the website of MAPL TECH Inc. (&quot;MAPL TECH,&quot; &quot;we,&quot; &quot;our,&quot; or
+        &quot;us&quot;) at mapltech.com and our services, you agree to be bound by these Terms of Use. If you do not
+        agree to these terms, please do not use our website or services.
       </p>
     ),
   },
@@ -237,7 +238,7 @@ const SECTIONS: LegalSection[] = [
       <>
         <p>If you have any questions about these Terms of Use, please contact us at:</p>
         <p>
-          <strong>MAPL TECH</strong>
+          <strong>MAPL TECH Inc.</strong>
           <br />
           Email: <a href={legalMailto(QUESTION_SUBJECT)}>contact@mapltech.com</a>
         </p>

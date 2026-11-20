@@ -13,7 +13,6 @@ import { blogPosts, categories, type BlogPost } from '@/data/blog-posts';
 import { findStory } from '@/components/case/stories';
 import { absoluteUrl, isSitemapPath, toISODate } from '@/config/routes';
 import {
-  ORG_LEGAL_NAME,
   ORG_NAME,
   SERVICE_LINES,
   parsePrice,
@@ -165,7 +164,7 @@ function header(): string {
     '',
     'Key facts:',
     '',
-    `- Brand: ${ORG_NAME} (legal name ${ORG_LEGAL_NAME}). Tagline: "${siteConfig.tagline}".`,
+    `- Brand: ${ORG_NAME}. Tagline: "${siteConfig.tagline}".`,
     `- Leadership: ${leadership}.`,
     `- Offices: ${locations}. Also serves agencies in ${listJoin(served)} and beyond. Team members across ${listJoin(countries)}.`,
     `- Services: ${servicesLine}.`,

@@ -34,7 +34,6 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   keywords: [
     'MAPL TECH',
-    'MAPL TECH Inc',
     'mapltech',
     'digital agency infrastructure partner',
     'systems partner for digital agencies',

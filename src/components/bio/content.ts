@@ -134,7 +134,8 @@ export const CLOSE = {
 export const CLIENTS = { label: PROOF.clientsLabel, logos: PROOF.logos } as const;
 
 export const LEGAL = {
-  company: 'MAPL TECH Inc.',
+  // "Inc." appears only on /privacy and /terms (Leshan, Nov 19, 2026).
+  company: 'MAPL TECH',
   offices: 'Canada · Nigeria · Jamaica',
   email: siteConfig.email,
   privacy: `${siteConfig.url}/privacy`,

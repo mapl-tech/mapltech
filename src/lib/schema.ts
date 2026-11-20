@@ -63,7 +63,9 @@ export const LOGO_ID = `${SITE_URL}/#logo`;
 export const BLOG_ID = `${SITE_URL}/blog#blog`;
 
 export const ORG_NAME = siteConfig.name; // 'MAPL TECH' in prose
-export const ORG_LEGAL_NAME = 'MAPL TECH Inc.'; // legalName only
+// Matching only (authorRef). "Inc." appears only on /privacy and /terms (Leshan, Nov 19, 2026),
+// so it is not emitted as legalName or anywhere else.
+export const ORG_LEGAL_NAME = 'MAPL TECH Inc.';
 export const ORG_ALTERNATE_NAMES = ['mapltech'];
 export const LOGO_URL = `${SITE_URL}/images/mapl-tech-logo.svg`;
 
@@ -359,7 +361,6 @@ export function organization(): Organization {
     '@type': 'Organization',
     '@id': ORG_ID,
     name: ORG_NAME,
-    legalName: ORG_LEGAL_NAME,
     alternateName: ORG_ALTERNATE_NAMES,
     url: SITE_URL,
     logo: logoImage(),

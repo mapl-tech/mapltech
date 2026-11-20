@@ -77,9 +77,9 @@ const SECTIONS: LegalSection[] = [
     title: 'Introduction',
     content: (
       <p>
-        MAPL TECH (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This
-        Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website
-        at mapltech.com or engage with our services.
+        MAPL TECH Inc. (&quot;MAPL TECH,&quot; &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to
+        protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your
+        information when you visit our website at mapltech.com or engage with our services.
       </p>
     ),
   },
@@ -248,7 +248,7 @@ const SECTIONS: LegalSection[] = [
       <>
         <p>If you have any questions about this Privacy Policy, please contact us at:</p>
         <p>
-          <strong>MAPL TECH</strong>
+          <strong>MAPL TECH Inc.</strong>
           <br />
           Email: <a href={legalMailto(QUESTION_SUBJECT)}>contact@mapltech.com</a>
         </p>
