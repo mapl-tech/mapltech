@@ -93,3 +93,73 @@
   color: $color-text-body;
   line-height: $line-height-relaxed;
 }
+
+// ---- Numbered rows (`numbered`): an index in a fixed 24px column before each
+// question (tabular figures, so 1-9 line up; 10+ still fit), muted (#B4B2AF on
+// #111: 8.9:1), crimson text on the open row (#FF8397 on #111: 8.0:1; both
+// computed, AAA). The list answers to its own width (a container query), not
+// the viewport's: 560px and wider, each answer starts under its question (the
+// row's 32px padding + the index + the 16px gap); narrower, the row tightens.
+$number-width: 24px;
+$numbered-wide: 560px;
+
+.numbered {
+  container-type: inline-size;
+}
+
+.number {
+  flex: none;
+  width: $number-width;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: $color-text-muted;
+  transition: color $transition-fast;
+
+  .item[open] & {
+    color: $color-red-text;
+  }
+}
+
+.numbered .question {
+  flex: 1 1 auto;
+}
+
+@container (min-width: #{$numbered-wide}) {
+  .numbered .content {
+    padding-left: calc(#{$space-xl} + #{$number-width} + #{$space-md});
+  }
+}
+
+// Narrow (a phone): a tighter row (20px in, 12px between index, question and
+// icon), so a question gets ~240px on a 390px screen rather than ~210px. The
+// red rule (styles/_motion.scss) moves in with it.
+@container (max-width: #{$numbered-wide - 1px}) {
+  .numbered .trigger {
+    gap: 12px;
+    padding-inline: 20px;
+  }
+
+  .numbered .content {
+    padding-inline: 20px;
+  }
+
+  .numbered .item > .trigger::after {
+    left: 20px;
+    right: 20px;
+  }
+}
+
+// Mouse and trackpad: a closed row answers the pointer (its edge and index
+// brighten), so it reads as something to open.
+@media (hover: hover) and (pointer: fine) {
+  .numbered .item:not([open]):hover {
+    border-color: rgba($color-fg, 0.18);
+
+    .number {
+      color: $color-fg;
+    }
+  }
+}

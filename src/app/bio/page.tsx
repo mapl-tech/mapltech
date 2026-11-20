@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Accordion from '@/components/ui/Accordion';
 import Arrow from '@/components/ui/Arrow';
 import Steps from '@/components/services/Steps';
 import TrustList from '@/components/flagship/TrustList';
@@ -11,7 +10,8 @@ import CallForm from '@/components/bio/CallForm';
 import BookButton from '@/components/bio/BookButton';
 import StickyBar from '@/components/bio/StickyBar';
 import ClientParade from '@/components/bio/ClientParade';
-import { BIO_ORIGIN, CASES, CLIENTS, CLOSE, FAQ, HERO, LEGAL, QUOTE, RATING, STEPS, VSL } from '@/components/bio/content';
+import BioFaq from '@/components/bio/BioFaq';
+import { BIO_ORIGIN, CASES, CLIENTS, CLOSE, HERO, LEGAL, QUOTE, RATING, STEPS, VSL } from '@/components/bio/content';
 import styles from '@/components/bio/Bio.module.scss';
 
 /**
@@ -210,15 +210,10 @@ export default function BioPage() {
           </section>
         ) : null}
 
-        {/* ---- 5. The questions people ask before they book. */}
+        {/* ---- 5. The questions people ask before they book, with the ask beside them. */}
         <section className={styles.section} aria-labelledby="bio-faq">
           <div className={styles.shell}>
-            <h2 id="bio-faq" className={styles.h2}>
-              Questions people ask
-            </h2>
-            <div className={styles.faq}>
-              <Accordion items={FAQ.map((item) => ({ question: item.question, answer: item.answer }))} defaultOpen={0} />
-            </div>
+            <BioFaq />
           </div>
         </section>
 

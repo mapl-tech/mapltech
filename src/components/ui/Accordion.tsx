@@ -30,6 +30,12 @@ export interface AccordionProps {
   multiple?: boolean;
   /** Index of the item rendered open on first paint. */
   defaultOpen?: number;
+  /**
+   * An index (1, 2…) before each question, and each answer set under its
+   * question rather than under the index. Decorative: hidden from assistive
+   * tech, so each question's name is unchanged.
+   */
+  numbered?: boolean;
   className?: string;
 }
 
@@ -41,12 +47,19 @@ function PlusIcon() {
   );
 }
 
-export default function Accordion({ items, name, multiple = false, defaultOpen, className = '' }: AccordionProps) {
+export default function Accordion({
+  items,
+  name,
+  multiple = false,
+  defaultOpen,
+  numbered = false,
+  className = '',
+}: AccordionProps) {
   const autoName = useId();
   const groupName = multiple ? undefined : (name ?? `accordion-${autoName}`);
 
   return (
-    <div className={`${styles.accordion} ${className}`.trim()}>
+    <div className={[styles.accordion, numbered ? styles.numbered : '', className].filter(Boolean).join(' ')}>
       {items.map((item, i) => {
         const question = item.question ?? item.title ?? '';
         const answer = item.answer ?? item.content;
@@ -59,6 +72,11 @@ export default function Accordion({ items, name, multiple = false, defaultOpen, 
             open={defaultOpen === i || undefined}
           >
             <summary className={`${styles.trigger} accordion-summary`}>
+              {numbered ? (
+                <span className={styles.number} aria-hidden="true">
+                  {i + 1}
+                </span>
+              ) : null}
               <span className={styles.question}>{question}</span>
               <span className={styles.icon} aria-hidden="true">
                 <PlusIcon />

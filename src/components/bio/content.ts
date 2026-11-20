@@ -97,33 +97,71 @@ export const QUOTE = alita
   ? { text: alita.quote, name: alita.name, role: `${alita.role}, ${alita.company}`, image: alita.image }
   : null;
 
-/** The questions a bio visitor asks before booking, in the order they ask them. */
-export const FAQ = [
+/**
+ * The next step at the foot of an answer: a link somewhere else. Never the call
+ * request itself: the FAQ's own ask (desktop) and the phone's sticky bar are in
+ * view beside every answer, and the same action twice in one section, in two
+ * styles, read as two different things.
+ */
+export interface FaqAction {
+  label: string;
+  href: string;
+  placement: string;
+}
+
+export interface FaqItem {
+  question: string;
+  /** The bottom line, set in bold before the detail, so a skim reads the answer. */
+  lead: string;
+  detail: string;
+  action?: FaqAction;
+}
+
+/**
+ * The questions a bio visitor asks before booking, in the order they ask them
+ * (the owner-approved facts, unchanged since Nov 19, 2026; Nov 20 split each
+ * into its bottom line and the detail).
+ */
+export const FAQ: readonly FaqItem[] = [
   {
     question: 'What does it cost?',
-    answer: `Projects start at ${BUDGET_FLOOR} (US dollars), and our prices are public on mapltech.com. After a 20-minute call, you get one fixed price for your project.`,
+    lead: `Projects start at ${BUDGET_FLOOR} (US dollars).`,
+    detail: 'Our prices are public on mapltech.com. After a 20-minute call, you get one fixed price for your project.',
+    action: { label: 'See our prices', href: `${siteConfig.url}/pricing`, placement: 'bio_faq_prices' },
   },
   {
     question: 'What if you miss the launch date?',
-    answer: 'You don’t pay the final payment. We agree the launch date with you before the work starts.',
+    lead: 'You don’t pay the final payment.',
+    detail: 'We agree the launch date with you before the work starts.',
   },
   {
     question: 'Who owns the code?',
-    answer: 'You do. We hand over the code with clear notes, so your team can carry on where we left off.',
+    lead: 'You do.',
+    detail: 'We hand over the code with clear notes, so your team can carry on where we left off.',
   },
   {
     question: 'How will I know how it’s going?',
-    answer: 'You get weekly progress: every week, we show you what has been built.',
+    lead: 'Weekly progress.',
+    detail: 'Every week, we show you what has been built.',
   },
   {
     question: 'Do you work outside Canada?',
-    answer: 'Yes. We have offices in Toronto (our head office), Lagos and Kingston, and we work with businesses directly as well as with agencies.',
+    lead: 'Yes.',
+    detail: 'We have offices in Toronto (our head office), Lagos and Kingston, and we work with businesses directly as well as with agencies.',
   },
   {
     question: 'What happens after I book?',
-    answer: 'We reply within 24 hours to set a time for your 20-minute call. On the call, we talk through what you’re building and your deadline. Then you get a fixed quote and a launch date.',
+    lead: 'We reply within 24 hours.',
+    detail: 'That reply sets the time for your 20-minute call. On the call, we talk through what you’re building and your deadline. Then you get a fixed quote and a launch date.',
   },
-] as const;
+];
+
+/** The FAQ's heading, its lede, and the line under the ask beside it (desktop). */
+export const FAQ_HEAD = {
+  title: 'Questions people ask',
+  lede: 'Short answers. Bring any others to your 20-minute call.',
+  askNote: 'We reply within 24 hours. Fixed quote after one 20-minute call.',
+} as const;
 
 export const CLOSE = {
   title: 'Not sure what it would cost, or how long it would take?',

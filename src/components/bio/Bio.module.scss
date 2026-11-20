@@ -1,5 +1,6 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
 
 // bio.mapltech.com: the site's tokens (warm near-black, Overpass over DM Sans,
 // crimson fills), on one quiet page with no navigation. Spacing on the 8px
@@ -591,10 +592,86 @@ $shell: 1280px;
   color: $color-fg-muted;
 }
 
-// ---- Questions: the section's left edge, the answers at a reading width.
-.faq {
-  max-width: 860px;
-  margin-top: clamp(24px, 3vw, 40px);
+// ---- Questions (BioFaq): the homepage's FAQ split from the lg step (5/7,
+// 72px apart), the heading, lede and ask held in view beside the answers.
+// Below lg: heading, lede, then the list, 32-48px apart (the steps' rhythm).
+.faqLayout {
+  display: grid;
+  gap: clamp(32px, 4vw, 48px);
+
+  @include lg {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 72px;
+    align-items: start;
+  }
+}
+
+.faqHead {
+  @include lg {
+    position: sticky;
+    top: 40px; // no fixed bar on this page
+  }
+}
+
+// The ask beside the answers: desktop only (below lg the close band follows
+// the list and the phone's sticky bar is on screen).
+.faqAsk {
+  display: none;
+
+  @include lg {
+    display: grid;
+    justify-items: start;
+    gap: 16px;
+    margin-top: 40px;
+  }
+}
+
+.faqAskNote {
+  margin: 0;
+  max-width: 24em;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-fg-muted; // 9.3:1 on the ground
+}
+
+// The shared accordion centres itself at 720px; here it fills its column, so
+// its left edge is the heading's on every width.
+.faqLayout .faqList {
+  max-width: none;
+  margin: 0;
+}
+
+// An answer: its bottom line in the page's white, then the detail in body
+// grey (16.9:1 and 10.8:1 on the card), then its next step where it has one.
+.faqAnswer {
+  margin: 0;
+}
+
+.faqLead {
+  font-weight: $font-weight-semibold;
+  color: $color-fg;
+}
+
+.faqNext {
+  margin: 4px 0 0;
+}
+
+.faqAction {
+  @include text-action($color-fg);
+  gap: 8px;
+}
+
+.faqActionArrow {
+  display: inline-flex;
+  transition: transform 0.4s $ease-out-expo;
+
+  .faqAction:hover & {
+    transform: translateX(4px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 // ---- The close: the site's crimson band (white on #A51832 is 7.56:1).
