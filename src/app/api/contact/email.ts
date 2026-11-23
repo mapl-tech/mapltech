@@ -1,20 +1,40 @@
 /**
- * The one way the site's forms email MAPL TECH: SMTP2GO's /email/send, with
- * the visitor as Reply-To. Shared by /api/contact and /api/apply.
+ * The one way the site's forms send email: Resend's POST /emails. Shared by
+ * /api/contact, /api/apply and /api/newsletter. Each entry sends two emails
+ * (emailTemplates.ts): the entry to the inbox, with the visitor as Reply-To,
+ * and a confirmation to the visitor. Each entry also goes to HubSpot
+ * (hubspot.ts).
  *
- * Attachments use SMTP2GO's documented shape: `{ filename, fileblob, mimetype }`,
- * `fileblob` being the file's bytes in base64. Nothing is stored anywhere
- * else: the file goes from the request to the email and is gone.
+ * - RESEND_API_KEY is the key. Without it nothing is emailed: the send is
+ *   logged and fails.
+ * - Resend sends only from a domain verified in its dashboard (mapltech.com).
+ *   RESEND_FROM overrides the inbox email's From line; the visitor's email
+ *   names its own.
+ * - Resend refuses a request with no User-Agent header (403), so every call
+ *   sends one.
+ * - Attachments use Resend's shape, `{ filename, content, content_type }`,
+ *   where `content` is the file's bytes in base64. Nothing is stored: the file
+ *   goes from the request to the email and is gone.
  */
 
-export const SMTP2GO_URL = 'https://api.smtp2go.com/v3/email/send';
+export const RESEND_URL = 'https://api.resend.com/emails';
 
 /** Where every form's email goes, applications included (confirmed by the owner, Nov 5 2026). */
 export const CONTACT_TO = 'contact@mapltech.com';
 
+/** The From line, on the domain verified in Resend. */
+export const DEFAULT_FROM = 'MAPL TECH website <contact@mapltech.com>';
+
+/** Sent with every call to Resend and HubSpot (Resend refuses a request without one). */
+export const USER_AGENT = 'mapltech-website/1.0';
+
+/** How long Resend may take before the send counts as failed (the function has to answer the form). */
+const TIMEOUT_MS = 4000;
+
 export interface EmailAttachment {
   filename: string;
-  fileblob: string;
+  /** The file's bytes, base64. */
+  content: string;
   mimetype: string;
 }
 
@@ -23,7 +43,12 @@ export interface OutgoingEmail {
   html: string;
   text: string;
   replyTo: string;
+  /** contact@mapltech.com unless given. */
   to?: string;
+  /** RESEND_FROM, else DEFAULT_FROM, unless given. */
+  from?: string;
+  /** Extra headers, such as the newsletter's List-Unsubscribe. */
+  headers?: Record<string, string>;
   attachments?: EmailAttachment[];
 }
 
@@ -37,44 +62,62 @@ export function oneLine(value: string, max = 200): string {
   return value.replace(/[\r\n\t]+/g, ' ').trim().slice(0, max);
 }
 
-/** The table of answers every form email shows, escaped; `value` keeps its line breaks. */
-export function answersTable(rows: { label: string; value: string; href?: string }[]): string {
-  const cell = 'padding: 8px 12px; vertical-align: top;';
-  return `<table style="border-collapse: collapse; width: 100%; max-width: 600px;">${rows
-    .map(
-      ({ label, value, href }) =>
-        `<tr><td style="${cell} font-weight: bold;">${escapeHtml(label)}</td><td style="${cell} white-space: pre-wrap;">${
-          href ? `<a href="${escapeHtml(href)}">${escapeHtml(value)}</a>` : escapeHtml(value)
-        }</td></tr>`,
-    )
-    .join('')}</table>`;
-}
-
-/** Sends one email; true when SMTP2GO accepted it. Errors are logged, never thrown. */
-export async function sendEmail({ subject, html, text, replyTo, to = CONTACT_TO, attachments }: OutgoingEmail): Promise<boolean> {
+/** Sends one email; true when Resend accepted it. Errors are logged, never thrown. */
+export async function sendEmail(
+  { subject, html, text, replyTo, to = CONTACT_TO, from, headers, attachments }: OutgoingEmail,
+  key: string | undefined = process.env.RESEND_API_KEY,
+): Promise<boolean> {
+  if (!key) {
+    console.error('Resend: RESEND_API_KEY is not set, so nothing was emailed.');
+    return false;
+  }
   try {
-    const res = await fetch(SMTP2GO_URL, {
+    const res = await fetch(RESEND_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'User-Agent': USER_AGENT },
       body: JSON.stringify({
-        api_key: process.env.SMTP2GO_API_KEY,
+        from: from ?? (process.env.RESEND_FROM || DEFAULT_FROM),
         to: [to],
-        sender: process.env.SMTP2GO_SENDER || CONTACT_TO,
         subject: oneLine(subject, 250),
-        html_body: html,
-        text_body: text,
-        custom_headers: [{ header: 'Reply-To', value: oneLine(replyTo, 254) }],
-        ...(attachments?.length ? { attachments } : {}),
+        html,
+        text,
+        reply_to: oneLine(replyTo, 254),
+        ...(headers ? { headers } : {}),
+        ...(attachments?.length
+          ? { attachments: attachments.map(({ filename, content, mimetype }) => ({ filename, content, content_type: mimetype })) }
+          : {}),
       }),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
     });
-    const result = (await res.json().catch(() => ({}))) as { data?: { error?: unknown } };
-    if (!res.ok || result.data?.error) {
-      console.error('SMTP2GO error:', res.status, result.data?.error ?? result);
+    if (!res.ok) {
+      const error = (await res.json().catch(() => ({}))) as { name?: unknown; message?: unknown };
+      console.error('Resend refused the email:', res.status, error.name ?? '', error.message ?? '');
       return false;
     }
     return true;
   } catch (err) {
-    console.error('SMTP2GO unreachable:', err);
+    console.error('Resend unreachable:', err);
     return false;
   }
+}
+
+/**
+ * Sends an entry's two emails: the inbox's, and the visitor's confirmation.
+ * The confirmation goes only once the entry is kept, so nobody is told "we
+ * have it" about an entry that went nowhere:
+ * - `keptWithoutEmail` (HubSpot has the entry, and nothing travels in the
+ *   inbox email alone): both go at once;
+ * - otherwise the confirmation waits for the inbox email, and goes only if
+ *   that went.
+ * Returns whether the inbox email went. A confirmation that fails is logged
+ * and changes nothing else.
+ */
+export async function sendEntryEmails(inbox: OutgoingEmail, confirmation: OutgoingEmail, keptWithoutEmail: boolean): Promise<boolean> {
+  if (keptWithoutEmail) {
+    const [sent] = await Promise.all([sendEmail(inbox), sendEmail(confirmation)]);
+    return sent;
+  }
+  const sent = await sendEmail(inbox);
+  if (sent) await sendEmail(confirmation);
+  return sent;
 }

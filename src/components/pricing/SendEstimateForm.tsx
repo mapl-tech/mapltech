@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useActionState, useEffect, useId, useRef, useState, type RefObject } from 'react';
-import { estimateHref, estimateSubjectText, estimateSummaryText, type EstimateResult } from '@/lib/estimate';
+import { ESTIMATE_SENDER_NAME, estimateHref, estimateSubjectText, estimateSummaryText, type EstimateResult } from '@/lib/estimate';
 import { PROJECT_LABEL } from '@/components/layout/chrome';
 import Arrow from '@/components/ui/Arrow';
 import { withLastWord } from '@/components/services/keepTogether';
@@ -18,8 +18,10 @@ import own from './SendEstimateForm.module.scss';
  * one field, the email, which it needs (so the field is required, not
  * labelled optional).
  * It posts the engine's plain-text summary plus the shareable URL to
- * /api/contact, which emails MAPL TECH with the visitor as Reply-To, so the
- * copy promises a reply in writing, not an automatic email. The visitor
+ * /api/contact, which emails MAPL TECH with the visitor as Reply-To. The
+ * visitor's automatic email only confirms the request (it never carries the
+ * estimate, since the server can't vouch for the text it was sent), so the
+ * copy promises the estimate in a written reply. The visitor
  * gives no name here, so the request's required name says what it is
  * ("Estimate request") instead of repeating the email. On success the
  * disclosure gives way to one confirmation, no modal: it fills a status
@@ -47,8 +49,6 @@ type SendState =
   | { status: 'sent'; email: string }
   | { status: 'error'; message: string; field?: 'email' };
 
-/** /api/contact requires a name; the visitor gives none here, so the request names what it is. */
-const SENDER_NAME = 'Estimate request';
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SEND_FAILED =
   'That didn’t send. Check the email address, or write to contact@mapltech.com and attach the estimate link.';
@@ -84,7 +84,10 @@ export default function SendEstimateForm({ result, placement = 'estimate' }: Sen
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: SENDER_NAME,
+            // Files the entry under the estimate's own form in HubSpot (lead.ts names every form).
+            form: 'estimate_email',
+            // /api/contact requires a name; the visitor gives none here, so the request names what it is.
+            name: ESTIMATE_SENDER_NAME,
             email,
             subject: estimateSubjectText(result),
             message: estimateSummaryText(result, { shareUrl: window.location.href }),

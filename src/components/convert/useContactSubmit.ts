@@ -7,9 +7,11 @@ import { useRecaptcha } from './Recaptcha';
 /**
  * Shared submit hook for every form on the convert pages.
  *
- * - `submit(payload)` posts JSON to /api/contact ({ name, email, phone?,
+ * - `submit(payload)` posts JSON to /api/contact ({ form, name, email, phone?,
  *   contactMethod?, subject?, message, recaptchaToken? }): the brief, the
- *   referral, the regional inquiries.
+ *   referral, the regional inquiries, the bio call request. `form` is the
+ *   hook's form name, so the server files the entry under that form's own
+ *   form in HubSpot.
  * - `submitForm(data)` posts multipart to /api/apply (the careers forms, so a
  *   resume can come with them), adding the reCAPTCHA token to `data`. A
  *   refusal the server ties to a field comes back as `errorField`, so the form
@@ -96,10 +98,10 @@ export function useContactSubmit(form: LeadForm) {
         fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...payload, recaptchaToken }),
+          body: JSON.stringify({ ...payload, form, recaptchaToken }),
         }),
       ),
-    [send],
+    [send, form],
   );
 
   const submitForm = useCallback(

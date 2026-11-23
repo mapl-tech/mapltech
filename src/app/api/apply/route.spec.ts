@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { RESUME_MAX_BYTES, RESUME_MESSAGES, cleanResumeName, formatBytes, kindFromHeader, kindFromName } from '@/components/convert/resume';
-import { SMTP2GO_URL } from '../contact/email';
+import { stubKeys, stubServices } from '../../../../tests/stubs/services';
+import { CONTACT_TO, RESEND_URL } from '../contact/email';
+import { HUBSPOT_ACCOUNT_ID, HUBSPOT_FORMS, HUBSPOT_SUBMIT_URL } from '../contact/hubspot';
 import { RECAPTCHA_ERRORS, SITEVERIFY_URL } from '../contact/verifyRecaptcha';
 import { checkResume } from './checkResume';
 
@@ -66,11 +68,11 @@ describe('resume rules (shared by the form and the server)', () => {
 });
 
 describe('checkResume (the server)', () => {
-  it('takes a real PDF, DOC and DOCX, with a clean name and the base64 SMTP2GO attaches', async () => {
+  it('takes a real PDF, DOC and DOCX, with a clean name and the base64 the email attaches', async () => {
     const pdf = await checkResume(file(PDF_BYTES, 'Ada Lovelace CV.pdf', 'application/pdf'), { required: true });
     expect(pdf).toMatchObject({ ok: true, resume: { filename: 'Ada Lovelace CV.pdf', mimetype: 'application/pdf', kind: 'pdf' } });
     if (!pdf.ok || !pdf.resume) throw new Error('expected a resume');
-    expect(Buffer.from(pdf.resume.fileblob, 'base64').equals(Buffer.from(PDF_BYTES))).toBe(true);
+    expect(Buffer.from(pdf.resume.content, 'base64').equals(Buffer.from(PDF_BYTES))).toBe(true);
 
     expect(await checkResume(file(DOC_BYTES, 'cv.doc'), { required: true })).toMatchObject({ ok: true, resume: { kind: 'doc', mimetype: 'application/msword' } });
     expect(await checkResume(file(DOCX_BYTES, 'cv.docx'), { required: true })).toMatchObject({ ok: true, resume: { kind: 'docx' } });
@@ -120,8 +122,7 @@ describe('POST /api/apply', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    vi.stubEnv('SMTP2GO_API_KEY', 'stub');
-    vi.stubEnv('RECAPTCHA_SECRET_KEY', '');
+    stubKeys();
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -129,16 +130,10 @@ describe('POST /api/apply', () => {
     vi.restoreAllMocks();
   });
 
-  /** Every outbound call answered: siteverify passes, SMTP2GO accepts. */
-  function stubFetch() {
-    const fn = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>(async (url) =>
-      Response.json(url === SITEVERIFY_URL ? { success: true } : { data: { succeeded: 1 } }),
-    );
-    vi.stubGlobal('fetch', fn);
-    return fn;
-  }
-  const smtpBody = (fetch: ReturnType<typeof stubFetch>) => {
-    const call = fetch.mock.calls.find(([url]) => url === SMTP2GO_URL);
+  /** Every outbound call answered: siteverify passes, HubSpot and Resend accept. */
+  const stubFetch = () => stubServices().fetch;
+  const emailBody = () => {
+    const call = (vi.mocked(globalThis.fetch).mock.calls as [string, RequestInit?][]).find(([url]) => url === RESEND_URL);
     return call ? JSON.parse(String(call[1]?.body)) : null;
   };
 
@@ -164,26 +159,42 @@ describe('POST /api/apply', () => {
     return POST(new NextRequest('http://localhost/api/apply', { method: 'POST', body, headers }));
   }
 
-  it('emails the application with the resume attached in SMTP2GO’s shape, and escapes what was typed', async () => {
-    const fetch = stubFetch();
+  it('emails the application with the resume attached in Resend’s shape, and escapes what was typed', async () => {
+    stubFetch();
     const res = await post(form(application, file(PDF_BYTES, 'My CV.pdf', 'application/pdf')));
     expect(res.status).toBe(200);
-    const body = smtpBody(fetch);
+    const body = emailBody();
     expect(body.attachments).toEqual([
-      { filename: 'My CV.pdf', mimetype: 'application/pdf', fileblob: Buffer.from(PDF_BYTES).toString('base64') },
+      { filename: 'My CV.pdf', content: Buffer.from(PDF_BYTES).toString('base64'), content_type: 'application/pdf' },
     ]);
-    expect(body.to).toEqual(['contact@mapltech.com']);
+    expect(body.to).toEqual([CONTACT_TO]);
     expect(body.subject).toBe('Job application: Web Developer, Jamaica (Ada <b>Lovelace</b>)');
-    expect(body.custom_headers).toEqual([{ header: 'Reply-To', value: 'ada@example.com' }]);
-    expect(body.html_body).toContain('Ada &lt;b&gt;Lovelace&lt;/b&gt;');
-    expect(body.html_body).not.toContain('<b>Lovelace</b>');
-    expect(body.text_body).toContain('Resume: My CV.pdf (attached)');
+    expect(body.reply_to).toBe('ada@example.com');
+    expect(body.html).toContain('Ada &lt;b&gt;Lovelace&lt;/b&gt;');
+    expect(body.html).not.toContain('<b>Lovelace</b>');
+    expect(body.text).toContain('Resume: My CV.pdf (attached)');
+  });
+
+  it('submits the application to its own HubSpot form, naming the resume but not holding it', async () => {
+    const services = stubServices();
+    await post(form(application, file(PDF_BYTES, 'My CV.pdf', 'application/pdf')));
+    expect(services.calls().map(({ method, url }) => `${method} ${url}`)).toEqual([
+      `POST ${HUBSPOT_SUBMIT_URL}/${HUBSPOT_ACCOUNT_ID}/${HUBSPOT_FORMS.careers_application.id}`,
+      `POST ${RESEND_URL}`,
+      `POST ${RESEND_URL}`,
+    ]);
+    const hubspot = services.hubspot();
+    expect(hubspot?.fields).toMatchObject({ email: 'ada@example.com', firstname: 'Ada', lastname: '<b>Lovelace</b>' });
+    expect(hubspot?.fields.message).toContain('Role: Web Developer, Jamaica');
+    expect(hubspot?.fields.message).toContain('Resume: My CV.pdf (attached to the email)');
+    expect(hubspot?.fields.message).toContain('About them and the role: I build accessible sites.');
+    expect(JSON.stringify(hubspot?.call.body)).not.toContain(Buffer.from(PDF_BYTES).toString('base64'));
   });
 
   it('names a general application in the subject when no role was chosen', async () => {
-    const fetch = stubFetch();
+    stubFetch();
     await post(form({ ...application, role: '' }, file(DOCX_BYTES, 'cv.docx')));
-    expect(smtpBody(fetch).subject).toBe('Job application: General application (Ada <b>Lovelace</b>)');
+    expect(emailBody().subject).toBe('Job application: General application (Ada <b>Lovelace</b>)');
   });
 
   it('refuses an application without a resume, on the resume field, and sends nothing', async () => {
@@ -213,11 +224,11 @@ describe('POST /api/apply', () => {
     const fetch = stubFetch();
     const talent = { form: 'talent', name: 'Grace Hopper', email: 'grace@example.com', about: 'Compilers.' };
     expect((await post(form(talent))).status).toBe(200);
-    expect(smtpBody(fetch).attachments).toBeUndefined();
-    expect(smtpBody(fetch).subject).toBe('Talent list: Grace Hopper');
+    expect(emailBody().attachments).toBeUndefined();
+    expect(emailBody().subject).toBe('Talent list: Grace Hopper');
     fetch.mockClear();
     expect((await post(form(talent, file(DOC_BYTES, 'grace.doc')))).status).toBe(200);
-    expect(smtpBody(fetch).attachments[0]).toMatchObject({ filename: 'grace.doc', mimetype: 'application/msword' });
+    expect(emailBody().attachments[0]).toMatchObject({ filename: 'grace.doc', content_type: 'application/msword' });
   });
 
   it('names the field for missing details', async () => {
@@ -244,13 +255,53 @@ describe('POST /api/apply', () => {
 
     const ok = await post(form({ ...application, recaptchaToken: 'token' }, file(PDF_BYTES, 'cv.pdf')));
     expect(ok.status).toBe(200);
-    expect(fetch.mock.calls.map(([url]) => url)).toEqual([SITEVERIFY_URL, SMTP2GO_URL]);
+    expect(fetch.mock.calls.map(([url]) => url)).toEqual([
+      SITEVERIFY_URL,
+      `${HUBSPOT_SUBMIT_URL}/${HUBSPOT_ACCOUNT_ID}/${HUBSPOT_FORMS.careers_application.id}`,
+      RESEND_URL,
+      RESEND_URL,
+    ]);
   });
 
-  it('says so when SMTP2GO refuses', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ data: { error: 'bad key' } }, { status: 400 })));
+  it('confirms to the applicant after the inbox email went, and only then', async () => {
+    let services = stubServices();
+    await post(form(application, file(PDF_BYTES, 'cv.pdf')));
+    expect(services.emails().map((call) => call.body.to[0])).toEqual([CONTACT_TO, 'ada@example.com']);
+    const confirmation = services.confirmation()?.body;
+    expect(confirmation.subject).toBe('We have your application');
+    expect(confirmation.text).toContain('Thanks for applying, Ada.');
+    expect(confirmation.text).toContain('Your application and resume are with us.');
+    expect(confirmation.attachments).toBeUndefined();
+
+    // HubSpot has the answers, but the resume rides only in the inbox email: no inbox email, no confirmation.
+    services = stubServices({ resend: { status: 500 } });
+    expect((await post(form(application, file(PDF_BYTES, 'cv.pdf')))).status).toBe(500);
+    expect(services.confirmation()).toBeNull();
+  });
+
+  it('succeeds when the email went out even if HubSpot refused, and the email says so', async () => {
+    stubServices({ hubspot: { status: 503 } });
+    expect((await post(form(application, file(PDF_BYTES, 'cv.pdf')))).status).toBe(200);
+    expect(emailBody().text).toContain('Not saved in HubSpot: HubSpot refused the entry (503). Add this entry to HubSpot by hand.');
+  });
+
+  it('fails an application with a resume when the email did not go, even if HubSpot has the answers', async () => {
+    // The resume travels only in the email: told it worked, the applicant would never send it again.
+    stubServices({ resend: { status: 403, body: { name: 'validation_error', message: 'Domain not verified' } } });
     const res = await post(form(application, file(PDF_BYTES, 'cv.pdf')));
     expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: 'Failed to send message. Please try again.' });
+  });
+
+  it('takes a talent sign-up without a resume into its own HubSpot form, succeeds when only HubSpot has it, and fails when neither does', async () => {
+    const talent = { form: 'talent', name: 'Grace Hopper', email: 'grace@example.com', about: 'Compilers.' };
+    const services = stubServices({ resend: { status: 500 } });
+    expect((await post(form(talent))).status).toBe(200);
+    expect(services.hubspot()?.formId).toBe(HUBSPOT_FORMS.talent_list.id);
+    expect(services.hubspot()?.fields.message).toContain('What they do best: Compilers.');
+
+    stubServices({ hubspot: { status: 503 }, resend: { status: 500 } });
+    expect((await post(form(talent))).status).toBe(500);
   });
 
   it('refuses a JSON body (this route takes the multipart form)', async () => {

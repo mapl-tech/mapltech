@@ -20,14 +20,14 @@ import {
  *   macro-enabled .docm renamed).
  *
  * The name's extension, when it has one we take, must agree with the bytes.
- * The result carries a clean filename and the base64 SMTP2GO attaches.
+ * The result carries a clean filename and the base64 the email attaches.
  */
 
 export interface ResumeAttachment {
   filename: string;
   mimetype: string;
-  /** Base64 of the file's bytes: SMTP2GO's `fileblob`. */
-  fileblob: string;
+  /** Base64 of the file's bytes: the attachment's `content` in Resend's API. */
+  content: string;
   bytes: number;
   kind: ResumeKind;
 }
@@ -66,7 +66,7 @@ export async function checkResume(value: FormDataEntryValue | null, { required }
     resume: {
       filename: cleanResumeName(file.name, kind),
       mimetype: RESUME_TYPES[kind].mime,
-      fileblob: buffer.toString('base64'),
+      content: buffer.toString('base64'),
       bytes: file.size,
       kind,
     },

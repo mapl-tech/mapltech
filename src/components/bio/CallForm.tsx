@@ -28,8 +28,8 @@ import styles from './CallForm.module.scss';
  * progress line along the top, the question numbered, a large field, OK
  * (or Enter), and up/down arrows bottom right. Built here rather than
  * embedded, so it loads nothing from another company, matches the site and
- * sends through the site's own /api/contact (SMTP2GO, the honeypot and
- * reCAPTCHA when its keys are set), tagged "bio.mapltech.com".
+ * sends through the site's own /api/contact (the honeypot, reCAPTCHA when its
+ * keys are set, then HubSpot and the Resend email), tagged "bio.mapltech.com".
  *
  * - A native <dialog>, opened with show(), not showModal(): a modal dialog sits
  *   in the browser's top layer and makes everything outside it inert, and

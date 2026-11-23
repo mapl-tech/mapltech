@@ -799,6 +799,13 @@ export function estimateHref(
 /* Email                                                                */
 /* ------------------------------------------------------------------ */
 
+/**
+ * The name the "Send this estimate" form gives /api/contact, which requires
+ * one. The visitor types only an email address there, so the server knows
+ * this is not a person's name and leaves the HubSpot contact unnamed.
+ */
+export const ESTIMATE_SENDER_NAME = 'Estimate request';
+
 /** Subject line for the "Send this estimate" email. */
 export function estimateSubjectText(result: EstimateResult): string {
   const services = result.lines.map((line) => line.serviceName).join(' + ') || 'Scope estimate';

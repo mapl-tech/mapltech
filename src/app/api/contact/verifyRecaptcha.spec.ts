@@ -1,4 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { stubKeys, stubServices } from '../../../../tests/stubs/services';
+import { RESEND_URL } from './email';
+import { HUBSPOT_ACCOUNT_ID, HUBSPOT_FORMS, HUBSPOT_SUBMIT_URL } from './hubspot';
 import { RECAPTCHA_ERRORS, SITEVERIFY_URL, verifyRecaptcha } from './verifyRecaptcha';
 
 const SECRET = 'test-secret';
@@ -116,25 +119,25 @@ describe('POST /api/contact', () => {
     expect(String((fetch.mock.calls[0] as unknown as [string])[0])).toBe(SITEVERIFY_URL);
   });
 
-  it('sends the email once Google accepts the token', async () => {
+  it('sends to HubSpot and emails once Google accepts the token', async () => {
+    stubKeys();
     vi.stubEnv('RECAPTCHA_SECRET_KEY', SECRET);
-    vi.stubEnv('SMTP2GO_API_KEY', 'stub');
-    const fetch = vi.fn(async (url: string) =>
-      Response.json(url === SITEVERIFY_URL ? { success: true } : { data: { succeeded: 1 } }),
-    );
-    vi.stubGlobal('fetch', fetch);
+    const { fetch } = stubServices();
     const res = await post({ ...lead, recaptchaToken: 'good' });
     expect(res.status).toBe(200);
-    expect(fetch.mock.calls.map(([url]) => url)).toEqual([SITEVERIFY_URL, 'https://api.smtp2go.com/v3/email/send']);
+    expect(fetch.mock.calls.map(([url]) => url)).toEqual([
+      SITEVERIFY_URL,
+      `${HUBSPOT_SUBMIT_URL}/${HUBSPOT_ACCOUNT_ID}/${HUBSPOT_FORMS.project_brief.id}`,
+      RESEND_URL,
+      RESEND_URL,
+    ]);
   });
 
   it('sends without a token when no secret is set (the forms work before the keys exist)', async () => {
-    vi.stubEnv('RECAPTCHA_SECRET_KEY', '');
-    vi.stubEnv('SMTP2GO_API_KEY', 'stub');
-    const fetch = vi.fn(async () => Response.json({ data: { succeeded: 1 } }));
-    vi.stubGlobal('fetch', fetch);
+    stubKeys();
+    const { fetch } = stubServices();
     const res = await post(lead);
     expect(res.status).toBe(200);
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch.mock.calls.map(([url]) => url)).not.toContain(SITEVERIFY_URL);
   });
 });

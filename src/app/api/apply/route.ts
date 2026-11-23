@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { RESUME_MAX_BYTES, RESUME_MESSAGES } from '@/components/convert/resume';
-import { answersTable, escapeHtml, sendEmail } from '../contact/email';
+import { sendEntryEmails } from '../contact/email';
+import { inboxEmail, visitorEmail } from '../contact/emailTemplates';
+import { recordInHubSpot } from '../contact/hubspot';
 import { RECAPTCHA_ERRORS, verifyRecaptcha } from '../contact/verifyRecaptcha';
 import { checkResume } from './checkResume';
 
@@ -11,12 +13,26 @@ import { checkResume } from './checkResume';
  * link, note (the application's) or about (the talent list's), resume (file),
  * website (honeypot), recaptchaToken.
  *
- * In order, before anything is emailed: the request size, the honeypot (a
- * bot gets a success and nothing is sent), the fields, the resume (type by
- * its bytes, 4 MB), then reCAPTCHA. The resume goes out as an attachment on
- * the one email to contact@mapltech.com (the address every form uses), with
- * the applicant as Reply-To; it is not stored anywhere. Subjects are made to
- * filter on: "Job application: <role> (<name>)" and "Talent list: <name>".
+ * Before anything is sent, in order:
+ * 1. The request size.
+ * 2. The honeypot. A bot gets a success, and nothing is sent.
+ * 3. The fields.
+ * 4. The resume: its type is read from its bytes, and it must be 4 MB or less.
+ * 5. reCAPTCHA.
+ *
+ * Then the entry goes to HubSpot, into its own form there ("Careers: Job
+ * application" or "Careers: Talent list", see ../contact/hubspot.ts), so
+ * applicants never mix with sales inquiries there. Then the entry is emailed to contact@mapltech.com (the address every
+ * form uses) through Resend, with the applicant as Reply-To, and the applicant
+ * gets a confirmation once the entry is kept (../contact/emailTemplates.ts).
+ *
+ * - The resume is an attachment on that email only. It is not stored
+ *   anywhere, HubSpot included. HubSpot's copy names the file.
+ * - Subjects are made to filter on: "Job application: <role> (<name>)" and
+ *   "Talent list: <name>".
+ * - The applicant is told it worked when either HubSpot or the email has the
+ *   entry. With a resume attached, only the email counts, because only the
+ *   email carries the file. If HubSpot missed the entry, the email says so.
  *
  * Errors name the field they belong to (`field`), so the form can put the
  * words under it.
@@ -88,14 +104,30 @@ export async function POST(req: NextRequest) {
     { label: talent ? 'What they do best' : 'About them and the role', value: message },
   ];
 
-  const sent = await sendEmail({
-    subject,
-    html: `<h2>${escapeHtml(talent ? 'New talent list sign-up' : 'New job application')}</h2>${answersTable(rows)}`,
-    text: rows.map((row) => `${row.label}: ${row.value}`).join('\n'),
-    replyTo: email,
-    attachments: file ? [{ filename: file.filename, fileblob: file.fileblob, mimetype: file.mimetype }] : undefined,
+  const form = talent ? 'talent_list' : 'careers_application';
+  const crm = await recordInHubSpot({
+    form,
+    email,
+    name,
+    // The file itself goes only to the inbox.
+    rows: rows.map((row) => (row.label === 'Resume' && file ? { ...row, value: `${file.filename} (attached to the email)` } : row)),
   });
 
-  if (!sent) return refuse(FAILED, 500);
+  // A resume travels only in the inbox email, so with one attached that email has to go.
+  const keptWithoutEmail = crm.ok && !file;
+  const sent = await sendEntryEmails(
+    inboxEmail({
+      form,
+      subject,
+      who: name,
+      email,
+      rows,
+      crm,
+      attachments: file ? [{ filename: file.filename, content: file.content, mimetype: file.mimetype }] : undefined,
+    }),
+    visitorEmail({ form, to: email, name, resume: Boolean(file) }),
+    keptWithoutEmail,
+  );
+  if (!sent && !keptWithoutEmail) return refuse(FAILED, 500);
   return NextResponse.json({ success: true });
 }
