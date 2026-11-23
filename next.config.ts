@@ -16,6 +16,13 @@ const nextConfig: NextConfig = {
     ],
   },
   poweredByHeader: false,
+  experimental: {
+    // Next 16.3 caches `next build` work in .next/cache/turbopack by default, and that
+    // cache holds the build's environment, secret keys included. Netlify saves .next/cache
+    // with the build, and its secrets scan then fails the deploy (Nov 23 2026). The build
+    // needs no secrets, so it writes no build cache. The dev cache is separate and stays on.
+    turbopackFileSystemCacheForBuild: false,
+  },
   async redirects() {
     return [
       // Old service paths still linked from older posts and elsewhere (permanent).
