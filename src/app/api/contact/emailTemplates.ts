@@ -7,27 +7,73 @@ import { HUBSPOT_FORMS, type CrmResult, type HubSpotForm } from './hubspot';
  * (contact@mapltech.com) with the entry, and one to the visitor, confirming it
  * arrived and saying what happens next.
  *
- * - One layout for both: the site's dark ground, the logo, a card with the red
- *   rule, Overpass headings over DM Sans, one red button. Every text colour is
- *   7:1 or more against what it sits on (WCAG AAA).
+ * - One layout for both: the logo, a card drawn by a hairline and the red
+ *   rule, Overpass headings over DM Sans, one red pill button.
+ * - Light, like the site's paper sections: paper, ink for words, crimson ink
+ *   for links, the black logo. A mail app set to dark mode that follows an email's
+ *   own dark styles (Apple Mail does) shows the site's dark ground and the
+ *   white logo instead. Every text colour is 7:1 or more against what it sits
+ *   on, in both (WCAG AAA; emailTemplates.spec.ts measures each pair).
  * - Built for mail apps: tables, inline styles, a 600px column that runs full
  *   width on phones, a button Outlook on Windows draws as well, and the hover,
- *   focus and phone rules in the head (an app that drops the head keeps the
- *   inline look). Every email has a plain-text twin.
+ *   focus, phone and dark-mode rules in the head (an app that drops the head
+ *   keeps the light look). Every email has a plain-text twin.
  * - The visitor's email never repeats what they typed, apart from a first name
  *   that is plainly a name, so nobody can use a form to put their own words in
  *   someone else's inbox from mapltech.com.
  * - The visitor's copy keeps to what each form already promises on the page.
  */
 
-/** The site's own colours (src/styles/_variables.scss). */
-const COLOR = {
+/** What each colour is for: the surfaces, the hairline, and the words. */
+interface Palette {
+  /** Around the card: the logo and the company line sit on it. */
+  ground: string;
+  card: string;
+  /** Hairlines: the card's edge, the answers' rules, the divider. */
+  line: string;
+  /** The HubSpot notice, on the card. */
+  raised: string;
+  /** Headings, steps, answers. */
+  fg: string;
+  /** Paragraphs. */
+  body: string;
+  /** Labels, the footnote and the company line. */
+  muted: string;
+  /** Links and the eyebrow. */
+  link: string;
+}
+
+/**
+ * The email: the site's paper sections (src/styles/_editorial.scss). Paper all
+ * through; the card is drawn by its ink hairline and the red rule, as the
+ * site's paper sections draw theirs (and as the dark card sits close to its
+ * ground).
+ */
+const LIGHT: Palette = {
+  /** Paper. */
+  ground: '#F1EDE7',
+  /** Paper. */
+  card: '#F1EDE7',
+  /** The ink hairline (ink at 14%) on paper. */
+  line: '#D1CDC8',
+  /** Paper 2: a panel on paper, a step darker. */
+  raised: '#E8E3DC',
+  /** Ink: 16.9:1 on paper, 15.4:1 on paper 2. */
+  fg: '#0B0B0C',
+  /** Ink too: the site's running text on paper. */
+  body: '#0B0B0C',
+  /** Muted ink (ink at 74% on paper): 8.1:1 on paper. */
+  muted: '#474645',
+  /** Crimson ink, the brand's crimson for words on paper: 7.8:1. */
+  link: '#8F162C',
+};
+
+/** A mail app in dark mode: the site's dark ground (src/styles/_variables.scss). */
+const DARK: Palette = {
   ground: '#0a0a0a',
   card: '#111111',
   line: '#222222',
   raised: '#1c1c1c',
-  /** The red: rules only, never text. */
-  rule: '#F03350',
   /** 16.9:1 on the card. */
   fg: '#F5F2EE',
   /** 10.8:1 on the card. */
@@ -36,11 +82,20 @@ const COLOR = {
   muted: '#B4B2AF',
   /** 8.0:1 on the card. */
   link: '#FF8397',
-  /** The button's fill: white on it is 7.56:1. */
-  fill: '#A51832',
-  fillHover: '#8F162C',
-  fillPressed: '#7A1226',
-} as const;
+};
+
+/** The red: the card's rule and the notice's edge, never text. The same in both. */
+const RULE = '#F03350';
+
+/** The button, the same in both: white on it is 7.56:1, 9.06:1 on hover and 10.8:1 pressed. */
+const FILL = { rest: '#A51832', hover: '#8F162C', pressed: '#7A1226' } as const;
+
+/** Every colour, for the contrast checks in emailTemplates.spec.ts. */
+export const EMAIL_COLORS = { LIGHT, DARK, RULE, FILL } as const;
+
+/** A text colour's role: its light colour inline, and a class the dark-mode rules recolour. */
+type Tone = 'fg' | 'body' | 'muted' | 'link';
+const tone = (role: Tone) => ({ cls: `c-${role}`, color: LIGHT[role] });
 
 const SANS = "'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 const DISPLAY = "Overpass,'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
@@ -51,8 +106,16 @@ const INBOX = siteConfig.email;
 /** The visitor's emails come from MAPL TECH itself, and a reply reaches the inbox. */
 export const VISITOR_FROM = `MAPL TECH <${INBOX}>`;
 
-/** public/email/mapl-tech-logo.png (scripts/email-logo.mjs): the white mark on the ground, drawn at 3x. */
-const LOGO = { src: `${SITE}/email/mapl-tech-logo.png`, width: 148, height: 33 };
+/**
+ * The logo, drawn at 3x by scripts/email-logo.mjs, each on its own ground: black on paper
+ * for the email, white on the dark ground for a mail app in dark mode.
+ */
+const LOGO = {
+  light: `${SITE}/email/mapl-tech-logo-black.png`,
+  dark: `${SITE}/email/mapl-tech-logo.png`,
+  width: 148,
+  height: 33,
+};
 
 export interface Row {
   label: string;
@@ -249,43 +312,50 @@ const SAFE_LINK = /^(https?:\/\/|mailto:)/i;
 // The parts every email is made of. Each takes escaped HTML or escapes its own words.
 
 const eyebrow = (words: string) =>
-  `<p style="margin:0 0 12px;font-family:${SANS};font-size:14px;line-height:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${COLOR.link};">${escapeHtml(words)}</p>`;
+  `<p class="${tone('link').cls}" style="margin:0 0 12px;font-family:${SANS};font-size:14px;line-height:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${tone('link').color};">${escapeHtml(words)}</p>`;
 
 const heading = (words: string) =>
-  `<h1 class="h1" style="margin:0 0 16px;font-family:${DISPLAY};font-size:28px;line-height:34px;font-weight:800;letter-spacing:-0.01em;color:${COLOR.fg};overflow-wrap:anywhere;word-break:break-word;">${escapeHtml(words)}</h1>`;
+  `<h1 class="h1 ${tone('fg').cls}" style="margin:0 0 16px;font-family:${DISPLAY};font-size:28px;line-height:34px;font-weight:800;letter-spacing:-0.01em;color:${tone('fg').color};overflow-wrap:anywhere;word-break:break-word;">${escapeHtml(words)}</h1>`;
 
-const paragraphHtml = (html: string, gap = 16, color: string = COLOR.body) =>
-  `<p style="margin:0 0 ${gap}px;font-family:${SANS};font-size:16px;line-height:26px;color:${color};">${html}</p>`;
+const paragraphHtml = (html: string, gap = 16, role: Tone = 'body', weight = 400) =>
+  `<p class="${tone(role).cls}" style="margin:${gap ? `0 0 ${gap}px` : '0'};font-family:${SANS};font-size:16px;line-height:26px;${weight === 400 ? '' : `font-weight:${weight};`}color:${tone(role).color};">${html}</p>`;
 
-const paragraph = (words: string, gap = 16, color: string = COLOR.body) => paragraphHtml(escapeHtml(words), gap, color);
+const paragraph = (words: string, gap = 16, role: Tone = 'body', weight = 400) => paragraphHtml(escapeHtml(words), gap, role, weight);
+
+/**
+ * A text link as the site sets one on paper: crimson ink, semibold, the underline 4px under
+ * the words. The underline keeps the words' own colour (the site tints it to 45%): a mail
+ * app that recolours the text in dark mode would leave a fixed tint, dark under light words.
+ */
+const LINK = `color:${tone('link').color};font-weight:600;text-decoration:underline;text-underline-offset:4px;`;
 
 /** Words with the inbox address made a link, for a reader who would rather write a fresh email. */
 const linkInbox = (words: string) =>
   escapeHtml(words).replace(
     escapeHtml(INBOX),
-    `<a class="text-link" href="${mailto(INBOX)}" style="color:${COLOR.link};text-decoration:underline;">${escapeHtml(INBOX)}</a>`,
+    `<a class="text-link ${tone('link').cls}" href="${mailto(INBOX)}" style="${LINK}">${escapeHtml(INBOX)}</a>`,
   );
 
 const label = (words: string) =>
-  `<h2 style="margin:0 0 12px;font-family:${SANS};font-size:14px;line-height:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${COLOR.muted};">${escapeHtml(words)}</h2>`;
+  `<h2 class="${tone('muted').cls}" style="margin:0 0 12px;font-family:${SANS};font-size:14px;line-height:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${tone('muted').color};">${escapeHtml(words)}</h2>`;
 
 const steps = (items: string[]) =>
-  `${label('What happens next')}<ol class="steps" style="margin:0 0 24px;padding:0 0 0 24px;font-family:${SANS};font-size:16px;line-height:26px;color:${COLOR.fg};">${items
-    .map((item, i) => `<li style="margin:0 0 ${i === items.length - 1 ? 0 : 8}px;padding:0 0 0 4px;">${escapeHtml(item)}</li>`)
+  `${label('What happens next')}<ol class="steps ${tone('fg').cls}" style="margin:0 0 24px;padding:0 0 0 24px;font-family:${SANS};font-size:16px;line-height:26px;color:${tone('fg').color};">${items
+    .map((item, i) => `<li style="margin:${i === items.length - 1 ? '0' : '0 0 8px'};padding:0 0 0 4px;">${escapeHtml(item)}</li>`)
     .join('')}</ol>`;
 
 /** A hairline between the message and the optional step. */
-const rule = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:8px 0 24px;"><div style="height:1px;line-height:1px;font-size:1px;background:${COLOR.line};">&nbsp;</div></td></tr></table>`;
+const rule = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:8px 0 24px;"><div class="s-line" style="height:1px;line-height:1px;font-size:1px;background:${LIGHT.line};">&nbsp;</div></td></tr></table>`;
 
 /**
- * The one red button: 48px tall, full width on phones. Outlook on Windows gets
- * the same padded, rounded button drawn in VML.
+ * The one red button, a pill like the site's: 48px tall, full width on phones.
+ * Outlook on Windows gets the same padded pill drawn in VML.
  */
 function button(words: string, href: string): string {
   const vmlWidth = Math.max(176, Math.round(words.length * 9.5 + 64));
   const url = escapeHtml(href);
   const text = escapeHtml(words);
-  return `<table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="${COLOR.fill}" style="border-radius:8px;background:${COLOR.fill};"><!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:48px;v-text-anchor:middle;width:${vmlWidth}px;" arcsize="17%" stroke="f" fillcolor="${COLOR.fill}"><w:anchorlock/><center style="color:#FFFFFF;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">${text}</center></v:roundrect><![endif]--><!--[if !mso]><!--><a class="btn-link" href="${url}" style="display:inline-block;padding:13px 28px;border:1px solid ${COLOR.fill};border-radius:8px;background:${COLOR.fill};color:#FFFFFF;font-family:${SANS};font-size:16px;line-height:20px;font-weight:600;text-align:center;text-decoration:none;">${text}</a><!--<![endif]--></td></tr></table>`;
+  return `<table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="${FILL.rest}" style="border-radius:24px;background:${FILL.rest};"><!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:48px;v-text-anchor:middle;width:${vmlWidth}px;" arcsize="50%" stroke="f" fillcolor="${FILL.rest}"><w:anchorlock/><center style="color:#FFFFFF;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">${text}</center></v:roundrect><![endif]--><!--[if !mso]><!--><a class="btn-link" href="${url}" style="display:inline-block;padding:13px 28px;border:1px solid ${FILL.rest};border-radius:24px;background:${FILL.rest};color:#FFFFFF;font-family:${SANS};font-size:16px;line-height:20px;font-weight:600;text-align:center;text-decoration:none;">${text}</a><!--<![endif]--></td></tr></table>`;
 }
 
 /** The entry's answers, each label over its answer, escaped; an answer keeps its line breaks. */
@@ -294,21 +364,44 @@ function answers(rows: Row[]): string {
     const html = escapeHtml(words).replace(/\r?\n/g, '<br>');
     return href && SAFE_LINK.test(href)
       ? // A link alone on its line: padded to a 44px touch target, still wrapping a long address.
-        `<a class="text-link" href="${escapeHtml(href)}" style="display:inline-block;padding:10px 0;margin:-10px 0;color:${COLOR.link};text-decoration:underline;">${html}</a>`
+        `<a class="text-link ${tone('link').cls}" href="${escapeHtml(href)}" style="display:inline-block;padding:10px 0;margin:-10px 0;${LINK}">${html}</a>`
       : html;
   };
   // A list of name and answer, each label over its answer at every width: it needs no
   // phone rule, so an app that drops the head (Gmail with other accounts) shows it the same.
-  return `<dl style="margin:0;padding:0;border-top:1px solid ${COLOR.line};">${rows
+  return `<dl class="b-line" style="margin:0;padding:0;border-top:1px solid ${LIGHT.line};">${rows
     .map(
       (row) =>
-        `<dt style="margin:0;padding:12px 0 0;font-family:${SANS};font-size:14px;line-height:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${COLOR.muted};">${escapeHtml(row.label)}</dt><dd style="margin:0;padding:4px 0 12px;border-bottom:1px solid ${COLOR.line};font-family:${SANS};font-size:16px;line-height:24px;color:${COLOR.fg};overflow-wrap:anywhere;word-break:break-word;">${value(row)}</dd>`,
+        `<dt class="${tone('muted').cls}" style="margin:0;padding:12px 0 0;font-family:${SANS};font-size:14px;line-height:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${tone('muted').color};">${escapeHtml(row.label)}</dt><dd class="b-line ${tone('fg').cls}" style="margin:0;padding:4px 0 12px;border-bottom:1px solid ${LIGHT.line};font-family:${SANS};font-size:16px;line-height:24px;color:${tone('fg').color};overflow-wrap:anywhere;word-break:break-word;">${value(row)}</dd>`,
     )
     .join('')}</dl>`;
 }
 
 /** Invisible text inbox apps show after the subject; the padding keeps the body out of that preview. */
 const PREHEADER_PAD = '&#847;&zwnj;&nbsp;'.repeat(40);
+
+/**
+ * A mail app in dark mode that reads the head (Apple Mail) gets the dark palette: every
+ * element that carries a colour has a class here, and the white logo takes the black
+ * one's place. The red rule and the button are the same in both.
+ */
+const DARK_MODE = [
+  `.s-ground{background:${DARK.ground}!important}`,
+  `.card{background:${DARK.card}!important;border-color:${DARK.line}!important;border-top-color:${RULE}!important}`,
+  `.s-raised{background:${DARK.raised}!important}`,
+  `.s-line{background:${DARK.line}!important}`,
+  `.b-line{border-color:${DARK.line}!important}`,
+  ...(['fg', 'body', 'muted', 'link'] as const).map((role) => `.${tone(role).cls}{color:${DARK[role]}!important}`),
+  `a{color:${DARK.link}}`,
+  `a:focus-visible{outline-color:${RULE}}`,
+  `.steps li::marker{color:${DARK.link}}`,
+  `.logo-light{display:none!important}`,
+  `.logo-dark{display:block!important;max-height:none!important;overflow:visible!important}`,
+].join('\n');
+
+/** One logo picture; the words stand in when pictures are off. */
+const logoImg = (src: string, cls: string) =>
+  `<img class="${cls}" src="${src}" width="${LOGO.width}" height="${LOGO.height}" alt="MAPL TECH" style="display:block;width:${LOGO.width}px;height:auto;color:${tone('fg').color};font-family:${DISPLAY};font-size:20px;line-height:${LOGO.height}px;font-weight:800;">`;
 
 /** One whole email: head, logo, card, footnote and company line. */
 function page({ title, preheader, content, footnote }: { title: string; preheader: string; content: string; footnote: string }): string {
@@ -319,22 +412,23 @@ function page({ title, preheader, content, footnote }: { title: string; preheade
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="x-apple-disable-message-reformatting">
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
-<meta name="color-scheme" content="dark">
-<meta name="supported-color-schemes" content="dark">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
 <title>${escapeHtml(title)}</title>
 <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><style>td,th,p,a,h1,h2,li{font-family:Arial,sans-serif !important;}</style><![endif]-->
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&amp;family=Overpass:wght@800&amp;display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;supported-color-schemes:dark}
-body{margin:0;padding:0;width:100%!important;background:${COLOR.ground};font-family:${SANS};-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
+:root{color-scheme:light dark;supported-color-schemes:light dark}
+body{margin:0;padding:0;width:100%!important;background:${LIGHT.ground};font-family:${SANS};-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
 table{border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0}
 img{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}
-a{color:${COLOR.link}}
+a{color:${LIGHT.link}}
+a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important;font-size:inherit!important;font-family:inherit!important;font-weight:inherit!important;line-height:inherit!important}
 .text-link:hover{text-decoration-thickness:2px}
-.btn-link:hover,.btn-link:focus{background:${COLOR.fillHover}!important;border-color:${COLOR.fillHover}!important}
-.btn-link:active{background:${COLOR.fillPressed}!important;border-color:${COLOR.fillPressed}!important}
-a:focus-visible{outline:2px solid ${COLOR.fg};outline-offset:3px;border-radius:4px}
-.steps li::marker{color:${COLOR.link};font-weight:600}
+.btn-link:hover,.btn-link:focus{background:${FILL.hover}!important;border-color:${FILL.hover}!important}
+.btn-link:active{background:${FILL.pressed}!important;border-color:${FILL.pressed}!important}
+a:focus-visible{outline:2px solid ${LIGHT.link};outline-offset:2px;border-radius:4px}
+.steps li::marker{color:${LIGHT.link};font-weight:600}
 @media (prefers-reduced-motion:no-preference){.btn-link{transition:background-color .15s ease,border-color .15s ease}}
 @media (max-width:620px){
 .frame{padding:16px 16px 32px!important}
@@ -343,23 +437,26 @@ a:focus-visible{outline:2px solid ${COLOR.fg};outline-offset:3px;border-radius:4
 .btn{width:100%!important}
 .btn-link{display:block!important}
 }
+@media (prefers-color-scheme:dark){
+${DARK_MODE}
+}
 </style>
 </head>
-<body style="margin:0;padding:0;background:${COLOR.ground};font-family:${SANS};">
-<div role="article" aria-roledescription="email" aria-label="${escapeHtml(title)}" lang="en" dir="ltr" style="background:${COLOR.ground};">
-<div aria-hidden="true" style="display:none;max-height:0;max-width:0;overflow:hidden;mso-hide:all;opacity:0;color:${COLOR.ground};font-size:1px;line-height:1px;">${escapeHtml(preheader)}${PREHEADER_PAD}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${COLOR.ground}" style="background:${COLOR.ground};">
+<body class="s-ground" style="margin:0;padding:0;background:${LIGHT.ground};font-family:${SANS};">
+<div class="s-ground" role="article" aria-roledescription="email" aria-label="${escapeHtml(title)}" lang="en" dir="ltr" style="background:${LIGHT.ground};">
+<div aria-hidden="true" style="display:none;max-height:0;max-width:0;overflow:hidden;mso-hide:all;opacity:0;color:${LIGHT.ground};font-size:1px;line-height:1px;">${escapeHtml(preheader)}${PREHEADER_PAD}</div>
+<table class="s-ground" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${LIGHT.ground}" style="background:${LIGHT.ground};">
 <tr><td align="center" class="frame" style="padding:32px 16px 40px;">
 <!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;margin:0 auto;">
-<tr><td style="padding:0 4px 18px;"><a href="${SITE}" style="display:inline-block;padding:6px 0;text-decoration:none;"><img src="${LOGO.src}" width="${LOGO.width}" height="${LOGO.height}" alt="MAPL TECH" style="display:block;width:${LOGO.width}px;height:auto;color:${COLOR.fg};font-family:${DISPLAY};font-size:20px;line-height:${LOGO.height}px;font-weight:800;"></a></td></tr>
-<tr><td class="card" bgcolor="${COLOR.card}" style="background:${COLOR.card};border:1px solid ${COLOR.line};border-top:3px solid ${COLOR.rule};border-radius:12px;padding:32px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;margin:0 auto;border-collapse:separate;">
+<tr><td style="padding:0 4px 18px;"><a href="${SITE}" style="display:inline-block;padding:6px 0;text-decoration:none;">${logoImg(LOGO.light, `logo-light ${tone('fg').cls}`)}<!--[if !mso]><!--><div class="logo-dark" style="display:none;max-height:0;overflow:hidden;">${logoImg(LOGO.dark, tone('fg').cls)}</div><!--<![endif]--></a></td></tr>
+<tr><td class="card" bgcolor="${LIGHT.card}" style="background:${LIGHT.card};border:1px solid ${LIGHT.line};border-top:3px solid ${RULE};border-radius:12px;padding:32px;">
 ${content}
 </td></tr>
-<tr><td style="padding:24px 4px 0;font-family:${SANS};font-size:14px;line-height:22px;color:${COLOR.muted};">
+<tr><td class="${tone('muted').cls}" style="padding:24px 4px 0;font-family:${SANS};font-size:14px;line-height:22px;color:${tone('muted').color};">
 <p style="margin:0 0 12px;">${footnote}</p>
 <p style="margin:0;">© ${new Date().getFullYear()} MAPL TECH <span style="white-space:nowrap;">Canada · Nigeria · Jamaica</span></p>
-<p style="margin:0;"><a class="text-link" href="${SITE}" style="display:inline-block;padding:11px 0;margin:-11px 0;color:${COLOR.muted};text-decoration:underline;">mapltech.com</a><span aria-hidden="true"> · </span><a class="text-link" href="${mailto(INBOX)}" style="display:inline-block;padding:11px 0;margin:-11px 0;color:${COLOR.muted};text-decoration:underline;">${INBOX}</a></p>
+<p style="margin:0;"><a class="text-link ${tone('muted').cls}" href="${SITE}" style="display:inline-block;padding:11px 0;margin:-11px 0;color:${tone('muted').color};text-decoration:underline;text-underline-offset:4px;">mapltech.com</a><span aria-hidden="true"> · </span><a class="text-link ${tone('muted').cls}" href="${mailto(INBOX)}" style="display:inline-block;padding:11px 0;margin:-11px 0;color:${tone('muted').color};text-decoration:underline;text-underline-offset:4px;">${INBOX}</a></p>
 </td></tr>
 </table>
 <!--[if mso]></td></tr></table><![endif]-->
@@ -380,11 +477,11 @@ const textRows = (rows: Row[]) => rows.map(({ label: name, value }) => (value.in
 export function hubspotStatus(form: HubSpotForm, crm: CrmResult): { html: string; text: string } {
   if (crm.ok) {
     const line = `Saved in HubSpot: Marketing › Forms › ${HUBSPOT_FORMS[form].name}.`;
-    return { html: paragraph(line, 0, COLOR.muted), text: line };
+    return { html: paragraph(line, 0, 'muted'), text: line };
   }
   const line = `Not saved in HubSpot: ${crm.problem}. Add this entry to HubSpot by hand.`;
   return {
-    html: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:12px 16px;border-left:4px solid ${COLOR.rule};border-radius:0 8px 8px 0;background:${COLOR.raised};font-family:${SANS};font-size:16px;line-height:24px;font-weight:600;color:${COLOR.fg};">${escapeHtml(line)}</td></tr></table>`,
+    html: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="s-raised ${tone('fg').cls}" bgcolor="${LIGHT.raised}" style="padding:12px 16px;border-left:4px solid ${RULE};border-radius:0 8px 8px 0;background:${LIGHT.raised};font-family:${SANS};font-size:16px;line-height:24px;font-weight:600;color:${tone('fg').color};">${escapeHtml(line)}</td></tr></table>`,
     text: line,
   };
 }
@@ -459,10 +556,11 @@ export function visitorEmail({ form, to, name, phone = false, resume = false }: 
     paragraphHtml(linkInbox(lead), next.length ? 24 : 16),
     next.length ? steps(next) : '',
     paragraph(copy.more),
-    paragraph(SIGN_OFF, 16, COLOR.fg),
+    // The signature: semibold, so it reads as the people who will reply rather than one more line.
+    paragraph(SIGN_OFF, 16, 'fg', 600),
     rule,
     // The optional step reads as a postscript: the footnote's quieter colour.
-    paragraph(copy.cta.intro, 16, COLOR.muted),
+    paragraph(copy.cta.intro, 16, 'muted'),
     button(copy.cta.label, copy.cta.href),
   ].join('');
 

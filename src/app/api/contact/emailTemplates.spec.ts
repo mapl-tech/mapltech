@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CONTACT_TO } from './email';
-import { FORM_COPY, VISITOR_FROM, firstName, hubspotStatus, inboxEmail, visitorEmail } from './emailTemplates';
+import { EMAIL_COLORS, FORM_COPY, VISITOR_FROM, firstName, hubspotStatus, inboxEmail, visitorEmail } from './emailTemplates';
 import { HUBSPOT_FORMS, type HubSpotForm } from './hubspot';
 
 const FORMS = Object.keys(FORM_COPY) as HubSpotForm[];
@@ -39,21 +39,95 @@ const visitorWords = (form: HubSpotForm) => {
   ];
 };
 
+/** WCAG contrast of two #RRGGBB colours. */
+function contrast(a: string, b: string): number {
+  const luminance = (hex: string) => {
+    const [r, g, bl] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+  };
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+/** Every email layout: each form's two emails, and the inbox email when HubSpot missed the entry. */
+const everyHtml = () => [
+  ...FORMS.flatMap((form) => [inbox(form).html, visitorEmail({ form, to: 'ada@example.com', name: 'Ada King' }).html]),
+  inbox('referral', { ok: false, problem: 'HubSpot did not answer' }).html,
+];
+
 describe('the brand, on every email', () => {
   for (const form of FORMS) {
-    it(`${form}: the logo, one heading, the company line, dark by design, and no "Inc."`, () => {
+    it(`${form}: the logo, one heading, the company line, light with a dark-mode twin, and no "Inc."`, () => {
       for (const { html } of [inbox(form), visitorEmail({ form, to: 'ada@example.com', name: 'Ada King' })]) {
         expect(html.startsWith('<!doctype html>')).toBe(true);
         expect(html).toContain('<html lang="en"');
         expect(html).toContain('role="article" aria-roledescription="email"');
-        expect(html).toContain('<meta name="color-scheme" content="dark">');
-        expect(html).toContain('src="https://mapltech.com/email/mapl-tech-logo.png" width="148" height="33" alt="MAPL TECH"');
+        expect(html).toContain('<meta name="color-scheme" content="light dark">');
+        expect(html).toContain('src="https://mapltech.com/email/mapl-tech-logo-black.png" width="148" height="33" alt="MAPL TECH"');
+        // The white logo waits, hidden, for a mail app in dark mode; Outlook on Windows never gets it.
+        expect(html).toContain(
+          '<!--[if !mso]><!--><div class="logo-dark" style="display:none;max-height:0;overflow:hidden;"><img class="c-fg" src="https://mapltech.com/email/mapl-tech-logo.png" width="148" height="33" alt="MAPL TECH"',
+        );
         expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
         expect(html).toContain(`© ${new Date().getFullYear()} MAPL TECH <span style="white-space:nowrap;">Canada · Nigeria · Jamaica</span>`);
         expect(html).not.toContain('Inc.');
       }
     });
   }
+
+  it('keeps every word at 7:1 or more on what it sits on, light and dark (WCAG AAA)', () => {
+    const { LIGHT, DARK, FILL } = EMAIL_COLORS;
+    // Text on the card; the logo's words (pictures off), the footnote and the company line on the ground; the notice.
+    const pairs = [
+      ['fg', 'card'],
+      ['body', 'card'],
+      ['muted', 'card'],
+      ['link', 'card'],
+      ['fg', 'ground'],
+      ['muted', 'ground'],
+      ['fg', 'raised'],
+    ] as const;
+    for (const palette of [LIGHT, DARK]) {
+      for (const [text, surface] of pairs) expect(contrast(palette[text], palette[surface]), `${text} on ${surface}`).toBeGreaterThanOrEqual(7);
+    }
+    for (const fill of Object.values(FILL)) expect(contrast('#FFFFFF', fill)).toBeGreaterThanOrEqual(7);
+  });
+
+  it('recolours everything that carries a colour when a mail app is in dark mode', () => {
+    const { LIGHT } = EMAIL_COLORS;
+    // Each light colour as an inline style writes it, and the class that recolours it. A colour
+    // the palette uses twice (ink for fg and body, paper for the ground and the card) may carry
+    // either class.
+    const roles: [string, string][] = [
+      [`color:${LIGHT.fg};`, 'c-fg'],
+      [`color:${LIGHT.body};`, 'c-body'],
+      [`color:${LIGHT.muted};`, 'c-muted'],
+      [`color:${LIGHT.link};`, 'c-link'],
+      [`background:${LIGHT.ground};`, 's-ground'],
+      [`background:${LIGHT.card};`, 'card'],
+      [`background:${LIGHT.raised};`, 's-raised'],
+      [`background:${LIGHT.line};`, 's-line'],
+      [`solid ${LIGHT.line};`, 'b-line'],
+      [`solid ${LIGHT.line};`, 'card'],
+    ];
+    const owners = new Map<string, string[]>();
+    for (const [declaration, owner] of roles) owners.set(declaration, [...(owners.get(declaration) ?? []), owner]);
+    for (const html of everyHtml()) {
+      const [head, body] = html.split('</head>');
+      const dark = head.slice(head.indexOf('@media (prefers-color-scheme:dark){'));
+      for (const [, attributes] of body.matchAll(/<[a-z][a-z0-9]*\b([^>]*)>/g)) {
+        const style = attributes.match(/style="([^"]*)"/)?.[1] ?? '';
+        const classes = attributes.match(/class="([^"]*)"/)?.[1] ?? '';
+        for (const [declaration, allowed] of owners) {
+          if (style.includes(declaration)) {
+            expect(allowed.some((owner) => classes.split(' ').includes(owner)), `${declaration} in <…${attributes.slice(0, 60)}>`).toBe(true);
+          }
+        }
+        // And every colour class used has its dark rule.
+        for (const name of classes.split(' ').filter((c) => /^(c|s|b)-/.test(c) || c === 'card')) expect(dark).toContain(`.${name}{`);
+      }
+    }
+  });
 
   it('gives the visitor one button, and the team a reply button on every form but the newsletter', () => {
     for (const form of FORMS) {
@@ -108,7 +182,7 @@ describe('the visitor’s confirmation', () => {
     expect(email).toMatchObject({ to: 'ada@example.com', from: VISITOR_FROM, replyTo: CONTACT_TO, subject: 'Your call request is in' });
     expect(email.text).toContain('Thanks, Ada. Your call request is in.');
     expect(email.text).toContain('What happens next\n1. We email you within 24 hours to set a time.\n2. We talk for 20 minutes.');
-    expect(email.html).toContain('<ol class="steps"');
+    expect(email.html).toContain('<ol class="steps c-fg"');
     expect(email.text).toContain('See the work: https://mapltech.com/our-work');
   });
 
