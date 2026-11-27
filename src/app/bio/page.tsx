@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Arrow from '@/components/ui/Arrow';
+import QuoteText from '@/components/ui/QuoteText';
 import Steps from '@/components/services/Steps';
 import TrustList from '@/components/flagship/TrustList';
 import QuoteLine from '@/components/flagship/QuoteLine';
@@ -195,18 +196,31 @@ export default function BioPage() {
                 <path d="M0 36V22.4C0 9.6 6.2 2.1 18.6 0l2 4.6C13.8 6.4 10.4 10.4 10.2 16.6H20V36H0zm28 0V22.4C28 9.6 34.2 2.1 46.6 0l2 4.6c-6.8 1.8-10.2 5.8-10.4 12H48V36H28z" />
               </svg>
               <blockquote className={styles.quoteText}>
-                <p>{QUOTE.text}</p>
+                <p>
+                  {/* The crimson mark above opens the quote, so the words carry none of their own. */}
+                  <QuoteText quote={QUOTE.text} highlight={QUOTE.highlight} marks={false} />
+                </p>
               </blockquote>
               <figcaption className={styles.quoteBy}>
                 {QUOTE.image ? (
                   <Image src={QUOTE.image} alt="" width={56} height={56} className={styles.quotePhoto} />
                 ) : null}
                 <span>
-                  <span className={styles.quoteName}>{QUOTE.name}</span>
+                  <span className={styles.quoteName}>{QUOTE.name}</span>{' '}
                   <span className={styles.quoteRole}>{QUOTE.role}</span>
                 </span>
               </figcaption>
             </figure>
+            {QUOTE.study ? (
+              <p className={styles.quoteMore}>
+                <a href={QUOTE.study.href} className={styles.faqAction} data-cta-placement={`bio_quote_case_${QUOTE.study.slug}`}>
+                  {QUOTE.study.label}
+                  <span aria-hidden="true" className={styles.faqActionArrow}>
+                    <Arrow />
+                  </span>
+                </a>
+              </p>
+            ) : null}
           </section>
         ) : null}
 

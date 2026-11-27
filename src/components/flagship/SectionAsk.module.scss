@@ -1,0 +1,80 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/editorial' as *;
+
+// SectionAsk (SectionAsk.tsx): the question, then the button over its trust
+// list; side by side from 1024px, the question in the title's column.
+.ask {
+  display: grid;
+  gap: 24px;
+
+  @include lg {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: 48px;
+    align-items: center;
+  }
+}
+
+.title {
+  @include display-m;
+  margin: 0;
+  max-width: 16em;
+  color: $color-fg;
+}
+
+// A later ask: under a hairline, its question a step smaller (24px -> 36px
+// against the first ask's 28px -> 48px).
+.compact {
+  padding-top: clamp(32px, 4vw, 48px);
+  border-top: 1px solid $color-hairline;
+
+  .title {
+    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.25rem);
+  }
+}
+
+.action {
+  display: grid;
+  justify-items: start;
+  gap: 28px; // the trust checklist's gap from the button above it, as every ask keeps
+
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    gap: 24px;
+  }
+}
+
+.primary {
+  @include button-primary;
+  min-height: 56px;
+  padding: 0 26px 0 30px;
+  gap: 14px;
+  font-size: 1.0625rem;
+
+  @include focus-ring;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.35s $ease-out-expo;
+
+  .primary:hover & {
+    transform: translateX(4px);
+  }
+}
+
+.note {
+  --trust-gap: 0px; // the grid gap above spaces it
+}
+
+// The button and its quiet companion on one line (wrapping on the narrowest
+// phones), 24px apart.
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+.secondary {
+  @include text-action($color-fg);
+}

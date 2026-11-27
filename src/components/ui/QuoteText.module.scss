@@ -1,0 +1,7 @@
+// QuoteText (QuoteText.tsx): a <mark> that emphasises rather than a highlighter
+// pen. Each place that shows a quote sets the mark's colour and weight (`mark`
+// in its own module wins over this class), so it suits that ground.
+.mark {
+  background: none;
+  color: inherit;
+}

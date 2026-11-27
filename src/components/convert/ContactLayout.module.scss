@@ -152,14 +152,16 @@ $accent: $color-red-ink;
 .proofQuote {
   margin: 0;
 
+  // The quote a step quieter than the words a skimming reader should catch
+  // (site.ts `highlight`, ui/QuoteText): muted ink 8.1:1, the highlight ink.
   p {
     margin: 0;
     font-family: $font-display;
-    font-weight: 600;
+    font-weight: 500;
     font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.5rem);
     line-height: 1.3;
     letter-spacing: -0.015em;
-    color: $ink;
+    color: $muted;
     text-wrap: pretty;
 
     &::before {
@@ -171,6 +173,11 @@ $accent: $color-red-ink;
       content: '\201D';
       color: $accent;
     }
+  }
+
+  mark {
+    color: $ink;
+    font-weight: 700;
   }
 }
 

@@ -549,18 +549,31 @@ $shell: 1280px;
 .quoteText {
   margin: 0;
 
-  // A person speaking, not a second headline: the body face at a reading weight.
+  // A person speaking, not a second headline: the body face at a reading
+  // weight, a step quieter than the words a skimming reader should catch
+  // (site.ts `highlight`, ui/QuoteText).
   p {
     margin: 0 auto;
     max-width: 36em;
     font-family: $font-body;
-    font-weight: $font-weight-medium;
+    font-weight: $font-weight-regular;
     font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem); // 20px -> 26px
     line-height: 1.5;
     letter-spacing: -0.005em;
-    color: $color-fg;
+    color: $color-text-muted;
     text-wrap: pretty;
   }
+
+  mark {
+    color: $color-fg;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// The case study the words are about, under who said them.
+.quoteMore {
+  margin: 20px 0 0;
+  text-align: center;
 }
 
 .quoteBy {

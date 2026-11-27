@@ -114,10 +114,24 @@
 }
 
 // ---------------------------------------------------------------- in their words (dark, ruled)
+// The quote, then from 1024px the work she means beside it (8 to 4), its
+// card level with the foot of the quote, where her name is.
+.voiceRow {
+  display: grid;
+  gap: clamp(32px, 4vw, 48px);
+  margin-top: clamp(24px, 3vw, 36px);
+
+  @include lg {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    column-gap: clamp(40px, 5vw, 80px);
+    align-items: end;
+  }
+}
+
 .voice {
   display: grid;
   gap: 28px;
-  margin: clamp(24px, 3vw, 36px) 0 0;
+  margin: 0;
 }
 
 .voiceQuote {
@@ -127,13 +141,19 @@
     margin: 0;
     max-width: 30em;
     font-family: $font-display;
-    // 21px -> 32px, semibold: sized for the four-sentence Google review it now carries (Nov 5, 2026).
+    // 21px -> 32px: sized for the four-sentence Google review it carries (Nov 5, 2026).
     font-size: clamp(1.3125rem, 1rem + 1vw, 2rem);
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.35;
     letter-spacing: -0.02em;
-    color: $color-fg;
+    color: $color-text-muted;
     text-wrap: pretty;
+  }
+
+  // The words a skimming reader should catch (site.ts `highlight`).
+  mark {
+    color: $color-fg;
+    font-weight: 700;
   }
 }
 
@@ -162,8 +182,41 @@
   color: $color-fg-muted;
 }
 
+// The work she means: its published result, then the case study.
+.voiceWork {
+  @include ground-card;
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  padding: clamp(24px, 2.6vw, 40px);
+  @include rise-in;
+}
+
+.voiceWorkLabel {
+  @include section-label;
+}
+
+.voiceWorkFact {
+  display: grid;
+  gap: 10px;
+  margin: 8px 0 0;
+}
+
+// A case result in a card, set as the homepage's work cards set theirs (32px
+// -> 48px): evidence beside the quote, never louder than it.
+.voiceWorkValue {
+  @include display-figure;
+  font-size: $figure-card;
+}
+
+.voiceWorkCaption {
+  max-width: 22em;
+  font-size: $font-size-base;
+  line-height: 1.45;
+  color: $color-fg-muted;
+}
+
 .voiceAction {
   @include text-action($color-fg);
   display: inline-flex;
-  margin-top: clamp(28px, 3.4vw, 40px);
 }

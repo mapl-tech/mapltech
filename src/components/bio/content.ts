@@ -10,6 +10,7 @@
 import { googleReviews, siteConfig, testimonials } from '@/config/site';
 import { findStory } from '@/components/case/stories';
 import { PROOF } from '@/components/flagship/content';
+import { caseFor } from '@/components/flagship/caseFor';
 import { BUDGET_FLOOR } from './questions';
 
 /** Where the page lives. src/app/bio is served at the subdomain's root (next.config.ts). */
@@ -91,10 +92,25 @@ export const CASES: readonly BioCase[] = CASE_SLUGS.flatMap((slug) => {
   ];
 });
 
-/** The one approved client quote (site.ts testimonials), with her photo. */
+/**
+ * The one approved client quote (site.ts testimonials), with her photo, the
+ * words a skimming reader should catch (`highlight`, set brighter by
+ * ui/QuoteText) and the case study it is about on mapltech.com, so the words
+ * can be checked against the work.
+ */
 const alita = testimonials.find((t) => t.company === 'LRO Staffing');
+const alitaCase = alita ? caseFor(alita.quote) : null;
 export const QUOTE = alita
-  ? { text: alita.quote, name: alita.name, role: `${alita.role}, ${alita.company}`, image: alita.image }
+  ? {
+      text: alita.quote,
+      highlight: alita.highlight,
+      name: alita.name,
+      role: `${alita.role}, ${alita.company}`,
+      image: alita.image,
+      study: alitaCase
+        ? { slug: alitaCase.slug, label: `Read the ${alitaCase.client} case study`, href: `${siteConfig.url}${alitaCase.href}` }
+        : null,
+    }
   : null;
 
 /**

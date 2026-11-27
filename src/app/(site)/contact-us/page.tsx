@@ -8,6 +8,7 @@ import { absoluteUrl } from '@/config/routes';
 import { siteConfig, testimonials } from '@/config/site';
 import PageHeader from '@/components/ui/PageHeader';
 import QuoteLine from '@/components/flagship/QuoteLine';
+import QuoteText from '@/components/ui/QuoteText';
 import ProjectBrief from '@/components/convert/ProjectBrief';
 import Steps from '@/components/services/Steps';
 import styles from '@/components/convert/ContactLayout.module.scss';
@@ -147,14 +148,16 @@ export default function ContactPage() {
             {PROOF ? (
               <figure className={styles.proof}>
                 <blockquote className={styles.proofQuote}>
-                  <p>{PROOF.quote}</p>
+                  <p>
+                    <QuoteText quote={PROOF.quote} highlight={PROOF.highlight} marks={false} />
+                  </p>
                 </blockquote>
                 <figcaption className={styles.proofBy}>
                   {PROOF.image ? (
                     <Image src={PROOF.image} alt="" width={48} height={48} className={styles.avatar} />
                   ) : null}
                   <span>
-                    <span className={styles.proofName}>{PROOF.name}</span>
+                    <span className={styles.proofName}>{PROOF.name}</span>{' '}
                     <span className={styles.proofRole}>
                       {PROOF.role}, {PROOF.company}
                     </span>

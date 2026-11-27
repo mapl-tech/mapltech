@@ -126,7 +126,7 @@ $card-wide: 920px;
   gap: clamp(28px, 4vw, 56px);
   overflow: hidden;
   padding: clamp(24px, 4vw, 56px);
-  border-radius: clamp(22px, 2.6vw, 36px);
+  border-radius: $card-radius;
   background:
     radial-gradient(70% 90% at 85% 100%, rgba(217, 28, 63, 0.16) 0%, transparent 60%),
     #121214;
@@ -189,15 +189,10 @@ $card-wide: 920px;
 
 // The <dd> after its label in the DOM, shown first (nothing in a metric is focusable).
 .value {
+  @include display-figure;
   order: -1;
   margin: 0;
-  font-family: $font-display;
-  font-weight: 800;
-  font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: $color-fg;
-  @include tabular;
+  font-size: $figure-card;
 }
 
 .metricLabel {
@@ -304,58 +299,10 @@ $card-wide: 920px;
 }
 
 // ---------------------------------------------------------------
-// The ask after the last card: the question, the one primary action, the
-// hero's reassurance under it.
+// The ask after the last card (SectionAsk): placed in the page's shell, under
+// the cards.
 // ---------------------------------------------------------------
 .ask {
   @include shell;
-  display: grid;
-  gap: 24px;
   margin-top: clamp(40px, 6vw, 80px);
-
-  @include lg {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    column-gap: 48px;
-    align-items: center;
-  }
-}
-
-.askTitle {
-  @include display-m;
-  margin: 0;
-  max-width: 16em;
-  color: $color-fg;
-}
-
-.askAction {
-  display: grid;
-  justify-items: start;
-  gap: 28px; // the trust checklist's gap from the button above it, as every ask keeps
-
-  @media (max-width: #{$breakpoint-sm - 1px}) {
-    gap: 24px;
-  }
-}
-
-.askPrimary {
-  @include button-primary;
-  min-height: 56px;
-  padding: 0 26px 0 30px;
-  gap: 14px;
-  font-size: 1.0625rem;
-
-  @include focus-ring;
-}
-
-.askArrow {
-  display: inline-block;
-  transition: transform 0.35s $ease-out-expo;
-
-  .askPrimary:hover & {
-    transform: translateX(4px);
-  }
-}
-
-.askNote {
-  --trust-gap: 0px; // the grid gap above spaces it
 }

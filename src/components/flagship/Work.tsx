@@ -1,8 +1,8 @@
 import { ViewTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PRIMARY_CTA, TRUST_ITEMS, WORK, WORK_SECTION } from './content';
-import TrustList from './TrustList';
+import { WORK, WORK_SECTION } from './content';
+import SectionAsk from './SectionAsk';
 import WorkStack from './WorkStack';
 import styles from './Work.module.scss';
 import Arrow from '@/components/ui/Arrow';
@@ -109,20 +109,7 @@ export default function Work() {
         })}
       </WorkStack>
 
-      {/* One filled ask on screen at a time: while this one is in view the header's is an
-          outline (data-header-quiet) and the phone bar steps aside (data-bar-stand-down). */}
-      <div className={styles.ask} data-header-quiet="" data-bar-stand-down="">
-        <p className={styles.askTitle}>{WORK_SECTION.ask}</p>
-        <div className={styles.askAction}>
-          <Link href={PRIMARY_CTA.href} className={styles.askPrimary} data-cta-placement="home_work_ask">
-            {PRIMARY_CTA.label}
-            <span aria-hidden="true" className={styles.askArrow}>
-              <Arrow />
-            </span>
-          </Link>
-          <TrustList items={TRUST_ITEMS} className={styles.askNote} />
-        </div>
-      </div>
+      <SectionAsk title={WORK_SECTION.ask} placement="home_work_ask" className={styles.ask} />
     </section>
   );
 }

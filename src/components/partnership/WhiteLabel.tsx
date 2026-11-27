@@ -1,11 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
-import { SPOTLIGHT } from '@/components/flagship/content';
+import { SPOTLIGHT, WORK } from '@/components/flagship/content';
+import { caseFor } from '@/components/flagship/caseFor';
 import ed from '@/components/company/Company.module.scss';
 import { WHITE_LABEL } from './content';
 import styles from './WhiteLabel.module.scss';
 import Arrow from '@/components/ui/Arrow';
+import QuoteText from '@/components/ui/QuoteText';
 
 /**
  * Who does what (paper): the white-label split, said once, as two short
@@ -90,37 +92,70 @@ export function Fit() {
 /**
  * The approved client quote, in full: it is about exactly this, working as
  * part of the client's team (site.ts testimonials, LRO Staffing).
+ *
+ * Nov 26, 2026: the quote alone ran seven lines across two thirds of the
+ * screen, beside nothing, and its link said only "See the work". Now the
+ * words a skimming reader should catch are set brighter (ui/QuoteText), and
+ * from 1024px the work she means sits beside them: the site's published
+ * result (its work card, content.ts WORK) and the case study, so the words can
+ * be checked against the work. Without that case it falls back to the link.
  */
 export function Voice() {
   if (!SPOTLIGHT) return null;
+  const { company } = SPOTLIGHT;
+  const work = WORK.find((card) => card.client === company);
+  const result = work?.metrics[0];
+  const study = caseFor(SPOTLIGHT.quote);
   return (
     <section className={`${ed.dark} ${ed.ruled}`} aria-labelledby="voice-title">
       <div className={ed.inner}>
         <h2 id="voice-title" className={ed.label}>
           {WHITE_LABEL.voice.label}
         </h2>
-        <figure className={styles.voice}>
-          <blockquote className={styles.voiceQuote}>
-            <p>“{SPOTLIGHT.quote}”</p>
-          </blockquote>
-          <figcaption className={styles.voiceBy}>
-            {SPOTLIGHT.image ? (
-              <Image src={SPOTLIGHT.image} alt="" width={56} height={56} className={styles.voiceAvatar} />
-            ) : null}
-            <span>
-              <span className={styles.voiceName}>{SPOTLIGHT.name}</span>
-              <span className={styles.voiceRole}>
-                {SPOTLIGHT.role}, {SPOTLIGHT.company}
+        <div className={styles.voiceRow}>
+          <figure className={styles.voice}>
+            <blockquote className={styles.voiceQuote}>
+              <p>
+                <QuoteText quote={SPOTLIGHT.quote} highlight={SPOTLIGHT.highlight} />
+              </p>
+            </blockquote>
+            <figcaption className={styles.voiceBy}>
+              {SPOTLIGHT.image ? (
+                <Image src={SPOTLIGHT.image} alt="" width={56} height={56} className={styles.voiceAvatar} />
+              ) : null}
+              <span>
+                <span className={styles.voiceName}>{SPOTLIGHT.name}</span>{' '}
+                <span className={styles.voiceRole}>
+                  {SPOTLIGHT.role}, {SPOTLIGHT.company}
+                </span>
               </span>
-            </span>
-          </figcaption>
-        </figure>
-        <Link href="/our-work" className={styles.voiceAction} data-cta-placement="white_label_work">
-          See the work
-          <span aria-hidden="true" className={styles.arrow}>
-            <Arrow />
-          </span>
-        </Link>
+            </figcaption>
+          </figure>
+          {work && result && study ? (
+            <div className={styles.voiceWork}>
+              <p className={styles.voiceWorkLabel}>
+                {work.client} · {work.kind.split(' · ')[0]}
+              </p>
+              <p className={styles.voiceWorkFact}>
+                <span className={styles.voiceWorkValue}>{result.value}</span>{' '}
+                <span className={styles.voiceWorkCaption}>{result.label}</span>
+              </p>
+              <Link href={study.href} className={styles.voiceAction} data-cta-placement={`white_label_case_${study.slug}`}>
+                Read the {study.client} case study
+                <span aria-hidden="true" className={styles.arrow}>
+                  <Arrow />
+                </span>
+              </Link>
+            </div>
+          ) : (
+            <Link href="/our-work" className={styles.voiceAction} data-cta-placement="white_label_work">
+              See the work
+              <span aria-hidden="true" className={styles.arrow}>
+                <Arrow />
+              </span>
+            </Link>
+          )}
+        </div>
       </div>
     </section>
   );

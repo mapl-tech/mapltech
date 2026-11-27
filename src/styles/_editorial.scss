@@ -22,6 +22,31 @@ $color-ink-muted: rgba(11, 11, 12, 0.74); // was 0.68 (6.5:1)
 $color-ink-hairline: rgba(11, 11, 12, 0.14);
 $color-red-ink: #8F162C; // was #B81D38 (5.5:1)
 
+// One radius for every card on the dark ground (the homepage's work cards set it).
+$card-radius: clamp(22px, 2.6vw, 36px);
+
+// Large figures (a result, a count, a price) share one setting; each role
+// sets its size. A case result inside a card (the work cards' metrics, the
+// white-label result) is $figure-card, 32px -> 48px.
+$figure-card: clamp(2rem, 1.4rem + 1.6vw, 3rem);
+
+@mixin display-figure {
+  font-family: $font-display;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: $color-fg;
+  @include tabular;
+}
+
+// A quiet card on the dark ground: the raised surface inside a 1px hairline
+// ring (a ring, not a border, so it adds no size), on the work cards' radius.
+@mixin ground-card {
+  border-radius: $card-radius;
+  background: $color-surface-1;
+  box-shadow: 0 0 0 1px $color-hairline;
+}
+
 @mixin shell {
   width: 100%;
   max-width: $editorial-max;

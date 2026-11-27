@@ -324,34 +324,87 @@ export const APPROACH = {
 } as const;
 
 /**
- * The reasons, before the counts: what an agency gains, in facts the site
- * publishes elsewhere (prices on /pricing, the fixed quote, the web line
- * "Fast websites built for AI search", the accessibility standards on launch
- * day, the Slack and weekly check-ins of the steps). Not hygiene an agency
+ * Why agencies work with us (reworked Nov 26, 2026; Leshan: the section "does
+ * not look good, and it might not help with conversion"). Its four promises
+ * read as small print under three outsized counts, and two of them repeated
+ * the steps a screen above word for word. Now: four reasons the steps do not
+ * give, each one unit read in order (its figure, what the figure counts, then
+ * the reason), the two testimonials, and one ask with the trust list. The
+ * fixed quote, the Slack check-ins and "your client only hears from your
+ * team" stay the steps' (and the trust list's) to say. Not hygiene an agency
  * expects of any partner (Leshan, Nov 5, 2026: no NDA lines).
  */
 export const PROOF_SECTION = {
-  label: 'Our track record',
+  label: 'Why us',
   title: 'Why agencies work with us.',
-  promises: [
-    'Public prices for every package, so you can plan your margin before you pitch.',
-    'One fixed quote after a 20-minute call, so the budget holds.',
-    'Websites built for AI search and accessibility standards from launch day.',
-    'We join your Slack and weekly check-ins. Your client only hears from your team.',
-  ],
+  lede: 'Four reasons, and the numbers behind them.',
   // A client's words and an audit's verdict, so not "What clients say".
   voicesLabel: 'In their words',
+  /** Not the work ask's question or the close's line: this one asks after the reasons. */
+  ask: 'Have a client project in mind?',
 } as const;
+
+export interface Reason {
+  /** As printed: "$3,500", "~50%", "200+", "3". */
+  figure: string;
+  /** What the figure counts, read straight after it. */
+  caption: string;
+  title: string;
+  text: string;
+}
+
+const [projects, experience, offices] = PROOF.stats;
+const chatGptShare = WORK.find((card) => card.slug === 'mapl-tours')?.metrics[0];
+
+/**
+ * Each figure read from where the site already publishes it, so none can
+ * drift: the lowest package price (site.ts `pricing`, as the hero's "Projects
+ * from" line), MAPL Tours' ChatGPT share (its work card), the projects and
+ * years (PROOF.stats, the live homepage's numbers) and the offices with their
+ * hours (the timezone FAQ, components/home/data.ts). MAPL Tours is named as
+ * our own company, as its work card says. A reason whose source is gone is
+ * dropped rather than shown without its number.
+ */
+export const REASONS: readonly Reason[] = [
+  {
+    figure: money(LOWEST_PRICE),
+    caption: 'the lowest starting price we publish',
+    title: 'Prices you can plan around',
+    text: 'Every package has a public price, so you can plan your margin before you pitch.',
+  },
+  chatGptShare
+    ? {
+        figure: chatGptShare.value,
+        caption: 'of customers on MAPL Tours, our own travel company, now arrive through ChatGPT',
+        title: 'Built for AI search',
+        text: 'Every website we build is ready for AI search and meets accessibility standards on launch day.',
+      }
+    : null,
+  {
+    figure: `${projects.value}${projects.suffix}`,
+    caption: projects.label,
+    title: 'A team that has done this before',
+    text: `Our team brings ${experience.value}${experience.suffix} ${experience.label} in websites, automation, internal tools and cloud.`,
+  },
+  {
+    figure: `${offices.value}${offices.suffix}`,
+    caption: 'offices: Toronto, Kingston and Lagos',
+    title: 'Hours that overlap yours',
+    text: 'Toronto is on Eastern time, Kingston is within an hour of it all year, and Lagos\u2019s afternoon overlaps the Eastern morning.',
+  },
+].filter((reason): reason is Reason => reason !== null);
 
 /**
  * The testimonials the live site publishes (site.ts `testimonials`), in full:
  * the approved client quote, then the CHHA-NCR post-launch audit's verdict,
  * which is attributed to the audit, not to a person (site.ts `kind`, the
  * test llms.ts uses too). A person reads "role, company"; the audit reads
- * "relaunch, month".
+ * "relaunch, month". `highlight` is the part set brighter (ui/QuoteText).
  */
 export const VOICES = testimonials.map((t) => ({
   quote: t.quote,
+  highlight: t.highlight,
+  kind: t.kind,
   name: t.name,
   // The company's name held on one line (U+00A0), so "LRO Staffing" never splits.
   detail: t.kind === 'client' ? `${t.role}, ${t.company.replace(/ /g, '\u00a0')}` : `${t.company}, ${t.role}`,

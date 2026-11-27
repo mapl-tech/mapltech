@@ -300,6 +300,9 @@ export const testimonials = [
     // "MAPL TECH" (Leshan: "In Alita's testimonial it should be MAPL TECH").
     quote:
       'Working with MAPL TECH has been nothing short of incredible. They blew our expectations out of the water and delivered web development far beyond what we imagined. Their team is creative, responsive, and truly committed to bringing your vision to life. We are thrilled with the final product and would highly recommend MAPL TECH to anyone looking for top-tier web development and marketing support.',
+    // The words a skimming reader should catch, set brighter where the quote is shown in
+    // full (ui/QuoteText). Always her words exactly: a test checks it is part of the quote.
+    highlight: 'They blew our expectations out of the water and delivered web development far beyond what we imagined.',
     name: 'Alita Fabiano',
     company: 'LRO Staffing',
     role: 'Operations Director',
@@ -314,6 +317,7 @@ export const testimonials = [
   {
     quote:
       'Skip links, real landmarks, complete alt text, visible focus states and reduced-motion support: accessibility engineering above what most agencies ship, with every audited colour pair meeting WCAG AA.',
+    highlight: 'accessibility engineering above what most agencies ship',
     name: 'Post-launch accessibility audit',
     company: 'CHHA-NCR relaunch',
     role: 'August 2026',
