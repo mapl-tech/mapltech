@@ -1,19 +1,11 @@
 import { ViewTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { WORK, WORK_SECTION } from './content';
+import { CASE_SHOTS as SHOTS, WORK, WORK_SECTION } from './content';
 import SectionAsk from './SectionAsk';
 import WorkStack from './WorkStack';
 import styles from './Work.module.scss';
 import Arrow from '@/components/ui/Arrow';
-
-/** Real captures per case (public/images/cases): the live desktop site and its phone view. */
-const SHOTS: Record<string, { desktop: string; mobile: string; url: string }> = {
-  'lro-staffing': { desktop: 'lro-desktop', mobile: 'lro-mobile', url: 'lrostaffing.com' },
-  'dodo-island-discoveries': { desktop: 'dodo-desktop', mobile: 'dodo-mobile', url: 'dodoislanddiscoveries.com' },
-  'mapl-tours': { desktop: 'tours-desktop', mobile: 'tours-mobile', url: 'mapltours.com' },
-  'chha-ncr': { desktop: 'chha-desktop', mobile: 'chha-mobile', url: 'chhancr.ca' },
-};
 
 /**
  * Selected work: the featured cases as cards that stack as they

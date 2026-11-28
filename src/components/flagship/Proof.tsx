@@ -1,12 +1,12 @@
 import { Fragment } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PRICING_HREF, PRICING_LABEL } from '@/components/layout/chrome';
 import Arrow from '@/components/ui/Arrow';
-import QuoteText from '@/components/ui/QuoteText';
 import { caseFor } from './caseFor';
-import { PROOF_SECTION, REASONS, VOICES } from './content';
+import { PROOF_SECTION, PROOF_WALL } from './content';
 import SectionAsk from './SectionAsk';
+import WallClocks from './WallClocks';
+import WallSpot from './WallSpot';
 import styles from './Proof.module.scss';
 
 /**
@@ -44,21 +44,75 @@ function Figure({ value }: { value: string }) {
 }
 
 /**
- * Why agencies work with us (content.ts PROOF_SECTION, reworked Nov 26, 2026).
- * Three parts, in the order a director weighs a partner:
- * - Four reasons, each one unit: its figure, what the figure counts directly
- *   under it, then the reason. In the DOM the reason's title comes first, so
- *   heading navigation lands on it; CSS shows the figure first (nothing in a
- *   reason is focusable). The figures are sized to their column (container
- *   query units), so none can reach its neighbour.
- * - The site's two testimonials in full, as cards, each ending on the case
- *   study it is about; the words a skimming reader should catch are set
- *   brighter (ui/QuoteText).
- * - One ask, with the trust list beside the button.
- * The clients' logos are in the hero's foot row, in the first screen, so
- * they are not repeated here.
+ * A tile's link, at the tile's foot: its words name the destination. With
+ * `cover`, it also covers its tile (::after), and the tile answers a mouse as
+ * one link (the light, the lift); that is for the figure tiles only. A tile
+ * that quotes someone keeps the quotation selectable, so there only the words
+ * of the link are the link. `short` is shown instead of `label` where the
+ * tile is half a phone wide (CSS); the hidden one is not part of the name,
+ * and analytics reads `label` from data-cta-label rather than both from the
+ * link's text.
+ */
+function TileLink({
+  href,
+  label,
+  short,
+  context,
+  placement,
+  cover = false,
+}: {
+  href: string;
+  label: string;
+  short?: string;
+  /** Said to screen readers after the label (": LRO Staffing"), as the work cards do. */
+  context?: string;
+  placement: string;
+  cover?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cover ? `${styles.tileLink} ${styles.cover}` : styles.tileLink}
+      data-cta-placement={placement}
+      data-cta-label={short ? label : undefined}
+    >
+      <span>
+        {short ? (
+          <>
+            <span className={styles.long}>{label}</span>
+            <span className={styles.short}>{short}</span>
+          </>
+        ) : (
+          label
+        )}
+        {context ? <span className="visually-hidden">: {context}</span> : null}
+      </span>
+      <span aria-hidden="true" className={styles.tileArrow}>
+        <Arrow />
+      </span>
+    </Link>
+  );
+}
+
+/**
+ * Why agencies work with us: the proof wall (content.ts PROOF_WALL, Nov 28,
+ * 2026). Six tiles, each one piece of proof in one shape: a small heading,
+ * the proof, one caption, its link. It opens on a client's own sentence and
+ * ends on the CHHA-NCR audit's verdict, so the last thing read before the ask
+ * is third-party proof ("above what most agencies ship"): proof belongs beside
+ * the decision it supports. From 1280px a twelve-column bento split 6 | 6 in
+ * every row: the client's sentence as the lead tile (two rows tall, on the
+ * work cards' crimson glow) beside the price and the projects, with the
+ * offices' live hours under those two; then MAPL Tours' ChatGPT share over its
+ * own site under the sentence, and the audit beside it, over the ask. 7 | 5
+ * from 1024px (the hours across the width), six columns on tablets, two on
+ * phones (the two figure tiles side by side). Then one ask.
  */
 export default function Proof() {
+  const { voice, price, team, hours, search, audit } = PROOF_WALL;
+  const voiceCase = voice ? caseFor(voice.quote) : null;
+  const auditCase = audit ? caseFor(audit.quote) : null;
+
   return (
     <section className={styles.proof} aria-labelledby="proof-title">
       <div className={styles.inner}>
@@ -70,71 +124,126 @@ export default function Proof() {
           <p className={styles.lede}>{PROOF_SECTION.lede}</p>
         </header>
 
-        <ul className={styles.reasons} role="list">
-          {REASONS.map((reason) => (
-            <li key={reason.title} className={styles.reason}>
-              <h3 className={styles.reasonTitle}>{reason.title}</h3>
-              <p className={styles.fact}>
-                <span className={styles.figure}>
-                  <Figure value={reason.figure} />
-                </span>{' '}
-                <span className={styles.caption}>{reason.caption}</span>
-              </p>
-              <p className={styles.reasonText}>{reason.text}</p>
+        <WallSpot className={styles.wall}>
+          {voice ? (
+            <li data-tile="" className={`${styles.tile} ${styles.voice}`}>
+              <h3 className={styles.tileHeading}>{voice.heading}</h3>
+              <figure className={styles.voiceFigure}>
+                <svg className={styles.mark} viewBox="0 0 48 36" width="48" height="36" aria-hidden="true" focusable="false">
+                  <path d="M0 36V22.4C0 9.6 6.2 2.1 18.6 0l2 4.6C13.8 6.4 10.4 10.4 10.2 16.6H20V36H0zm28 0V22.4C28 9.6 34.2 2.1 46.6 0l2 4.6c-6.8 1.8-10.2 5.8-10.4 12H48V36H28z" />
+                </svg>
+                {/* The crimson mark opens the quote, so the words carry no marks of their own. */}
+                <blockquote className={styles.voiceQuote}>
+                  <p>{voice.excerpt}</p>
+                </blockquote>
+                <figcaption className={styles.voiceBy}>
+                  {voice.image ? (
+                    <Image src={voice.image} alt="" width={56} height={56} className={styles.voiceAvatar} />
+                  ) : null}
+                  <span>
+                    <span className={styles.voiceName}>{voice.name}</span>{' '}
+                    <span className={styles.voiceDetail}>{voice.detail}</span>
+                  </span>
+                </figcaption>
+              </figure>
+              {voiceCase ? (
+                <TileLink
+                  href={voiceCase.href}
+                  label="Read the case study"
+                  context={voiceCase.client}
+                  placement={`home_proof_case_${voiceCase.slug}`}
+                />
+              ) : null}
             </li>
-          ))}
-        </ul>
+          ) : null}
 
-        {VOICES.length ? (
-          <section className={styles.voices} aria-labelledby="voices-title">
-            <h3 id="voices-title" className={styles.voicesLabel}>
-              {PROOF_SECTION.voicesLabel}
+          {/* The figure tiles' headings hold their figures, so each reads whole in a
+              list of headings ("Prices from $3,500"); they look as every tile does. */}
+          <li data-tile="" className={`${styles.tile} ${styles.price}`}>
+            <h3 className={styles.figureHeading}>
+              <span className={styles.tileHeading}>{price.heading}</span>{' '}
+              <span className={styles.figure}>
+                <Figure value={price.figure} />
+              </span>
             </h3>
-            <ul className={styles.voiceList} role="list">
-              {VOICES.map((voice) => {
-                const study = caseFor(voice.quote);
-                return (
-                  <li key={voice.name} className={styles.voiceItem}>
-                    <figure className={styles.voice}>
-                      <blockquote className={styles.voiceQuote}>
-                        <p>
-                          <QuoteText quote={voice.quote} highlight={voice.highlight} />
-                        </p>
-                      </blockquote>
-                      <figcaption className={styles.voiceBy}>
-                        {voice.image ? (
-                          <Image src={voice.image} alt="" width={56} height={56} className={styles.voiceAvatar} />
-                        ) : null}
-                        <span>
-                          <span className={styles.voiceName}>{voice.name}</span>{' '}
-                          <span className={styles.voiceDetail}>{voice.detail}</span>
-                        </span>
-                      </figcaption>
-                    </figure>
-                    {study ? (
-                      <Link href={study.href} className={styles.voiceCase} data-cta-placement={`home_proof_case_${study.slug}`}>
-                        Read the {study.client} case study
-                        <span aria-hidden="true" className={styles.voiceCaseArrow}>
-                          <Arrow />
-                        </span>
-                      </Link>
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ) : null}
+            <p className={styles.caption}>{price.caption}</p>
+            <TileLink href={price.link.href} label={price.link.label} short={price.link.short} placement="home_proof_pricing" cover />
+          </li>
 
-        {/* The page's second ask (the work cards end on the first), so the quieter one; the
-            first reason is public prices, so the prices are one quiet link away. The
-            section's grid gap places it under the testimonials. */}
-        <SectionAsk
-          title={PROOF_SECTION.ask}
-          placement="home_proof_ask"
-          compact
-          secondary={{ label: PRICING_LABEL, href: PRICING_HREF, placement: 'home_proof_pricing' }}
-        />
+          <li data-tile="" className={`${styles.tile} ${styles.team}`}>
+            <h3 className={styles.figureHeading}>
+              <span className={styles.tileHeading}>{team.heading}</span>{' '}
+              <span className={styles.figure}>
+                <Figure value={team.figure} />
+              </span>
+            </h3>
+            <p className={styles.caption}>{team.caption}</p>
+            <TileLink href={team.link.href} label={team.link.label} short={team.link.short} placement="home_proof_team" cover />
+          </li>
+
+          <li data-tile="" className={`${styles.tile} ${styles.hours}`}>
+            <h3 className={styles.tileHeading}>{hours.heading}</h3>
+            <WallClocks cities={hours.cities} />
+          </li>
+
+          {search ? (
+            <li data-tile="" className={`${styles.tile} ${styles.search}`}>
+              <div className={styles.searchCopy}>
+                <h3 className={styles.tileHeading}>{search.heading}</h3>
+                <p className={styles.figure}>
+                  <Figure value={search.figure} />
+                </p>
+                <p className={styles.caption}>{search.caption}</p>
+                <TileLink href={search.link.href} label={search.link.label} context={search.link.context} placement="home_proof_case_mapl-tours" cover />
+              </div>
+              {search.shot ? (
+                <div className={styles.shot} aria-hidden="true">
+                  <div className={styles.chrome}>
+                    <span className={styles.lights}>
+                      <i />
+                      <i />
+                      <i />
+                    </span>
+                    <span className={styles.url}>{search.shot.url}</span>
+                  </div>
+                  <Image
+                    src={`/images/cases/${search.shot.desktop}.jpg`}
+                    alt=""
+                    width={1800}
+                    height={1125}
+                    sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 380px, (min-width: 640px) 46vw, 92vw"
+                    className={styles.shotImage}
+                  />
+                </div>
+              ) : null}
+            </li>
+          ) : null}
+          {audit ? (
+            <li data-tile="" className={`${styles.tile} ${styles.audit}`}>
+              <h3 className={styles.tileHeading}>{audit.heading}</h3>
+              <figure className={styles.auditFigure}>
+                <p className={styles.seal}>
+                  <span className="visually-hidden">WCAG </span>
+                  {audit.figure}
+                </p>
+                <div className={styles.auditWords}>
+                  {/* Its quotation marks are drawn in crimson (CSS), as the lead tile's mark is. */}
+                  <blockquote className={styles.auditQuote}>
+                    <p>{audit.excerpt}</p>
+                  </blockquote>
+                  <figcaption className={styles.auditBy}>{audit.by}</figcaption>
+                </div>
+              </figure>
+              {auditCase ? (
+                <TileLink href={audit.link.href} label={audit.link.label} context={audit.link.context} placement={`home_proof_case_${auditCase.slug}`} />
+              ) : null}
+            </li>
+          ) : null}
+
+        </WallSpot>
+
+        {/* The page's second ask (the work cards end on the first), so the quieter one. */}
+        <SectionAsk title={PROOF_SECTION.ask} placement="home_proof_ask" compact />
       </div>
     </section>
   );

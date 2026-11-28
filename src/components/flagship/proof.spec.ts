@@ -1,10 +1,11 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { testimonials } from '@/config/site';
+import { caseStudies, testimonials } from '@/config/site';
 import QuoteText from '@/components/ui/QuoteText';
 import { caseFor } from './caseFor';
-import { APPROACH, CLOSE_BAND, LOWEST_PRICE, PROOF, PROOF_SECTION, REASONS, VOICES, WORK, WORK_SECTION } from './content';
+import { APPROACH, CLOSE_BAND, LOWEST_PRICE, PROOF, PROOF_SECTION, PROOF_WALL, WORK, WORK_SECTION, excerpt } from './content';
+import Proof from './Proof';
 
 const quoteHtml = (props: { quote: string; highlight?: string; marks?: boolean }) =>
   renderToStaticMarkup(createElement(QuoteText, props));
@@ -48,28 +49,66 @@ describe('QuoteText', () => {
   });
 });
 
-describe('Why agencies work with us (PROOF_SECTION, REASONS)', () => {
-  it('gives four reasons, each figure read from where the site publishes it', () => {
-    expect(REASONS).toHaveLength(4);
-    const figures = REASONS.map((r) => r.figure);
-    expect(figures).toContain(`$${LOWEST_PRICE.toLocaleString('en-US')}`);
-    expect(figures).toContain(WORK.find((card) => card.slug === 'mapl-tours')?.metrics[0].value);
-    const [projects, , offices] = PROOF.stats;
-    expect(figures).toContain(`${projects.value}${projects.suffix}`);
-    expect(figures).toContain(`${offices.value}${offices.suffix}`);
+describe('excerpt', () => {
+  const quote = 'One two. Three four five. Six seven.';
+
+  it('keeps a whole sentence as it is', () => {
+    expect(excerpt(quote, quote.indexOf('Three'), quote.indexOf('Six'))).toBe('Three four five.');
+  });
+
+  it('marks a piece that starts or stops mid-sentence', () => {
+    expect(excerpt(quote, quote.indexOf('four'))).toBe('…four five. Six seven.');
+    expect(excerpt(quote, 0, quote.indexOf(' five'))).toBe('One two. Three four…');
+  });
+});
+
+describe('Why agencies work with us: the proof wall (PROOF_WALL)', () => {
+  const { voice, price, team, hours, search, audit } = PROOF_WALL;
+  const tours = WORK.find((card) => card.slug === 'mapl-tours');
+  const chha = WORK.find((card) => card.slug === 'chha-ncr');
+
+  it('shows every tile while its source exists', () => {
+    expect(voice).not.toBeNull();
+    expect(search).not.toBeNull();
+    expect(audit).not.toBeNull();
+    expect(hours.cities).toEqual(['Toronto', 'Kingston', 'Lagos']);
+  });
+
+  it('reads every figure from where the site publishes it', () => {
+    const [projects, years] = PROOF.stats;
+    expect(price.figure).toBe(`$${LOWEST_PRICE.toLocaleString('en-US')}`);
+    expect(team.figure).toBe(`${projects.value}${projects.suffix}`);
+    expect(team.heading.toLowerCase()).toBe(projects.label);
+    expect(team.caption).toBe(`${years.value}${years.suffix} ${years.label}`);
+    expect(search?.figure).toBe(tours?.metrics[0].value);
+    // The card's own claim, with the company named: "of customers … now arrive through ChatGPT".
+    expect(search?.caption.endsWith(tours?.metrics[0].label.replace(/^of customers /, '') ?? '-')).toBe(true);
+    expect(audit?.figure).toBe(chha?.metrics[0].value);
+  });
+
+  it('quotes only exact words, marking any piece cut mid-sentence', () => {
+    const client = testimonials.find((t) => t.kind === 'client');
+    const verdict = testimonials.find((t) => t.kind === 'audit');
+    expect(voice?.excerpt).toBe(client?.highlight);
+    expect(client?.quote.includes(voice?.excerpt ?? '-')).toBe(true);
+    expect(audit?.excerpt.startsWith('…')).toBe(true);
+    expect(verdict?.quote.endsWith(audit?.excerpt.slice(1) ?? '-')).toBe(true);
+  });
+
+  it('calls the audit independent only because its case study does', () => {
+    const study = caseStudies.find((c) => c.slug === 'chha-ncr');
+    expect(audit?.heading.toLowerCase()).toContain('independent');
+    expect(study?.results.some((line) => line.includes('an independent August 2026 audit'))).toBe(true);
   });
 
   it('names MAPL Tours as our own company wherever its figure is used', () => {
-    const tours = REASONS.find((r) => r.caption.includes('MAPL Tours'));
-    expect(tours?.caption).toContain('our own');
+    expect(search?.caption).toContain(`${tours?.client}, our own`);
   });
 
   it('does not repeat the steps a screen above, or the other asks', () => {
     const steps = APPROACH.steps.flatMap((step) => [step.title, step.text]);
-    for (const reason of REASONS) {
-      for (const words of [reason.title, reason.text]) {
-        expect(steps.some((s) => s.includes(words) || words.includes(s)), words).toBe(false);
-      }
+    for (const words of [price.caption, search?.heading ?? '', hours.heading]) {
+      expect(steps.some((s) => s.includes(words) || words.includes(s)), words).toBe(false);
     }
     expect(PROOF_SECTION.ask).not.toBe(WORK_SECTION.ask);
     expect(PROOF_SECTION.ask).not.toBe(CLOSE_BAND.title);
@@ -78,7 +117,16 @@ describe('Why agencies work with us (PROOF_SECTION, REASONS)', () => {
   it('keeps the copy rules: no exclamation marks, curly apostrophes, never "Inc."', () => {
     const copy = [
       ...Object.values(PROOF_SECTION),
-      ...REASONS.flatMap((r) => [r.figure, r.caption, r.title, r.text]),
+      voice?.heading ?? '',
+      price.heading,
+      price.caption,
+      team.heading,
+      team.caption,
+      hours.heading,
+      audit?.heading ?? '',
+      audit?.by ?? '',
+      search?.heading ?? '',
+      search?.caption ?? '',
     ];
     for (const words of copy) {
       expect(words, words).not.toMatch(/!/);
@@ -87,7 +135,51 @@ describe('Why agencies work with us (PROOF_SECTION, REASONS)', () => {
     }
   });
 
-  it('ends every testimonial on the case study it is about', () => {
-    for (const voice of VOICES) expect(caseFor(voice.quote), voice.name).not.toBeNull();
+  it('ends both quotes on the case study they are about', () => {
+    expect(caseFor(voice?.quote ?? '')).not.toBeNull();
+    expect(caseFor(audit?.quote ?? '')).not.toBeNull();
+  });
+
+  // The rendered wall: one tile per <li data-tile>, named by its second class
+  // (CSS modules print "_voice_<hash>").
+  const tiles = renderToStaticMarkup(createElement(Proof))
+    .split('<li data-tile=""')
+    .slice(1)
+    .map((html) => ({ name: /^ class="_tile_\w+ _([a-z]+)_\w+"/.exec(html)?.[1] ?? '?', html }));
+
+  it('renders the tiles in the order the grids place them', () => {
+    // It opens on a client's words and closes on the audit's, the third-party proof nearest the ask.
+    expect(tiles.map((tile) => tile.name)).toEqual(['voice', 'price', 'team', 'hours', 'search', 'audit']);
+  });
+
+  it('opens every tile with its heading, so heading navigation lands before the proof', () => {
+    for (const tile of tiles) {
+      expect(/^ class="[^"]*">(?:<div class="[^"]*">)?<h3 /.test(tile.html), tile.name).toBe(true);
+    }
+  });
+
+  it('gives every tile a heading that reads whole in a list of headings', () => {
+    const headings = tiles.map((tile) => text(/<h3[^>]*>(.*?)<\/h3>/.exec(tile.html)?.[1] ?? '').replace(/\s+/g, ' ').trim());
+    expect(headings).toEqual([
+      voice?.heading,
+      `${price.heading} ${price.figure}`,
+      `${team.heading} ${team.figure}`,
+      hours.heading,
+      search?.heading,
+      audit?.heading,
+    ]);
+  });
+
+  it('labels the figure tiles’ links with the site’s own words, the nav’s where space is short', () => {
+    expect(price.link.label).toBe('See pricing');
+    expect([price.link.short, team.link.short]).toEqual(['Pricing', 'Team']);
+    // Both labels sit in the markup, so analytics is handed the full one explicitly.
+    const labels = tiles.map((tile) => /data-cta-label="([^"]*)"/.exec(tile.html)?.[1] ?? null);
+    expect(labels).toEqual([null, 'See pricing', 'Meet the team', null, null, null]);
+  });
+
+  it('lets only the figure tiles cover themselves with their link, so both quotations stay selectable', () => {
+    const covered = tiles.filter((tile) => /_cover_/.test(tile.html)).map((tile) => tile.name);
+    expect(covered).toEqual(['price', 'team', 'search']);
   });
 });

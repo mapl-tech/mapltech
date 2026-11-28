@@ -7,7 +7,7 @@
  */
 import { listedProjects, pricing, testimonials } from '@/config/site';
 import { parsePriceLabel, type EstimateService } from '@/lib/estimate';
-import { ESTIMATE_HREF, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
+import { ESTIMATE_HREF, PRICING_HREF, PRICING_LABEL, PROJECT_HREF, PROJECT_LABEL } from '@/components/layout/chrome';
 
 /** The one primary action, labelled the same everywhere (header, hero, bar, close). */
 export const PRIMARY_CTA = { label: PROJECT_LABEL, href: PROJECT_HREF } as const;
@@ -226,6 +226,19 @@ export const WORK: readonly WorkCard[] = (
   ] satisfies WorkCard[]
 ).filter((card) => listedSlugs.has(card.slug));
 
+/**
+ * Real captures per case (public/images/cases, 1800x1125 desktop, 780x1688
+ * phone): the live site and its phone view, with the address shown in the
+ * browser frame. The work cards show both; the proof wall's AI-search tile
+ * shows MAPL Tours' desktop.
+ */
+export const CASE_SHOTS: Readonly<Record<string, { desktop: string; mobile: string; url: string }>> = {
+  'lro-staffing': { desktop: 'lro-desktop', mobile: 'lro-mobile', url: 'lrostaffing.com' },
+  'dodo-island-discoveries': { desktop: 'dodo-desktop', mobile: 'dodo-mobile', url: 'dodoislanddiscoveries.com' },
+  'mapl-tours': { desktop: 'tours-desktop', mobile: 'tours-mobile', url: 'mapltours.com' },
+  'chha-ncr': { desktop: 'chha-desktop', mobile: 'chha-mobile', url: 'chhancr.ca' },
+};
+
 /** The one approved client quote (site.ts `testimonials`, LRO Staffing). */
 export const SPOTLIGHT = testimonials.find((t) => t.company === 'LRO Staffing') ?? null;
 
@@ -324,92 +337,117 @@ export const APPROACH = {
 } as const;
 
 /**
- * Why agencies work with us (reworked Nov 26, 2026; Leshan: the section "does
- * not look good, and it might not help with conversion"). Its four promises
- * read as small print under three outsized counts, and two of them repeated
- * the steps a screen above word for word. Now: four reasons the steps do not
- * give, each one unit read in order (its figure, what the figure counts, then
- * the reason), the two testimonials, and one ask with the trust list. The
- * fixed quote, the Slack check-ins and "your client only hears from your
- * team" stay the steps' (and the trust list's) to say. Not hygiene an agency
- * expects of any partner (Leshan, Nov 5, 2026: no NDA lines).
+ * Why agencies work with us: the proof wall (Nov 28, 2026). Leshan on the
+ * Nov 26 version (four reasons in rows, two full-length quotes): it "looks
+ * plain" and was "too long to read"; he chose the proof wall. One screen of
+ * tiles, each a single piece of proof with one job and as few words as it
+ * can carry: a client's own sentence (the lead tile), the starting price,
+ * the projects behind us, the offices' live hours, MAPL Tours' ChatGPT share
+ * over its site, and the CHHA-NCR audit's verdict. Every figure is read from
+ * where the site already publishes it, so none can drift, and every quote is
+ * an exact excerpt (proof.spec.ts checks both). The full testimonials stay on
+ * their case studies, which the tiles link to. Then the ask.
  */
 export const PROOF_SECTION = {
   label: 'Why us',
   title: 'Why agencies work with us.',
-  lede: 'Four reasons, and the numbers behind them.',
-  // A client's words and an audit's verdict, so not "What clients say".
-  voicesLabel: 'In their words',
-  /** Not the work ask's question or the close's line: this one asks after the reasons. */
+  lede: 'Proof you can check.',
+  /** Not the work ask's question or the close's line: this one asks after the proof. */
   ask: 'Have a client project in mind?',
 } as const;
 
-export interface Reason {
-  /** As printed: "$3,500", "~50%", "200+", "3". */
-  figure: string;
-  /** What the figure counts, read straight after it. */
-  caption: string;
-  title: string;
-  text: string;
+/**
+ * An exact piece of a quote, `quote.slice(start, end)`, marked as a piece: an
+ * ellipsis where it starts mid-sentence or stops before the quote's end in
+ * the middle of one. The words in between are never changed.
+ */
+export function excerpt(quote: string, start: number, end: number = quote.length): string {
+  const text = quote.slice(start, end).trim();
+  const before = quote.slice(0, start).trim();
+  const lead = before && !/[.!?]$/.test(before) ? '\u2026' : '';
+  const tail = end < quote.length && !/[.!?]$/.test(text) ? '\u2026' : '';
+  return `${lead}${text}${tail}`;
 }
 
-const [projects, experience, offices] = PROOF.stats;
-const chatGptShare = WORK.find((card) => card.slug === 'mapl-tours')?.metrics[0];
+const client = testimonials.find((t) => t.kind === 'client');
+const verdict = testimonials.find((t) => t.kind === 'audit');
+const tours = WORK.find((card) => card.slug === 'mapl-tours');
+const chha = WORK.find((card) => card.slug === 'chha-ncr');
+const [projects, years] = PROOF.stats;
 
 /**
- * Each figure read from where the site already publishes it, so none can
- * drift: the lowest package price (site.ts `pricing`, as the hero's "Projects
- * from" line), MAPL Tours' ChatGPT share (its work card), the projects and
- * years (PROOF.stats, the live homepage's numbers) and the offices with their
- * hours (the timezone FAQ, components/home/data.ts). MAPL Tours is named as
- * our own company, as its work card says. A reason whose source is gone is
- * dropped rather than shown without its number.
+ * The tiles' content, each read from its source: the client's `highlight`
+ * sentence (site.ts testimonials), the lowest package price (site.ts
+ * `pricing`, as the hero's "Projects from"), the projects and years
+ * (PROOF.stats, the live homepage's numbers), the offices in the timezone
+ * FAQ's order (Toronto on Eastern time, Kingston within an hour of it, Lagos
+ * whose afternoon overlaps the Eastern morning), MAPL Tours' ChatGPT share
+ * (its work card; named as our own company, as that card says) and, last,
+ * the CHHA-NCR audit (its work card's rating and the verdict from the
+ * highlight to the end), so the wall closes on third-party proof just above
+ * its ask. A tile whose source is gone is not shown. `quote` is the full
+ * testimonial, for the case-study lookup (caseFor) in the component.
+ *
+ * Every tile has one shape, in reading order: its `heading` (the tile's h3,
+ * set as a small label, so heading navigation reaches every tile and lands
+ * before its figure), then its proof, one caption, and its link. On the two
+ * figure tiles the heading holds the figure too ("Prices from $3,500"), so it
+ * stands alone in a list of headings. Their links use the site's own labels,
+ * and the nav's shorter ones ("Pricing", "Team") where the tiles sit half a
+ * phone wide.
  */
-export const REASONS: readonly Reason[] = [
-  {
-    figure: money(LOWEST_PRICE),
-    caption: 'the lowest starting price we publish',
-    title: 'Prices you can plan around',
-    text: 'Every package has a public price, so you can plan your margin before you pitch.',
-  },
-  chatGptShare
+export const PROOF_WALL = {
+  voice: client
     ? {
-        figure: chatGptShare.value,
-        caption: 'of customers on MAPL Tours, our own travel company, now arrive through ChatGPT',
-        title: 'Built for AI search',
-        text: 'Every website we build is ready for AI search and meets accessibility standards on launch day.',
+        heading: 'In a client\u2019s words',
+        quote: client.quote,
+        excerpt: excerpt(client.quote, client.quote.indexOf(client.highlight), client.quote.indexOf(client.highlight) + client.highlight.length),
+        name: client.name,
+        // The company's name held on one line (U+00A0), so "LRO Staffing" never splits.
+        detail: `${client.role}, ${client.company.replace(/ /g, '\u00a0')}`,
+        image: client.image || null,
       }
     : null,
-  {
+  price: {
+    heading: 'Prices from',
+    figure: money(LOWEST_PRICE),
+    caption: 'Published, so you can budget',
+    link: { label: PRICING_LABEL, short: 'Pricing', href: PRICING_HREF },
+  },
+  team: {
+    heading: `${projects.label.charAt(0).toUpperCase()}${projects.label.slice(1)}`,
     figure: `${projects.value}${projects.suffix}`,
-    caption: projects.label,
-    title: 'A team that has done this before',
-    text: `Our team brings ${experience.value}${experience.suffix} ${experience.label} in websites, automation, internal tools and cloud.`,
+    caption: `${years.value}${years.suffix} ${years.label}`,
+    link: { label: 'Meet the team', short: 'Team', href: '/team' },
   },
-  {
-    figure: `${offices.value}${offices.suffix}`,
-    caption: 'offices: Toronto, Kingston and Lagos',
-    title: 'Hours that overlap yours',
-    text: 'Toronto is on Eastern time, Kingston is within an hour of it all year, and Lagos\u2019s afternoon overlaps the Eastern morning.',
+  hours: {
+    heading: 'Hours that overlap yours',
+    cities: ['Toronto', 'Kingston', 'Lagos'] as const,
   },
-].filter((reason): reason is Reason => reason !== null);
-
-/**
- * The testimonials the live site publishes (site.ts `testimonials`), in full:
- * the approved client quote, then the CHHA-NCR post-launch audit's verdict,
- * which is attributed to the audit, not to a person (site.ts `kind`, the
- * test llms.ts uses too). A person reads "role, company"; the audit reads
- * "relaunch, month". `highlight` is the part set brighter (ui/QuoteText).
- */
-export const VOICES = testimonials.map((t) => ({
-  quote: t.quote,
-  highlight: t.highlight,
-  kind: t.kind,
-  name: t.name,
-  // The company's name held on one line (U+00A0), so "LRO Staffing" never splits.
-  detail: t.kind === 'client' ? `${t.role}, ${t.company.replace(/ /g, '\u00a0')}` : `${t.company}, ${t.role}`,
-  image: t.image || null,
-}));
+  search: tours
+    ? {
+        heading: 'Built for AI search',
+        figure: tours.metrics[0].value,
+        caption: `of customers at ${tours.client}, our own travel company, now arrive through ChatGPT`,
+        link: { label: 'Read the case study', context: tours.client, href: tours.href },
+        shot: CASE_SHOTS[tours.slug] ?? null,
+      }
+    : null,
+  audit:
+    chha && verdict
+      ? {
+          // Said on the tile because the case study says it (site.ts caseStudies, chha-ncr:
+          // "an independent August 2026 audit"; sourceNote "Independent four-track audit").
+          heading: 'Independent accessibility audit',
+          quote: verdict.quote,
+          figure: chha.metrics[0].value,
+          excerpt: excerpt(verdict.quote, verdict.quote.indexOf(verdict.highlight)),
+          // The heading says what it was; this says which launch, and when ("August 2026" on one line).
+          by: `${verdict.company}, ${verdict.role.replace(/ /g, '\u00a0')}`,
+          link: { label: 'Read the case study', context: chha.client, href: chha.href },
+        }
+      : null,
+} as const;
 
 /**
  * The close adds what the hero's reassurance does not: what the call is for

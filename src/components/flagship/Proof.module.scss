@@ -11,7 +11,7 @@
   @include shell;
   @include section-pad;
   display: grid;
-  gap: clamp(48px, 6vw, 80px);
+  gap: clamp(40px, 5vw, 64px);
   // The FAQ that follows opens with its own full padding and rule: together
   // they left 288px of ground at 1440.
   padding-bottom: clamp(48px, 5vw, 72px);
@@ -69,124 +69,194 @@
 }
 
 // ---------------------------------------------------------------
-// The reasons: one column on phones, two from 768px. The list is a
-// container, so each figure is sized to its column (cqi), not to the
-// viewport, and no figure can reach the one beside it.
+// The wall, in one reading order at every width: the client's sentence, the
+// two figures, the hours, MAPL Tours, then the audit's verdict, last and so
+// nearest the ask. Phones: two columns, the two figure tiles side by side.
+// Tablets: six. 1024-1279px: 7 | 5 (the sentence beside the two figure
+// tiles), the hours across the width, then MAPL Tours (its site beside its
+// words) and the audit. From 1280px the full bento, 6 | 6 in every row, so
+// one gutter runs straight down it: MAPL Tours under the sentence, the audit
+// under the hours, both over the ask.
 // ---------------------------------------------------------------
-.reasons {
-  container-type: inline-size;
+.wall {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    'voice voice'
+    'price team'
+    'hours hours'
+    'search search'
+    'audit audit';
+  gap: 12px;
   margin: 0;
   padding: 0;
   list-style: none;
 
   @include md {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: clamp(32px, 5vw, 80px);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-areas:
+      'voice voice voice voice voice voice'
+      'price price price team team team'
+      'hours hours hours hours hours hours'
+      'search search search search search search'
+      'audit audit audit audit audit audit';
+    gap: 16px;
+  }
+
+  @include lg {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-areas:
+      'voice voice voice voice voice voice voice price price price price price'
+      'voice voice voice voice voice voice voice team team team team team'
+      'hours hours hours hours hours hours hours hours hours hours hours hours'
+      'search search search search search search search audit audit audit audit audit';
+  }
+
+  // Under 360px (a 320px phone, or a page zoomed to 400%), one column: the
+  // half-width tiles would leave their link words a line each.
+  @media (max-width: #{$breakpoint-xs - 1px}) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'voice' 'price' 'team' 'hours' 'search' 'audit';
+  }
+
+  @include xl {
+    grid-template-areas:
+      'voice voice voice voice voice voice price price price team team team'
+      'voice voice voice voice voice voice hours hours hours hours hours hours'
+      'search search search search search search audit audit audit audit audit audit';
   }
 }
 
-// One reason under its rule: the figure and what it counts (one group, 10-12px
-// apart), then the reason (20-24px below it). The title is first in the DOM,
-// for heading navigation; the fact is ordered before it on screen. From 768px
-// each reason spans three rows of the list (subgrid), so the facts, the titles
-// and the sentences line up across a row whatever a caption's length.
-.reason {
+// One tile: the work cards' chrome (ground-card), its heading and words from
+// the top and its link at the foot, so links sit level across a row. A figure
+// tile is its link (.cover) and, under a fine pointer, lifts 4px with a
+// brighter ring and a light where the mouse is; a tile without one stays
+// still, so nothing promises a link that is not there. The lift uses
+// `translate`, so it never fights the scroll entrance, which animates
+// `transform`.
+.tile {
+  --pad: clamp(20px, 2.2vw, 32px);
+  @include ground-card;
   position: relative;
+  isolation: isolate; // the light below sits over the tile's ground, under its words
   display: flex;
   flex-direction: column;
-  padding: 20px 0 32px;
-  border-top: 1px solid $color-hairline-strong;
-  // Each reason rises in as it enters, as the steps above do (transform only).
-  @include rise-in;
+  gap: 14px;
+  min-width: 0;
+  padding: var(--pad);
+  overflow: hidden;
+  transition:
+    translate 0.5s $ease-out-expo,
+    box-shadow 0.3s ease;
+  @include rise-in($distance: 24px);
 
-  // As the reasons scroll in, each rule draws in crimson, left to right, as
-  // the steps' rules above do. Scroll-driven, transform only; without support
-  // or with reduced motion the hairline stays as it is.
+  // A soft crimson light where the mouse is (WallSpot sets --spot-x/-y).
   &::before {
     content: '';
     position: absolute;
-    top: -1px;
-    right: 0;
-    left: 0;
-    height: 1px;
-    background: $color-red;
-    transform: scaleX(0);
-    transform-origin: left;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(
+      380px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+      rgba(255, 84, 112, 0.11),
+      transparent 62%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
 
-    @include motion-ok {
-      @supports (animation-timeline: view()) {
-        animation: proof-draw linear both;
-        animation-timeline: view();
-        animation-range: cover 6% cover 30%;
-      }
+  &:has(.cover):hover::before {
+    @include pointer-fine-motion {
+      opacity: 1;
     }
   }
 
-  &:last-child {
-    padding-bottom: 0;
-  }
-
-  @include md {
-    display: grid;
-    grid-row: span 3;
-    grid-template-rows: subgrid;
-    row-gap: 0;
-    padding: 28px 0 clamp(40px, 4.5vw, 56px);
-
-    // The last row ends the list on its sentences (the row that starts with an
-    // odd reason among the last two, and the one beside it).
-    &:nth-child(odd):nth-last-child(-n + 2),
-    &:nth-child(odd):nth-last-child(-n + 2) + & {
-      padding-bottom: 0;
-    }
-
-    // Two in a row share a scroll position, so the right one starts a beat later.
-    @supports (animation-timeline: view()) {
-      &:nth-child(even)::before {
-        animation-range: cover 10% cover 34%;
-      }
+  &:has(.cover):hover {
+    @include pointer-fine-motion {
+      translate: 0 -4px;
+      box-shadow:
+        0 0 0 1px $color-hairline-strong,
+        0 30px 60px -30px rgba(0, 0, 0, 0.9);
     }
   }
 }
 
-.fact {
-  order: -1;
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  margin: 0 0 16px;
+// Tiles in one row share a scroll position, so later ones arrive a beat later.
+.wall > li:nth-child(2) {
+  animation-range: entry 4% entry 64%;
+}
 
-  @include md {
-    gap: 12px;
-    margin-bottom: 24px;
+.wall > li:nth-child(3) {
+  animation-range: entry 8% entry 68%;
+}
+
+.wall > li:nth-child(5) {
+  animation-range: entry 2% entry 62%;
+}
+
+.wall > li:nth-child(6) {
+  animation-range: entry 6% entry 66%;
+}
+
+// Every tile's h3: first in the tile, set as a small label, so the figure under
+// it leads the eye and heading navigation lands before the proof.
+.tileHeading {
+  @include section-label;
+  display: block;
+  text-wrap: balance;
+}
+
+// A figure tile's h3 holds its label and its figure, laid out as every other
+// tile's label and figure are.
+.figureHeading {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+
+  .figure {
+    display: block;
   }
 }
 
-// 34px on phones; from 768px a share of the list: 44px at 768, 49px at 1024,
-// 64px from 1440. Always a visible step under the section's title (36px on
-// phones; 47, 57 and 73-76px there), so the title stays the way into the
-// section and the figures read as its evidence.
+// A link's short label (the nav's own word) only where its tile is half a
+// phone wide; the hidden one is not part of the link's name.
+.short {
+  display: none;
+}
+
+@media (min-width: $breakpoint-xs) and (max-width: #{$breakpoint-sm - 1px}) {
+  .long {
+    display: none;
+  }
+
+  .short {
+    display: inline;
+  }
+}
+
+// 34px on phones, 46px at 1024, 57px at 1440: a step under the section
+// title at every width (36, 57 and 73px), so the title stays the way in.
 .figure {
   @include display-figure;
-  font-size: 2.125rem;
+  margin: 0;
+  font-size: clamp(2.125rem, 1.2rem + 2.6vw, 3.75rem);
   white-space: nowrap;
-
-  @include md {
-    font-size: clamp(2.75rem, calc(4cqi + 12px), 4rem);
-  }
 }
 
-// "$", "~", "%", "+": large display type, where the display crimson is AAA (5.9:1).
+// "$", "~", "%", "+": large display type, where the display crimson is AAA (6.4:1).
 .sign {
   color: $color-red-display;
 }
 
 // A sign before the digits, typeset as on a price: 60% size, its top level
 // with the digits' (raised half its own size; the tilde, a mid-height mark, a
-// third). No line height of its own, so it never adds height to the figure's
-// line. At the 34px phone figure it is 20.4px bold: large text, where the
-// display crimson's 6.4:1 is AAA.
+// third), with no line height of its own so the figure's line never grows.
+// At the 34px phone figure it is 20.4px bold: large text, so AAA at 6.4:1.
 .lead {
   margin-right: 0.04em;
   font-size: 0.6em;
@@ -199,79 +269,100 @@
 }
 
 .caption {
-  max-width: 26em;
+  margin: 0;
+  max-width: 24em;
   font-size: $font-size-base;
-  line-height: 1.45;
+  line-height: 1.4;
   color: $color-fg-muted;
   text-wrap: pretty;
 }
 
-// As the steps' titles: 20px, 24px from ~1440.
-.reasonTitle {
-  margin: 0;
-  font-family: $font-display;
-  font-weight: 700;
-  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  color: $color-fg;
-  text-wrap: balance;
-}
+// The tile's link: its own words name the destination, at the tile's foot,
+// with the site's focus ring.
+.tileLink {
+  @include text-action($color-fg);
+  position: static;
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: 4px;
 
-.reasonText {
-  margin: 8px 0 0;
-  max-width: 34em;
-  font-size: $font-size-base;
-  line-height: 1.55;
-  color: $color-text-body;
-  text-wrap: pretty;
-}
-
-// ---------------------------------------------------------------
-// In their words: the two testimonials as cards, side by side from 1024px.
-// The client's longer quote takes the wider column (7 to 5), so the two run
-// to about the same height. Each card reads from the top (quote, who said
-// it, the case study); a shorter card ends with space at its foot, never with
-// a gap in the middle of its words.
-// ---------------------------------------------------------------
-// The label sits closer to its cards (16px) than the cards sit to each other
-// (24px, 32px side by side), so it reads as theirs.
-.voices {
-  display: grid;
-  gap: 16px;
-}
-
-.voicesLabel {
-  @include section-label;
-}
-
-.voiceList {
-  display: grid;
-  gap: 24px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  @include lg {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: 32px;
+  &:focus-visible {
+    outline: $focus-ring;
+    outline-offset: $focus-ring-offset;
   }
 }
 
-// One testimonial: the words, who said them, then the case study they are about.
-.voiceItem {
-  @include ground-card;
-  display: grid;
-  align-content: start;
-  gap: 24px;
-  padding: clamp(24px, 3.2vw, 48px);
-  @include rise-in;
+// A figure tile's link also covers the tile (the link is static, so the tile
+// is the positioned ancestor), with its focus ring just inside the tile's
+// edge. Tiles that quote someone do without, so their words stay selectable.
+.cover {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: $card-radius;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:focus-visible::after {
+    outline: $focus-ring;
+    outline-offset: -4px;
+  }
 }
 
+.tileArrow {
+  display: inline-block;
+  transition: translate 0.35s $ease-out-expo;
+
+  .tile:has(.cover):hover &,
+  .tileLink:hover & {
+    @include pointer-fine-motion {
+      translate: 4px 0;
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// The lead tile: a client's own sentence, on the work cards' crimson glow.
+// ---------------------------------------------------------------
 .voice {
-  display: grid;
-  gap: 24px;
+  grid-area: voice;
+  container: proof-voice / inline-size; // the sentence is sized to its tile
+  background:
+    radial-gradient(70% 90% at 85% 100%, rgba(217, 28, 63, 0.16) 0%, transparent 60%),
+    #121214;
+}
+
+// The words from the top; who said them at the foot, over the link, so a tall
+// tile (two rows from 1024px) opens its space between the sentence and its
+// speaker rather than under them.
+.voiceFigure {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
   margin: 0;
+}
+
+.voiceFigure .voiceBy {
+  margin-top: auto;
+}
+
+// Where the lead tile is taller than its words (two rows from 1024px), the
+// mark and the sentence sit centred in the space above the speaker: the two
+// auto margins share it.
+.voiceFigure .mark {
+  margin-top: auto;
+}
+
+.mark {
+  width: clamp(32px, 3vw, 44px);
+  height: auto;
+  fill: $color-red-text;
 }
 
 .voiceQuote {
@@ -279,17 +370,23 @@
 
   p {
     margin: 0;
-    max-width: 38em;
-    font-size: clamp(1.125rem, 1rem + 0.45vw, 1.375rem); // 18px -> 22px
-    line-height: 1.5;
-    color: $color-text-muted;
-    text-wrap: pretty;
-  }
-
-  // The words a skimming reader should catch (site.ts `highlight`).
-  mark {
+    max-width: 22em;
+    font-family: $font-display;
+    font-weight: 700;
+    // A share of the tile's width (22px on phones, ~35px at 1024, 40px from
+    // ~1300), so it fills the tall lead tile and stays under the 36-73px title.
+    font-size: clamp(1.375rem, 7cqi, 2.5rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
     color: $color-fg;
-    font-weight: $font-weight-semibold;
+    text-wrap: pretty;
+
+    // From 1280px the lead tile is two rows tall: the sentence grows into it
+    // (41px at 1280, 48px from 1440, still under the 57-73px title), so its
+    // heading stays near it instead of floating over an empty band.
+    @include xl {
+      font-size: clamp(2.5rem, 11cqi - 15px, 3rem);
+    }
   }
 }
 
@@ -320,25 +417,398 @@
   color: $color-fg-muted;
 }
 
-// "Read the LRO Staffing case study": the words checked against the work.
-.voiceCase {
-  @include text-action($color-fg);
-  justify-self: start;
+// ---------------------------------------------------------------
+// The two figure tiles, side by side on phones and from 1280px. On phones a
+// label may take two lines in one tile and one in the other, so both keep
+// two, and the figures sit level.
+// ---------------------------------------------------------------
+.price {
+  grid-area: price;
 }
 
-.voiceCaseArrow {
-  display: inline-block;
-  transition: transform 0.35s $ease-out-expo;
+.team {
+  grid-area: team;
+}
 
-  .voiceCase:hover & {
-    @include motion-ok {
-      transform: translateX(4px);
+@media (min-width: $breakpoint-xs) and (max-width: #{$breakpoint-sm - 1px}) {
+  .price,
+  .team {
+    .tileHeading {
+      min-height: 2lh;
     }
   }
 }
 
-@keyframes proof-draw {
-  to {
-    transform: scaleX(1);
+// ---------------------------------------------------------------
+// Live hours over the visitor's own day (WallClocks). Each office: its
+// local time and an open dot, then a 24-hour track of the visitor's day:
+// their 9 to 6 shaded crimson, the office's working day as a bar (teal while
+// it is open) and a tick at "now". The three tracks share one scale, so the
+// overlap reads straight down the stack.
+// ---------------------------------------------------------------
+.hours {
+  grid-area: hours;
+  container: proof-hours / inline-size;
+}
+
+.overlap {
+  display: grid;
+  gap: 12px;
+}
+
+.overlapLabel {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+  color: $color-fg-muted;
+}
+
+.clocks {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clock {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'city time'
+    'track track';
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.city {
+  grid-area: city;
+  font-size: 1rem;
+  line-height: 1.3;
+  color: $color-text-body;
+}
+
+.time {
+  grid-area: time;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(1.125rem, 1rem + 0.45vw, 1.375rem); // 18px -> 22px
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: $color-fg;
+  white-space: nowrap;
+  @include tabular;
+}
+
+// The visitor's day, midnight to midnight: a hairline track 10px tall.
+.track {
+  grid-area: track;
+  position: relative;
+  height: 10px;
+  border-radius: 5px;
+  background: rgba($color-fg, 0.07);
+}
+
+// The visitor's own 9 to 6: the full height of the track, crimson.
+.yours {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 5px;
+  background: rgba($color-red-display, 0.28);
+}
+
+// The office's working day, in the visitor's time: a bar inside the track,
+// so the crimson shows above and below it where the two overlap.
+.theirs {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 2px;
+  background: rgba($color-fg, 0.72);
+
+  .clock[data-open='true'] & {
+    background: $color-teal;
   }
+}
+
+// Now: a tick that runs past the track, so the three line up as one mark.
+.now {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: $color-fg;
+}
+
+.axis {
+  position: relative;
+  height: 1.2em;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  color: $color-fg-muted;
+
+  span {
+    position: absolute;
+    top: 0;
+    translate: -50% 0;
+    white-space: nowrap;
+  }
+}
+
+// Wide (the full-width tile, 1000-1279px): one row per office, its city, its
+// day's track and its time, so a city never sits ~750px from its time; the
+// axis is inset to the tracks' column (the clock's 12px column gap included).
+@container proof-hours (min-width: 720px) {
+  .clock {
+    grid-template-columns: 6.5rem minmax(0, 1fr) 7.5rem;
+    grid-template-areas: 'city track time';
+  }
+
+  .time {
+    justify-self: end;
+  }
+
+  .axis {
+    margin-inline: calc(6.5rem + 12px) calc(7.5rem + 12px);
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  color: $color-fg-muted;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.key {
+  width: 16px;
+  height: 8px;
+  border-radius: 2px;
+
+  &[data-key='yours'] {
+    background: rgba($color-red-display, 0.28);
+  }
+
+  &[data-key='theirs'] {
+    height: 4px;
+    background: rgba($color-fg, 0.72);
+  }
+}
+
+// Open: teal, with a ring that pings three times as the clocks come in, then
+// rests (under five seconds, so it needs no pause control). Closed: an
+// outline.
+.dot {
+  position: relative;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba($color-fg, 0.55);
+
+  .clock[data-open='true'] & {
+    border-color: $color-teal;
+    background: $color-teal;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 1px solid $color-teal;
+      opacity: 0;
+
+      @include motion-ok {
+        animation: proof-ping 1.6s ease-out 0.6s 3;
+      }
+    }
+  }
+}
+
+@keyframes proof-ping {
+  from {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+// ---------------------------------------------------------------
+// AI search: the share, over MAPL Tours' own site in a browser frame. The
+// tile is a container: narrower than 480px the frame sits under the words,
+// running off the tile's foot; wider (six columns at 1280px is 512px), it
+// peeks in from the tile's right-hand foot beside the words, which keep a
+// measure wide enough for their link.
+// ---------------------------------------------------------------
+.search {
+  grid-area: search;
+  container: proof-search / inline-size;
+  padding-bottom: 0;
+  gap: 20px;
+}
+
+.searchCopy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+
+  @container proof-search (min-width: 480px) {
+    max-width: 50%;
+    padding-bottom: var(--pad);
+  }
+}
+
+.shot {
+  position: relative;
+  height: clamp(160px, 40vw, 240px);
+  margin-bottom: -1px;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  background: #0d0d0f;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 30px 60px -30px rgba(0, 0, 0, 0.9);
+  transition: translate 0.8s $ease-out-expo;
+
+  .search:hover & {
+    @include pointer-fine-motion {
+      translate: 0 -8px;
+    }
+  }
+
+  // Never so wide that its frame's top passes the tile's (the full-width tile
+  // at 1024px): 380px keeps the browser bar in view.
+  @container proof-search (min-width: 480px) {
+    position: absolute;
+    right: -28px;
+    bottom: -56px;
+    width: min(50%, 380px);
+    height: auto;
+    border-radius: 12px;
+  }
+}
+
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 30px;
+  padding: 0 12px;
+  background: #18181b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lights {
+  display: inline-flex;
+  gap: 6px;
+
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+  }
+}
+
+.url {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: $color-fg-muted;
+}
+
+.shotImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+// ---------------------------------------------------------------
+// The audit: its rating as a seal, beside the verdict's own words.
+// ---------------------------------------------------------------
+.audit {
+  grid-area: audit;
+}
+
+// Phones get a smaller seal and gap, so the verdict has the width to read in
+// fewer lines.
+.auditFigure {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(14px, 1.6vw, 20px);
+  margin: 0;
+}
+
+.seal {
+  display: grid;
+  place-items: center;
+  width: clamp(52px, 5.6vw, 84px);
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px $color-red;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: clamp(1.375rem, 1rem + 1vw, 1.875rem);
+  letter-spacing: -0.02em;
+  color: $color-fg;
+}
+
+.auditWords {
+  display: grid;
+  gap: 10px;
+}
+
+// Both quotations open in crimson: the lead tile with its large mark, the
+// verdict with its quotation marks in the text-size crimson (8:1, AAA), as
+// the contact page draws its quote. The opening mark hangs into the gap, so
+// the words align with the caption under them.
+.auditQuote {
+  margin: 0;
+
+  p {
+    margin: 0;
+    text-indent: -0.42em;
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem); // 17px -> 20px
+    line-height: 1.45;
+    color: $color-fg;
+    text-wrap: pretty;
+
+    &::before {
+      content: '\201C';
+      color: $color-red-text;
+    }
+
+    &::after {
+      content: '\201D';
+      color: $color-red-text;
+    }
+  }
+}
+
+.auditBy {
+  font-size: 1rem;
+  line-height: 1.4;
+  color: $color-fg-muted;
 }

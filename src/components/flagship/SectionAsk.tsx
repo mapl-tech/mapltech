@@ -15,32 +15,18 @@ import styles from './SectionAsk.module.scss';
  * `compact`: a later ask on the same page reads as its section's conclusion,
  * a step quieter than the first (a smaller question under a hairline), so the
  * two never look like the same block repeated.
- *
- * `secondary`: a quiet text link beside the button (the hero's and the
- * close's pairing, "See pricing"), for a reader who wants the numbers first.
- * The button stays the one filled action.
  */
 export default function SectionAsk({
   title,
   placement,
   className,
   compact = false,
-  secondary,
 }: {
   title: string;
   placement: string;
   className?: string;
   compact?: boolean;
-  secondary?: { label: string; href: string; placement: string };
 }) {
-  const primary = (
-    <Link href={PRIMARY_CTA.href} className={styles.primary} data-cta-placement={placement}>
-      {PRIMARY_CTA.label}
-      <span aria-hidden="true" className={styles.arrow}>
-        <Arrow />
-      </span>
-    </Link>
-  );
   return (
     <div
       className={[styles.ask, compact ? styles.compact : '', className].filter(Boolean).join(' ')}
@@ -49,16 +35,12 @@ export default function SectionAsk({
     >
       <p className={styles.title}>{title}</p>
       <div className={styles.action}>
-        {secondary ? (
-          <div className={styles.buttons}>
-            {primary}
-            <Link href={secondary.href} className={styles.secondary} data-cta-placement={secondary.placement}>
-              {secondary.label}
-            </Link>
-          </div>
-        ) : (
-          primary
-        )}
+        <Link href={PRIMARY_CTA.href} className={styles.primary} data-cta-placement={placement}>
+          {PRIMARY_CTA.label}
+          <span aria-hidden="true" className={styles.arrow}>
+            <Arrow />
+          </span>
+        </Link>
         <TrustList items={TRUST_ITEMS} className={styles.note} />
       </div>
     </div>

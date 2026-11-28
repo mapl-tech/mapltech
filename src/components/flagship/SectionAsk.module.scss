@@ -65,16 +65,3 @@
 .note {
   --trust-gap: 0px; // the grid gap above spaces it
 }
-
-// The button and its quiet companion on one line (wrapping on the narrowest
-// phones), 24px apart.
-.buttons {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 24px;
-}
-
-.secondary {
-  @include text-action($color-fg);
-}

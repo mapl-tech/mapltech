@@ -14,7 +14,9 @@ import { useEffect, useRef } from 'react';
  *
  * - cta_click for every element marked data-cta-placement (the site's asks),
  *   with the placement, the link and its text; the MagneticButton and the
- *   phone bar also announce `cta_click` on window, counted once.
+ *   phone bar also announce `cta_click` on window, counted once. A link whose
+ *   words change with the screen (two labels in its markup, one shown) names
+ *   itself in data-cta-label, so its text is reported the same at any width.
  * - contact_click for phone and email links.
  * - generate_lead when a form is sent (a `lead` event on window from the
  *   forms, with the form's name only: never personal data).
@@ -27,8 +29,8 @@ function send(name: string, params: Record<string, unknown>) {
   if (typeof gtag === 'function') gtag('event', name, params);
 }
 
-function linkText(el: Element): string {
-  const text = (el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' ').trim();
+export function linkText(el: Element): string {
+  const text = (el.getAttribute('data-cta-label') || el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' ').trim();
   return text.slice(0, 100);
 }
 
